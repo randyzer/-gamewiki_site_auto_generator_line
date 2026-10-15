@@ -263,13 +263,20 @@ for (const variant of ['expired', 'self-issued', 'inputs', 'scope', 'skill-versi
   });
 }
 
-test('legacy CLI run/retry reject even nonexistent inputs and caller approval switches', () => {
+test('CLI run/retry need a readable inputs file and an interactive terminal; nothing starts otherwise', async t => {
   for (const command of ['run', 'retry']) {
-    const result = spawnSync(process.execPath, ['src/cli.mjs', command, '/nonexistent/approval.json', 'TEST-no-host', '--approved'],
-      { cwd: AGENT_ROOT, encoding: 'utf8' });
-    assert.equal(result.status, 2);
-    assert.equal(JSON.parse(result.stdout).code, 'ENTRY_TRUSTED_APPROVAL_UNAVAILABLE');
+    const missing = spawnSync(process.execPath, ['src/cli.mjs', command, '/nonexistent/inputs.json', 'TEST-no-host'],
+      { cwd: AGENT_ROOT, encoding: 'utf8', input: 'y\n' });
+    assert.notEqual(missing.status, 0);
+    assert.match(missing.stderr, /RUN_INPUTS_INVALID: \/nonexistent\/inputs\.json/);
   }
+  const id = 'TEST-cli-pipe-' + randomUUID(), inputs = join(AGENT_ROOT, 'runs', id + '-inputs.json');
+  t.after(() => rm(inputs, { force: true }));
+  await writeFile(inputs, JSON.stringify({ gameIdentity: 'TEST' }));
+  const piped = spawnSync(process.execPath, ['src/cli.mjs', 'run', inputs, id], { cwd: AGENT_ROOT, encoding: 'utf8', input: 'y\n' });
+  assert.notEqual(piped.status, 0);
+  assert.match(piped.stderr, /TERMINAL_CONFIRMATION_REQUIRED/);
+  await assert.rejects(access(join(AGENT_ROOT, 'runs', id)), { code: 'ENOENT' });
 });
 
 for (const variant of ['material-after-consume', 'expiry-after-consume', 'host-error', 'empty-receipt', 'wrong-binding', 'future-approval']) {

@@ -42,7 +42,7 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
         const detail = sanitizeDiagnosticText(stderr || stdout, env);
         reject(workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`, 'WORKER_EXIT_NONZERO', { exitCode: code, exitSignal }));
       }
-      else resolve({ exitCode: code });
+      else resolve({ exitCode: code, stdout });
     });
     child.stdin.end(input);
   });

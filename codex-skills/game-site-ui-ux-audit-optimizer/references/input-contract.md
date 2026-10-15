@@ -20,6 +20,7 @@ Never guess a remote production domain. Never install dependencies or browser bi
 Recognized page roots:
 
 - `app/`
+- `src/app/`
 - `pages/`
 - `src/pages/`
 

@@ -36,7 +36,9 @@ If visual inspection reveals excessive detail, regenerate once with fewer shapes
 
 ## favicon.io browser flow
 
-1. Open https://favicon.io/favicon-converter/.
+`scripts/favicon_io_convert.mjs` performs these steps; follow them by hand only for the manual fallback in SKILL.md step 6.
+
+1. Open https://favicon.io/favicon-converter/ and wait for the page to finish loading (an upload made earlier is ignored).
 2. Select the actual image file input, not an advertisement.
 3. Upload the verified 512 PNG.
 4. Confirm Loaded: filename is visible.

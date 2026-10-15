@@ -36,7 +36,7 @@ Reuse values from the current conversation only when explicitly supplied and sti
 Resolve inside the target workspace:
 
 - Framework and scripts from `package.json`.
-- Page roots from `app/`, `pages/`, or `src/pages/`.
+- Page roots from `app/`, `src/app/`, `pages/`, or `src/pages/`.
 - Existing URL supplied by the user, or a safe project preview/dev command.
 - Representative routes from `docs/CONTENT_PAGE_MANIFEST.json`, framework routes, and navigation.
 - Template selection context from `docs/TEMPLATE_SELECTION_REPORT.md`, when present.
@@ -127,8 +127,11 @@ From this skill directory:
 python3 scripts/preflight.py \
   --game "Game Name" \
   --workspace "/absolute/game/workspace" \
+  --template-root "$TEMPLATE_ROOT" \
   --mode audit-only
 ```
+
+`TEMPLATE_ROOT` is the `template/` subtree of the commit-pinned GitHub snapshot recorded in `docs/template-copy-manifest.json` (`templateSnapshot.templateRoot` when supplied by the orchestrator).
 
 Add `--url "http://localhost:3000"` when a server is already running.
 

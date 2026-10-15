@@ -135,8 +135,39 @@ test('complete handoff passes the native content-integrator preflight and is ide
   await writeFile(join(project, 'docs/template-copy-manifest.json'), JSON.stringify({ destination: project }));
   const output = join(context.runDirectory, 'preflight.json');
   const script = fileURLToPath(new URL('../../codex-skills/game-site-content-integrator/scripts/preflight.py', import.meta.url));
-  await runProcess('python3', [script, '--game', context.inputs.gameIdentity, '--workspace', project, '--output', output]);
+  await runProcess('python3', [script, '--game', context.inputs.gameIdentity, '--workspace', project,
+    '--template-root', context.templateRoots[0], '--output', output]);
   const data = JSON.parse(await readFile(output));
   assert.equal(data.ready, true);
   assert.equal(data.resolved_inputs.keywords, join(project, 'backgroundinformation/keyword-materials/keywords.json'));
+});
+
+async function deploymentReport(t, report) {
+  const f = await nativeFixture(t, 6);
+  const json = f.result.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
+  const dir = dirname(json.path);
+  const md = join(dir, 'DEPLOYMENT_REPORT.md'), data = join(dir, 'DEPLOYMENT_REPORT.json');
+  await writeFile(md, '# Offline deployment report');
+  await writeFile(data, JSON.stringify(report));
+  f.context.mode = 'execute';
+  f.context.requiredArtifacts = ['DEPLOYMENT_REPORT.md', 'DEPLOYMENT_REPORT.json'];
+  f.result.artifacts = [{ kind: 'DEPLOYMENT_REPORT.md', path: md }, { kind: 'DEPLOYMENT_REPORT.json', path: data }];
+  return f;
+}
+
+test('an execution pass is validated against the deployment report, not the plan', async t => {
+  const f = await deploymentReport(t, { deployment: 'PRODUCTION LIVE', production_url: 'https://example.test' });
+  f.context.inputs.domain = 'example.test';
+  const result = await f.validate();
+  assert.equal(result.status, 'PASSED');
+  assert.deepEqual(result.artifacts.map(a => a.kind), ['DEPLOYMENT_REPORT.md', 'DEPLOYMENT_REPORT.json']);
+});
+
+test('a PASSED execution must report a live deployment on the task domain', async t => {
+  const notLive = await deploymentReport(t, { deployment: 'PREVIEW VERIFIED', production_url: 'https://example.test' });
+  notLive.context.inputs.domain = 'example.test';
+  await assert.rejects(notLive.validate(), /DEPLOYMENT_REPORT_INVALID: deployment is "PREVIEW VERIFIED"/);
+  const otherDomain = await deploymentReport(t, { deployment: 'PRODUCTION LIVE', production_url: 'https://elsewhere.test' });
+  otherDomain.context.inputs.domain = 'example.test';
+  await assert.rejects(otherDomain.validate(), /DEPLOYMENT_REPORT_INVALID: production_url "https:\/\/elsewhere\.test"/);
 });

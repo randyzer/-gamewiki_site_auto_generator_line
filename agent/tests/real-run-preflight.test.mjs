@@ -23,6 +23,11 @@ test('derived preflight preserves original bytes, uses a fresh directory and nev
   assert.equal(result.keywords.pending.length, 1);
   assert.equal((await readFile(result.derived.path, 'utf8')).includes('truncated'), false);
   await assert.rejects(access(join(AGENT_ROOT, 'runs', id, 'manifest.json')));
+  // Preflight reports the template source a run would pin, but never downloads a snapshot.
+  assert.equal(result.templateSource.repository, 'https://github.com/randyzer/-gamewiki_site_auto_generator_line.git');
+  assert.equal(typeof result.templateSource.reachable, 'boolean');
+  if (result.templateSource.reachable) assert.match(result.templateSource.commit, /^[0-9a-f]{40}$/);
+  else assert.match(result.templateSource.reason, /TEMPLATE_SNAPSHOT_FETCH_FAILED/);
   await assert.rejects(prepareRealRunPreflight(inputs, id), /EEXIST/);
 });
 

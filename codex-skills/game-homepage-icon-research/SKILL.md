@@ -123,14 +123,30 @@ Inspect the generated image. Resize mechanically to exactly 512 by 512 only when
 
 ### 6. Convert with favicon.io
 
-Use browser interaction on https://favicon.io/favicon-converter/ because the user explicitly requires that service.
+Convert on https://favicon.io/favicon-converter/ because the user explicitly requires that service. Do not substitute another converter or a local favicon generator.
 
-- Upload the verified 512 by 512 PNG.
-- Confirm the page displays the loaded filename and preview sizes.
-- Download the complete favicon package.
-- Rename the downloaded archive to {game name}图标.zip.
-- Move or copy it into the output directory.
+**Default: the bundled script.** It drives favicon.io in a headless browser (upload, wait for processing, download) and writes the package straight to the final name:
+
+~~~bash
+node scripts/favicon_io_convert.mjs \
+  --png "/absolute/path/{game name}-icon-512.png" \
+  --out "/absolute/path/backgroundinformation/{game name}图标.zip"
+~~~
+
+On success it prints one JSON line with `status: "DOWNLOADED"`, the ZIP path and its SHA-256. Record that line. First-time setup in `scripts/`: `npm ci` and `npx playwright install chromium`.
+
+**Fallback: one manual step.** If the script exits non-zero (`FAVICON_IO_UNREACHABLE`, `FAVICON_IO_PAGE_CHANGED`, `FAVICON_IO_DOWNLOAD_FAILED`, `FAVICON_IO_BROWSER_UNAVAILABLE`), do not retry it in a loop and do not switch converters. Return `WAITING_FOR_USER` with `missing_inputs: ["faviconIoManualZip"]` and state, in the evidence:
+
+- the script's exact error line;
+- the absolute path of the verified 512 by 512 PNG to upload;
+- the exact path where the user must save the downloaded ZIP (`backgroundinformation/{game name}图标.zip`).
+
+The user uploads that PNG on https://favicon.io/favicon-converter/, clicks Download favicon package, and saves the file at that path. When the stage is retried and the ZIP is present, skip the script and continue with step 7; the same validation applies. Record `conversion: manual favicon.io download by the user` in the report.
+
+Either way:
+
 - Do not click advertisements or unrelated download buttons.
+- Never overwrite an existing ZIP; the script refuses to.
 
 The expected ZIP members are:
 
@@ -165,6 +181,6 @@ Also:
 
 - If the official identity is ambiguous, stop and ask before creating files.
 - If an official/community link cannot be verified, omit it and state it was not confirmed.
-- If favicon.io is blocked or fails, preserve the verified 512 by 512 PNG, report the blocker, and do not claim a ZIP was generated.
+- If the favicon.io script fails, preserve the verified 512 by 512 PNG and use the manual fallback in step 6. Never claim a ZIP was generated until the file exists and passes step 7.
 - If the local device or destination is unavailable, preserve completed artifacts and report the exact blocked step.
 - Never mark partial work as complete.

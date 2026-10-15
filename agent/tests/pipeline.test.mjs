@@ -248,7 +248,7 @@ test('deploy always produces a plan and waits, even when executor says PASSED', 
   assert.equal(f.calls.length, 7);
   assert.equal(state.stages[6].status, 'WAITING_FOR_USER');
   assert.equal(f.calls[4].context.mode, 'audit-only');
-  assert.equal(f.calls[6].context.mode, 'plan-only');
+  assert.equal(f.calls[6].context.mode, 'plan');
   for (const key of ['gitPush', 'dns', 'productionDeployment', 'gsc', 'ga4', 'advertisingScripts']) {
     assert.equal(f.calls[6].context.permissions[key], false);
   }

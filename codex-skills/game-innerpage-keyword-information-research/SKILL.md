@@ -70,6 +70,17 @@ Choose the dominant wording using observable evidence: exact-title frequency in 
 
 Create 10–20 final keywords when the raw input contains that many valid intents. Never fabricate keywords merely to reach 10. Use specific, mutually exclusive category names; `guide` is mandatory. Avoid broad categories such as `gameplay` or `general`. A `codes` category, if present, contains exactly one final keyword. Order categories and keywords by expected demand using the evidence above.
 
+The 10–20 range is the number of final keywords (one inner page each), not the number of raw inputs. A long raw list normally merges into fewer final keywords; record every merge rather than treating merged inputs as lost.
+
+#### Piracy-intent keywords
+
+Raw keywords that seek the paid product without paying (for example `crack`, `cracked`, `keygen`, `hacked`, `pirated`, `torrent`, `steamunlocked`, `mediafire`, `free download`, `full gratis`, and translated equivalents) are neither excluded nor turned into their own download pages. Handle them as risk warnings:
+
+- Merge each one into a safety/risk final keyword (for example `{Game} safe` or `{Game} virus`); create that keyword when the input has piracy intent but no such keyword.
+- The merged keyword's material file adds a `## 盗版风险提示` section: malware and account risks, no updates or support, license violation, and the official purchase channels. Cite sources for factual claims as usual.
+- Never research, quote, or link a download, crack, keygen, or file-hosting page. Collect evidence only from official, security, and reputable news or guide sources.
+- Record every such raw keyword in the `## 盗版意图处理` table of `关键词处理记录.md`. A term that only looks like piracy (for example a puzzle called "crack the code") is still listed there with `非盗版意图` and the reason, then handled normally.
+
 Write `keywords.json` and document every keep, exclusion, translation, correction, and merge in `关键词处理记录.md`. Do not silently drop an input.
 
 ### 3. Research each final keyword
@@ -135,6 +146,7 @@ python scripts/validate_outputs.py --workdir "/absolute/workdir" --raw-keywords 
 Fix structural errors before completion. Manually check that:
 
 - Every raw keyword has an audit disposition.
+- Every piracy-intent raw keyword is in `## 盗版意图处理`, its target material has `## 盗版风险提示`, and no material links a download or file-hosting site.
 - Every final keyword has exactly one material file.
 - Every listed URL was successfully opened during this run.
 - Source dates and access dates are present.

@@ -83,8 +83,11 @@ Run:
 ```bash
 python3 scripts/preflight.py \
   --game "Game Name" \
-  --workspace "/absolute/game/workspace"
+  --workspace "/absolute/game/workspace" \
+  --template-root "$TEMPLATE_ROOT"
 ```
+
+`TEMPLATE_ROOT` is the `template/` subtree of the commit-pinned GitHub snapshot recorded in `docs/template-copy-manifest.json` (`templateSnapshot.templateRoot` when supplied by the orchestrator).
 
 The preflight must confirm:
 
@@ -92,7 +95,7 @@ The preflight must confirm:
 - The workspace is not inside the original template library.
 - The template selection report and copy manifest exist.
 - The copy manifest destination matches the workspace.
-- `package.json` and a recognized page root (`app/`, `pages/`, or `src/pages/`) exist.
+- `package.json` and a recognized page root (`app/`, `src/app/`, `pages/`, or `src/pages/`) exist.
 - The homepage research and icon ZIP are readable.
 - The favicon ZIP contains the required members.
 - `keywords.json` is valid and has no duplicate final keywords.

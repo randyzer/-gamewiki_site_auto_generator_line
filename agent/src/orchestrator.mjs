@@ -13,29 +13,45 @@ import { candidateDiff } from './candidate-diff.mjs';
 import { promotionPlan } from './promotion-gate.mjs';
 import { prepareResearchHandoff } from './handoff.mjs';
 import { prepareExistingContent } from './existing-content-adapter.mjs';
+import { materializeTemplateSnapshot } from './template-snapshot.mjs';
 
 export async function loadConfiguration(file = join(AGENT_ROOT, 'config/workflow.json')) {
   const data = JSON.parse(await readFile(file, 'utf8'));
   const base = dirname(file);
   const existingProjectAllowlist = data.existingProjectAllowlist
     ? JSON.parse(await readFile(resolve(base, data.existingProjectAllowlist), 'utf8')) : { targets: {} };
+  if (!data.templateSource || typeof data.templateCache !== 'string')
+    throw Error(`TEMPLATE_SOURCE_INVALID: ${file} needs templateSource and templateCache`);
+  // The cache sits outside the workspace: the pipeline refuses workspaces that overlap a template root.
   return { workspace: resolve(base, data.workspace), inventoryPath: resolve(base, data.inventory),
-    templateRoots: data.templateRoots.map(p => resolve(base, p)), existingProjectAllowlist };
+    templateSource: data.templateSource, templateCacheRoot: resolve(base, data.templateCache), existingProjectAllowlist };
+}
+
+// New runs pin the current ref once; resumed runs reuse the commit recorded in their manifest.
+async function runTemplateSnapshot(config, manifest, runId, resume) {
+  if (!config.templateSource) return undefined;
+  let commit;
+  if (resume) {
+    const recorded = JSON.parse(await readFile(manifest, 'utf8')).templateSnapshot;
+    if (!recorded?.commit) throw Error(`TEMPLATE_SNAPSHOT_MISSING_IN_MANIFEST: run ${runId} was created without a template snapshot; start a new run`);
+    commit = recorded.commit;
+  }
+  return materializeTemplateSnapshot(config.templateSource, { cacheRoot: config.templateCacheRoot, commit });
 }
 
 export function summarize(state, paused = false) {
   const index = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
   const current = state.stages[index];
   return { status: paused ? 'PAUSED' : current?.status ?? 'PASSED', run_id: state.runId,
-    summary: paused ? 'Paused after current stage' : current ? stageDefinition(current.skill).label + ': ' + current.status + (current.evidence.length ? '\n' + current.evidence.map(item => sanitizeDiagnosticText(item)).join('\n') : '') : 'Deployment plan acknowledged; no production actions executed',
+    summary: paused ? 'Paused after current stage' : current ? stageDefinition(current.skill).label + ': ' + current.status + (current.evidence.length ? '\n' + current.evidence.map(item => sanitizeDiagnosticText(item)).join('\n') : '') : state.deploymentExecuted ? 'All stages passed; approved deployment executed' : 'Deployment plan acknowledged; no production actions executed',
     missing_inputs: current?.missing_inputs ?? [], artifact_paths: state.stages.flatMap(s => s.artifacts.map(a => a.path)),
     stage: current?.skill ?? null, stage_index: index, diagnostic: current?.diagnostic ?? null, stage_label: current ? stageDefinition(current.skill).label : null, stages: state.stages.map(s => ({ skill: s.skill, status: s.status })),
-    plan_digest: findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest ?? null, deployment_executed: false };
+    plan_digest: findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest ?? null, deployment_executed: state.deploymentExecuted === true };
 }
 
 // Host code is trusted; task JSON is not. No production approval host is installed.
 // An injected consumer AND executor are required for the offline integration seam.
-export function createOrchestrator({ configuration, executor, approvalConsumer } = {}) {
+export function createOrchestrator({ configuration, executor, approvalConsumer, deploymentExecution = false } = {}) {
   return async function execute(task, { shouldPause = () => false } = {}) {
     task = structuredClone(task);
     const config = structuredClone(configuration ?? await loadConfiguration());
@@ -80,9 +96,11 @@ export function createOrchestrator({ configuration, executor, approvalConsumer }
       await permit.verify({ stage: skill });
       return result;
     } : executor;
+    const { templateSource, templateCacheRoot, ...pipelineConfig } = config;
+    const templateSnapshot = await runTemplateSnapshot(config, manifest, runId, resume);
     if (localPermit) await permit.start();
     try {
-      const pipeline = await createPipeline({ ...config, executor: guardedExecutor, runId, resume, siteWrites: true,
+      const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor, runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined, inputs: resume ? {} : inputs });
       if (resume) {
@@ -103,7 +121,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer }
       const state = pipeline.snapshot();
       const result = { ...summarize(state, shouldPause(state)), inputs: pipeline.inputChecklist(), project_path: projectPath };
       await writeFile(join(config.workspace, 'runs', runId, 'AGENT_RUN_REPORT.md'),
-        `# Agent run ${runId}\n\n${result.summary}\n\nProduction deployed: false\n\n` +
+        `# Agent run ${runId}\n\n${result.summary}\n\nProduction deployed: ${state.deploymentExecuted === true}\n\n` +
         state.stages.map(s => `- ${s.skill}: ${s.status}`).join('\n') + '\n', { mode: 0o600 });
       return result;
     } finally {

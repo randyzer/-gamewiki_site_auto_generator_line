@@ -32,3 +32,6 @@ __pycache__/
 /agent/.existing-content-test-*/
 /agent/host-approval-store/
 /agent/deps/m3-favicon-downloads/
+
+# Commit-pinned template snapshots fetched by the orchestrator
+.template-cache/

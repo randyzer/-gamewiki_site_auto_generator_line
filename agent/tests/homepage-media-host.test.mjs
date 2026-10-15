@@ -240,7 +240,7 @@ test('missing media scope and damaged ownership proof stop the actual executor b
 
 test('every reviewed official target is scope-checked before Steam, including unused private routes', async t => {
   const host = await api(), f = await fixture(t);
-  const context = { ...f.context, localFaviconHandoff: { synthetic: true } };
+  const context = f.context;
   assert.equal((await host.inspectHomepageMediaReadiness(context)).status, 'READY_FOR_MEDIA_CAPTURE');
   const target = { url: 'https://official.invalid/account/', sourceType: 'OFFICIAL_HELP',
     gameIdentity: f.context.inputs.gameIdentity };

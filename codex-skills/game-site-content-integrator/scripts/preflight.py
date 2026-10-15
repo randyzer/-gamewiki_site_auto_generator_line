@@ -247,7 +247,8 @@ def main() -> None:
     parser.add_argument("--materials-dir")
     parser.add_argument(
         "--template-root",
-        default="/Users/randyz/work/coding/hot_words_web/template",
+        required=True,
+        help="Template subtree of the commit-pinned GitHub snapshot used by template-selector",
     )
     parser.add_argument("--allow-dirty-after-confirmation", action="store_true")
     parser.add_argument("--output")
@@ -277,6 +278,7 @@ def main() -> None:
     page_roots = [
         path for path in (
             workspace / "app",
+            workspace / "src" / "app",
             workspace / "pages",
             workspace / "src" / "pages",
         )
@@ -284,7 +286,7 @@ def main() -> None:
     ]
     if not page_roots:
         errors.append(
-            "workspace has no recognized page root; expected app/, pages/, or src/pages/"
+            "workspace has no recognized page root; expected app/, src/app/, pages/, or src/pages/"
         )
 
     background = resolve_background(workspace, args.background_dir, errors)

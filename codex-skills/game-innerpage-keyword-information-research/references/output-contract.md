@@ -59,9 +59,15 @@ Use this structure:
 | 原始关键词 | 原因 |
 | --- | --- |
 | ... | 核心主词/非本游戏主题 |
+
+## 盗版意图处理
+
+| 原始关键词 | 归入关键词 | 处理 |
+| --- | --- | --- |
+| ... | {Game} safe | 风险提示，不提供下载 / 非盗版意图：原因 |
 ```
 
-Every source entry from the raw file must appear exactly once in one of these sections, allowing multiple raw terms to map to one final keyword.
+Every source entry from the raw file must appear exactly once in one of these sections, allowing multiple raw terms to map to one final keyword. A piracy-intent raw keyword is listed in `## 盗版意图处理` (it may also appear in `## 同义词合并`). Its `归入关键词` must be a final keyword whose material file contains a `## 盗版风险提示` section, and no material file may link a download or file-hosting site.
 
 ## `{keyword}素材.md`
 

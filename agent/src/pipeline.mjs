@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { hostname } from 'node:os';
 import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { parseArtifactJson } from './files.mjs';
+import { verifySkillSource } from './skill-lock.mjs';
+import { verifyTemplateSnapshot } from './template-snapshot.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -75,6 +77,7 @@ async function readInventory(path, names) {
   const bytes = await regularFile(path);
   const inventory = JSON.parse(bytes.toString('utf8'));
   assert(isAbsolute(inventory.skillRoot ?? '') && Array.isArray(inventory.skills), 'Invalid inventory');
+  if (inventory.sourceTree !== undefined) await verifySkillSource(resolve(inventory.skillRoot), inventory.sourceTree);
   const skills = [];
   for (const name of names) {
     const matches = inventory.skills.filter(s => s.name === name);
@@ -90,14 +93,15 @@ async function readInventory(path, names) {
     skills.push({ name, source: resolve(entry.source), sha256: entry.sha256,
       contractVersion: entry.contractVersion ?? null, version: entry.version ?? entry.commit ?? null });
   }
-  return { inventoryPath: path, inventorySha256: hash(bytes), skillRoot: resolve(inventory.skillRoot), skills };
+  return { inventoryPath: path, inventorySha256: hash(bytes), skillRoot: resolve(inventory.skillRoot),
+    sourceTree: inventory.sourceTree ?? null, skills };
 }
 
 function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
   assert(m?.schemaVersion === 1 && m.runId === runId && m.workspace === workspace &&
     m.inventoryPath === inventoryPath && JSON.stringify(m.templateRoots) === JSON.stringify(templateRoots), 'Run manifest configuration mismatch');
   checkInputs(m.inputs);
-  assert(Number.isSafeInteger(m.sequence) && m.sequence >= 0 && m.deploymentExecuted === false, 'Invalid run manifest');
+  assert(Number.isSafeInteger(m.sequence) && m.sequence >= 0 && typeof m.deploymentExecuted === 'boolean', 'Invalid run manifest');
   const names = ALL_STAGES;
   assert(Array.isArray(m.stages) && m.stages.length === names.length, 'Invalid stage count');
   let pending = false;
@@ -128,8 +132,9 @@ export async function recoverDeadRunLock(lockPath) {
 }
 
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
-  templateRoots = [], runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
-  expectedManifestSha256 } = {}) {
+  templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
+  expectedManifestSha256, deploymentExecution = false } = {}) {
+  if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
   assert(/^[a-zA-Z0-9_-]{1,100}$/.test(runId), 'Unsafe runId');
@@ -230,7 +235,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       try { await mkdir(runDirectory); }
       catch (error) { if (error.code === 'EEXIST') throw Error('ENTRY_EXECUTION_DESTINATION_EXISTS'); throw error; }
     }
-    state = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots, createdAt: now(),
+    state = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots,
+      ...(templateSnapshot ? { templateSnapshot: clone(templateSnapshot) } : {}), createdAt: now(),
       sequence: 0, inputs, lock: null, lockError: null, deploymentExecuted: false,
       stages: ALL_STAGES.map(skill => ({ skill,
         status: (skill === STAGE.ADVERTISING_PLAN && inputs.adsEnabled !== true) || (skill === STAGE.TEMPLATE_SELECTION && inputs.mode === 'existing-project') ? 'SKIPPED' : 'NOT_STARTED',
@@ -279,8 +285,23 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     assert(JSON.stringify(current) === JSON.stringify(state.lock), 'Skill inventory changed during locked run');
   }
 
+  // Stage 7 runs twice: first to write a plan, then, after the operator approves its digest, to execute it.
+  const executingDeployment = stage => stage.skill === STAGE.DEPLOYMENT_PLAN && Boolean(stage.checkpoint.approvedPlanDigest);
+
   function requiredArtifacts(index) {
-    return [...stageDefinition(state.stages[index].skill).artifacts, ...(state.stages[index].skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? ['UI_UX_RETEST_REPORT.md'] : [])];
+    const stage = state.stages[index], definition = stageDefinition(stage.skill);
+    if (executingDeployment(stage) && stage.status !== 'PASSED') return [...definition.executionArtifacts];
+    return [...definition.artifacts, ...(stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? ['UI_UX_RETEST_REPORT.md'] : [])];
+  }
+
+  async function verifyApprovedPlan(stage) {
+    for (const artifact of stage.artifacts) {
+      await safeOutput(artifact.path);
+      assert(hash(await regularFile(artifact.path)) === artifact.sha256,
+        `Approved deployment plan SHA256 changed: ${artifact.path}; generate and approve a new plan`);
+    }
+    assert(hash(JSON.stringify(stage.artifacts.map(a => a.sha256))) === stage.checkpoint.approvedPlanDigest,
+      'Approved deployment plan does not match its approval digest');
   }
 
   async function verifyArtifacts(index) {
@@ -430,12 +451,14 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       }
       try {
         await verifyLock(); await validateProject(state.inputs.projectPath);
+        if (state.templateSnapshot) await verifyTemplateSnapshot(state.templateSnapshot);
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         await verifyProjectFreshness(index);
         if (index > stageIndex(STAGE.KEYWORD_RESEARCH)) {
           const expected = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256;
           assert(expected && hash(await regularFile(state.inputs.rawKeywordsFile)) === expected, 'Raw keywords changed; explicitly update input or start a new run');
         }
+        if (executingDeployment(stage)) await verifyApprovedPlan(stage);
       } catch (error) {
         await recordFailure(stage, error, 'verify-upstream', 'BLOCKED'); await save(); return clone(state);
       }
@@ -459,19 +482,28 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (stage.skill === STAGE.KEYWORD_RESEARCH) stage.checkpoint.keywordSha256 = hash(await regularFile(state.inputs.rawKeywordsFile));
         const outputDirectory = join(runDirectory, 'artifacts', String(index), String(stage.checkpoint.attempt));
         await safeOutput(outputDirectory); await mkdir(outputDirectory, { recursive: true });
-        const context = clone({ runId, stage: stage.skill, inputs: state.inputs, outputDirectory, templateRoots, requiredArtifacts: requiredArtifacts(index),
+        // Production permissions open only for the execute pass of an approved plan; the Skill keeps its own gates.
+        const executing = executingDeployment(stage);
+        const mode = stage.skill === STAGE.DEPLOYMENT_PLAN ? (executing ? 'execute' : 'plan')
+          : stageDefinition(stage.skill).planOnly ? 'plan-only'
+          : stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? 'optimize' : 'audit-only';
+        const context = clone({ runId, stage: stage.skill, inputs: state.inputs, outputDirectory, templateRoots,
+          templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
           skillLock: state.lock.skills.find(s => s.name === stage.skill),
-          upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint,
-          mode: stageDefinition(stage.skill).planOnly ? 'plan-only' : stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? 'optimize' : 'audit-only',
+          upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint, mode,
+          ...(executing ? { approvedPlan: { digest: stage.checkpoint.approvedPlanDigest, artifacts: stage.artifacts } } : {}),
           permissions: { uiChanges: stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize',
-            gitPush: false, dns: false, productionDeployment: false, gsc: false, ga4: false, advertisingScripts: false,
-            siteWrites: siteWrites && (stage.skill === STAGE.TEMPLATE_SELECTION || stage.skill === STAGE.CONTENT_INTEGRATION || (stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
+            gitPush: executing, dns: executing, productionDeployment: executing, gsc: executing, ga4: executing, advertisingScripts: false,
+            siteWrites: siteWrites && (executing || stage.skill === STAGE.TEMPLATE_SELECTION || stage.skill === STAGE.CONTENT_INTEGRATION || (stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
+        // Unknown external effects: from the moment an approved deployment starts, never report "nothing deployed".
+        if (executing) { state.deploymentExecuted = true; await save(); }
         operation = 'execute-skill';
         const result = await executor(stage.skill, context);
         operation = 'verify-upstream-after-execution';
         await verifyLock();
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
-        await verifyProjectFreshness(index);
+        // Deployment legitimately changes the site (.vercel/, measurement tag) after the UI audit.
+        if (!executing) await verifyProjectFreshness(index);
         operation = 'validate-artifacts';
         const artifacts = await validateResult(result, index, outputDirectory);
         let status = result.status;
@@ -492,10 +524,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           await mkdir(dirname(artifact.path), { recursive: true });
           await writeFile(artifact.path, Buffer.from(artifact.content, artifact.encoding ?? 'utf8'), { flag: 'wx', mode: 0o600 });
         }
-        stage.artifacts = artifacts.map(({ content, encoding, ...metadata }) => metadata);
+        const saved = artifacts.map(({ content, encoding, ...metadata }) => metadata);
+        // The execute pass keeps the approved plan next to its report so the run records what was approved.
+        stage.artifacts = executing ? [...stage.artifacts, ...saved] : saved;
         operation = 'save-stage-checkpoint';
         if (stage.skill === STAGE.UI_UX_AUDIT && status === 'PASSED') stage.checkpoint.projectDigest = await projectDigest();
-        if (stage.skill === STAGE.DEPLOYMENT_PLAN && status === 'PASSED') {
+        if (stage.skill === STAGE.DEPLOYMENT_PLAN && status === 'PASSED' && !executing) {
           stage.checkpoint.planDigest = hash(JSON.stringify(stage.artifacts.map(a => a.sha256)));
           status = 'WAITING_FOR_USER'; missing = ['deploymentPlanApproval'];
         }
@@ -533,7 +567,14 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         assert(hash(await regularFile(state.inputs.rawKeywordsFile)) === findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256,
           'Raw keywords changed since plan creation');
         state.inputs = updated;
-        transition(findStage(state.stages, STAGE.DEPLOYMENT_PLAN), 'PASSED', ['Deployment plan acknowledged only; no external actions executed']);
+        const deploy = findStage(state.stages, STAGE.DEPLOYMENT_PLAN);
+        if (!deploymentExecution) {
+          transition(deploy, 'PASSED', ['Deployment plan acknowledged only; no external actions executed']);
+          await save(); return clone(state);
+        }
+        // The next advance re-runs stage 7 in execute mode against exactly these approved plan bytes.
+        deploy.checkpoint.approvedPlanDigest = deploy.checkpoint.planDigest;
+        transition(deploy, 'NOT_STARTED', [`Deployment plan ${deploy.checkpoint.planDigest} approved; next advance executes it`]);
         await save(); return clone(state);
       }
       const changed = Object.keys(patch).filter(k => JSON.stringify(state.inputs[k]) !== JSON.stringify(patch[k]));
@@ -553,7 +594,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (stage.status === 'SKIPPED' || stage.status === 'NOT_STARTED') continue;
         transition(stage, 'NOT_STARTED', ['Explicit user input update/retry; previous attempt retained in history']);
         stage.artifacts = [];
-        for (const key of ['planDigest', 'projectDigest', 'keywordSha256']) delete stage.checkpoint[key];
+        for (const key of ['planDigest', 'approvedPlanDigest', 'projectDigest', 'keywordSha256']) delete stage.checkpoint[key];
       }
       if (start <= stageIndex(STAGE.DEPLOYMENT_PLAN)) delete state.inputs.deploymentPlanApproval;
       await save(); return clone(state);

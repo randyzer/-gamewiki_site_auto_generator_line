@@ -40,7 +40,9 @@ export async function goodResult(skill, context) {
   return { status: 'PASSED', missing_inputs: [], evidence: ['OFFLINE TEST FIXTURE, not a real skill execution'],
     artifacts: context.requiredArtifacts.map(kind => ({ kind, path: join(context.outputDirectory, kind),
       runId: context.runId, projectPath: context.inputs.projectPath, gameIdentity: context.inputs.gameIdentity,
-      content: kind === 'PRELAUNCH_ACCEPTANCE.json' ? JSON.stringify({ disposition: '可以上线', expected_domain: 'https://' + context.inputs.domain, siteRevision: context.inputs.siteRevision }) : kind.endsWith('.json') ? '{}' : 'OFFLINE TEST FIXTURE: ' + skill })) };
+      content: kind === 'PRELAUNCH_ACCEPTANCE.json' ? JSON.stringify({ disposition: '可以上线', expected_domain: 'https://' + context.inputs.domain, siteRevision: context.inputs.siteRevision })
+        : kind === 'DEPLOYMENT_REPORT.json' ? JSON.stringify({ deployment: 'PRODUCTION LIVE', production_url: 'https://' + context.inputs.domain, synthetic: true })
+        : kind.endsWith('.json') ? '{}' : 'OFFLINE TEST FIXTURE: ' + skill })) };
 }
 
 // Offline host-source contract fixture only; never passed to production bootstrap.

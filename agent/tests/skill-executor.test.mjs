@@ -189,3 +189,65 @@ test('deployment plan publication rolls back newly created files after a write f
   await assert.rejects(access(join(projectPath, 'docs/DEPLOYMENT_PLAN.md')), { code: 'ENOENT' });
   await assert.rejects(access(join(projectPath, 'docs/DEPLOYMENT_PLAN.json')), { code: 'ENOENT' });
 });
+
+function deploymentExecutionContext(f, projectPath, extra = {}) {
+  const runDirectory = join(f.configuration.workspace, 'runs/deploy');
+  const plan = join(runDirectory, 'artifacts/6/1/0-DEPLOYMENT_PLAN.json');
+  return { runId: 'deploy', inputs: { ...f.inputs, projectPath }, outputDirectory: join(runDirectory, 'artifacts/6/2'),
+    requiredArtifacts: ['DEPLOYMENT_REPORT.md', 'DEPLOYMENT_REPORT.json'], skillLock: { source: join(f.root, 'skills', STAGES[6] + '.md') },
+    upstream: [], mode: 'execute', approvedPlan: { digest: 'a'.repeat(64), artifacts: [{ kind: 'DEPLOYMENT_PLAN.json', path: plan }] },
+    permissions: { siteWrites: true, gitPush: true, dns: true, productionDeployment: true, gsc: true, ga4: true, advertisingScripts: false },
+    ...extra };
+}
+
+test('approved deployment worker gets network, the operator CLI logins and an execute-the-approved-plan prompt', async t => {
+  const f = await fixture(t); const projectPath = join(f.configuration.workspace, 'site'); let invoked;
+  await mkdir(projectPath, { recursive: true });
+  const context = deploymentExecutionContext(f, projectPath);
+  await mkdir(join(f.configuration.workspace, 'runs/deploy/artifacts/6/1'), { recursive: true });
+  await writeFile(context.approvedPlan.artifacts[0].path, '{}');
+  const executor = createSkillExecutor({ run: async (_command, args, options) => {
+    invoked = { args, options };
+    await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC deployment fixture'] }));
+  }, deploymentTools: { paths: ['/opt/homebrew/bin'], readPaths: ['/opt/homebrew/Cellar/gh'],
+    credentialPaths: [join(f.root, 'gh-config')] } });
+  await executor(STAGES[6], context);
+  const profile = invoked.args.find(value => value.startsWith('permissions.agent-worker='));
+  assert.match(profile, /network=\{enabled=true\}/);
+  assert.ok(profile.includes(JSON.stringify(join(f.root, 'gh-config')) + '="read"'));
+  assert.ok(profile.includes(JSON.stringify(projectPath) + '="write"'));
+  assert.ok(profile.includes(JSON.stringify(context.approvedPlan.artifacts[0].path) + '="read"'));
+  const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
+  assert.match(path, /\/opt\/homebrew\/bin/);
+  assert.match(invoked.options.input, /Execute the APPROVED deployment plan/);
+  assert.match(invoked.options.input, /a{64}/);
+  assert.match(invoked.options.input, /DEPLOYMENT_REPORT\.md/);
+  assert.doesNotMatch(invoked.options.input, /No commit, push/);
+  for (const key of ['GH_TOKEN', 'GITHUB_TOKEN', 'VERCEL_TOKEN']) assert.equal(invoked.options.env[key], undefined);
+});
+
+test('the plan pass stays offline and keeps the no-commit instruction', async t => {
+  const f = await fixture(t); const projectPath = join(f.configuration.workspace, 'site'); let invoked;
+  const executor = createSkillExecutor({ run: async (_command, args, options) => {
+    invoked = { args, options };
+    await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC plan fixture'] }));
+  }, deploymentTools: { paths: ['/opt/homebrew/bin'], readPaths: [], credentialPaths: [join(f.root, 'gh-config')] } });
+  await executor(STAGES[6], deploymentExecutionContext(f, projectPath, { mode: 'plan', approvedPlan: undefined,
+    requiredArtifacts: ARTIFACTS[6], permissions: { siteWrites: false, gitPush: false, productionDeployment: false } }));
+  const profile = invoked.args.find(value => value.startsWith('permissions.agent-worker='));
+  assert.match(profile, /network=\{enabled=false\}/);
+  assert.equal(profile.includes('gh-config'), false);
+  assert.match(invoked.options.input, /No commit, push/);
+});
+
+test('execute mode without production permission or an approved plan is refused before the worker starts', async t => {
+  const f = await fixture(t); const projectPath = join(f.configuration.workspace, 'site'); let started = false;
+  const executor = createSkillExecutor({ run: async () => { started = true; } });
+  await assert.rejects(executor(STAGES[6], deploymentExecutionContext(f, projectPath, {
+    permissions: { siteWrites: true, productionDeployment: false } })), /DEPLOYMENT_EXECUTION_NOT_APPROVED/);
+  await assert.rejects(executor(STAGES[6], deploymentExecutionContext(f, projectPath, { approvedPlan: undefined })),
+    /DEPLOYMENT_EXECUTION_NOT_APPROVED/);
+  assert.equal(started, false);
+});

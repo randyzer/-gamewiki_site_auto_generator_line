@@ -73,9 +73,9 @@ Use the confirmed new site's canonical origin for absolute canonical URLs, Open 
 ## Preflight blockers
 
 - Missing or non-absolute workspace.
-- Workspace inside `/Users/randyz/work/coding/hot_words_web/template`.
+- Workspace inside the template library snapshot passed as `--template-root` (the `template/` subtree of https://github.com/randyzer/-gamewiki_site_auto_generator_line at the commit recorded in `docs/template-copy-manifest.json`).
 - Missing copied template manifest or mismatched destination.
-- Missing `package.json` or all recognized page roots (`app/`, `pages/`, and `src/pages/`).
+- Missing `package.json` or all recognized page roots (`app/`, `src/app/`, `pages/`, and `src/pages/`).
 - Invalid favicon ZIP.
 - Invalid `keywords.json`.
 - Duplicate final keyword.

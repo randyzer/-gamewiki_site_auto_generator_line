@@ -14,7 +14,9 @@ await mkdir(inputDirectory, { recursive: true });
 const rawKeywordsFile = join(inputDirectory, 'fixture-keywords.md');
 await writeFile(rawKeywordsFile, '# SYNTHETIC OFFLINE VALIDATION ONLY\n- Offline fixture guide\n');
 const inputs = { ...JSON.parse(await readFile(join(AGENT_ROOT, 'config/test-fixture.json'))), rawKeywordsFile };
-const execute = createOrchestrator({ configuration: await loadConfiguration(), executor: goodResult });
+// Offline fixture only: the executor never runs a Skill, so no operator confirmation is involved.
+const execute = createOrchestrator({ configuration: await loadConfiguration(), executor: goodResult,
+  approvalConsumer: async () => true });
 const result = await execute({ id, inputs: JSON.stringify(inputs) });
 if (result.status !== 'WAITING_FOR_USER' || result.stage !== STAGE.DEPLOYMENT_PLAN || !result.plan_digest || result.deployment_executed) throw Error('Offline deployment-plan gate failed');
 await writeFile(join(directory, 'OFFLINE_VALIDATION.json'), JSON.stringify({ kind: 'OFFLINE_FIXTURE_ONLY', realSkillExecution: false,

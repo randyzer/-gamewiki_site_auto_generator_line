@@ -74,6 +74,8 @@ TEMPLATE_ROOT="$SNAPSHOT_DIR/repo/template"
 
 Resolve and record the full `COMMIT_SHA` once. Do not refresh `main` during a run. A clone/auth/network failure is `BLOCKED`; do not use a pre-existing local library as fallback. The clone must remain outside the target workspace, with no source mutations. Remove the temporary checkout after the run unless retention is explicitly approved.
 
+**Orchestrator-provided snapshot.** When the task context supplies `templateSnapshot` (repository, ref, subtree, full `commit`, `templateRoot`), the orchestrator has already materialized that fixed GitHub source at that commit. Do not clone again. Confirm that `templateSnapshot.repository` is the fixed repository above, `templateSnapshot.ref` is `main`, `templateSnapshot.subtree` is `template`, and `commit` is a full 40-character SHA; otherwise return `BLOCKED`. Then set `TEMPLATE_ROOT` to `templateSnapshot.templateRoot` and `COMMIT_SHA` to `templateSnapshot.commit`, and do not delete that snapshot.
+
 Confirm:
 
 1. The fetched repository and `template/` subtree are readable, the Git origin matches the fixed URL, and the recorded commit SHA matches the checkout HEAD.
@@ -81,7 +83,7 @@ Confirm:
 3. Discover all current candidates dynamically; a changed template count is not an error by itself.
 4. Every candidate name matches `temp<number>_based_<reference>`, with no duplicate number.
 5. Every candidate is a real directory rather than a symlink.
-6. Every candidate contains readable `package.json`, `app/`, and `components/`.
+6. Every candidate contains readable `package.json`, `app/` or `src/app/`, and `components/` or `src/components/`. Both layouts are valid Next.js structures; a candidate with both `app/` and `src/app/` is ambiguous because Next.js ignores `src/app/`.
 7. Every `package.json` is valid JSON.
 8. The target path is absolute.
 9. The target does not resolve inside the template library.
@@ -121,8 +123,8 @@ Do not copy the reference site's brand, protected media, logo, vocabulary, ficti
 Read the inventory plus relevant candidate files:
 
 - `README.md`, when present.
-- `app/page.tsx`, index and detail route files.
-- `components/` names and representative components.
+- `page.tsx`, index and detail route files under the inventory's `app_dir` (`app/` or `src/app/`).
+- Component names and representative components under the inventory's `components_dir` (`components/` or `src/components/`).
 - `content/` organization and metadata model.
 - `public/` media inventory.
 - `package.json` scripts and dependencies.
