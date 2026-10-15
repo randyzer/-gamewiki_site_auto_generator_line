@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 
 TEMPLATE_ROOT = Path("/Users/randyz/work/coding/hot_words_web/template")
-PAGE_ROOTS = ("app", "pages", "src/pages")
+PAGE_ROOTS = ("app", "src/app", "pages", "src/pages")
 UPSTREAM_DOCS = (
     "docs/TEMPLATE_SELECTION_REPORT.md",
     "docs/template-copy-manifest.json",
@@ -246,7 +246,7 @@ def main() -> None:
         if (workspace / root).is_dir()
     ]
     if not roots:
-        errors.append("no recognized page root; expected app/, pages/, or src/pages/")
+        errors.append("no recognized page root; expected app/, src/app/, pages/, or src/pages/")
 
     scripts = package.get("scripts", {}) if package else {}
     if not isinstance(scripts, dict):

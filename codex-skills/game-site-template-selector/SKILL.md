@@ -81,7 +81,7 @@ Confirm:
 3. Discover all current candidates dynamically; a changed template count is not an error by itself.
 4. Every candidate name matches `temp<number>_based_<reference>`, with no duplicate number.
 5. Every candidate is a real directory rather than a symlink.
-6. Every candidate contains readable `package.json`, `app/`, and `components/`.
+6. Every candidate contains readable `package.json`, `app/` or `src/app/`, and `components/` or `src/components/`. Both layouts are valid Next.js structures; a candidate with both `app/` and `src/app/` is ambiguous because Next.js ignores `src/app/`.
 7. Every `package.json` is valid JSON.
 8. The target path is absolute.
 9. The target does not resolve inside the template library.
@@ -121,8 +121,8 @@ Do not copy the reference site's brand, protected media, logo, vocabulary, ficti
 Read the inventory plus relevant candidate files:
 
 - `README.md`, when present.
-- `app/page.tsx`, index and detail route files.
-- `components/` names and representative components.
+- `page.tsx`, index and detail route files under the inventory's `app_dir` (`app/` or `src/app/`).
+- Component names and representative components under the inventory's `components_dir` (`components/` or `src/components/`).
 - `content/` organization and metadata model.
 - `public/` media inventory.
 - `package.json` scripts and dependencies.

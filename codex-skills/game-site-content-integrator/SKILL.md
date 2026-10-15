@@ -92,7 +92,7 @@ The preflight must confirm:
 - The workspace is not inside the original template library.
 - The template selection report and copy manifest exist.
 - The copy manifest destination matches the workspace.
-- `package.json` and a recognized page root (`app/`, `pages/`, or `src/pages/`) exist.
+- `package.json` and a recognized page root (`app/`, `src/app/`, `pages/`, or `src/pages/`) exist.
 - The homepage research and icon ZIP are readable.
 - The favicon ZIP contains the required members.
 - `keywords.json` is valid and has no duplicate final keywords.

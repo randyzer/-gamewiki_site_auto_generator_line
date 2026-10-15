@@ -17,7 +17,15 @@ MEDIA_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".avif", ".m
 CONTENT_SUFFIXES = {".md", ".mdx"}
 TEST_MARKERS = (".test.", ".spec.")
 NAME_PATTERN = re.compile(r"^temp(\d+)_based_.+$")
-REQUIRED_ENTRIES = ("package.json", "app", "components")
+# Next.js supports both the root layout and the src/ layout for these directories.
+LAYOUT_DIRS = ("app", "components")
+
+
+def resolve_layout_dir(template: Path, name: str) -> Path | None:
+    for candidate in (template / name, template / "src" / name):
+        if candidate.is_dir():
+            return candidate
+    return None
 
 
 def visible_files(root: Path) -> list[Path]:
@@ -51,15 +59,16 @@ def read_package(template: Path) -> dict[str, Any]:
 def inspect_template(template: Path) -> dict[str, Any]:
     files = visible_files(template)
     package = read_package(template)
+    app_dir = resolve_layout_dir(template, "app")
+    components_dir = resolve_layout_dir(template, "components")
     routes = [
         path for path in files
-        if "app" in path.relative_to(template).parts
+        if app_dir is not None and app_dir in path.parents
         and path.name in {"page.tsx", "page.jsx", "layout.tsx", "layout.jsx", "route.ts"}
     ]
     components = [
         path for path in files
-        if path.relative_to(template).parts
-        and path.relative_to(template).parts[0] == "components"
+        if components_dir is not None and components_dir in path.parents
         and path.suffix in {".tsx", ".ts", ".jsx", ".js"}
     ]
     content = [
@@ -90,6 +99,8 @@ def inspect_template(template: Path) -> dict[str, Any]:
         "scripts": package.get("scripts", {}),
         "dependencies": sorted((package.get("dependencies") or {}).keys()),
         "eligible_file_count": len(files),
+        "app_dir": app_dir.relative_to(template).as_posix() if app_dir else None,
+        "components_dir": components_dir.relative_to(template).as_posix() if components_dir else None,
         "routes": relative_strings(template, routes),
         "components": relative_strings(template, components),
         "content_file_count": len(content),
@@ -128,16 +139,22 @@ def check_health(candidates: list[Path]) -> list[str]:
         if template.is_symlink():
             issues.append(f"{template.name}: candidate directory is a symlink")
 
-        for entry in REQUIRED_ENTRIES:
-            path = template / entry
-            if entry == "package.json":
-                valid_type = path.is_file()
-            else:
-                valid_type = path.is_dir()
-            if not valid_type:
-                issues.append(f"{template.name}: missing required {entry}")
-            elif not os.access(path, os.R_OK):
-                issues.append(f"{template.name}: required {entry} is not readable")
+        package_path = template / "package.json"
+        if not package_path.is_file():
+            issues.append(f"{template.name}: missing required package.json")
+        elif not os.access(package_path, os.R_OK):
+            issues.append(f"{template.name}: required package.json is not readable")
+
+        for name in LAYOUT_DIRS:
+            path = resolve_layout_dir(template, name)
+            if path is None:
+                issues.append(f"{template.name}: missing {name}/ (expected {name}/ or src/{name}/)")
+            elif not os.access(path, os.R_OK | os.X_OK):
+                issues.append(f"{template.name}: {path.relative_to(template).as_posix()}/ is not readable")
+
+        # Next.js ignores src/app/ when a root app/ exists, so the routes would be ambiguous.
+        if (template / "app").is_dir() and (template / "src" / "app").is_dir():
+            issues.append(f"{template.name}: both app/ and src/app/ exist; Next.js ignores src/app/")
 
         package = read_package(template)
         if package.get("_error"):

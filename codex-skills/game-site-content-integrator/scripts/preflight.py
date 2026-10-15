@@ -277,6 +277,7 @@ def main() -> None:
     page_roots = [
         path for path in (
             workspace / "app",
+            workspace / "src" / "app",
             workspace / "pages",
             workspace / "src" / "pages",
         )
@@ -284,7 +285,7 @@ def main() -> None:
     ]
     if not page_roots:
         errors.append(
-            "workspace has no recognized page root; expected app/, pages/, or src/pages/"
+            "workspace has no recognized page root; expected app/, src/app/, pages/, or src/pages/"
         )
 
     background = resolve_background(workspace, args.background_dir, errors)
