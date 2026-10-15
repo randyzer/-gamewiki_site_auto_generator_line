@@ -89,3 +89,28 @@ test('prelaunch executor passes evidence to offline worker and stops preview, de
     assert.equal(stopped,1);
   }
 });
+
+test('all prelaunch project scripts receive a minimal environment without host secrets', async t => {
+  const supplied = { SERPER_API_KEY: 'x', HOST_TOKEN: 'x', HOST_SECRET: 'x', HOST_COOKIE: 'x', HOST_PASSWORD: 'x',
+    UNRELATED_SETTING: 'x', NODE_OPTIONS: '--inspect', PNPM_HOME: '/synthetic/pnpm', NODE_ENV: 'production' };
+  const previous = Object.fromEntries(Object.keys(supplied).map(name => [name, process.env[name]]));
+  Object.assign(process.env, supplied);
+  t.after(() => { for (const [name, value] of Object.entries(previous)) {
+    if (value === undefined) delete process.env[name]; else process.env[name] = value;
+  } });
+  const f = await setup(t), d = dependencies(), observed = [];
+  await writeFile(join(f.context.inputs.projectPath, 'package.json'), JSON.stringify({ scripts: {
+    typecheck: 'tsc', lint: 'lint', test: 'test', build: 'build',
+  } }));
+  await api.collectPrelaunch(f.context, { ...d.options, run: async (_command, args, options) => {
+    assert.ok(options.env, 'run must receive an explicit env');
+    assert.notEqual(options.env, process.env);
+    assert.equal(options.env.SERPER_API_KEY, undefined);
+    assert.ok(Object.keys(options.env).every(name => ['PATH', 'HOME', 'TMPDIR', 'LANG', 'LC_ALL', 'NODE_ENV', 'PNPM_HOME'].includes(name)));
+    assert.ok(Object.keys(options.env).every(name => !/key|token|secret|cookie|password/i.test(name)));
+    for (const name of ['PATH', 'HOME', 'TMPDIR', 'LANG', 'LC_ALL', 'NODE_ENV', 'PNPM_HOME'])
+      assert.equal(options.env[name], process.env[name]);
+    observed.push(args[1]); return { exitCode: 0 };
+  } });
+  assert.deepEqual(observed, ['typecheck', 'lint', 'test', 'build']);
+});

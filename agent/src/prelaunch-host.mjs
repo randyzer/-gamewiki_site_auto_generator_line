@@ -4,6 +4,7 @@ import { runProcess } from './process.mjs';
 import { safePath } from './files.mjs';
 import { publishedRoutes, snapshotSiteEvidence } from './site-evidence.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
+import { siteProcessEnvironment } from './site-process-environment.mjs';
 
 const launchChromium = async () => (await import('playwright')).chromium.launch();
 const decodeXml = text => text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'");
@@ -96,7 +97,7 @@ export async function collectPrelaunch(context, { url, fetchUrl = fetch, launchB
   for (const name of ['typecheck', 'lint', 'test', 'build']) {
     if (!pkg.scripts?.[name]) continue;
     const check = { script: name, command: [command, 'run', name], exitCode: null };
-    try { check.exitCode = (await run(command, ['run', name], { cwd: project, timeoutMs: 600000 }))?.exitCode ?? 0; }
+    try { check.exitCode = (await run(command, ['run', name], { cwd: project, env: siteProcessEnvironment(), timeoutMs: 600000 }))?.exitCode ?? 0; }
     catch (error) { check.exitCode = error.exitCode ?? null; check.error = sanitizeDiagnosticText(error.message); }
     checks.push(check);
   }

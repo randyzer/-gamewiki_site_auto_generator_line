@@ -66,3 +66,31 @@ test('build failure does not start server and is sanitized', async t => {
   await assert.rejects(() => api.buildAndServe(project, { run: async () => { throw Error('password=private-build-value'); },
     spawnProcess: () => assert.fail('must not start') }), error => error.code === 'SITE_PREVIEW_FAILED' && !error.message.includes('private-build-value'));
 });
+
+test('install, build and start receive a minimal environment without host secrets', async t => {
+  const supplied = { SERPER_API_KEY: 'x', HOST_TOKEN: 'x', HOST_SECRET: 'x', HOST_COOKIE: 'x', HOST_PASSWORD: 'x',
+    UNRELATED_SETTING: 'x', NODE_OPTIONS: '--inspect', PNPM_HOME: '/synthetic/pnpm', NODE_ENV: 'production' };
+  const previous = Object.fromEntries(Object.keys(supplied).map(name => [name, process.env[name]]));
+  Object.assign(process.env, supplied);
+  t.after(() => { for (const [name, value] of Object.entries(previous)) {
+    if (value === undefined) delete process.env[name]; else process.env[name] = value;
+  } });
+  const project = await fixture(t, { 'package.json': JSON.stringify({ scripts: { build: 'build', start: 'start' } }), 'pnpm-lock.yaml': 'lock' });
+  const observed = [], child = childFixture();
+  const assertEnvironment = env => {
+    assert.ok(env, 'run/spawn must receive an explicit env');
+    assert.notEqual(env, process.env);
+    assert.equal(env.SERPER_API_KEY, undefined);
+    assert.ok(Object.keys(env).every(name => ['PATH', 'HOME', 'TMPDIR', 'LANG', 'LC_ALL', 'NODE_ENV', 'PNPM_HOME'].includes(name)));
+    assert.ok(Object.keys(env).every(name => !/key|token|secret|cookie|password/i.test(name)));
+    for (const name of ['PATH', 'HOME', 'TMPDIR', 'LANG', 'LC_ALL', 'NODE_ENV', 'PNPM_HOME'])
+      assert.equal(env[name], process.env[name]);
+  };
+  const run = async (_command, _args, options) => { assertEnvironment(options.env); observed.push('run'); return { exitCode: 0 }; };
+  await api.installDependencies(project, { run });
+  const preview = await api.buildAndServe(project, { run, getPort: async () => 32125,
+    spawnProcess: (_command, _args, options) => { assertEnvironment(options.env); observed.push('spawn'); return child.child; },
+    fetchUrl: async () => ({ status: 200 }) });
+  await preview.stop();
+  assert.deepEqual(observed, ['run', 'run', 'spawn']);
+});

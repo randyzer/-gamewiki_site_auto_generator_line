@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import { runProcess } from './process.mjs';
 import { safePath, sha256 } from './files.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
+import { siteProcessEnvironment } from './site-process-environment.mjs';
 
 const fail = (code, detail) => Object.assign(Error(`${code}: ${sanitizeDiagnosticText(detail)}`), { code });
 async function manager(projectPath) {
@@ -23,7 +24,7 @@ export async function installDependencies(projectPath, { run = runProcess, manif
   const manifest = { projectPath, lockfile: selected.lockfile, command: [selected.command, ...selected.args], exitCode: null };
   let failure;
   try {
-    const result = await run(selected.command, selected.args, { cwd: projectPath, timeoutMs: 600000 });
+    const result = await run(selected.command, selected.args, { cwd: projectPath, env: siteProcessEnvironment(), timeoutMs: 600000 });
     manifest.exitCode = result?.exitCode ?? 0;
     if (manifest.exitCode !== 0) throw Object.assign(Error('installation exited unsuccessfully'), { exitCode: manifest.exitCode });
   } catch (error) {
@@ -64,10 +65,11 @@ export async function buildAndServe(projectPath, { run = runProcess, spawnProces
     const { command } = await manager(projectPath);
     const pkg = JSON.parse(await readFile(join(projectPath, 'package.json'), 'utf8'));
     if (!pkg.scripts?.build || !pkg.scripts?.start) throw Error(`build/start script missing in ${projectPath}/package.json`);
-    await run(command, ['run', 'build'], { cwd: projectPath, timeoutMs: 600000 });
+    const env = siteProcessEnvironment();
+    await run(command, ['run', 'build'], { cwd: projectPath, env, timeoutMs: 600000 });
     const port = await getPort(), url = `http://127.0.0.1:${port}`;
     const args = ['run', 'start', ...(command === 'npm' ? ['--'] : []), '--hostname', '127.0.0.1', '--port', String(port)];
-    child = spawnProcess(command, args, { cwd: projectPath, env: process.env, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] });
+    child = spawnProcess(command, args, { cwd: projectPath, env, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] });
     child.stdout.on('data', bytes => { stdout = (stdout + bytes).slice(-8192); });
     child.stderr.on('data', bytes => { stderr = (stderr + bytes).slice(-8192); });
     child.on('error', error => { startError = error; });

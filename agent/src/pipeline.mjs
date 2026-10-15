@@ -338,6 +338,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (entry.isDirectory()) await walk(path);
         else {
           assert(entry.isFile(), 'Project contains a non-regular file');
+          // Next.js/TypeScript regenerate these during the prelaunch build and typecheck.
+          if (entry.name.endsWith('.tsbuildinfo') || entry.name === 'next-env.d.ts') continue;
           files.push([relative(state.inputs.projectPath, path), hash(await regularFile(path))]);
         }
       }
@@ -606,5 +608,5 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     });
   }
 
-  return Object.freeze({ manifestPath, advance, updateUserInputs, inputChecklist, snapshot: () => clone(state) });
+  return Object.freeze({ manifestPath, advance, updateUserInputs, inputChecklist, projectDigest, snapshot: () => clone(state) });
 }
