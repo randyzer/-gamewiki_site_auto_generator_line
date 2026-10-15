@@ -51,6 +51,14 @@ test('audit adapter rejects route escape and an incomplete viewport set', async 
     await writeFile(join(out, 'AUTOMATED_AUDIT.json'), '{"viewports":[{"width":390}]}');
   } }), /SITE_AUDIT_VIEWPORTS_INVALID/);
 });
+test('audit findings exit code 2 preserves completed evidence, other failures still reject', async t => {
+  const f = await auditFixture(t);
+  const bundle = await host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async (_c,args) => {
+    await writeAudit(args[args.indexOf('--out')+1]); throw Object.assign(Error('HIGH findings'), { exitCode: 2 });
+  } });
+  assert.equal(bundle.scriptExitCode, 2);
+  await assert.rejects(host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async () => { throw Object.assign(Error('browser launch failed'), { exitCode: 1 }); } }), /browser launch failed/);
+});
 test('module hook resolves playwright from an external script without editing the Skill', async t => {
   const f = await fixture(t), script = join(f.root, 'import-playwright.mjs');
   await writeFile(script, "const {chromium}=await import('playwright'); console.log(typeof chromium.launch);");
