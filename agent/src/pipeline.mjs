@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { hostname } from 'node:os';
 import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { parseArtifactJson } from './files.mjs';
+import { verifySkillSource } from './skill-lock.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -75,6 +76,7 @@ async function readInventory(path, names) {
   const bytes = await regularFile(path);
   const inventory = JSON.parse(bytes.toString('utf8'));
   assert(isAbsolute(inventory.skillRoot ?? '') && Array.isArray(inventory.skills), 'Invalid inventory');
+  if (inventory.sourceCommit !== undefined) await verifySkillSource(resolve(inventory.skillRoot), inventory.sourceCommit);
   const skills = [];
   for (const name of names) {
     const matches = inventory.skills.filter(s => s.name === name);
@@ -90,7 +92,8 @@ async function readInventory(path, names) {
     skills.push({ name, source: resolve(entry.source), sha256: entry.sha256,
       contractVersion: entry.contractVersion ?? null, version: entry.version ?? entry.commit ?? null });
   }
-  return { inventoryPath: path, inventorySha256: hash(bytes), skillRoot: resolve(inventory.skillRoot), skills };
+  return { inventoryPath: path, inventorySha256: hash(bytes), skillRoot: resolve(inventory.skillRoot),
+    sourceCommit: inventory.sourceCommit ?? null, skills };
 }
 
 function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
