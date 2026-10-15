@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
 import { installDependencies, buildAndServe } from './site-preview-host.mjs';
 import { collectSiteAudit } from './site-audit-host.mjs';
+import { collectPrelaunch } from './prelaunch-host.mjs';
 import { verifySiteEvidence } from './site-evidence.mjs';
 import { safePath, readArtifact, parseArtifactJson, sha256 } from './files.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
@@ -35,7 +36,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
   environment = process.env,
   researchPython = '/opt/homebrew/bin/python3',
   researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools, convertIcon = convertIconOnHost,
-  previewSite = buildAndServe, auditSite = collectSiteAudit } = {}) {
+  previewSite = buildAndServe, auditSite = collectSiteAudit, prelaunchSite = collectPrelaunch } = {}) {
   const executor = async (skill, original) => {
     stageDefinition(skill);
     const deploying = skill === STAGE.DEPLOYMENT_PLAN && original?.mode === 'execute';
@@ -60,7 +61,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
     const keywordResearch = skill === STAGE.KEYWORD_RESEARCH;
     const hostAudit = skill === STAGE.UI_UX_AUDIT && original.mode !== 'optimize';
-    if (needsBrowser && !keywordResearch && !hostAudit && (!browserHumanDialog || !homepageResearch)) {
+    const hostPrelaunch = skill === STAGE.PRELAUNCH_ACCEPTANCE && original.mode !== 'optimize';
+    const hostReview = hostAudit || hostPrelaunch;
+    if (needsBrowser && !keywordResearch && !hostReview && (!browserHumanDialog || !homepageResearch)) {
       return {status:'BLOCKED',artifacts:[],missing_inputs:[],
         evidence:['APPROVAL_CAPABILITY_UNAVAILABLE: no supported host per-command approval broker; browser-dependent worker launch is disabled',
           ...(browserLaunchApproval?['A supplied launch permission cannot approve individual browser commands']:[]),
@@ -147,10 +150,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     let preview;
     try {
-    if (hostAudit) {
+    if (hostReview) {
       try {
         preview = await previewSite(project);
-        context.hostEvidence = await auditSite(context, { url: preview.url });
+        context.hostEvidence = await (hostAudit ? auditSite : prelaunchSite)(context, { url: preview.url });
         await verifySiteEvidence(context.hostEvidence);
       } catch (error) {
         return { status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['sitePreviewEvidence'], evidence: [
@@ -202,6 +205,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         hostAudit ? [
           'Host browser evidence is in context.hostEvidence, with a SHA256 for every screenshot and automated evidence file. Read these files and use view_image to inspect the screenshots. Do not invoke browser commands or network requests.',
           'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
+        ] : hostPrelaunch ? [
+          'Read context.hostEvidence and verify every SHA256. Use view_image to inspect the host screenshots. Do not invoke browser commands, network requests, build/test/lint/typecheck commands, or site repairs; the host already collected those results.',
+          'Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under projectPath/docs/prelaunch/runId per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.'
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
       ...(context.homepageSourceEvidencePath ? ['Read the approved homepageSourceEvidencePath, verify its SHA256, and cite only those bounded public fields. This bundle is source evidence, not a completed homepage or an image approval. Do not perform direct browser or network commands.'] : []),
       ...(context.homepageMediaEvidencePath ? ['Read homepageMediaEvidencePath and verify homepageMediaEvidenceSha256. It contains bounded primary webpage evidence for one officially linked video. Respect officialChannelStatus NOT_CONFIRMED; never infer an official channel from its name. No playback, download, popularity or whole-video viewing was verified. This is source material, not skill completion.'] : []),

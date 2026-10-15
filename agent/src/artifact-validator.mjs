@@ -110,6 +110,8 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     assert(['可以上线', '可以上线，但有P2待办'].includes(report.disposition), 'Prelaunch does not permit planning');
     assert(Array.isArray(report.pages) && report.pages.length > 0 && report.coverage && typeof report.coverage === 'object', 'Empty prelaunch coverage');
     assert(Number.isInteger(report.coverage.routes_expected) && report.coverage.routes_expected > 0 && report.coverage.routes_checked === report.coverage.routes_expected && report.pages.length === report.coverage.routes_checked, 'Incomplete prelaunch coverage');
+    if (context.hostEvidence) assert(JSON.stringify(report.pages.map(page => page.path).sort()) ===
+      JSON.stringify([...context.hostEvidence.routes].sort()), 'Prelaunch host route coverage mismatch');
   }
   if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute') {
     const report = parseArtifactJson(get('DEPLOYMENT_REPORT.json').bytes, get('DEPLOYMENT_REPORT.json').path);

@@ -13,7 +13,7 @@ export const ENABLED_WORKER_FEATURES = Object.freeze(['code_mode_host']);
 
 export function stageWorkerFeatures(skill) {
   const images = skill === STAGE.HOMEPAGE_RESEARCH;
-  const viewing = images || skill === STAGE.UI_UX_AUDIT;
+  const viewing = images || [STAGE.UI_UX_AUDIT, STAGE.PRELAUNCH_ACCEPTANCE].includes(skill);
   const enabled = [...ENABLED_WORKER_FEATURES, ...(images ? ['image_generation'] : []), ...(viewing ? ['view_image'] : [])];
   return {
     disabled: DISABLED_WORKER_FEATURES.filter(feature => !enabled.includes(feature)),

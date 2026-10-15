@@ -83,6 +83,11 @@ test('UI report must include the exact six required viewport widths', async t =>
   await writeFile(path, JSON.stringify(audit));
   await assert.rejects(f.validate(), /UI audit viewport coverage mismatch/);
 });
+test('prelaunch report must cover exactly the routes captured by the host', async t => {
+  const f = await nativeFixture(t, 5);
+  f.context.hostEvidence = { routes: ['/', '/missing-from-report'] };
+  await assert.rejects(f.validate(), /Prelaunch host route coverage mismatch/);
+});
 test('homepage rejects directories, invalid ZIP and missing native fields', async t => {
   const f = await nativeFixture(t, 0); const zip = f.result.artifacts.find(a => a.kind === 'ICON.zip');
   await writeFile(zip.path, 'not a zip'); await assert.rejects(f.validate());
