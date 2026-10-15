@@ -1,6 +1,6 @@
 ---
 name: game_site_orchestrator
-description: "Prepare inputs for the existing seven-stage game-site CLI, ask the operator to run it in an interactive terminal, and report progress from evidence."
+description: "Prepare inputs, preview the existing CLI, obtain the user's confirmation code, start in the background, and report progress from evidence."
 ---
 
 # Codex 游戏站总控入口适配说明
@@ -13,20 +13,31 @@ description: "Prepare inputs for the existing seven-stage game-site CLI, ask the
 
 1. 只根据用户确认的事实整理 inputs.json：准确游戏身份、平台/版本/语言与目标、站点目录、调研目录、原始关键词 Markdown 路径、canonical、siteRevision、域名、仓库/分支、DNS 与部署计划授权。按 README 给出完整 JSON，并列出缺项和条件项；不要猜 Steam App ID、关键词、域名、路径或批准。projectPath 来自 paths.siteDirectory，新 run 未指定时拒绝启动。
 2. 给用户查看输入、文件范围和将调用真实 worker 的操作，请用户确认。密钥不进入输入文件或对话；SERPER_API_KEY 由用户通过环境变量提供。不得索取或输出 token、密码、cookie、凭据文件内容。
-3. 用户确认后，告诉用户在自己的交互终端切换到上述 agent 根目录，再执行：
+3. 用户确认完整输入后，Codex 在上述 agent 根目录执行预览：
 
    ```sh
-   node src/cli.mjs run inputs.json RUN_ID
+   node src/cli.mjs run inputs.json RUN_ID --preview
    ```
 
-   RUN_ID 必须符合 `[a-zA-Z0-9_-]{1,100}`。inputs.json 是用户确认后准备的运行时文件，非仓库预置文件。终端先打印摘要，用户核对后亲自输入单独的小写 `y` 才会启动。Codex 不得代输 y，不得用伪 TTY、管道、脚本或改代码绕过操作者确认；管道 stdin 会被拒绝。
-4. 恢复同一 run 时先据记录说明缺项、失败环节及输入变化，再展示更新后的完整 JSON 请用户确认；由用户在交互终端执行并亲自输入 y：
+   把**完整摘要与 Confirmation code 行**展示给用户。预览退出码为 0，不创建 run 目录、不调用 Skill、不联网。码绑定命令、RUN_ID、摘要全文和递归按键名排序后的完整 inputs.json；空白与对象字段顺序不影响码。只有用户在自己的消息中写出本轮码，Codex 才能用该码执行 --confirm。不得自行抄用预览中的码来启动、计算或猜码，不得复用过期的码，不得替用户编写确认内容；普通“同意”不能代替码。错误中的当前应有码也不能自动拿来启动，必须重新预览并等待用户回复。
+4. 收到用户亲自提供的码后后台运行（USER_PROVIDED_CODE 仅替换为用户消息中的码）：
 
    ```sh
-   node src/cli.mjs retry inputs.json RUN_ID
+   nohup node src/cli.mjs run inputs.json RUN_ID --confirm USER_PROVIDED_CODE > runs/RUN_ID.run.log 2>&1 < /dev/null &
    ```
 
-   run 要求新 manifest，retry 要求已有 manifest；retry 会重验受影响阶段，不保证自动清理已有站点或覆盖冲突。
+   输出重定向到 `agent/runs/<RUN_ID>.run.log`，runs/ 已被 .gitignore 忽略。确认校验通过会输出 `Confirmation method: confirmation-code`。Codex 通过定期轮询 manifest.json 并读取日志/报告汇报进度，不要阻塞在一条长命令上；manifest 尚未生成时先查看日志。
+5. 恢复同一 run 时先据记录说明缺项、失败环节及输入变化，展示更新后的完整 JSON；每次 retry 都重新预览，要求用户在本轮消息给出确认码，然后才后台启动：
+
+   ```sh
+   node src/cli.mjs retry inputs.json RUN_ID --preview
+   # 展示完整摘要并等待用户在自己的消息中写出码，再执行：
+   nohup node src/cli.mjs retry inputs.json RUN_ID --confirm USER_PROVIDED_CODE > runs/RUN_ID.run.log 2>&1 < /dev/null &
+   ```
+
+   同输入的码具有确定性，即使码字符串相同也不能沿用以前的确认消息。RUN_ID 必须符合 `[a-zA-Z0-9_-]{1,100}`。inputs.json 是用户确认后准备的运行时文件，非仓库预置文件。run 要求新 manifest，retry 要求已有 manifest；retry 会重验受影响阶段，不保证自动清理已有站点或覆盖冲突。
+
+不带 --confirm 时仍要求交互终端加单独小写 y，管道输入 y 仍被拒绝。用户可自行使用该原有流程；Codex 不得代输 y、模拟操作者 TTY 或改代码绕过确认。--preview 与 --confirm 互斥；不支持 --yes 或环境变量绕过。
 
 不要先走 entry-preview/create/update 草稿或可信宿主票据流程；这些代码已冻结。已有项目、飞书、G0/bsk/m3 不属于当前新站主线。不得修改 `codex-skills/`、模板来源、凭据或全局 Codex 配置。仅做文档/检查不授权真实建站或生产操作。
 
@@ -48,7 +59,7 @@ stage 3 worker 只写 run/template-copy/ 与原生输出区，对 site/research 
 
 可读取运行时 `agent/runs/RUN_ID/manifest.json` 与同目录 `AGENT_RUN_REPORT.md`，以 manifest、实际产物和诊断为依据汇报 run_id、当前阶段/状态、missing_inputs、产物路径和阻断原因；运行前这些文件不一定存在。不要把 CLI 退出码 2 当作必然崩溃，WAITING_FOR_USER/BLOCKED 就会返回 2；也不能仅凭退出 0 声称 PASSED。
 
-第 7 阶段先生成站点 `docs/DEPLOYMENT_PLAN.md` 与 `docs/DEPLOYMENT_PLAN.json`（运行时文件），进入 WAITING_FOR_USER。向用户展示准确仓库/分支/文件、托管、DNS、Google 服务、成本、回滚和 plan_digest；由用户确认批准范围。只在原 inputs.json 中增加 `deploymentPlanApproval: {"approved": true, "digest": "准确plan_digest"}`，其他值不改，再让用户执行上述 retry 并亲自输入 y。这一轮会按批准计划执行 push、部署、DNS、GSC/GA4；计划变化、账号登录、OAuth 或范围变化须停止并请用户处理。
+第 7 阶段先生成站点 `docs/DEPLOYMENT_PLAN.md` 与 `docs/DEPLOYMENT_PLAN.json`（运行时文件），进入 WAITING_FOR_USER。向用户展示准确仓库/分支/文件、托管、DNS、Google 服务、成本、回滚和 plan_digest；由用户确认批准范围。只在原 inputs.json 中增加 `deploymentPlanApproval: {"approved": true, "digest": "准确plan_digest"}`，其他值不改。重新 retry --preview，展示包含 DEPLOY TO PRODUCTION 的完整摘要和新确认码；添加批准字段前的码不能启动带批准字段的 retry。用户在自己的消息中写出新码后，才按上述方式 retry --confirm 后台执行。这一轮会按批准计划执行 push、部署、DNS、GSC/GA4；计划变化、账号登录、OAuth 或范围变化须停止并请用户处理。
 
 deploymentExecuted 在执行开始前已置 true，失败也可能保留，不能单独证明部署成功。只生成计划不表示部署、收录、测量或广告接入完成；核对阶段状态、实际报告及每项服务证据，不能伪造结果、把 GSC 提交写成已收录或把 GA4 标签写成已有数据。
 
