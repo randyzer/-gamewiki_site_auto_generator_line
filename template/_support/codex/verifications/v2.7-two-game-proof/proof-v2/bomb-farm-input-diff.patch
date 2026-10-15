@@ -1,0 +1,768 @@
+--- /dev/null
++++ b/docs/MEDIA_DECISION_TABLE.md
+@@ -0,0 +1,8 @@
++# Bomb Farm Proof Media Decisions
++
++Existing lifecycle columns only. VERIFIED describes actual new diagram authorship; it does not approve third-party media. Human/visual review remains pending.
++
++| pageId_or_route | page_family | media_need | need_rationale | intended_placement | candidate_state | rights_state | human_decision | integration_state | visual_gate_state | source_or_provenance | owner_or_defer_reason | notes |
++| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
++| home | Homepage | HIGH PRIORITY | Three-team switching gives an informative entry into the mine task. | Hero | SEMANTICALLY VERIFIED | VERIFIED | PENDING | INTEGRATED | PENDING | New project-authored primitives; docs/PROOF_GAME_ADAPTATION.md original-diagram-authorship | Codex authored; independent visual review pending | Source date 2026-09-04; no official screenshot rights approval. |
++| guide.how-to-play | guide/article | HIGH PRIORITY | The diagram explains three team choices; body distinguishes them from recovery phases. | Hero | SEMANTICALLY VERIFIED | VERIFIED | PENDING | INTEGRATED | PENDING | New project-authored primitives; official three-team source recorded 2026-09-04 | Independent reviewer; no Human approval assigned | Evidence purpose only; no timing or recovery claim. |
+--- /dev/null
++++ b/docs/PROOF_GAME_ADAPTATION.md
+@@ -0,0 +1,25 @@
++# Bomb Farm — Bounded V2.7 Proof Adaptation
++
++Date: 2026-10-08. Execution Owner: Codex. Authority: ChatGPT PLAN38 + PLAN39. Two representative pages: home / guide.how-to-play. Game Adaptation is an adoption method, not runtime data. Nine existing authorities remain the only technical truths; this record cites Config, Inventory, Content, Facts (unused/unchanged), Media Manifest, media decisions, semantic theme values, search (disabled), freshness/version semantics rather than copying their contracts.
++
++## Adoption identity and player decision
++
++Independent fan-wiki proof at the already recorded bombfarmwiki.wiki domain. Not deployed. Mine overview → How-to-Play; no promised entity database, Market or build tool. Ordinary MDX gives a direct answer, an observation loop, completion/stop conditions and manual links. Page truth/dates/sources live only in Page Inventory; article content/FAQ in Content. New content publication/update date is 2026-10-08; factual source accessedAt remains 2026-09-04. No new verification date, live model or inferred version.
++
++## Visual decision
++
++Existing BF PROJECT_BRIEF §§Visual direction / Implementation palette records dark mine brown/charcoal, mineral gold and cyan from first-party visual reference. Reuse only compatible values in existing semantic tokens, and compact interface-oriented type/density values. No selector, token or theme engine added. This provenance is historical visual evidence, not proof that colors identify the game. Strict masked recognition remains pending; mine/three-team/task context must carry real identification evidence. No copied game imagery or UI.
++
++## Original diagram authorship
++
++On 2026-10-08 Codex authored public/media/proof/three-team-switching.svg specifically for this proof using newly written primitive rectangles, one divider line and text. It was not copied/traced from old energy-rotation.svg, official art, Steam screenshots, UI, logos, characters or competitor material. There are no images, external references or scripts. This is the actual creation record of a new project-authored work, not a third-party permission decision or Human approval.
++
++The factual source is separately the official Steam URL recorded on 2026-09-04 in old BF Inventory guide.energy-rotation: players can switch between three teams to keep the mine running. Diagram numbering is editorial; no state, timing, energy amount or mandatory order. Authored width/height/viewBox are 1200×675. Manifest rightsRef points here solely for the new diagram's authorship; sourceUrl is factual provenance, not a screenshot license. The source old SVG remains unchanged and is not imported. Official battle-overview.webp remains unauthorized and absent.
++
++## Media and journey decision
++
++One informative image, zero videos. Existing hero mappings serve home and How-to-Play. The article explains three choices rather than a recovery cycle; no gallery or empty media shell. Decision Table records actual integration and project authorship but leaves human_decision and visual_gate_state PENDING. No final approval is created.
++
++## Review and evidence
++
++Common Core/CI/tests/package/lock unchanged. BF exact ten input paths only. Real build/browser/masked results belong to the external proof package; do not store an acceptance state as reusable runtime data. WS04B/WS07/AX/Safari/RELEASE are not accepted by this adaptation. About still uses inherited Core editorial copy and must be disclosed as support-page residue; no Core fix in this proof.
+--- a/game.config.ts
++++ b/game.config.ts
+@@ -2,50 +2,27 @@
+ 
+ export default defineGameConfig({
+   brand: {
+-    name: "Game Atlas",
+-    shortName: "Atlas",
+-    mark: "GA",
+-    logoPath: "/logo.svg",
+-    tagline: "Clear answers for every session.",
++    name: "Bomb Farm Wiki",
++    shortName: "BF Wiki",
++    mark: "BF",
++    tagline: "Understand the mine. Switch teams with a purpose.",
+   },
+-  site: {
+-    url: "https://gameatlas.example",
+-    locale: "en",
+-    timezone: "UTC",
++  site: { url: "https://bombfarmwiki.wiki", locale: "en", timezone: "UTC" },
++  seo: {
++    defaultTitle: "Bomb Farm Wiki — The Mine and Three-Team Loop",
++    titleTemplate: "%s | Bomb Farm Wiki",
++    defaultDescription: "Understand the bomber squad's mine loop, observe progress and use the recorded three-team switching concept without invented timers.",
+   },
+-  seo: {
+-    defaultTitle: "Game Atlas — Guides, Builds & Game Data",
+-    titleTemplate: "%s | Game Atlas",
+-    defaultDescription:
+-      "A fast, source-aware starter for guides, builds, and game reference data.",
+-  },
+-  social: {
+-    xHandle: "@gameatlas",
+-  },
++  social: {},
+   navigation: {
+     groups: [
+-      { label: "Home", pageId: "home" },
+-      {
+-        label: "Guides",
+-        pageId: "hub.guides",
+-        children: ["guide.getting-started"],
+-      },
+-      { label: "Search", pageId: "search" },
++      { label: "Mine overview", pageId: "home" },
++      { label: "Mine guides", pageId: "hub.guides", children: ["guide.how-to-play"] },
+     ],
+   },
+-  homepage: {
+-    featuredPageIds: ["guide.getting-started"],
+-  },
++  homepage: { featuredPageIds: ["guide.how-to-play"] },
+   features: {
+-    guides: true,
+-    heroes: false,
+-    weapons: false,
+-    items: false,
+-    maps: false,
+-    tierLists: false,
+-    news: false,
+-    search: true,
+-    calculator: false,
+-    planner: false,
++    guides: true, heroes: false, weapons: false, items: false, maps: false,
++    tierLists: false, news: false, search: false, calculator: false, planner: false,
+   },
+ });
+--- a/public/logo.svg
++++ /dev/null
+@@ -1,5 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Game Atlas logo">
+-  <rect width="64" height="64" fill="#111111"/>
+-  <path d="M18 44 32 14l14 30h-8l-2.8-6.4H28.8L26 44h-8Zm14-20-4.4 10h8.8L32 24Z" fill="#f8f4ec"/>
+-  <path d="M14 50h36v4H14z" fill="#db3d2f"/>
+-</svg>
+--- /dev/null
++++ b/public/media/proof/three-team-switching.svg
+@@ -0,0 +1,21 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
++  <title id="title">Three teams available for switching</title>
++  <desc id="desc">Project-authored explanation of switching between three teams to keep the mine running. No team states, timing or ordered cycle are shown.</desc>
++  <rect width="1200" height="675" fill="#100d0a"/>
++  <text x="70" y="110" fill="#e1b957" font-family="system-ui, sans-serif" font-size="66" font-weight="700">THREE TEAMS</text>
++  <g fill="#211a13" stroke="#c89a48" stroke-width="3">
++    <rect x="70" y="165" width="330" height="220"/>
++    <rect x="435" y="165" width="330" height="220"/>
++    <rect x="800" y="165" width="330" height="220"/>
++  </g>
++  <g fill="#f4ead3" font-family="system-ui, sans-serif" font-size="54" font-weight="700" text-anchor="middle">
++    <text x="235" y="295">TEAM 1</text>
++    <text x="600" y="295">TEAM 2</text>
++    <text x="965" y="295">TEAM 3</text>
++  </g>
++  <path d="M70 440H1130" stroke="#58bbae" stroke-width="4"/>
++  <g fill="#f4ead3" font-family="system-ui, sans-serif" font-size="57" font-weight="600">
++    <text x="70" y="530">Switch between teams</text>
++    <text x="70" y="607">to keep the mine running.</text>
++  </g>
++</svg>
+--- a/src/content/guides/getting-started.mdx
++++ /dev/null
+@@ -1,27 +0,0 @@
+----
+-pageId: guide.getting-started
+----
+-
+-This starter keeps publishing decisions separate from prose. Configure those decisions first, then write against a stable page contract.
+-
+-## 1. Set the game and brand
+-
+-Edit `game.config.ts`. Replace the starter name, canonical HTTPS URL, default SEO copy, and social handle. Keep the locale on an English tag such as `en`, `en-US`, or `en-GB` for the global English-market build.
+-
+-Every feature flag is explicit. Turn on only the page families that have reviewed data and a route implementation.
+-
+-## 2. Declare pages before writing them
+-
+-Add each intended URL to `src/data/page-inventory.json`. The inventory owns the route, editorial title and description, publishing status, indexability, dates, relationships, and source confidence.
+-
+-For an editorial page, add a `contentRef` that points to its collection and slug. In the MDX file, keep frontmatter focused on `pageId`; do not duplicate inventory metadata.
+-
+-## 3. Add sourced facts by module
+-
+-Entity data belongs in `src/data/facts/`. Each enabled hero, weapon, item, or map module has its own JSON file and schema. Record source URLs, accessed dates, evidence notes, and confidence with every entity.
+-
+-Disabled modules need no empty data files. If you enable a module without its required fact file, production validation stops the build.
+-
+-## 4. Verify before publishing
+-
+-Run `npm run check` for types and unit tests, then `npm run build` for inventory validation, static output, sitemap generation, and the Pagefind index. Preview the production output when testing search because the development server does not contain a fresh Pagefind index.
+--- /dev/null
++++ b/src/content/guides/how-to-play.mdx
+@@ -0,0 +1,43 @@
++---
++pageId: guide.how-to-play
++faq:
++  - question: "Does three-team switching establish an exact recovery timer?"
++    answer: "No. The recorded official description supports switching between three teams to keep the mine running. It does not establish recovery rates, readiness states or an optimal rotation order."
++  - question: "When should I stop and check the current game?"
++    answer: "Stop when the available upgrade, team state or action is unclear. Inspect the current interface and official information rather than assuming a timing or best-build rule."
++---
++
++Start by observing the bomber squad's mine progress, then inspect an available upgrade and the teams you can select. The recorded official description supports **switching between three teams to keep the mine running**; it does not prescribe when to switch or a mandatory order.
++
++## Read the three-team diagram
++
++The three cards above represent three team choices, not three stages of a recovery cycle. TEAM 1, TEAM 2 and TEAM 3 are editorial labels. The shared mine task connects them; the picture does not show simultaneous team activity, cooldowns or energy values.
++
++Use it to understand the switching concept, then inspect the actual state in the current game before acting. It is an explanatory diagram, not a screenshot or a simulator.
++
++## Follow one mine session
++
++1. **Observe the current push.** Check whether the mine and squad are progressing through auto battles and stages.
++2. **Inspect the rewards.** Look for an upgrade opportunity in the systems available to you; the recorded store description names equipment, heroes and account-level progression.
++3. **Check your team choices.** Consider switching between the three teams using the current interface. Do not infer that a numbered team must act next.
++4. **Observe the result.** Recheck whether progress continues and whether the next decision is clear. Change one decision at a time so you can tell what happened.
++
++This sequence is editorial guidance for observation. It is not a sourced optimal build order or a guarantee that switching fixes a stalled run.
++
++## Between pushes: inspect rather than guess
++
++The recorded store description names gear, Forge upgrades and a skill tree. Their presence gives you places to inspect an upgrade opportunity; it does not establish which upgrade is best for your current squad.
++
++If you cannot tell what an action changes, stop before spending resources and inspect the current details. Do not substitute a guessed cost, recovery rule or damage formula.
++
++## Know when this guide has answered the question
++
++You have the bounded answer when you can locate the mine progress, identify a decision to inspect and explain what the three-team switching concept means. You do not need to know a timer or adopt an optimal build to finish this guide.
++
++If progress remains unclear after a change, return to observation and check the game details. This page cannot diagnose every stalled run.
++
++## Your next check
++
++Read the [official Steam description](https://store.steampowered.com/app/4892010/Bomb_Farm/) if you need to compare the current game with the source. Return to the [mine overview](/) to revisit this bounded route. This proof does not offer a separate build, Market or timer tool.
++
++The source record used here was accessed on **4 September 2026**. Writing this guide on 8 October does not mean the source or current mechanics were reverified on that date.
+--- a/src/data/media/media.json
++++ b/src/data/media/media.json
+@@ -1,4 +1,27 @@
+ {
+-  "assets": [],
+-  "pages": []
++  "assets": [
++    {
++      "id": "proof.three-team-switching",
++      "type": "image",
++      "src": "/media/proof/three-team-switching.svg",
++      "alt": "Original diagram showing three teams available for switching to keep the mine running",
++      "caption": "Project-authored explanatory diagram of three-team switching; not an in-game UI capture or a timing or recovery guide.",
++      "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++      "dimensions": {
++        "width": 1200,
++        "height": 675
++      },
++      "rightsRef": "docs/PROOF_GAME_ADAPTATION.md#original-diagram-authorship"
++    }
++  ],
++  "pages": [
++    {
++      "pageId": "home",
++      "hero": "proof.three-team-switching"
++    },
++    {
++      "pageId": "guide.how-to-play",
++      "hero": "proof.three-team-switching"
++    }
++  ]
+ }
+--- a/src/data/page-inventory.json
++++ b/src/data/page-inventory.json
+@@ -10,26 +10,32 @@
+     "publicationStatus": "published",
+     "contentStatus": "ready",
+     "developmentStatus": "ready",
+-    "needsReview": false,
+-    "needsUpdate": false,
+-    "indexability": "index",
+-    "title": "Game Atlas — Guides, Builds & Game Data",
+-    "description": "Find clear, source-aware game guides and reference data in a fast, focused experience.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "game guides",
+-    "tags": ["guides", "reference", "game data"],
+-    "relatedPageIds": ["guide.getting-started"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Starter editorial copy; replace before production launch."
+-      }
+-    ],
+-    "confidence": "high"
++    "needsReview": true,
++    "needsUpdate": false,
++    "indexability": "index",
++    "title": "Bomb Farm Wiki \u2014 Understand the Mine Loop",
++    "description": "Start with the mine loop: observe squad progress, check an upgrade opportunity and understand the sourced three-team switching concept.",
++    "publishedAt": "2026-10-08",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "bomb farm mine loop",
++    "tags": [
++      "mine",
++      "squad",
++      "three teams"
++    ],
++    "relatedPageIds": [
++      "guide.how-to-play"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
+   },
+   {
+     "pageId": "hub.guides",
+@@ -43,30 +49,36 @@
+     "publicationStatus": "published",
+     "contentStatus": "ready",
+     "developmentStatus": "ready",
+-    "needsReview": false,
+-    "needsUpdate": false,
+-    "indexability": "index",
+-    "title": "Game Guides & Field Notes | Game Atlas",
+-    "description": "Browse every published Game Atlas field guide from one fast, source-aware editorial index.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "game guides hub",
+-    "tags": ["guides", "hub", "editorial"],
+-    "relatedPageIds": ["home", "guide.getting-started"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/guides/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Starter guide index assembled from the enabled Page Catalog."
+-      }
+-    ],
+-    "confidence": "high"
+-  },
+-  {
+-    "pageId": "guide.getting-started",
+-    "route": "/guides/getting-started/",
++    "needsReview": true,
++    "needsUpdate": false,
++    "indexability": "index",
++    "title": "Bomb Farm Mine Guides \u2014 Start with the Core Loop",
++    "description": "One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database.",
++    "publishedAt": "2026-10-08",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "bomb farm mine guides",
++    "tags": [
++      "mine guides",
++      "onboarding"
++    ],
++    "relatedPageIds": [
++      "guide.how-to-play",
++      "home"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
++  },
++  {
++    "pageId": "guide.how-to-play",
++    "route": "/guides/how-to-play/",
+     "pageType": "guide",
+     "cluster": "onboarding",
+     "module": "guides",
+@@ -76,63 +88,37 @@
+     "publicationStatus": "published",
+     "contentStatus": "ready",
+     "developmentStatus": "ready",
+-    "needsReview": false,
+-    "needsUpdate": false,
+-    "indexability": "index",
+-    "title": "How to Configure This Game Site Starter",
+-    "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "game site starter setup",
+-    "tags": ["setup", "workflow", "publishing"],
++    "needsReview": true,
++    "needsUpdate": false,
++    "indexability": "index",
++    "title": "How to Play Bomb Farm: The Mine and Three-Team Loop",
++    "description": "Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.",
++    "publishedAt": "2026-10-08",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "how to play bomb farm",
++    "tags": [
++      "mine loop",
++      "squad",
++      "three teams"
++    ],
+     "contentRef": {
+       "collection": "guides",
+-      "slug": "getting-started"
++      "slug": "how-to-play"
+     },
+-    "relatedPageIds": ["home"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/guides/getting-started/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Starter operating instructions maintained with the repository."
+-      }
+-    ],
+-    "confidence": "high"
+-  },
+-  {
+-    "pageId": "search",
+-    "route": "/search/",
+-    "pageType": "search",
+-    "cluster": "core",
+-    "module": "search",
+-    "feature": "search",
+-    "priority": 70,
+-    "visibility": "public",
+-    "publicationStatus": "published",
+-    "contentStatus": "ready",
+-    "developmentStatus": "building",
+-    "needsReview": false,
+-    "needsUpdate": false,
+-    "indexability": "noindex",
+-    "title": "Search Game Atlas Guides",
+-    "description": "Search the published Game Atlas guide index without sending queries to an external search service.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "search game atlas",
+-    "tags": ["search", "guides", "discovery"],
+-    "relatedPageIds": ["home", "hub.guides"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/search/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Starter search shell; Pagefind interaction is attached after build."
+-      }
+-    ],
+-    "confidence": "high"
++    "relatedPageIds": [
++      "hub.guides",
++      "home"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
+   },
+   {
+     "pageId": "about",
+@@ -148,23 +134,29 @@
+     "needsReview": true,
+     "needsUpdate": false,
+     "indexability": "index",
+-    "title": "About Game Atlas Editorial",
+-    "description": "Learn how Game Atlas separates editorial decisions, sourced facts, and static delivery for trustworthy game guidance.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "about game atlas",
+-    "tags": ["about", "editorial", "method"],
+-    "relatedPageIds": ["home", "hub.guides"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/about/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Starter editorial-method copy requiring operator review before launch."
+-      }
+-    ],
+-    "confidence": "high"
++    "title": "About Bomb Farm Wiki \u2014 Sources and Scope",
++    "description": "Read the editorial scope and recorded sources behind this independent mine-loop guide. The proof is limited and is not a complete game reference.",
++    "publishedAt": "2026-10-08",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "about bomb farm wiki",
++    "tags": [
++      "about",
++      "sources"
++    ],
++    "relatedPageIds": [
++      "home",
++      "hub.guides"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
+   },
+   {
+     "pageId": "privacy",
+@@ -179,24 +171,31 @@
+     "developmentStatus": "ready",
+     "needsReview": true,
+     "needsUpdate": false,
+-    "legalActivation": { "state": "unavailable" },
++    "legalActivation": {
++      "state": "unavailable"
++    },
+     "indexability": "noindex",
+-    "title": "Privacy Policy | Game Atlas",
+-    "description": "Review the starter privacy disclosure and replace it with terms appropriate to your business, jurisdiction, and data practices.",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "game atlas privacy policy",
+-    "tags": ["privacy", "legal", "policy"],
+-    "relatedPageIds": ["home", "terms"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/privacy/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Non-legal starter disclosure requiring qualified review before launch."
+-      }
+-    ],
+-    "confidence": "low"
++    "title": "Bomb Farm Wiki \u2014 Privacy Policy Unavailable",
++    "description": "A reviewed project privacy policy is not available in this proof. This legal page remains private and unavailable pending a separate legal decision.",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "bomb farm privacy",
++    "tags": [
++      "privacy",
++      "legal"
++    ],
++    "relatedPageIds": [
++      "home"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
+   },
+   {
+     "pageId": "terms",
+@@ -211,24 +210,31 @@
+     "developmentStatus": "ready",
+     "needsReview": true,
+     "needsUpdate": false,
+-    "legalActivation": { "state": "unavailable" },
++    "legalActivation": {
++      "state": "unavailable"
++    },
+     "indexability": "noindex",
+-    "title": "Terms of Use | Game Atlas",
+-    "description": "Review the starter terms and replace them with conditions appropriate to your game site, content rights, and jurisdiction.",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "game atlas terms of use",
+-    "tags": ["terms", "legal", "policy"],
+-    "relatedPageIds": ["home", "privacy"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/terms/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Non-legal starter terms requiring qualified review before launch."
+-      }
+-    ],
+-    "confidence": "low"
++    "title": "Bomb Farm Wiki \u2014 Terms of Use Unavailable",
++    "description": "Reviewed project terms are not available in this proof. This legal page remains private and unavailable pending a separate legal decision.",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "bomb farm terms",
++    "tags": [
++      "terms",
++      "legal"
++    ],
++    "relatedPageIds": [
++      "home"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
+   },
+   {
+     "pageId": "not-found",
+@@ -241,62 +247,31 @@
+     "publicationStatus": "published",
+     "contentStatus": "ready",
+     "developmentStatus": "ready",
+-    "needsReview": false,
++    "needsReview": true,
+     "needsUpdate": false,
+     "indexability": "noindex",
+-    "title": "Page Not Found | Game Atlas",
+-    "description": "The requested page is outside the published Game Atlas index; return to a verified guide or start a new search.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "game atlas page not found",
+-    "tags": ["error", "navigation", "404"],
+-    "relatedPageIds": ["home", "search"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/404.html",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Starter error-page copy derived from the enabled navigation catalog."
+-      }
+-    ],
+-    "confidence": "high"
+-  },
+-  {
+-    "pageId": "hero.demo-sentinel",
+-    "route": "/heroes/demo-sentinel/",
+-    "pageType": "hero",
+-    "cluster": "heroes",
+-    "module": "heroes",
+-    "feature": "heroes",
+-    "priority": 10,
+-    "visibility": "public",
+-    "publicationStatus": "published",
+-    "contentStatus": "ready",
+-    "developmentStatus": "ready",
+-    "needsReview": false,
+-    "needsUpdate": false,
+-    "indexability": "index",
+-    "title": "Demo Sentinel Hero Guide",
+-    "description": "A non-production inventory record used to verify that disabled entity modules never generate public routes.",
+-    "publishedAt": "2026-09-01",
+-    "updatedAt": "2026-09-01",
+-    "primaryKeyword": "demo sentinel guide",
+-    "tags": ["demo", "hero", "validation"],
+-    "entityRef": {
+-      "entityType": "hero",
+-      "entityId": "demo-sentinel"
+-    },
+-    "relatedPageIds": ["home"],
+-    "relatedEntityRefs": [],
+-    "sources": [
+-      {
+-        "sourceUrl": "https://gameatlas.example/",
+-        "sourceType": "editorial",
+-        "accessedAt": "2026-09-01",
+-        "evidenceNote": "Validation-only demo record; excluded by the heroes feature flag."
+-      }
+-    ],
+-    "confidence": "high"
++    "title": "Bomb Farm Wiki \u2014 Page Outside This Guide Index",
++    "description": "This address is outside the published mine-loop guide index. Return to the mine overview or browse the one available player guide.",
++    "publishedAt": "2026-10-08",
++    "updatedAt": "2026-10-08",
++    "primaryKeyword": "bomb farm missing page",
++    "tags": [
++      "navigation",
++      "404"
++    ],
++    "relatedPageIds": [
++      "home",
++      "hub.guides"
++    ],
++    "relatedEntityRefs": [],
++    "sources": [
++      {
++        "sourceUrl": "https://store.steampowered.com/app/4892010/Bomb_Farm/",
++        "sourceType": "official",
++        "accessedAt": "2026-09-04",
++        "evidenceNote": "Recorded Steam description: bomber squad resources and three-team switching to keep the mine running. Source not re-accessed for this proof."
++      }
++    ],
++    "confidence": "medium"
+   }
+ ]
+--- a/src/styles/theme.css
++++ b/src/styles/theme.css
+@@ -5,14 +5,14 @@
+  * the Flexible Edge.
+  */
+ :root {
+-  --color-background: #f6f5f1;
+-  --color-surface: #e7e4dc;
+-  --color-text: #1f2426;
+-  --color-text-muted: #697174;
+-  --color-primary: #2f4c54;
+-  --color-accent: #4f6f78;
+-  --color-accent-strong: #31535d;
+-  --color-guides: var(--color-accent);
++  --color-background: #100d0a;
++  --color-surface: #211a13;
++  --color-text: #f4ead3;
++  --color-text-muted: #bcae94;
++  --color-primary: #c89a48;
++  --color-accent: #58bbae;
++  --color-accent-strong: #e1b957;
++  --color-guides: #d3a64c;
+   --color-heroes: var(--color-accent);
+   --color-weapons: var(--color-accent);
+   --color-items: var(--color-accent);
+@@ -20,24 +20,24 @@
+   --color-updates: var(--color-accent);
+   --color-meta: var(--color-accent);
+   --color-tools: var(--color-accent);
+-  --color-border: color-mix(in srgb, var(--color-text) 24%, transparent);
+-  --color-border-strong: color-mix(in srgb, var(--color-text) 72%, transparent);
++  --color-border: color-mix(in srgb, var(--color-primary) 27%, transparent);
++  --color-border-strong: color-mix(in srgb, var(--color-primary) 64%, transparent);
+   --color-footer-background: color-mix(in srgb, var(--color-surface) 72%, var(--color-background));
+   --color-footer-text: var(--color-text);
+   --color-footer-muted: var(--color-text-muted);
+   --color-footer-border: var(--color-border-strong);
+-  --color-on-primary: #f4f7f5;
+-  --color-on-accent: #f8fbfa;
++  --color-on-primary: #15110d;
++  --color-on-accent: #15110d;
+ }
+ 
+ /* Supported site-wide roles; omission preserves the original fallback. */
+ :root {
+-  --role-font-display: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
+-  --role-font-body: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
++  --role-font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++  --role-font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+   --role-font-utility: "SFMono-Regular", "Cascadia Mono", "Liberation Mono", monospace;
+-  --role-shell-gutter: 48px;
+-  --role-section-spacing: clamp(68px, 9vw, 120px);
+-  --role-card-padding: 26px;
++  --role-shell-gutter: 36px;
++  --role-section-spacing: clamp(52px, 7vw, 96px);
++  --role-card-padding: 22px;
+   --role-control-min-height: 48px;
+   --role-control-radius: 0px;
+   --role-surface-radius: 0px;
+@@ -82,17 +82,17 @@
+     --role-shell-gutter: 36px;
+   }
+   :root[data-theme-density="compact"] {
+-    --role-shell-gutter: 28px;
++    --role-shell-gutter: 36px;
+   }
+ }
+ 
+ @media (max-width: 620px) {
+   :root {
+-    --role-shell-gutter: 28px;
++    --role-shell-gutter: 36px;
+     --role-card-padding: 22px;
+   }
+   :root[data-theme-density="compact"] {
+-    --role-shell-gutter: 24px;
+-    --role-card-padding: 20px;
++    --role-shell-gutter: 36px;
++    --role-card-padding: 22px;
+   }
+ }

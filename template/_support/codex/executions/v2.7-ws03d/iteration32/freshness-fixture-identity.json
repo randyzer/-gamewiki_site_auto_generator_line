@@ -1,0 +1,65 @@
+{
+  "fixtureRoot": "/tmp/c2c32a.QNAxYv/starter-adoption-verification-k52lAu",
+  "starterSourceSha256": "bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1",
+  "prePatchFixtureSourceSha256": "8eb33914ee404a2a10ee89b7adc232a2d86abe121b20ec4d17bb7dcef0017695",
+  "postPatchFixtureSourceSha256": "12689c6a63343670992130c429da09844e7452f7915771640e585c179291bedb",
+  "distSha256": "2301bf652ff9c5e51f810cc4a732ff9be2e82fe8fbbfd3c99cadf375d71ab6fd",
+  "authoredSyntheticPage": {
+    "pageId": "guide.getting-started",
+    "route": "/guides/getting-started/",
+    "pageType": "guide",
+    "cluster": "onboarding",
+    "module": "guides",
+    "feature": "guides",
+    "priority": 90,
+    "visibility": "public",
+    "publicationStatus": "published",
+    "contentStatus": "ready",
+    "developmentStatus": "ready",
+    "needsReview": false,
+    "needsUpdate": false,
+    "indexability": "index",
+    "title": "Getting Started with Field Notes",
+    "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+    "publishedAt": "2026-08-10",
+    "updatedAt": "2026-09-20",
+    "primaryKeyword": "game site starter setup",
+    "tags": [
+      "setup",
+      "workflow",
+      "publishing"
+    ],
+    "contentRef": {
+      "collection": "guides",
+      "slug": "getting-started"
+    },
+    "relatedPageIds": [
+      "home"
+    ],
+    "relatedEntityRefs": [],
+    "sources": [
+      {
+        "sourceUrl": "https://example.com/qa-source-a",
+        "sourceType": "editorial",
+        "accessedAt": "2026-09-18",
+        "evidenceNote": "Private synthetic source A access evidence"
+      },
+      {
+        "sourceUrl": "https://example.com/qa-source-b",
+        "sourceType": "editorial",
+        "accessedAt": "2026-09-21",
+        "evidenceNote": "Private synthetic source B access evidence"
+      }
+    ],
+    "confidence": "high",
+    "liveStatus": {
+      "state": "observed-live",
+      "observedAt": "2026-09-22",
+      "sourceUrl": "https://example.com/qa-live-status",
+      "evidenceNote": "PRIVATE_QA_LIVE_EVIDENCE_32"
+    }
+  },
+  "canonicalInventoryModified": false,
+  "syntheticOnly": true,
+  "observedAt": "2026-10-08T02:12:43.345Z"
+}

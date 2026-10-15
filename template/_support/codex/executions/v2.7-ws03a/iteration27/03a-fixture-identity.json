@@ -1,0 +1,15 @@
+{
+  "fixtureRoot": "/tmp/c2c27a.RPRZNi/starter-adoption-verification-TwKYph",
+  "starterSourceSha256": "06505800546c762c148b4befdbde3de9e5930a49c89dd7feeee148bdb5dae7b9",
+  "prePatchFixtureSourceSha256": "54b82d23c35ee30c896d5a7288d51e58743f34c1e4e77c0d5fd3d7f4566657fe",
+  "postPatchFixtureSourceSha256": "7e1e9fd3969152a6f7f97f05cd030b5054df9a12db2523cbedd17f8800d4d727",
+  "distSha256": "262bc98db265e12f151d043bb36660b8d7e4d517f86b16d738475dbb9a48fada",
+  "profile": {
+    "font": "interface",
+    "density": "compact",
+    "shape": "soft",
+    "state": "quiet"
+  },
+  "canonicalGameConfigModified": false,
+  "observedAt": "2026-10-07T16:57:40.433Z"
+}

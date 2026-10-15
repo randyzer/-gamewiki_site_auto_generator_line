@@ -1,0 +1,6 @@
+interface:
+  display_name: "Game Site Orchestrator"
+  short_description: "Entry V1: preview skills and inputs before any game-site execution"
+  default_prompt: "Use $game_site_orchestrator for a read-only Entry V1 check: identify the game from only supplied facts, verify 8 local Skill hashes, list now/later/conditional input needs, and ask before saving a draft. Do not start any worker or build."
+policy:
+  allow_implicit_invocation: false

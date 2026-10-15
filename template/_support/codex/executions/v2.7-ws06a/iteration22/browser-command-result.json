@@ -1,0 +1,12 @@
+{
+  "command": "npm run check:browser",
+  "startedAt": "2026-10-07T15:33:21.312Z",
+  "finishedAt": "2026-10-07T15:37:01.727Z",
+  "exitCode": 1,
+  "qualificationAttempts": 1,
+  "retryCount": 0,
+  "qualificationChildPid": 78077,
+  "childPidGone": true,
+  "observerErrors": [],
+  "fixtureCaptured": true
+}

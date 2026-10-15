@@ -1,0 +1,20 @@
+{
+  "assertionNamesUnchanged": true,
+  "assertionLogicUnchanged": true,
+  "profileUnchanged": true,
+  "enginesUnchanged": true,
+  "viewportsUnchanged": true,
+  "buildPathUnchanged": true,
+  "fixtureMutationUnchanged": true,
+  "previewLifecycleUnchanged": true,
+  "cleanupRulesUnchanged": true,
+  "normalizedHelperEqualsIteration23": true,
+  "status": "PASS",
+  "allowedChanges": [
+    "output path",
+    "native callback imports and transport"
+  ],
+  "mechanism": "exact full-file normalization matches frozen predecessor",
+  "oldSha256": "168ffcf5c88a53ac2e5688367598605b7abf3e975d06709ed24226fe35d1160f",
+  "newSha256": "61a584c0a9999c4edfc4cca641992bde3e58a860d6476a4bd0021703d21413f6"
+}

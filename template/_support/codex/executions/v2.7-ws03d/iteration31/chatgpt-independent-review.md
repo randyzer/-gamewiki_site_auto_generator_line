@@ -1,0 +1,490 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 31"
+      - text: "WORKSTREAM: WS03D-SEARCH"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03D-SEARCH IMPLEMENTATION FOR CONTINUATION
+    - paragraph: 我独立核对了 actual PLAN31、当前源码、exact13 changed-file set、RED/GREEN、search browser raw、fresh47、residual/counterpart、closure、identity 与 cleanup。结论可以签 continuation ACCEPT。
+    - paragraph: 实际实现保持了预定边界：SearchProvider 是纯 provider-neutral interface；pagefind-search-adapter.ts 是唯一 Pagefind edge；features.search 仍是唯一技术 activation truth；没有新增 provider registry、远程 API、analytics、search backend config 或第二套 enable 字段。SearchIsland 现在只负责输入、history、request race 和 UI state；Pagefind 1.5.2 artifact/version/budget contract 没有改变。
+    - paragraph: 证据成立：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "scope: exact 13 files RED: 11 FAIL / 19 PASS implementationBeforeRed = false GREEN: 35 / 35 PASS optional-route regression included root: 843 tests PASS Astro clean unadopted/adopted/diff PASS targeted search: 12 / 12 rows PASS 156 / 156 assertions PASS enabled + disabled Chromium / Firefox / WebKit desktop + mobile 1 attempt / 0 retry fresh47: 47 / 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN raw FAIL / exit1 preserved residual: 40 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED newOutsideFrozen40 = 0 vs iteration30: 40 persisted 0 disappeared 0 reappeared 0 new counterparts: Chromium 40 / 40 Firefox 40 / 40 closure: BLOCKED sole error: missing/invalid real Safari keyboard evidence integrity: 6506 protected files unchanged Contract SHA exact 41 unique IDs verification infrastructure delta = 0"
+    - paragraph:
+      - text: 有一个
+      - strong: 非阻塞的 evidence-presentation 瑕疵
+      - text: 需要记录：raw 中 idle-does-not-load-provider 的 passed=true，但最终 detail 数组后来含有两个 Pagefind loader URL。我读取实际 harness 后确认，判断执行顺序是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: idle reached → evaluate loaderRequests.length === 0 → boolean PASS stored → same mutable array object stored as detail → later results/error phase pushes loader URLs → serialization therefore shows later-mutated detail
+    - paragraph: 所以实际 idle condition 有效；污染的是 diagnostic detail 的快照语义，不是产品行为或 assertion boolean。它不足以阻挡 WS03D-search continuation，但以后 targeted harness 不应把会继续 mutation 的数组直接作为 evidence detail；应复制快照。
+    - paragraph: 正式状态现在是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WS03A = IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03B = IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03C = IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03D-SEARCH = IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03 FORMAL GATE = NOT_ACCEPTED IA-03 formal capability promotion = NONE Safari proof = 0 WS06A FULL = BLOCKED Release hold = ACTIVE
+    - paragraph: 下面只进入 freshness。
+    - button "添加到资料库":
+      - generic: PLAN32 — WS03D Freshness Truth and Distinct Time Semantics
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 32"
+        - text: "WORKSTREAM: WS03D-FRESHNESS"
+        - text: "SLICE: FRESHNESS ONLY"
+        - text: "PREDECESSOR: REVIEW31 WS03D-SEARCH CONTINUATION ACCEPT"
+        - text: "CAPABILITY_FOCUS: FR-01 / FR-02 MECHANISM ONLY"
+        - text: "WS03_FORMAL_GATE: NOT_ACCEPTED"
+        - text: "WS06A_FULL: BLOCKED"
+        - text: "SAFARI_PROOF: 0"
+      - heading "1. Existing truth" [level=2]
+      - paragraph: "The Starter already has separate pieces of freshness data:"
+      - code: "Page Inventory: publishedAt updatedAt publicationStatus contentStatus needsUpdate Facts / Tools: patch updatedAt Provenance: publishedAt accessedAt"
+      - paragraph: "It also already exposes several public labels:"
+      - code: Published Last updated Last verified Current version Latest updates
+      - paragraph: The problem is therefore not “missing dates”.
+      - paragraph:
+        - text: The remaining problem is
+        - strong: semantic truth
+        - text: .
+      - separator
+      - heading "2. Actual gaps" [level=2]
+      - paragraph: Three concrete gaps exist.
+      - heading "A. accessedAt is currently relabeled as verification" [level=3]:
+        - text: A.
+        - code: accessedAt
+        - text: is currently relabeled as verification
+      - paragraph:
+        - code: EditorialArticle
+        - text: ","
+        - code: WikiArticle
+        - text: and
+        - code: Sources
+        - text: "compute:"
+      - code: max(source.accessedAt)
+      - paragraph: "but publicly call it:"
+      - code: Last verified
+      - paragraph:
+        - code: accessedAt
+        - text: proves source access/check time, not an independent verification event.
+      - paragraph:
+        - text: This wording must change rather than inventing
+        - code: verifiedAt
+        - text: .
+      - heading "B. Static patch data claims currency" [level=3]
+      - paragraph:
+        - code: EntityDetail
+        - text: "currently renders:"
+      - code: Current version Patch X
+      - paragraph: "but the fact model only proves:"
+      - code: patch = recorded version context updatedAt = data update date
+      - paragraph: It does not prove the game is currently running that patch.
+      - heading "C. Live status has no distinct model" [level=3]
+      - paragraph: "FR-01 requires live status to remain distinct from:"
+      - code: publishedAt updatedAt patch/version
+      - paragraph: No Core field currently represents an evidence-backed live-status observation.
+      - separator
+      - heading "3. Selected architecture" [level=2]
+      - paragraph: Do not build a freshness engine or CMS.
+      - paragraph: "Add one narrow reusable seam:"
+      - code: Page Inventory publishedAt updatedAt liveStatus? ↓ core/freshness.ts ↓ truthful rendered labels
+      - paragraph: "Existing:"
+      - code: fact.patch tool.patch
+      - paragraph: remain the separate version/patch authorities.
+      - paragraph: No migration of those values into Page Inventory.
+      - separator
+      - heading "4. Live-status schema" [level=2]
+      - paragraph:
+        - text: Extend
+        - code: pageInventoryEntrySchema
+        - text: "with optional:"
+      - code: "liveStatus: | { state: \"not-live\" } | { state: \"observed-live\" observedAt: \"YYYY-MM-DD\" sourceUrl: \"https://...\" evidenceNote: string }"
+      - paragraph: Strict object only.
+      - paragraph: No free-form state strings.
+      - separator
+      - heading "5. Why observed-live, not simply live" [level=2]:
+        - text: 5. Why
+        - code: observed-live
+        - text: ", not simply"
+        - code: live
+      - paragraph:
+        - code: live
+        - text: can imply continuing real-time truth.
+      - paragraph: "The Core can safely prove only:"
+      - blockquote:
+        - paragraph: this state was observed as live at a specified date from an identified source.
+      - paragraph: "Therefore:"
+      - code: observed-live
+      - paragraph: is deliberately snapshot semantics.
+      - paragraph: "It must never be rendered as:"
+      - code: Live now Currently live Real-time
+      - paragraph: unless a later product layer has genuine real-time evidence.
+      - separator
+      - heading "6. not-live semantics" [level=2]:
+        - text: "6."
+        - code: not-live
+        - text: semantics
+      - code: "{ state: \"not-live\" }"
+      - paragraph: "means:"
+      - blockquote:
+        - paragraph: this page/content surface is not claiming live telemetry.
+      - paragraph: "It is not:"
+      - code: offline game servers down feature unavailable
+      - paragraph: No gameplay status may be inferred from it.
+      - separator
+      - heading "7. No canonical fake live status" [level=2]
+      - paragraph: "Canonical:"
+      - code: src/data/page-inventory.json
+      - paragraph: remains unchanged.
+      - paragraph:
+        - text: Do not populate
+        - code: liveStatus
+        - text: merely to exercise the new schema.
+      - paragraph: All live-status positive evidence uses disposable synthetic fixtures only.
+      - separator
+      - heading "8. Date ordering invariant" [level=2]
+      - paragraph: "Add one page-schema invariant:"
+      - code: "if publishedAt exists: updatedAt >= publishedAt"
+      - paragraph: "Reject:"
+      - code: publishedAt = 2026-09-10 updatedAt = 2026-09-01
+      - paragraph: Do not auto-correct or swap dates.
+      - separator
+      - heading "9. New Core helper" [level=2]
+      - paragraph: "Add:"
+      - code: src/core/freshness.ts
+      - paragraph: "with narrow pure functions, e.g.:"
+      - code: latestSourceAccessedAt(sources) resolvePageFreshness(page, versionContext?)
+      - paragraph: "Resolved semantics remain separate:"
+      - code: publishedAt updatedAt sourceCheckedAt versionContext? liveStatus?
+      - separator
+      - heading "10. Version context" [level=2]
+      - paragraph: "Optional resolver input:"
+      - code: "{ kind: \"patch\" | \"version\", value: string }"
+      - paragraph: may be supplied by fact/tool consumers.
+      - paragraph: "It must never be derived from:"
+      - code: updatedAt publishedAt source.accessedAt liveStatus
+      - paragraph: Likewise dates must never be derived from patch strings.
+      - paragraph: This is the FR-01 separation boundary.
+      - separator
+      - heading "11. Source access label correction" [level=2]
+      - paragraph: "Where the UI currently says:"
+      - code: Last verified
+      - paragraph:
+        - text: for
+        - code: max(source.accessedAt)
+        - text: ", change it to:"
+      - code: Sources checked
+      - paragraph: or equivalent exact approved wording.
+      - paragraph:
+        - text: The underlying date remains
+        - code: accessedAt
+        - text: .
+      - paragraph:
+        - text: Do not add
+        - code: verifiedAt
+        - text: .
+      - paragraph: Do not claim verification that the data model does not contain.
+      - separator
+      - heading "12. Wiki article date completeness" [level=2]
+      - paragraph:
+        - code: WikiArticle
+        - text: "currently exposes:"
+      - code: Last updated Last verified
+      - paragraph:
+        - text: but not
+        - code: Published
+        - text: .
+      - paragraph: "After PLAN32 it should expose distinctly:"
+      - code: Published → page.publishedAt Last updated → page.updatedAt Sources checked → max sources.accessedAt
+      - paragraph: when the corresponding value exists.
+      - separator
+      - heading "13. Editorial article" [level=2]
+      - paragraph:
+        - code: EditorialArticle
+        - text: "already renders:"
+      - code: Published Last updated
+      - paragraph: Keep those sources unchanged.
+      - paragraph: "Only correct:"
+      - code: Last verified → Sources checked
+      - paragraph: and add bounded live-status rendering when authored.
+      - separator
+      - heading "14. Live-status public rendering" [level=2]
+      - paragraph: "When:"
+      - code: state = observed-live
+      - paragraph: "render something semantically equivalent to:"
+      - code: Live status Observed live 2026-09-22 Status source
+      - paragraph: "Requirements:"
+      - code: observedAt shown as <time> sourceUrl shown as link evidenceNote remains private
+      - paragraph:
+        - text: Do not render
+        - code: evidenceNote
+        - text: .
+      - paragraph: "For:"
+      - code: state = not-live
+      - paragraph: "a component may show:"
+      - code: Not live telemetry
+      - paragraph: only where a status row is explicitly desired.
+      - paragraph: Omission must remain valid and render no live-status claim.
+      - separator
+      - heading "15. Static patch wording" [level=2]
+      - paragraph:
+        - text: Change
+        - code: EntityDetail
+        - text: ":"
+      - code: Current version
+      - paragraph: "to:"
+      - code: Recorded version
+      - paragraph: "and its accessibility wording:"
+      - code: Current patch X
+      - paragraph: to truthful recorded-patch semantics.
+      - paragraph: "Keep:"
+      - code: Patch X Updated YYYY-MM-DD
+      - paragraph: as distinct values.
+      - paragraph: Do not modify the fact schema or patch value.
+      - separator
+      - heading "16. Tool wording" [level=2]
+      - paragraph:
+        - code: ToolShell
+        - text: "already says:"
+      - code: Results use the reviewed formula set for patch X. Recheck after game updates.
+      - paragraph: This is bounded historical/version context and does not claim live telemetry.
+      - paragraph: Leave it unchanged.
+      - separator
+      - heading "17. Latest updates provenance" [level=2]:
+        - text: "17."
+        - code: Latest updates
+        - text: provenance
+      - paragraph: "Homepage currently renders:"
+      - code: Latest updates
+      - paragraph:
+        - text: ordered by
+        - code: page.updatedAt
+        - text: .
+      - paragraph:
+        - text: FR-02 requires that a
+        - code: Latest
+        - text: label identify provenance.
+      - paragraph: "Keep the title if desired, but change its adjacent eyebrow to explicit semantics:"
+      - code: Ordered by recorded update date
+      - paragraph: "rather than vague:"
+      - code: What changed
+      - paragraph: "The cards already display:"
+      - code: "Updated {page.updatedAt}"
+      - paragraph: No telemetry source is introduced.
+      - separator
+      - heading "18. Popular / Trending" [level=2]
+      - paragraph: "Current Starter contains no public:"
+      - code: Popular Trending
+      - paragraph: freshness/ranking labels.
+      - paragraph: PLAN32 does not add them.
+      - paragraph: SOP/Prompt must state that future use requires explicit editorial/data provenance.
+      - separator
+      - heading "19. Exact RED files" [level=2]
+      - paragraph: "First mutations are tests only:"
+      - code: tests/freshness.test.ts NEW tests/editorial-article.test.ts tests/wiki-article.test.ts tests/player-facing-metadata.test.ts tests/homepage.test.ts
+      - paragraph: Run them before implementation.
+      - paragraph: RED must be non-zero and saved.
+      - separator
+      - heading "20. Required RED cases" [level=2]
+      - paragraph:
+        - code: freshness.test.ts
+        - text: "must prove initially missing behavior for:"
+      - code: observed-live schema not-live schema invalid HTTP status source rejection missing observedAt rejection missing evidenceNote rejection updatedAt < publishedAt rejection publishedAt / updatedAt / sourceCheckedAt remain distinct patch/version context remains distinct from dates live status is never inferred when liveStatus is absent
+      - separator
+      - heading "21. Existing-schema proof" [level=2]
+      - paragraph: "Freshness tests may use existing:"
+      - code: fact.patch fact.updatedAt tool.patch tool.updatedAt
+      - paragraph: to prove distinct version/date storage.
+      - paragraph: "Do not modify:"
+      - code: facts.ts tools.ts
+      - paragraph: unless a genuine preflight dependency is discovered.
+      - paragraph: "If modification becomes necessary:"
+      - code: STOP PREFLIGHT_SCOPE_REPLAN
+      - separator
+      - heading "22. Exact product/test scope" [level=2]
+      - paragraph: "Approved Starter scope:"
+      - code: 1. src/data/schemas/page-inventory.ts 2. src/core/freshness.ts NEW 3. src/components/EditorialArticle.astro 4. src/components/wiki/WikiArticle.astro 5. src/components/wiki/Sources.astro 6. src/components/EntityDetail.astro 7. src/pages/index.astro 8. tests/freshness.test.ts NEW 9. tests/editorial-article.test.ts 10. tests/wiki-article.test.ts 11. tests/player-facing-metadata.test.ts 12. tests/homepage.test.ts 13. docs/CONTENT_AND_DATA_GUIDE.md 14. docs/QA_CHECKLIST.md
+      - paragraph: "Triad synchronization:"
+      - code: 15. GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md 16. GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md 17. GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md 18. GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph: "Exact limit:"
+      - code: 18 changed product/test/governance files
+      - paragraph: A 19th requires STOP + replan before mutation.
+      - separator
+      - heading "23. Protected scope" [level=2]
+      - paragraph: "Do not modify:"
+      - code: canonical page-inventory.json facts schema tools schema fact files tool definitions SEO structured-data implementation search/Pagefind media/share ads package / lock / CI browser matrix runner closure WebKit policy/control Contract / Registry
+      - separator
+      - heading "24. GREEN requirements" [level=2]
+      - paragraph: After implementation, targeted freshness tests must PASS.
+      - paragraph: "Then:"
+      - code: npm run check npm run verify:unadopted-final npm run verify:adopted-final git diff --check
+      - paragraph: "Iteration31 baseline:"
+      - code: 843 root tests
+      - paragraph: New count may increase.
+      - separator
+      - heading "25. Player-facing negative assertions" [level=2]
+      - paragraph: "Tests must explicitly reject the old misleading labels on affected Core surfaces:"
+      - code: Last verified Current version Current patch
+      - paragraph: "when their underlying data is only:"
+      - code: source.accessedAt static fact.patch
+      - paragraph:
+        - text: Do not blanket-ban the English word
+        - code: current
+        - text: everywhere.
+      - paragraph: Only protect these freshness-semantic surfaces.
+      - separator
+      - heading "26. Homepage provenance test" [level=2]
+      - paragraph:
+        - code: homepage.test.ts
+        - text: "must retain current deterministic sorting:"
+      - code: updatedAt desc → priority tie-break
+      - paragraph: "and additionally prove the source wiring for the homepage section declares:"
+      - code: Latest updates + Ordered by recorded update date
+      - paragraph: No telemetry or analytics value may influence ordering.
+      - separator
+      - heading "27. Targeted browser fixture" [level=2]
+      - paragraph: Use one disposable adopted fixture.
+      - paragraph: "For synthetic:"
+      - code: guide.getting-started
+      - paragraph: "set clearly distinct values:"
+      - code: "publishedAt = 2026-08-10 updatedAt = 2026-09-20 source A accessedAt = 2026-09-18 source B accessedAt = 2026-09-21 liveStatus: state = observed-live observedAt = 2026-09-22 sourceUrl = https://example.com/qa-live-status evidenceNote = explicit synthetic QA evidence"
+      - paragraph: All values are technical QA only.
+      - paragraph: No real-game claim.
+      - separator
+      - heading "28. Browser assertions" [level=2]
+      - paragraph: "Across:"
+      - code: Chromium Firefox WebKit 1280×900 390×844
+      - paragraph: "verify the guide route renders:"
+      - code: Published 2026-08-10 Last updated 2026-09-20 Sources checked 2026-09-21 Live status Observed live 2026-09-22 Status source href exact
+      - paragraph: "Also verify:"
+      - code: no "Last verified" no evidenceNote leakage published != updated updated != source checked source checked != live observed
+      - paragraph: This is 6-row targeted evidence.
+      - separator
+      - heading "29. Structured-data regression" [level=2]
+      - paragraph: "For the same synthetic page, verify generated structured data still maps:"
+      - code: datePublished → publishedAt dateModified → updatedAt
+      - paragraph: Live observation and source-access dates must not overwrite either field.
+      - paragraph: No SEO code modification is authorized.
+      - paragraph:
+        - text: If that requires changing
+        - code: seo.ts
+        - text: ":"
+      - code: STOP REPLAN
+      - separator
+      - heading "30. Live-status evidence boundary" [level=2]
+      - paragraph: "A successful synthetic browser test proves only:"
+      - blockquote:
+        - paragraph: Core renders an explicitly authored, source-linked live-status observation truthfully.
+      - paragraph:
+        - text: It does
+        - strong: not
+        - text: "prove:"
+      - code: any real game is currently live any patch is current the project has real-time telemetry FR-02 real-project PASS
+      - separator
+      - heading "31. Targeted qualification" [level=2]
+      - paragraph: "Use:"
+      - code: /tmp/c2c32a.*
+      - paragraph: "Exactly:"
+      - code: 1 targeted qualification attempt 0 retry
+      - paragraph: "Any browser failure:"
+      - code: STOP fresh47 NOT_STARTED
+      - paragraph: No assertion relaxation.
+      - separator
+      - heading "32. Fresh unchanged47" [level=2]
+      - paragraph: "Only after targeted PASS:"
+      - code: npm run check:browser
+      - paragraph: "using unchanged runner and:"
+      - code: /tmp/c2c32b.*
+      - paragraph: "Require:"
+      - code: 47 planned 47 executed 0 NOT_RUN 1 attempt 0 retry 0 non-WebKit regressions
+      - separator
+      - heading "33. Residual discipline" [level=2]
+      - paragraph: "Current WebKit residuals must remain:"
+      - code: subset of iteration19 frozen40
+      - paragraph: "Compare with iteration31:"
+      - code: persisted disappeared reappearedFromFrozen40 newOutsideFrozen40
+      - paragraph: "Require:"
+      - code: newOutsideFrozen40 = 0
+      - paragraph: "For every current residual, generate fresh:"
+      - code: Chromium counterpart PASS Firefox counterpart PASS
+      - separator
+      - heading "34. Identity / closure / cleanup" [level=2]
+      - paragraph: "Rebind the complete post-freshness identity:"
+      - code: Starter / SOP / Prompt Contract fixture source / dist Playwright / 3 engines / host matrix / runner / closure policy / control / native probe
+      - paragraph: Run unchanged closure.
+      - paragraph: "With known residuals and Safari proof still absent, expected current state remains:"
+      - code: raw FAIL preserved closure BLOCKED sole Safari evidence error
+      - paragraph: Both TMP roots require normal stop/PID/fixture/cache cleanup with zero unknowns or fallback signals.
+      - separator
+      - heading "35. SOP responsibility" [level=2]
+      - paragraph: "SOP must explicitly separate:"
+      - code: publishedAt = first publication date updatedAt = editorial/content update date patch/version = game/content version context source accessedAt = when source was checked/accessed liveStatus.observedAt = dated observation of live state
+      - paragraph: None may substitute for another.
+      - separator
+      - heading "36. FR-02 dynamic-label rule" [level=2]
+      - paragraph: "SOP/Prompt must require:"
+      - code: Popular Trending Latest Live
+      - paragraph: to state their editorial/data basis when shown.
+      - paragraph: "Examples:"
+      - code: Latest → ordered by recorded page update date Live → observed date + source
+      - paragraph: No static label may imply telemetry it does not possess.
+      - separator
+      - heading "37. Final candidate boundary" [level=2]
+      - paragraph: "If all gates pass, Codex may report only:"
+      - code: "WS03D-FRESHNESS: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: "It may not self-claim:"
+      - code: FR-01 PASS FR-02 PASS WS03 formal Gate ACCEPT WS06A ACCEPT capability promotion release readiness
+      - paragraph: Independent REVIEW32 is still required.
+      - separator
+      - heading "38. State after possible REVIEW32 ACCEPT" [level=2]
+      - paragraph: "Even if independent continuation ACCEPT is later granted:"
+      - code: WS03A/B/C/D-search/D-freshness = candidate implementations accepted for continuation
+      - paragraph: "but:"
+      - code: WS06A FULL = BLOCKED Safari proof = 0 formal WS03 Gate = NOT_ACCEPTED 04A formal integration = BLOCKED capability promotion = NONE release hold = ACTIVE
+      - paragraph: PLAN32 does not authorize WS04A/WS05 or release work.
+      - heading "Core sentence" [level=2]
+      - code: A date may say when something was published, when the page was edited, when a source was accessed, when a patch applies, or when a live state was observed. Those are five different facts. WS03D-freshness exists to stop the Starter from silently turning one into another.
+    - paragraph:
+      - text: 所以 iteration31 可以关闭为
+      - strong: WS03D-search continuation ACCEPT
+      - text: 。下一步严格只有 PLAN32 freshness；即使 PLAN32 最终也通过，仍然不会绕过当前 Safari / WS06A FULL hold 去关闭正式 WS03。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

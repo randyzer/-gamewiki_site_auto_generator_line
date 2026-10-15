@@ -1,0 +1,246 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 19,
+  "status": "FAIL",
+  "protectedFilesVerified": 5775,
+  "acceptedScopeFingerprintsVerified": 6,
+  "localLinksChecked": 45,
+  "unexpectedFiles": [],
+  "errors": [
+    "Broken link template/codex/executions/v2.7-ws06a/iteration19/result.md -> closure-integrity-check.json"
+  ],
+  "actualReview": "ACCEPT_DESIGN_ONLY",
+  "activeRoadmapDelta": 0,
+  "productDelta": 0,
+  "developmentReadiness": "NOT_EVALUATED",
+  "safariProof": 0,
+  "fullAcceptance": "BLOCKED",
+  "productBuildsTestsFresh47": "NOT_RUN",
+  "links": [
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "target": "../../codex/prompts/v2.7-ws06a/iteration19-development-readiness-alternative-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "target": "ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "target": "WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "target": "WS03_SLICE_CONTINUATION_RULES_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "target": "SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../codex/prompts/v2.7-ws06a/iteration19-development-readiness-alternative-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration17/browser-evidence/core-browser-evidence.json",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/verify-ws06a-browser-closure.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/closure-recheck.json",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/residual-set-v1.json",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/dual-engine-counterpart-audit.json",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS03_SLICE_CONTINUATION_RULES_V1.md",
+      "target": "../../codex/prompts/v2.7-ws06a/iteration19-development-readiness-alternative-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS03_SLICE_CONTINUATION_RULES_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/WS03_SLICE_CONTINUATION_RULES_V1.md",
+      "target": "SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "target": "../../codex/prompts/v2.7-ws06a/iteration19-development-readiness-alternative-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CORE_BROWSER_EVIDENCE.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5/docs/QA_CHECKLIST.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../codex/prompts/v2.7-ws06a/iteration19-development-readiness-alternative-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../codex/executions/v2.7-ws06a/iteration19/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "../../../prompts/v2.7-ws06a/iteration19-development-readiness-alternative-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "../../../../design/ws06a/WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "../../../../design/ws06a/WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "../../../../design/ws06a/WS03_SLICE_CONTINUATION_RULES_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "../../../../design/ws06a/SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "../../../../design/ws06a/ROADMAP_AMENDMENT_IMPACT_MAP_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "preflight.json",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "closure-recheck.json",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "closure-recheck.log",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "residual-set-v1.json",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "dual-engine-counterpart-audit.json",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "design-checks.json",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "design-checks.log",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "screenshots/chatgpt-review.png",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration19/result.md",
+      "target": "closure-integrity-check.json",
+      "exists": false
+    }
+  ]
+}

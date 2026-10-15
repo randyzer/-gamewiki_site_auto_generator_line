@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});const p=c.pages()[0]||await c.newPage();
+await p.goto('https://open.feishu.cn/app/cli_aa476f5e72789ccc/event',{waitUntil:'domcontentloaded'});await p.getByText('事件配置',{exact:true}).first().waitFor();
+await p.getByText('订阅方式',{exact:true}).locator('xpath=..').locator('button').click();
+await p.getByText('验证',{exact:true}).click();await p.waitForTimeout(1200);
+console.log('VERIFY',(await p.locator('body').innerText()).slice(-1200));
+console.log('SAVE-ENABLED',await p.getByText('保存',{exact:true}).last().isEnabled());
+await p.getByText('保存',{exact:true}).last().click();await p.waitForTimeout(1200);
+console.log('AFTER',(await p.locator('body').innerText()).slice(-1400));
+await c.close();

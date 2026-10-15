@@ -1,0 +1,1103 @@
+{
+  "schemaVersion": "1",
+  "identity": {
+    "starter": {
+      "branch": "v2.7/evolution",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "workingTreeSha256": "423bbb054ede60cf10607e4f5bc83ab6521cc433bbeedfff6e4656079bf5d06d"
+    },
+    "canonicalContract": {
+      "reference": {
+        "version": "2.7",
+        "owningArtifact": "GAME_SOP",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      },
+      "verification": {
+        "mode": "FILE_SHA256",
+        "filePath": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "observedSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      }
+    },
+    "fixture": {
+      "identity": "Field Notes synthetic adoption",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac"
+    },
+    "build": {
+      "distSha256": ""
+    },
+    "playwright": {
+      "packageVersion": "1.63.0"
+    },
+    "host": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.22.0"
+    },
+    "engines": {
+      "chromium": {
+        "browserName": "chromium",
+        "version": "",
+        "revision": ""
+      },
+      "firefox": {
+        "browserName": "firefox",
+        "version": "",
+        "revision": ""
+      },
+      "webkit": {
+        "browserName": "webkit",
+        "version": "",
+        "revision": ""
+      }
+    }
+  },
+  "overall": "FAIL",
+  "infrastructureErrors": [
+    "Expected success; received exit 1."
+  ],
+  "cleanup": {
+    "previewStopped": true,
+    "fixtureRemoved": true
+  },
+  "humanReview": {
+    "visualFocus": "DEFERRED",
+    "contrast": "DEFERRED"
+  },
+  "rows": [
+    {
+      "caseId": "baseline:chromium:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "no-js:chromium:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "no-js:firefox:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:899x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 899,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:900x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 900,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:901x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 901,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "reduced-motion:chromium:shell-nav:390x844",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "reduced-motion:chromium:content-detail:390x844",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "reduced-motion:chromium:shell-nav:1280x800",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "reduced-motion:chromium:content-detail:1280x800",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    },
+    {
+      "caseId": "live-resize:chromium:shell-nav:899x800",
+      "category": "live-resize",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 899,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "",
+      "browserRevision": "",
+      "sourceSha256": "",
+      "buildSha256": "",
+      "httpStatus": 0,
+      "assertions": [],
+      "caseStatus": "NOT_RUN",
+      "durationMs": 0,
+      "failure": "not executed"
+    }
+  ]
+}

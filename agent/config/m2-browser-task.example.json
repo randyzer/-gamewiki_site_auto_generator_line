@@ -1,0 +1,9 @@
+{
+  "runId": "m2-browser-readiness-probe",
+  "stage": "game-homepage-icon-research",
+  "gameIdentity": "Bodycam",
+  "gameMetadata": {
+    "steamAppId": "2406770",
+    "steam": "https://store.steampowered.com/app/2406770/Bodycam/"
+  }
+}

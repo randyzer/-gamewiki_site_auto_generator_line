@@ -1,0 +1,10 @@
+{
+  "exitCode": 0,
+  "command": "tsx iteration26/geometry-probe.ts",
+  "diagnosticSessions": 1,
+  "qualificationAttempts": 0,
+  "retryCount": 0,
+  "childPid": 4377,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c26.mqDWvx"
+}

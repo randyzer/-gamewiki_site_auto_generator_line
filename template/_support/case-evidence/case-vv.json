@@ -1,0 +1,51 @@
+{
+  "caseId": "vvultimatum",
+  "observedAt": "2026-10-01",
+  "timeZone": "Asia/Taipei",
+  "method": "web-access Chrome CDP Proxy; read-only rendered DOM and screenshot",
+  "site": "https://vvultimatum.net/",
+  "access": {"status": "success", "loginWall": false, "captcha": false, "fallbackUsed": false},
+  "pages": [
+    {
+      "url": "https://vvultimatum.net/",
+      "role": "home",
+      "observations": ["六个顶层主题入口", "新手、种族、兑换码三个任务 CTA", "四阶段新手路径", "带图片的热点卡片", "折叠 FAQ", "主题切换按钮", "右侧分类导航及兑换码入口", "游戏和社区外链"],
+      "labels": ["Popular", "Updated", "New System", "New Database"],
+      "dates": {"visibleShortDates": ["Sep 11", "Sep 10", "Aug 17"], "hasDatetime": false, "yearVerified": false},
+      "media": {"trailerThumbnail": true, "gameplayImage": true, "cardImages": true, "videoPlaybackVerified": false, "rightsVerified": false},
+      "seo": {"canonical": "https://vvultimatum.net/", "description": true, "openGraph": true, "twitterCard": true, "robots": "index, follow", "jsonLdTypes": ["WebSite", "VideoGame", "FAQPage"]}
+    },
+    {
+      "url": "https://vvultimatum.net/races",
+      "role": "category",
+      "discoveredFrom": "https://vvultimatum.net/",
+      "observations": ["面包屑", "概览介绍", "头图和官方媒体标记", "阵营转换提示", "六条指南", "部分指南有热门/新内容标签"],
+      "guideCount": 6,
+      "filterObserved": false,
+      "seo": {"canonical": "https://vvultimatum.net/races", "jsonLdTypes": []}
+    },
+    {
+      "url": "https://vvultimatum.net/races/best-race",
+      "role": "article",
+      "discoveredFrom": "https://vvultimatum.net/races",
+      "observations": ["标题、摘要、更新时间", "三种偏好决策卡", "三种种族对比表", "下一步、求助、相关阅读、同分类导航", "侧栏分类计数和当前页高亮"],
+      "updatedDateText": "2026-06-06",
+      "timeElementObserved": false,
+      "table": {"columns": 5, "bodyRows": 3},
+      "inArticleImagesObserved": false,
+      "anchorTocObserved": false,
+      "readingTimeObserved": false,
+      "seo": {"canonical": "https://vvultimatum.net/races/best-race", "description": true, "jsonLdTypes": []},
+      "screenshot": "/tmp/hot-words-c2c-a765-case-vv-article.png",
+      "ads": [
+        {"src": "https://vvultimatum.net/adsterra_728.html", "count": 2, "width": 728, "height": 90, "title": "Sponsored banner", "firstViewportFillObserved": false},
+        {"src": "https://vvultimatum.net/adsterra_native_banner.html", "count": 1, "observedWidth": 264, "observedHeight": 260, "title": "Sponsored content"},
+        {"src": "https://vvultimatum.net/adsterra_320.html", "count": 1, "declaredWidth": 320, "declaredHeight": 50, "observedWidth": 0, "observedHeight": 0, "titleObserved": false, "fixedContainer": true, "closeButtonObserved": true}
+      ]
+    }
+  ],
+  "contentConsistencyObservation": {"pages": ["https://vvultimatum.net/", "https://vvultimatum.net/races"], "finding": "首页 FAQ 强调重置才能换种族，目录另列稀有阵营转换路径；未验证实际游戏机制"},
+  "reusablePatterns": ["玩家任务路径首页", "编辑状态卡片", "概览目录连接细分指南", "决策卡和对比表", "按下一步/求助/相关阅读分流", "可禁用、可关闭的广告槽", "共享事实记录避免内容漂移"],
+  "improvementOpportunities": ["文章锚点目录", "日期语义", "与正文一致的文章结构化数据", "广告空填充处理", "Popular 来源说明", "底部广告 iframe 可访问名称"],
+  "notVerified": ["traffic", "revenue", "rankings", "conversion", "game-fact-accuracy", "code-validity", "mobile", "keyboard", "performance", "ad-network-authorization", "consent", "legal-pages", "media-rights", "search-indexing"]
+}

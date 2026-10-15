@@ -1,0 +1,322 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 15,
+  "workstream": "Live-Resize Core Repair PLAN ONLY",
+  "planStatus": "PLAN_ACCEPTED_NOT_IMPLEMENTED",
+  "sourceImplementationAuthorized": false,
+  "currentProductDelta": 0,
+  "authorityDelta": 0,
+  "dependencyDelta": 0,
+  "sourceManifestBefore": "796b1a6e39ca2df4141e4e65ea4cf2fc70c9d510d3018fef38c3fd60612cfed8",
+  "sourceManifestAfter": "796b1a6e39ca2df4141e4e65ea4cf2fc70c9d510d3018fef38c3fd60612cfed8",
+  "qualificationEvidenceSha256": "c24c2371ff8a52453582468165f0f2fb93918ea69bf59fd35e4f511b0bb00cf9",
+  "qualification": {
+    "executed": 47,
+    "pass": 36,
+    "fail": 11,
+    "notRun": 0,
+    "skip": 0,
+    "rerun": false
+  },
+  "futureProductScope": [
+    "src/components/navigation/MobileNav.astro",
+    "tests/navigation-behavior.test.ts"
+  ],
+  "futureProductPreimageHashes": {
+    "src/components/navigation/MobileNav.astro": {
+      "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+      "mode": 420,
+      "symlink": false
+    },
+    "tests/navigation-behavior.test.ts": {
+      "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "referencePatchOnlyInMarkdown": true,
+  "referencePatchApplied": false,
+  "referencePatchExecuted": false,
+  "newRepairScriptCreated": false,
+  "integrityExitCode": 0,
+  "integrityErrors": [],
+  "canonicalContract": {
+    "systemVersion": "V2.7",
+    "productContractVersion": "V2.7",
+    "capabilityRegistryVersion": "V2.7",
+    "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+    "owningArtifact": "GAME_SOP",
+    "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+    "predecessorContractVersion": "v0.2",
+    "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+  },
+  "frozenKeyHashes": {
+    "scripts/core-browser-matrix.ts": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+    "scripts/run-core-browser-evidence.ts": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+    "src/components/navigation/MobileNav.astro": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+    "src/styles/global.css": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+    "package.json": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+    "package-lock.json": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616"
+  },
+  "nineteenFileHashes": {
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE": {
+      "package.json": {
+        "before": {
+          "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "package-lock.json": {
+        "before": {
+          "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      ".github/workflows/ci.yml": {
+        "before": {
+          "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      ".gitignore": {
+        "before": {
+          "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "README.md": {
+        "before": {
+          "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/QA_CHECKLIST.md": {
+        "before": {
+          "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/CORE_BROWSER_EVIDENCE.md": {
+        "before": {
+          "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "scripts/core-browser-matrix.ts": {
+        "before": {
+          "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "scripts/core-browser-evidence.ts": {
+        "before": {
+          "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "scripts/run-core-browser-evidence.ts": {
+        "before": {
+          "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "tests/core-browser-evidence.test.ts": {
+        "before": {
+          "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "src/styles/global.css": {
+        "before": {
+          "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "src/components/navigation/MobileNav.astro": {
+        "before": {
+          "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "tests/navigation-behavior.test.ts": {
+        "before": {
+          "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "tests/navigation.test.ts": {
+        "before": {
+          "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE": {
+      "docs/NEW_GAME_SITE_SOP_v2.7.md": {
+        "before": {
+          "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/QA_CHECKLIST.md": {
+        "before": {
+          "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/EXECUTION_PROMPT.md": {
+        "before": {
+          "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    },
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE": {
+      "CodexMasterPrompt_v2.7Candidate.md": {
+        "before": {
+          "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    }
+  },
+  "filesSha256": {
+    "LIVE_RESIZE_CORE_REPAIR_SPEC_V1.md": "daa4d317ba020bd5dd4558da44664eef9e42f59ccd60817af7b1bd15241b68a9",
+    "integrity-check.json": "831cf00ebb80221221a045f9cd631a628a51262454ae6ef722edf69a0d4093b9",
+    "preflight.json": "1f15fddd98294e3d8e1c6cb31529f9f4ff47fe5d49339f3a7fc2070e6223594b",
+    "result.md": "b90ebafdd2df1632f494f66fc58d9686c931b95912dbe020254c79a27c61801a"
+  },
+  "planSha256": "45c46389b933b5b35d83509cff246d265e2d1be3b788fb50616168114ccbcec3",
+  "capabilityPromotion": "NONE",
+  "gitActions": {
+    "commit": false,
+    "push": false,
+    "tag": false,
+    "merge": false
+  },
+  "selfHashOmittedToAvoidRecursiveHash": true,
+  "independentReview": {
+    "verdict": "ACCEPT",
+    "sourceImplementationAuthorized": false,
+    "url": "https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c",
+    "domNode": "fallback-turn-10:2:assistant",
+    "textSha256": "c657e7cc3b6ca35202c68c1aae9de47c72c9b2c5269239d14fc70bb4330753df",
+    "savedIn": "result.md",
+    "nextStep": "iteration16 two-file implementation requires separate human authorization",
+    "characters": 7671
+  }
+}

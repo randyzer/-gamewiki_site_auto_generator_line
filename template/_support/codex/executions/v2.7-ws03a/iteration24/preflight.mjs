@@ -1,0 +1,10 @@
+import {files,hash,base,read} from '../../v2.7-ws06a/iteration22/finalize-readiness-audit.mjs';
+import {join} from 'node:path';import {existsSync,readFileSync,writeFileSync} from 'node:fs';
+const out=join(base,'template/codex/executions/v2.7-ws03a/iteration24');
+const old=join(base,'template/codex/executions/v2.7-ws03a/iteration23');
+const scope=read(join(old,'preflight.json')).scope;
+const exact=scope.map(path=>({path,sha256:hash(join(base,path)),postimageSha256:hash(join(old,'postimages',path)),exact:readFileSync(join(base,path)).equals(readFileSync(join(old,'postimages',path)))}));
+if(exact.length!==13||exact.some(x=>!x.exact))throw Error('13 postimages not exact');
+const protectedFiles={};for(const n of ['template','Repo_hotgameweb','gameweb'])if(existsSync(join(base,n)))for(const {path,...v} of files(join(base,n),n==='template'?['codex/executions/v2.7-ws03a/iteration24','codex/prompts/v2.7-ws03a/iteration24-ws03a-browser-harness-continuation-plan.md']:[]))protectedFiles[n+'/'+path]=v;
+const result={taskId:'c2c_a765',iteration:24,capturedAt:new Date().toISOString(),allowed:['template/codex/executions/v2.7-ws03a/iteration24/**','template/codex/prompts/v2.7-ws03a/iteration24-ws03a-browser-harness-continuation-plan.md'],exact13:exact,protected:protectedFiles,protectedCount:Object.keys(protectedFiles).length,contractSha256:read(join(old,'preflight.json')).contractSha256,verificationFileHashes:read(join(old,'preflight.json')).verificationFileHashes,productDeltaAllowed:0,governanceDeltaAllowed:0};
+writeFileSync(join(out,'preflight.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({protected:result.protectedCount,exact13:13,status:'PASS'}));

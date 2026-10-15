@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["PASSED", "PARTIAL", "BLOCKED", "WAITING_FOR_USER", "FAILED"] },
+    "summary": { "type": "string" },
+    "evidence": { "type": "array", "items": { "type": "string" } },
+    "missing_inputs": { "type": "array", "items": { "type": "string" } },
+    "artifacts": { "type": "array", "items": {
+      "type": "object", "properties": {"kind": {"type": "string"}, "path": {"type": "string"}},
+      "required": ["kind", "path"], "additionalProperties": false
+    } }
+  },
+  "required": ["status", "summary", "evidence", "missing_inputs", "artifacts"],
+  "additionalProperties": false
+}

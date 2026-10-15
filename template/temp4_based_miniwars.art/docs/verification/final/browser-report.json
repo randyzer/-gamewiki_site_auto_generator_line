@@ -1,0 +1,1102 @@
+[
+  {
+    "path": "/",
+    "width": 1440,
+    "height": 5527,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 734
+      },
+      {
+        "tag": "SECTION",
+        "y": 824.5,
+        "height": 473
+      },
+      {
+        "tag": "SECTION",
+        "y": 1297.5,
+        "height": 420
+      },
+      {
+        "tag": "SECTION",
+        "y": 1717.5,
+        "height": 571
+      },
+      {
+        "tag": "SECTION",
+        "y": 2288.5,
+        "height": 460
+      },
+      {
+        "tag": "SECTION",
+        "y": 2748.5,
+        "height": 448
+      },
+      {
+        "tag": "SECTION",
+        "y": 3196.5,
+        "height": 466.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3662.75,
+        "height": 436
+      },
+      {
+        "tag": "SECTION",
+        "y": 4098.75,
+        "height": 628
+      },
+      {
+        "tag": "SECTION",
+        "y": 4726.75,
+        "height": 394
+      }
+    ]
+  },
+  {
+    "path": "/guides",
+    "width": 1440,
+    "height": 2765,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 353
+      },
+      {
+        "tag": "SECTION",
+        "y": 443.5,
+        "height": 843
+      },
+      {
+        "tag": "SECTION",
+        "y": 1286.5,
+        "height": 1072
+      }
+    ]
+  },
+  {
+    "path": "/guides/beginner-opening-guide",
+    "width": 1440,
+    "height": 4393,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 476
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 566.5,
+        "height": 2999.5
+      },
+      {
+        "tag": "SECTION",
+        "y": 3566,
+        "height": 421
+      }
+    ]
+  },
+  {
+    "path": "/de",
+    "width": 1440,
+    "height": 5699,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 762
+      },
+      {
+        "tag": "SECTION",
+        "y": 852.5,
+        "height": 473
+      },
+      {
+        "tag": "SECTION",
+        "y": 1325.5,
+        "height": 452
+      },
+      {
+        "tag": "SECTION",
+        "y": 1777.5,
+        "height": 607
+      },
+      {
+        "tag": "SECTION",
+        "y": 2384.5,
+        "height": 460
+      },
+      {
+        "tag": "SECTION",
+        "y": 2844.5,
+        "height": 476
+      },
+      {
+        "tag": "SECTION",
+        "y": 3320.5,
+        "height": 466.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3786.75,
+        "height": 436
+      },
+      {
+        "tag": "SECTION",
+        "y": 4222.75,
+        "height": 648
+      },
+      {
+        "tag": "SECTION",
+        "y": 4870.75,
+        "height": 394
+      }
+    ]
+  },
+  {
+    "path": "/de/guides",
+    "width": 1440,
+    "height": 2733,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 353
+      },
+      {
+        "tag": "SECTION",
+        "y": 443.5,
+        "height": 811
+      },
+      {
+        "tag": "SECTION",
+        "y": 1254.5,
+        "height": 1044
+      }
+    ]
+  },
+  {
+    "path": "/de/guides/beginner-opening-guide",
+    "width": 1440,
+    "height": 4714,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 476
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 566.5,
+        "height": 3292.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3858.75,
+        "height": 421
+      }
+    ]
+  },
+  {
+    "path": "/pt-BR",
+    "width": 1440,
+    "height": 5674,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 762
+      },
+      {
+        "tag": "SECTION",
+        "y": 852.5,
+        "height": 501
+      },
+      {
+        "tag": "SECTION",
+        "y": 1353.5,
+        "height": 452
+      },
+      {
+        "tag": "SECTION",
+        "y": 1805.5,
+        "height": 571
+      },
+      {
+        "tag": "SECTION",
+        "y": 2376.5,
+        "height": 460
+      },
+      {
+        "tag": "SECTION",
+        "y": 2836.5,
+        "height": 476
+      },
+      {
+        "tag": "SECTION",
+        "y": 3312.5,
+        "height": 466.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3778.75,
+        "height": 436
+      },
+      {
+        "tag": "SECTION",
+        "y": 4214.75,
+        "height": 648
+      },
+      {
+        "tag": "SECTION",
+        "y": 4862.75,
+        "height": 394
+      }
+    ]
+  },
+  {
+    "path": "/pt-BR/guides",
+    "width": 1440,
+    "height": 2688,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 353
+      },
+      {
+        "tag": "SECTION",
+        "y": 443.5,
+        "height": 811
+      },
+      {
+        "tag": "SECTION",
+        "y": 1254.5,
+        "height": 1016
+      }
+    ]
+  },
+  {
+    "path": "/pt-BR/guides/beginner-opening-guide",
+    "width": 1440,
+    "height": 4685,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 536
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 626.5,
+        "height": 3219.5
+      },
+      {
+        "tag": "SECTION",
+        "y": 3846,
+        "height": 421
+      }
+    ]
+  },
+  {
+    "path": "/es",
+    "width": 1440,
+    "height": 5670,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 778
+      },
+      {
+        "tag": "SECTION",
+        "y": 868.5,
+        "height": 501
+      },
+      {
+        "tag": "SECTION",
+        "y": 1369.5,
+        "height": 452
+      },
+      {
+        "tag": "SECTION",
+        "y": 1821.5,
+        "height": 571
+      },
+      {
+        "tag": "SECTION",
+        "y": 2392.5,
+        "height": 460
+      },
+      {
+        "tag": "SECTION",
+        "y": 2852.5,
+        "height": 476
+      },
+      {
+        "tag": "SECTION",
+        "y": 3328.5,
+        "height": 466.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3794.75,
+        "height": 436
+      },
+      {
+        "tag": "SECTION",
+        "y": 4230.75,
+        "height": 628
+      },
+      {
+        "tag": "SECTION",
+        "y": 4858.75,
+        "height": 394
+      }
+    ]
+  },
+  {
+    "path": "/es/guides",
+    "width": 1440,
+    "height": 2672,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 353
+      },
+      {
+        "tag": "SECTION",
+        "y": 443.5,
+        "height": 795
+      },
+      {
+        "tag": "SECTION",
+        "y": 1238.5,
+        "height": 1016
+      }
+    ]
+  },
+  {
+    "path": "/es/guides/beginner-opening-guide",
+    "width": 1440,
+    "height": 4757,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 536
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 626.5,
+        "height": 3292.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3918.75,
+        "height": 421
+      }
+    ]
+  },
+  {
+    "path": "/zh-CN",
+    "width": 1440,
+    "height": 5251,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 706
+      },
+      {
+        "tag": "SECTION",
+        "y": 796.5,
+        "height": 417
+      },
+      {
+        "tag": "SECTION",
+        "y": 1213.5,
+        "height": 420
+      },
+      {
+        "tag": "SECTION",
+        "y": 1633.5,
+        "height": 493
+      },
+      {
+        "tag": "SECTION",
+        "y": 2126.5,
+        "height": 460
+      },
+      {
+        "tag": "SECTION",
+        "y": 2586.5,
+        "height": 448
+      },
+      {
+        "tag": "SECTION",
+        "y": 3034.5,
+        "height": 444.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 3478.75,
+        "height": 408
+      },
+      {
+        "tag": "SECTION",
+        "y": 3886.75,
+        "height": 588
+      },
+      {
+        "tag": "SECTION",
+        "y": 4474.75,
+        "height": 370
+      }
+    ]
+  },
+  {
+    "path": "/zh-CN/guides",
+    "width": 1440,
+    "height": 2477,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 325
+      },
+      {
+        "tag": "SECTION",
+        "y": 415.5,
+        "height": 667
+      },
+      {
+        "tag": "SECTION",
+        "y": 1082.5,
+        "height": 988
+      }
+    ]
+  },
+  {
+    "path": "/zh-CN/guides/beginner-opening-guide",
+    "width": 1440,
+    "height": 3752,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 388
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 478.5,
+        "height": 2474.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 2953.25,
+        "height": 393
+      }
+    ]
+  },
+  {
+    "path": "/",
+    "width": 390,
+    "height": 11169,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 1266
+      },
+      {
+        "tag": "SECTION",
+        "y": 1356.5,
+        "height": 1041
+      },
+      {
+        "tag": "SECTION",
+        "y": 2397.5,
+        "height": 1076
+      },
+      {
+        "tag": "SECTION",
+        "y": 3473.5,
+        "height": 1291
+      },
+      {
+        "tag": "SECTION",
+        "y": 4764.5,
+        "height": 1016
+      },
+      {
+        "tag": "SECTION",
+        "y": 5780.5,
+        "height": 973
+      },
+      {
+        "tag": "SECTION",
+        "y": 6753.5,
+        "height": 1010.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 7764.25,
+        "height": 912
+      },
+      {
+        "tag": "SECTION",
+        "y": 8676.25,
+        "height": 1180
+      },
+      {
+        "tag": "SECTION",
+        "y": 9856.25,
+        "height": 492
+      }
+    ]
+  },
+  {
+    "path": "/guides",
+    "width": 390,
+    "height": 5669,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 305
+      },
+      {
+        "tag": "SECTION",
+        "y": 395.5,
+        "height": 1948
+      },
+      {
+        "tag": "SECTION",
+        "y": 2343.5,
+        "height": 2504
+      }
+    ]
+  },
+  {
+    "path": "/guides/beginner-opening-guide",
+    "width": 390,
+    "height": 7667,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 491
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 581.5,
+        "height": 5307
+      },
+      {
+        "tag": "SECTION",
+        "y": 5888.5,
+        "height": 957
+      }
+    ]
+  },
+  {
+    "path": "/de",
+    "width": 390,
+    "height": 11627,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 1292
+      },
+      {
+        "tag": "SECTION",
+        "y": 1382.5,
+        "height": 1145
+      },
+      {
+        "tag": "SECTION",
+        "y": 2527.5,
+        "height": 1076
+      },
+      {
+        "tag": "SECTION",
+        "y": 3603.5,
+        "height": 1355
+      },
+      {
+        "tag": "SECTION",
+        "y": 4958.5,
+        "height": 1016
+      },
+      {
+        "tag": "SECTION",
+        "y": 5974.5,
+        "height": 1060
+      },
+      {
+        "tag": "SECTION",
+        "y": 7034.5,
+        "height": 1032.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 8067.25,
+        "height": 912
+      },
+      {
+        "tag": "SECTION",
+        "y": 8979.25,
+        "height": 1292
+      },
+      {
+        "tag": "SECTION",
+        "y": 10271.25,
+        "height": 480
+      }
+    ]
+  },
+  {
+    "path": "/de/guides",
+    "width": 390,
+    "height": 5912,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 371
+      },
+      {
+        "tag": "SECTION",
+        "y": 461.5,
+        "height": 2010.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 2472.25,
+        "height": 2564
+      }
+    ]
+  },
+  {
+    "path": "/de/guides/beginner-opening-guide",
+    "width": 390,
+    "height": 8471,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 544
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 634.5,
+        "height": 6003.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 6638.25,
+        "height": 957
+      }
+    ]
+  },
+  {
+    "path": "/pt-BR",
+    "width": 390,
+    "height": 11533,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 1254
+      },
+      {
+        "tag": "SECTION",
+        "y": 1344.5,
+        "height": 1141
+      },
+      {
+        "tag": "SECTION",
+        "y": 2485.5,
+        "height": 1076
+      },
+      {
+        "tag": "SECTION",
+        "y": 3561.5,
+        "height": 1311
+      },
+      {
+        "tag": "SECTION",
+        "y": 4872.5,
+        "height": 1048
+      },
+      {
+        "tag": "SECTION",
+        "y": 5920.5,
+        "height": 1060
+      },
+      {
+        "tag": "SECTION",
+        "y": 6980.5,
+        "height": 1032.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 8013.25,
+        "height": 940
+      },
+      {
+        "tag": "SECTION",
+        "y": 8953.25,
+        "height": 1280
+      },
+      {
+        "tag": "SECTION",
+        "y": 10233.25,
+        "height": 456
+      }
+    ]
+  },
+  {
+    "path": "/pt-BR/guides",
+    "width": 390,
+    "height": 5871,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 371
+      },
+      {
+        "tag": "SECTION",
+        "y": 461.5,
+        "height": 1973.5
+      },
+      {
+        "tag": "SECTION",
+        "y": 2435,
+        "height": 2592
+      }
+    ]
+  },
+  {
+    "path": "/pt-BR/guides/beginner-opening-guide",
+    "width": 390,
+    "height": 8219,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 558
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 648.5,
+        "height": 5741.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 6390.25,
+        "height": 985
+      }
+    ]
+  },
+  {
+    "path": "/es",
+    "width": 390,
+    "height": 11708,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 1308
+      },
+      {
+        "tag": "SECTION",
+        "y": 1398.5,
+        "height": 1141
+      },
+      {
+        "tag": "SECTION",
+        "y": 2539.5,
+        "height": 1092
+      },
+      {
+        "tag": "SECTION",
+        "y": 3631.5,
+        "height": 1363
+      },
+      {
+        "tag": "SECTION",
+        "y": 4994.5,
+        "height": 1048
+      },
+      {
+        "tag": "SECTION",
+        "y": 6042.5,
+        "height": 1033
+      },
+      {
+        "tag": "SECTION",
+        "y": 7075.5,
+        "height": 1032.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 8108.25,
+        "height": 968
+      },
+      {
+        "tag": "SECTION",
+        "y": 9076.25,
+        "height": 1296
+      },
+      {
+        "tag": "SECTION",
+        "y": 10372.25,
+        "height": 492
+      }
+    ]
+  },
+  {
+    "path": "/es/guides",
+    "width": 390,
+    "height": 5943,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 371
+      },
+      {
+        "tag": "SECTION",
+        "y": 461.5,
+        "height": 2033.5
+      },
+      {
+        "tag": "SECTION",
+        "y": 2495,
+        "height": 2604
+      }
+    ]
+  },
+  {
+    "path": "/es/guides/beginner-opening-guide",
+    "width": 390,
+    "height": 8277,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 584
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 674.5,
+        "height": 5773.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 6448.25,
+        "height": 985
+      }
+    ]
+  },
+  {
+    "path": "/zh-CN",
+    "width": 390,
+    "height": 10199,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 1166
+      },
+      {
+        "tag": "SECTION",
+        "y": 1256.5,
+        "height": 873
+      },
+      {
+        "tag": "SECTION",
+        "y": 2129.5,
+        "height": 1076
+      },
+      {
+        "tag": "SECTION",
+        "y": 3205.5,
+        "height": 1159
+      },
+      {
+        "tag": "SECTION",
+        "y": 4364.5,
+        "height": 984
+      },
+      {
+        "tag": "SECTION",
+        "y": 5348.5,
+        "height": 946
+      },
+      {
+        "tag": "SECTION",
+        "y": 6294.5,
+        "height": 934.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 7229.25,
+        "height": 828
+      },
+      {
+        "tag": "SECTION",
+        "y": 8057.25,
+        "height": 952
+      },
+      {
+        "tag": "SECTION",
+        "y": 9009.25,
+        "height": 408
+      }
+    ]
+  },
+  {
+    "path": "/zh-CN/guides",
+    "width": 390,
+    "height": 4971,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 279
+      },
+      {
+        "tag": "SECTION",
+        "y": 369.5,
+        "height": 1567.75
+      },
+      {
+        "tag": "SECTION",
+        "y": 1937.25,
+        "height": 2252
+      }
+    ]
+  },
+  {
+    "path": "/zh-CN/guides/beginner-opening-guide",
+    "width": 390,
+    "height": 5966,
+    "overflow": false,
+    "errors": [],
+    "images": true,
+    "sections": [
+      {
+        "tag": "SECTION",
+        "y": 90.5,
+        "height": 426
+      },
+      {
+        "tag": "ARTICLE",
+        "y": 516.5,
+        "height": 3854.25
+      },
+      {
+        "tag": "SECTION",
+        "y": 4370.75,
+        "height": 813
+      }
+    ]
+  }
+]

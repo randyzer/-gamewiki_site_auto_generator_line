@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Three teams available for switching</title>
+  <desc id="desc">Project-authored explanation of switching between three teams to keep the mine running. No team states, timing or ordered cycle are shown.</desc>
+  <rect width="1200" height="675" fill="#100d0a"/>
+  <text x="70" y="110" fill="#e1b957" font-family="system-ui, sans-serif" font-size="66" font-weight="700">THREE TEAMS</text>
+  <g fill="#211a13" stroke="#c89a48" stroke-width="3">
+    <rect x="70" y="165" width="330" height="220"/>
+    <rect x="435" y="165" width="330" height="220"/>
+    <rect x="800" y="165" width="330" height="220"/>
+  </g>
+  <g fill="#f4ead3" font-family="system-ui, sans-serif" font-size="54" font-weight="700" text-anchor="middle">
+    <text x="235" y="295">TEAM 1</text>
+    <text x="600" y="295">TEAM 2</text>
+    <text x="965" y="295">TEAM 3</text>
+  </g>
+  <path d="M70 440H1130" stroke="#58bbae" stroke-width="4"/>
+  <g fill="#f4ead3" font-family="system-ui, sans-serif" font-size="57" font-weight="600">
+    <text x="70" y="530">Switch between teams</text>
+    <text x="70" y="607">to keep the mine running.</text>
+  </g>
+</svg>

@@ -1,0 +1,324 @@
+[
+  {
+    "title": "Einsteiger-Guide",
+    "description": "Lerne Steuerung, Kapitelstruktur, Beweisaufnahme und spoilerarme Überlebenstipps für deine erste vollständige Nacht in Blackwater City.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 1,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Reviewed",
+    "slug": "beginner"
+  },
+  {
+    "title": "Kapitel-Komplettlösung",
+    "description": "Folge den Ermittler-, Zeugen- und Nachtschichtkapiteln in Story-Reihenfolge mit klaren Zielen und gekennzeichneten Spoilergrenzen.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 2,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Reviewed",
+    "searchOrder": 0,
+    "searchTitle": "Komplette Kapitelroute",
+    "searchDescription": "Jedes Kapitel durch die fehlende Stunde.",
+    "slug": "walkthrough"
+  },
+  {
+    "title": "Figuren",
+    "description": "Entdecke Mara Vale, Ellis Reed und die anderen Menschen in Blackwater City mit Kapitelrollen und spoilerbewussten Figurenprofilen.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 3,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Draft",
+    "slug": "characters"
+  },
+  {
+    "title": "Rätsellösungen",
+    "description": "Finde Umgebungshinweise, Objektinteraktionen und Hilfen für den Fortschritt mit optionalen spoilerarmen Tipps zu blockierenden Schlössern.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 4,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Draft",
+    "slug": "puzzles"
+  },
+  {
+    "title": "Midnight Evidence Gameplay: So funktioniert die Untersuchung",
+    "description": "Ein praktischer Blick auf Beweise, spielbare Perspektiven, Erkundung, Kapiteltempo und die erste Untersuchung.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 5,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "gameplay"
+  },
+  {
+    "title": "Midnight Evidence Diner-Szene: Die Nachtschicht erklärt",
+    "description": "Die nächtliche Bedienung, der Fremde an Tisch sieben und der Beitrag der Begegnung zur Fallgeschichte.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 6,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "diner"
+  },
+  {
+    "title": "Midnight Evidence: Projektzeitplan und Plattformnotizen",
+    "description": "Fiktive Meilensteine, geplante Plattformen und der Unterschied zwischen einer Ankündigung und einem spielbaren Release.",
+    "category": "Release",
+    "publishedAt": "2026-10-09",
+    "order": 7,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "release-notes"
+  },
+  {
+    "title": "Midnight Evidence Demo: Kapitel und erste Route",
+    "description": "Der Einstieg in Revier, Diner und Bahnhof mit einer kurzen Route durch das fiktive Story-Konzept.",
+    "category": "Release",
+    "publishedAt": "2026-10-09",
+    "order": 8,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "demo"
+  },
+  {
+    "title": "Midnight Evidence PC-Guide: Steuerung und Barrierefreiheit",
+    "description": "Tastaturbelegung, Untertitel, lesbare Hinweise, Pausen und Zugänglichkeit im fiktiven PC-Abenteuer.",
+    "category": "Platforms",
+    "publishedAt": "2026-10-09",
+    "order": 9,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "platforms"
+  },
+  {
+    "title": "Midnight Evidence Download: Hinweise zur Verfügbarkeit",
+    "description": "So unterscheidest du die Website-Demonstration von einem Spiel-Download, einem Store und offiziellen Vertriebskanälen.",
+    "category": "Platforms",
+    "publishedAt": "2026-10-09",
+    "order": 10,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "download"
+  },
+  {
+    "title": "Midnight Evidence Community: Spielertheorien einordnen",
+    "description": "Beobachtung und Theorie unterscheiden, Hinweise vergleichen und über das Finale sprechen, ohne neue Leser zu spoilern.",
+    "category": "Community",
+    "publishedAt": "2026-10-09",
+    "order": 11,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "community"
+  },
+  {
+    "title": "Midnight Evidence Sprecher: Figuren und Rollen",
+    "description": "Ein originales Produktionskonzept für Ermittler, Zeugen und Nachtarbeiter mit Rollen und Beziehungen.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 12,
+    "cover": "/illustrations/blackwater-city.svg",
+    "searchOrder": 3,
+    "searchTitle": "Sprecher und Besetzung",
+    "searchDescription": "Figuren und ihre fiktiven Sprechrichtungen.",
+    "slug": "voice-cast"
+  },
+  {
+    "title": "Midnight Evidence Mara Vale: Ermittlerin und Kapitelrolle",
+    "description": "Maras erster Fall, ihre Verbindung zum alten Bahnhof und die Beweise, die sie durch Blackwater City führen.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 13,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "mara"
+  },
+  {
+    "title": "Midnight Evidence Ellis Reed: Partner und Figurennotizen",
+    "description": "Ellis im Revier, seine frühen Zweifel und Gespräche, die sich mit neuen Beweisen am Schreibtisch verändern.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 14,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "ellis"
+  },
+  {
+    "title": "Midnight Evidence Cass Rowan: Die Filmvorführerin",
+    "description": "Cass im Kino, die beschädigte Rolle und die Verbindung zwischen dem alten Filmtheater und dem Vermisstenfall.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 15,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "cass"
+  },
+  {
+    "title": "Wer ist der Signalhüter? Identität, Motiv und Beweise",
+    "description": "Eine spoilergekennzeichnete Lesart der anonymen Aufnahmen, falschen Spuren und letzten Beweise zum Signalhüter.",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 16,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "identity"
+  },
+  {
+    "title": "Midnight Evidence Nina Hart: Diner-Angestellte und Zeugin",
+    "description": "Ninas Spätschicht, Tisch sieben, der fehlende Beleg und ihre Rolle in der sich verändernden Zeitlinie.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 17,
+    "cover": "/illustrations/blackwater-city.svg",
+    "searchOrder": 2,
+    "searchTitle": "Nina: Figuren-Guide",
+    "searchDescription": "Nachtschicht, Zeugenaussage und Rolle.",
+    "slug": "nina"
+  },
+  {
+    "title": "Midnight Evidence Owen Park: Nachtwache am Bahnhof",
+    "description": "Owens Rundgänge, das Wartungsbuch und ein entscheidender Hinweis in einem gewöhnlichen Schichtbericht.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 18,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "owen"
+  },
+  {
+    "title": "Midnight Evidence Iris Bell: Radiomoderatorin und Rolle",
+    "description": "Iris in der Nachtsendung, die wiederholte Stationskennung und die Stimme im letzten Live-Programm der Stadt.",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 19,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "iris"
+  },
+  {
+    "title": "Midnight Evidence Fallakten: Alle 16 Archiveinträge",
+    "description": "Kapitelnotizen, zusätzliche Zeugenaussagen, reparierte Aufnahmen und die leicht übersehene Reviernotiz.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 20,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "achievements"
+  },
+  {
+    "title": "Midnight Evidence Rätselhinweise und Beweisraum-Codes",
+    "description": "Spoilerarme Hinweise zu Schublade, Bahnhofsuhr, Filmreihenfolge und dem letzten Schloss im Beweisraum.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 21,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "puzzle-codes"
+  },
+  {
+    "title": "Midnight Evidence Design-Review: Tempo und Atmosphäre",
+    "description": "Kurze Kapitel, reduzierte Ermittlungsmechaniken und Horror durch wechselnde Perspektiven im fiktiven Abenteuer.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 22,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "review"
+  },
+  {
+    "title": "Midnight Evidence Geschichte und Handlung erklärt",
+    "description": "Die originale Handlung von der ersten anonymen Aufnahme bis zum Finale am gesperrten Bahnsteig, entlang der Kapitelroute.",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 23,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "story"
+  },
+  {
+    "title": "6 Mystery-Szenarien für deine nächste Untersuchung",
+    "description": "Sechs originale Szenen mit unzuverlässigen Zeugen, verlassenen Gebäuden und Hinweisen in alltäglichen Routinen.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 24,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "next-investigation"
+  },
+  {
+    "title": "Midnight Evidence Inhaltsnotizen und Spoilergrenzen",
+    "description": "Ein Überblick über beunruhigende Szenen, fiktive Gewalt, optionale Enthüllungen und die Grenzen des Archivs.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 25,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "content-notes"
+  },
+  {
+    "title": "Wie Midnight Evidence entsteht: Grafik, Ton und Szenen",
+    "description": "Das originale Konzept hinter Stadträumen, Low-Poly-Szenen und einer kleinen Besetzung fiktiver Figuren.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 26,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "making-of"
+  },
+  {
+    "title": "Midnight Evidence Bahnhofsuhr: Wohin die Spur führt",
+    "description": "Warum die kaputte Uhr ein Zeitlinienhinweis ist, wie das Protokoll hilft und welches Rätsel diese Information nutzt.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 27,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "station-clock"
+  },
+  {
+    "title": "Midnight Evidence Tonbänder: Jede Aufnahme erklärt",
+    "description": "Die zwölf fiktiven Aufnahmen, ihre Hintergrundgeräusche und der Platz des beschädigten letzten Bandes.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 28,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "recordings"
+  },
+  {
+    "title": "Midnight Evidence Archiv-Edition: Was die Extras ergänzen",
+    "description": "Ein originales Konzept für Kunstheft, kommentierte Szenennotizen und Soundtrack, ohne reales Kaufangebot.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 30,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "archive-edition"
+  },
+  {
+    "title": "Midnight Evidence Übersetzung: Untertitel und Oberfläche",
+    "description": "Begriffswahl und der Unterschied zwischen einer übersetzten Website und einem lokalisierten Spiel.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 31,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "translation-notes"
+  },
+  {
+    "title": "Midnight Evidence Untertitel: Lesbare Beweise",
+    "description": "Untertitel, lesbare Aufnahmen und die Bedeutung von Textfassungen für Hinweise in Hintergrundgeräuschen.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 32,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "subtitle-guide"
+  },
+  {
+    "title": "Midnight Evidence Mediennotizen: Originale Projektgrafik",
+    "description": "Originale Illustrationen, Projektbeschreibung und fiktive Produktionsdetails dieser Guide-Demonstration.",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 33,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "press-notes"
+  },
+  {
+    "title": "Midnight Evidence Letztes Kapitel und Ende erklärt",
+    "description": "Das Finale am gesperrten Bahnsteig, die Verbindung der Aufnahmen und die Enthüllung im letzten Archiveintrag.",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 34,
+    "cover": "/illustrations/blackwater-city.svg",
+    "searchOrder": 1,
+    "searchTitle": "Das Ende erklärt",
+    "searchDescription": "Die letzte Sendung und ihre Beweise.",
+    "slug": "ending"
+  },
+  {
+    "title": "Midnight Evidence Nachspiel: Die letzte Sendung",
+    "description": "Der kurze Übergang zwischen Bahnhofsentdeckung und letzter Sendung und seine Rolle für die Zeitlinie.",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 35,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "aftermath"
+  }
+]

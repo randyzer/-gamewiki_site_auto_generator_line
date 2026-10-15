@@ -1,0 +1,19 @@
+{
+  "freshness-browser-evidence.json": "9894d48af02fff3ed6f601cdd2b607b2925c46585577dc064e8dab59e6a587ce",
+  "freshness-browser-run.log": "d16ec071c5d6b3c94a8492d5927c3ae2ff0b248e943be021b20522e7ff41572e",
+  "freshness-browser-command-result.json": "7bc5c9f28780610950ce7600d52faddb0fe44b5b0b8dd3ec5d9c61bf77064632",
+  "freshness-cleanup.json": "ffd49e0d18789d3ae3217bd21fd568a86d2d7ae4376704e689210f2260d0ae0f",
+  "freshness-tmp-cleanup/owned-tmp-cleanup.json": "75f83e05fcfd65f3dd5be44692bc1d7c39b7aaaa5ef7a0829152fb8d0cf8cd95",
+  "freshness-observation.mjs": "2e47a8a93aae0f6aa965f5bd15d4eb94c5e497fb35532c7e843aad78696f9d5a",
+  "browser-freshness.ts": "a0dde6d2f94325884200cb174545be2888282b961aae50769dd4ea3805e0ea13",
+  "run-targeted-browser.mjs": "ab1db5bb0a65ce745cbb9a691ce802a8add9ac1edf6165892f26ebffd3ab5299",
+  "root-check.log": "cdc3162c48836f8bbe0ad76214d3845265c29cc85f27f45f65363c4fc14a603f",
+  "green-targeted.log": "1bea5ffcfc55f5af66e6cdd4bc5d94771022faa5dfd9b527a06b9d3b15cfebff",
+  "red-targeted.log": "875a34cde4147c81b3813b380125f2e340e972a78b671368cf93a63e32ab97f5",
+  "integrity-check.json": "3a5255d646b91295012b34d9e42846c295714518a36956f8b88a36aba892cc9a",
+  "postimages.json": "d9f3b3ab6347ab039ad2dfaeb314f50a34ed408c20cec055b9afbfe8a9681705",
+  "approved-scope.patch": "fc536b94d8ec22ab0ec2e4dfbd1d769a3f75aa14e8c9f3aed878ad6cc8ce6d42",
+  "triad-blocked-identity.json": "64ed563f54263c74307488566bf1ffae3b19545a92da0720918e253f3545c9af",
+  "blocked-audit.json": "fe310137d5b50961da8af6eadadd274ea8346549a2488f6bf33cc21d4aefe973",
+  "result.md": "e0d162c6cf7cf6505de4a3b067ca30a1ade20e3caa1ac4e3fc4e0913f4c1f1f6"
+}

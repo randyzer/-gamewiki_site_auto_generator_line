@@ -1,0 +1,201 @@
+# V2.7 商业游戏站生产体系演进路线 V1
+
+日期：2026-10-01。状态：DESIGN_ACCEPTED，见 [独立验收](../codex/verifications/v2.7-design/roadmap-acceptance.md)。依据：[已独立 ACCEPT 的 V2.7 蓝图](../architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md)及 [独立审查/设计 PLAN](../codex/verifications/v2.7-design/blueprint-acceptance-and-roadmap-plan.md)。这是设计路线，所有 workstream 的实施均未开始，不恢复旧 A4。
+
+以上为设计接受时的历史状态。用户随后授权按路线推进；WS-01 依 [实际独立 PLAN](../codex/prompts/v2.7-ws01/prompt.md)执行有限规范基础工作。本次仅澄清 REF-A/B/C 确定性 fixture 与 PROJECT-* 真实采用的双命名空间、证据状态与 outcome；不改变八个 workstream、DAG、41 ID 或规范语义。澄清随 WS-01 复验。
+
+## 1. 路线目标与排序依据
+
+产出协同工作的 GAME_SOP V2.7、GAME_CODEX_MASTER_PROMPT V2.7、GAME_SITE_STARTER V2.7，经真实采用和独立验收后组装至 `Repo_hotgameweb/GAME_SITE_SYSTEM_V2.7/`。商业适用性通过玩家任务、识别、真实内容/媒体、可用性和商业布局验收；不将技术通过当成流量、收入或市场成功证明。
+
+先统一规范与来源，再保护现有 Core；通过有限切片补齐接口，形成明确的项目适配和三种组合；浏览器基础尽早建立，完整验收必须针对组合后页面；三类真实采用及逐能力跨版本比较通过后才导出交付包。旧 A1/A2/A3 不重新实施，旧 Phase A 顺序不是本路线来源。
+
+八个 workstream 是组织任务的编号，不是新增 capability ID。41 个规范 ID 和原适用性/严重度保留，唯一语义源将随 SOP V2.7 交付；工作流、测试覆盖和 delta 只引用它。
+
+## 2. 开发来源与候选策略（拟议，尚未执行）
+
+| 工件 | 准确来源 | 拟议开发位置/建立时点 | 约束 |
+| --- | --- | --- | --- |
+| SOP | `Repo_hotgameweb/GAME_SOP_V2.6.5`，`9a13b7314b9cb102b0c440d9677ab22400109e8f` | WS-01 建立独立 `Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/` | 保留 Git 来源与历史，冻结原目录；新规范纳入 PACKAGE_MANIFEST |
+| Master Prompt | `Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.6.5`，`f655a0e08529060be8b716330ffcecf489a4484d` | WS-01 建立独立 `Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/` | 保留 Git 来源与历史；只引用 SOP 规范身份，不复制 Registry |
+| Starter | 现有 `Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE`，`b067e8d4050478072f25a1dc78a8526cdd128cfd` | WS-02 在同一仓库从 accepted A3 建立拟议 `v2.7/evolution` 开发分支 | 不复制/搬移仓库；保留 `phase-a/core-safety` 历史与 S1/A1/A2/A3；分支尚未创建 |
+
+Starter 三方案比较：继续现有分支最省操作，但新路线与历史 Phase A 状态混杂；新分支保留所有祖先、容易对照 accepted A3，且不产生第二份源码副本；新仓库可以保留历史，但增加路径/权威迁移和清理负担。选择同仓库新分支。建立前重新核对 CLEAN/HEAD；遇到已有同名候选/分支先核对来源，不覆盖用户改动。SOP/Prompt 独立候选同样只从核对后的本地基线建立；具体本地创建命令在 WS-01 实施计划中验证，不联网拉取新基线。
+
+SOP 内的拟议唯一规范路径为 `docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md`，同时持有 Contract 与 Registry。WS-01 独立接受并纳入包清单后才承接 V2.7 规范权威。当前 `template/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V0.2.md` 保留原文/哈希作为前代输入。所有候选路径、分支、规范文件和最终交付目录目前均只是约定；本轮没有创建它们。
+
+## 3. 依赖 DAG 与阶段门槛
+
+```mermaid
+flowchart TD
+    W1["WS-01 规范与来源"] --> W2["WS-02 Core 连续性与 CI"]
+    W2 --> W6A["WS-06A Core 浏览器与证据基础"]
+    W2 --> W3["WS-03 有限接口切片"]
+    W6A --> W3
+    W1 --> W4["WS-04A 游戏适配契约"]
+    W3 -->|接口冻结后集成| W4
+    W3 --> W5["WS-05 三种组合"]
+    W4 --> W5
+    W5 --> W4B["WS-04B 适配实例验证"]
+    W4B --> W6B["WS-06B 组合验收能力"]
+    W6A --> W6B
+    W6B --> W7["WS-07 三类真实采用"]
+    W7 --> W8["WS-08 跨版与三件套交付"]
+```
+
+硬前置：WS-02 依赖 WS-01；WS-06A 依赖 WS-02；WS-03 各实现切片依赖 WS-02/06A；WS-04A 可以在 WS-01 后设计方法模板，但契约 Gate 依赖 WS-03 接口接受；WS-05 每种组合依赖其 WS-03/04A 输入接受；WS-04B 在 WS-05 后完成实例验证；WS-06B 依赖 04B、组合与 06A；WS-07 完整采用验收依赖 06B；WS-08 依赖全部前置接受。
+
+可并行的是设计/研究或输入已接受后的有限切片，不是绕过 Gate：WS-04 的术语/主题证据模板可与 06A/03 设计并行；WS-03 已冻结接口对应的 WS-04 集成、WS-05 模块可先准备，但 workstream 退出必须等待其完整前置。WS-07 第一手事实/媒体权利准备可提前，完整结果必须绑定最终接受的组合和准确构建。
+
+所有 Gate 要求：受影响 capability 与三件套增量明确；meaningful 技术/产物证据通过；该阶段适用浏览器/人工证据齐全；既有能力无未授权回归；独立 ACCEPT；下一阶段输入准确冻结。计划中的 PASS 不是已执行的 PASS。步骤不得以“先实现后补 SOP/Prompt”退出。
+
+## 4. 八个 workstream
+
+### WS-01 — 规范基础与采用证据约定
+
+- **目标/能力**：将全部 41 ID 原语义带入 SOP 的单一规范源，落实 RI-04、RI-03 的 baseline 和 PA-01/02 证据/例外方法。
+- **依据**：[权威盘点](../audit/TRIAD_AUTHORITY_INVENTORY_V1.md)、[同步决定](../governance/TRIAD_EVOLUTION_DECISION_V1.md)、蓝图 L0 修订；真实报告 PASS/BLOCK 时间冲突。
+- **工件/主 owner**：SOP 持规范/方法；Prompt 引用准确身份、停止条件和采用阶段；Starter 此阶段仅定义将引用什么，不改源码。
+- **前置**：蓝图和路线独立 ACCEPT，以及本阶段实施计划获得执行授权。
+- **实施边界/排除**：建立 SOP/Prompt 独立候选，迁入规范与 adoption/证据方法；不改 frozen、Starter、真实项目、41 ID 语义或新技术能力。
+- **测试/证据**：逐行比较 41 ID、要求/适用性/严重度/lifecycle/owner；包 manifest 路径齐全；单一 canonical 文件；引用身份一致；frozen 哈希保持。
+- **独立 Gate/退出**：41/41 保留、0 静默语义变化、SOP 包内规范接受、Prompt 引用及停止条件正确、前代保留、准确候选来源记录，独立 ACCEPT。
+- **回归/真实采用义务**：逐能力建立 V2.6.5 与 accepted A3 证据 baseline，不从历史测试数量推断全能力 PASS；方法模板必须能记录 War of Genesis/Bomb Farm 的 BLOCK/PENDING 与人工决定，完成采用证明仍在 WS-07。
+
+### WS-02 — Stable Core 连续性与采用构建/CI
+
+- **目标/能力**：复用 TL-01、TL-02、PP-02、AX-01 实现；保全 IA-02、SEO-01/03、PP-01、MR-01、IA-03 与 final/evidence。
+- **依据**：accepted A3 历史与蓝图保全清单；[Candidate README](../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md)、当前 CI 在未采用例子上运行 final build 的冲突。
+- **工件/主 owner**：Starter 开发分支、采用 fixture/CI/README；SOP 明确 example 不是 final-ready；Prompt 调用真实采用/验证命令并解释预期失败。主 owner 为 Starter，方法/执行同步为 ALL_THREE。
+- **前置**：WS-01 ACCEPT。
+- **实施边界/排除**：从 A3 建新开发分支；用现有 bounded adopted fixture 支持可重复 final 构建；修 CI 验证方式，不重新写 A1/A2、不装浏览器、不弱化 PP-02。
+- **测试/证据**：未采用默认例子的 final 必须失败；采用后的中立 fixture `npm run validate`、`npm run check`、`npm run build` 必须通过；输出 reconciliation、SEO、Pagefind、广告关闭零输出和安全负例保留；CI 在准确候选验证同一路径。
+- **独立 Gate/退出**：祖先 provenance 完整、采用构建与 CI 路径接受、预期失败被明确断言而不是忽略、0 final/evidence 绕过、已有能力无回归，独立 ACCEPT。AX-01 浏览器仍待 06A，不提前 PROVEN。
+- **回归/真实采用义务**：验证项目不需用私有脚本绕过残留检查；War of Genesis 的法律/主体负例与 Bomb Farm 的 final/evidence 需求进入 fixture；真实声明审核不由这些例子代替。
+
+### WS-03 — Core 接口补强，分四个有限切片
+
+- **目标/能力**：VF-01/02、MC-01/03/05、SEO-02、IA-03、FR-01；扩展既有接口，不扩大页面范围。
+- **依据**：蓝图契约、[V2.6.5 缺口审计](../GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md)、War of Genesis OG/识别、Bomb Farm 媒体增补。
+- **工件/主 owner**：Starter schema/adapter/render/审计；SOP 定义角色与媒体/搜索/时效选择；Prompt 同步命令、采用迁移和 HARD STOP。各切片按 ALL_THREE 或准确责任细分审查，不复制规范。
+- **前置**：WS-02、WS-06A ACCEPT；接口设计可提前，技术完成后才供集成。
+- **有限切片**：03A 语义字体/密度/形状/状态角色；03B 资产尺寸/比例、rights/credit 引用、video accessible equivalent 与统一 adapter/fallback；03C 分享图以同一 media authority 解析与生成产物审计，依赖 03B；03D 搜索查询/结果状态边界＋现有 Pagefind、日期与 patch/验证语义。03D 的两部分独立提交/验证，避免耦合重构。
+- **排除**：不加新 provider、CMS/DAM、远程资产平台、运行时统计；不改变路由/发布真相，不把字段合法性当权利批准。
+- **测试/证据**：每切片 schema 正/负例、实际组件/输出、相关浏览器状态及继承回归；媒体有效/缺失/失败/无媒体、视频/等价说明、share fallback；搜索启用/关闭/无结果/错误、安全 URL/预算；published 不冒充 updated。
+- **独立 Gate/退出**：四切片分别 ACCEPT；既有字段的兼容/迁移规则明确且经验证，legacy 无证据字段不能用默认值自动批准；required share/媒体缺失按契约阻塞；Core 无回归，三个工件要求/执行/实现一致。
+- **回归/真实采用义务**：03A 支持 WoG/Bomb Farm 两种主题而不硬编码；03B/C 能承接 Bomb Farm 现有 local assets/video 与 WoG 的 share-media 缺口；03D 保留原 corpus 与 Pagefind 安全，项目启用选择在 WS-04/07验收。
+
+### WS-04 — Game Adaptation 契约与采用流程
+
+- **目标/能力**：GI-01/02、VF-01/02、IA-01/03、MC-02/04/05、FR-02、ID-01；让适配成为可核验决定。
+- **依据**：真实项目泛化视觉/媒体/标题问题，五案例的不同分类与视觉语法；Farever 仅本地候选。
+- **工件/主 owner**：SOP 的适配/视觉/内容/媒体模板、Prompt 的人工规划与实施核对、Starter 的受约束适配入口和可验证引用。游戏事实/选择的 primary owner 始终是项目。
+- **前置/两段 Gate**：04A 在 WS-01/03 后接受方法模板与适配 schema/引用契约（含模式输入要求），供 WS-05 使用；04B 在 WS-05 三组合实现后验证实例组装并关闭 WS-04。04A 不以尚未实现的 Pattern 页面作为退出条件。
+- **实施边界/排除**：记录来源三件套、术语/分类、视觉依据→角色、Page ID→模式、媒体/视频需求、搜索理由、关系、时效依据；不复制 Inventory routes/publication，不决定版权/主体真相。
+- **测试/证据**：有效与未知/disabled Page ID、有效与不匹配模式/媒体需求、approved/no-media/PENDING/BLOCK lifecycle；主题证据与术语来源审查；模版实例不得藏无依据 Popular/Live。
+- **独立 Gate/退出**：04A 的唯一数据权威、schema 正/负例与三件套方法/引用独立 ACCEPT；04B 无需私有 Core 绕过即可组装至少两种不同配置，每页需求/搜索/关系有决定，独立 ACCEPT。项目实际 GI-02/权利审批仍在 WS-07，不以通用模板宣告它们 PASS。
+- **回归/真实采用义务**：预先准备 WoG、Bomb Farm 适配实例；无媒体必须是合理完整组合及合法人工状态，不能掩盖 unresolved rights；具体媒体数量不成为验收目标。
+
+### WS-05 — 最小 Pattern Library 与内容价值组合
+
+- **目标/能力**：HR-01/02、CU-01/02、DS-01/02、ID-01/02、MR-01/02、RI-01；形成 hub/wiki、task-guide、media-rich article 三类组合。
+- **依据**：VV 的 hub/决策入口、Gamble 的问题文章、Mini Wars 的阅读关系、Bomb Farm 的 cover/TOC/媒体节奏。Farever 的本地主题层次只作适配选择，不承诺第四种产品。
+- **工件/主 owner**：Starter 内 Pattern 组合/共享模块；SOP 的任务选型/标题承诺/真实深度；Prompt 的 approved composition 与 Human Content Gate。Primary owner 是 Pattern 技术实现和项目内容各自责任。
+- **前置**：WS-03 各依赖接口与 WS-04A 适配契约接受；不依赖 WS-04B 实例 Gate。WS-05 完成后供 04B 实例验证使用，因此不存在循环前置。
+- **实施边界/排除**：按三种组合分别交付；共享 Quick Answer、steps、mistakes/recovery、comparison、figure、TOC、FAQ、related/next action 按需使用；不搬入五站整套代码/游戏事实，不复制 Core 渲染安全/SEO/路由/导航。
+- **必需/可选**：hub 必须起点与真实分类目标；task-guide 必须明确任务/答案与行动步骤或决策依据；media-rich article 必须语义相关的所需资产、正文和阅读导航。FAQ/比较/恢复/视频/广告依事实与任务决定；每种组合提供诚实完整的无媒体方案，使用它需记录重分类而不能冒充媒体已齐全。
+- **测试/证据**：三套 composition fixtures 使用实际 Core；有/无媒体、搜索与广告开/关、TOC、长表、disabled/no-data；每种组合的实际输出/键盘/overflow；链接不能以重复目标凑深度；相关性手动→分类/标签→允许 fallback 的确定性验证。
+- **独立 Gate/退出**：三组合分别 ACCEPT，required/optional 与 no-media 契约明确，RI-01 边界审查通过；内容模块不要求每页全用；原 Core 保全；人工内容方法同期接受。
+- **回归/真实采用义务**：WoG 的标题/比较必须有答案或收窄承诺；Bomb Farm 有媒体文章与四类 no-media 输入验证；第三采用验证 task-guide 主路径。技术 fixture 不证明游戏事实或人工游戏识别。
+
+### WS-06 — 独立验收体系，早期基础＋组合验收
+
+- **目标/能力**：AX-01/02/03、PA-01/02；并执行 TL-01/02/03、GI-02、MC-*、CU/DS、MR-* 的适用验收。Requirement 含义继续由 SOP 规范持有。
+- **依据**：WoG build PASS 但不上线、Bomb Farm 人审/rights/provider 状态及 A3 尚未证明的浏览器行为。
+- **工件/主 owner**：Starter 的 dev-only browser runner、结果/fixture hooks；SOP 的支持范围、人工/例外方法；Prompt 的逐项执行/停止与证据身份。primary verification owner 是独立 Acceptance，实施者不能代填人审。
+- **前置/切片**：06A 在 WS-02 后建立 Core 浏览器/证据基础并供 WS-03 使用；06B 在 WS-03/04/05 接受后扩展到组装页面。不是恢复旧 A4；旧 patch/缺失 matrix 的 RED 仅是失败输入。
+- **实施边界/排除**：最小锁定 dev-only 浏览器依赖，实际 Core 的 shell/nav、content/detail、recovery/404 三角色；不得复制 Core、加 runtime browser 包或测试 SaaS/截图平台。命令需实施后才成为真实可调用项，不把本路线拟议 runner 当现有命令。
+- **06A 证据矩阵**：Chromium/Firefox/WebKit × 390×844、768×1024、1280×800 × 三角色；Chromium 899/900/901 导航、619/620/621 布局边界、live resize；mobile/desktop reduced-motion；三 engine no-JS mobile。记录真实 engine/revision、source/build、视口、JS/motion、断言与结果；必需条目缺失/skip 即失败。
+- **断言**：document overflow ≤1 CSS px，长表局部滚动；skip link/Tab/Shift+Tab/Enter/Space/Escape、nested cleanup、可见 focus/恢复与 resize、末尾链接可达、44×44 控件目标意图、no-JS/reduced-motion、真实404恢复。视觉 focus/对比度与不能自动证明的内容项明确交给人工。
+- **06B 证据**：组装输出的 route/link/meta/media、互动/TOC/布局、法律/身份/残留、媒体/视频 fallback、广告关闭/开启/空槽；人审模板分别覆盖玩家答案、game-recognition、媒体语义/权利、政策行为对应、广告遮挡/真实交付。请求/rendered/viewable 三者分开；provider 不可用不伪造填充 PASS。
+- **确定性 Reference suite**：06B 在已接受组合上完成 REF-A（Wiki / Commercial Editorial）、REF-B（Problem Guide / Tool）、REF-C（Tactical / Systems）的最小组装 fixture 与回归；严格保留前代 Contract §V 的全部内容、媒体和 PASS 证据义务。REF-C 可组合已有 hub/guide 模块，不新增第四种 Starter。WS-05 提供组合，06B 检查确定性 suite；PROJECT-* 真实项目不替代它们。
+- **独立 Gate/退出**：06A 矩阵完整、Core 行为实际 PASS 才可提升相关技术证据；06B fixture/输出/报告机制接受，状态含 PASS、FAIL/BLOCK、PENDING/NOT RUN、依据明确的 NOT_APPLICABLE 与允许的 P2/NIT 例外。实际游戏的人审不是 06B fixture Gate，而是 WS-07 必需 Gate。
+- **回归/真实采用义务**：每次相关可见变化增补组合验证，不只跑旧 browser 基础；人审和机器证据必须绑定相同项目构建，失败后新构建重新审核。不得由 06A 宣称完整项目 AX/PA 或商业完成。
+
+### WS-07 — 三类真实游戏采用与回归
+
+- **目标/能力**：RI-02、PA-01 及所有适用项目级能力；证明完整三件套可被新游戏采用。
+- **依据/对象**：PROJECT-WOG＝War of Genesis（工具/经济与决策任务）；PROJECT-BOMBFARM＝Bomb Farm（系统 wiki、媒体文章）；PROJECT-TASK-GUIDE＝Gamble With Your Friends 的玩家任务型指南路线，依据已有原站 games/blackjack 观察和本地 Quick Answer/steps/mistakes 组合。任务指南与实体/system wiki 有明确 IA/文章组织差异；不采用“Farever 已原站验证”的假设。这三个项目提供真实 compatibility/adoption evidence，命名不等同于契约的 Reference A/B/C。
+- **工件/主 owner**：三个独立 validation project＋对应准确版本证据；SOP 的逐项目采用与维护、人审；Prompt 的实际执行；Starter 只接纳被证明通用且另作有限 review 的修复，不回灌游戏内容。primary owner 为项目采用执行与独立 reviewer。
+- **前置**：WS-06B、相关 03/04/05 Gate 全部接受；可以提前准备来源/权利，但不能先填最终 PASS。
+- **实施边界/排除**：拟议采用 workspace `gameweb/v2.7_validation/{war_of_genesis,bomb_farm,task_guide}/`，以后经计划授权建立，独立保留来源/项目改动。原项目/报告保持；不上线、不修改生产配置；不得完整拷五案例当 Starter 采用。
+- **必需采用证据**：每个项目记录 Starter/SOP/Prompt 的准确版本、契约身份、项目增量、逐页适配/媒体决定、final输出、浏览器结果、人工内容/视觉/权利/政策及广告适用审查。PROJECT-TASK-GUIDE 的游戏事实/媒体须重新取第一手依据和批准；拿不到就保持该 Gate 未完成，不从本地虚构内容充数。可记录项目与 REF 类型的多对多 coverage，但 realProjectCoverage 不等于 deterministicReferencePass。
+- **PROJECT-WOG 的回归清单**：法律残留、显式身份、adoption residual、Escape/focus/断点、游戏识别、所需真实媒体/视频决定、share-media、标题/配装/排名承诺；历史 P2 与新契约 severity 分开记录，不反改旧报告。
+- **PROJECT-BOMBFARM 的回归清单**：视觉适配、系统 UI 媒体/本地视频与 no-media、文章节奏、媒体权利/PENDING、防止旧 PASS 覆盖新 BLOCK、广告布局/预留/遮挡；旧 403 不作当前 provider 证明。PROJECT-TASK-GUIDE 检查回答→步骤/恢复→下一指南的实际任务闭环。
+- **独立 Gate/退出**：三个 PROJECT-* 均有独立采用 ACCEPT；所适用的 P0/P1 及 required 人审证据满足；无无法解释的 Core 绕过。它们不豁免 REF-A/REF-B/REF-C suite 回归。P2/NIT 例外需契约允许并记录 owner/范围/理由/证据/到期。本阶段的 ACCEPT 是新证据，不能来自历史报告。
+- **回归/真实采用义务**：三实例均加入可重复 regression，采用后关键更新以 accurate source/build 重跑；若发现通用问题回到对应 WS 修复并重验受影响实例，不在项目私补后宣告 Starter 已修。
+
+### WS-08 — 逐能力跨版本比较与 V2.7 兼容交付
+
+- **目标/能力**：RI-02/03/04、PA-01/02；把三件套准确来源与规范、采用、人审、回归绑定成可复验组合。
+- **依据**：蓝图回归/交付语义、V2.6.5/frozen/accepted A3、前述所有阶段证据。
+- **工件/主 owner**：SOP 的规范/包 manifest/迁移维护；Prompt 的最终 reconciliation；Starter 的 capability/技术证据、采用/开发说明；兼容性清单与 assembly root。Primary owner 是独立 Release Gate。
+- **前置**：WS-01～07 全部所需 Gate ACCEPT；三个开发源与采用证据冻结到准确身份。
+- **实施边界/排除**：对 41 ID 比较 frozen V2.6.5 → accepted A3 → V2.7，分别注明 portable/assembled、适用性、证据范围、PASS/FAIL/PENDING/未证明和 lifecycle；不把原 PARTIAL/GAP 当 PROVEN，不误判有明确 lifecycle 决定的变更为静默删除。
+- **测试/证据**：完整 capability delta 与合法 replacement/deprecation 双向关联；无未授权 P0/P1 回归/消失；REF-A/REF-B/REF-C 确定性 suite 与三个 PROJECT-* 真实采用均通过；规范唯一路径/哈希匹配；从准确源导出后重查包路径、引用、声明与采用步骤。证据采集状态 PENDING/NOT_RUN/UNVERIFIED 不扩展 §W 最终 outcome enum，未裁定 outcome=null 不能冻结为发布 PASS。
+- **兼容清单必需信息**：三个工件版本与来源 commit/tree/hash；`productContractVersion`、`capabilityRegistryVersion`、`canonicalPath`、`sha256`、`owningArtifact=GAME_SOP`；蓝图/路线身份、capability delta、参考采用和独立验收、允许例外、适用组合。
+- **交付整理**：18 历史文档按最终有效入口逐份判定 keep/archive/superseded 并保存映射；不要现在搬。导出排除 node_modules/dist/cache、秘密环境值、临时日志、任务半成品；来源 repo 仍是开发权威，交付 root 不变成第四源码源。
+- **独立 Gate/退出**：41/41 有准确 delta，所有仍有效前置能力与 required 新义务满足，允许例外可追溯；SOP＋Prompt＋Starter 三件套兼容 ACCEPT；最终 assembly 本身复验通过，才成为 V2.7 release candidate。push/tag/merge/部署/正式发布仍是独立实际动作与授权，不自动执行。
+- **回归/真实采用义务**：交付后采用者可从包入口得到真实规范与可复验技术边界，无依赖 template 私有规则；来源三件套、资产、构建或例外变化影响结论时重新绑定验收身份。
+
+## 5. 41 能力落点（覆盖索引，不另建 Registry）
+
+| ID | 主落点/保持义务 | 项目证明/最终 Gate |
+| --- | --- | --- |
+| GI-01 | WS-04 术语/分类 | WS-07/08 |
+| GI-02 | WS-04 方法、WS-06 人审 | WS-07 游戏识别 |
+| VF-01 | WS-03A/04 | WS-07 多游戏适配 |
+| VF-02 | WS-03A、WS-06 | WS-07 可用主题 |
+| MC-01 | WS-03B、WS-05 | WS-07 相关所需媒体 |
+| MC-02 | WS-04 方法、WS-06 权利/语义审查 | WS-07 无虚构游戏证据 |
+| MC-03 | WS-03B | WS-06/07 可访问/来源 |
+| MC-04 | WS-04 per-page 决策 | WS-07 need/no-media |
+| MC-05 | WS-03B/04 | WS-07 视频决定与有条件播放 |
+| HR-01 | WS-05 hub/task 入口 | WS-07 真实有用目标 |
+| HR-02 | WS-05 浏览路径 | WS-07 不以重复目标充数 |
+| IA-01 | WS-04 | WS-07 分类来自游戏 |
+| IA-02 | WS-02 保全 NO_CHANGE | WS-05/06/07 组合回归 |
+| IA-03 | WS-03D/04 | WS-07 搜索选择与启用验证 |
+| CU-01 | WS-01/05 人工方法 | WS-07 标题与答案 |
+| CU-02 | WS-05 按需模块 | WS-07 长文结构 |
+| DS-01 | WS-01/05 方法/比较呈现 | WS-07 方法/版本/来源 |
+| DS-02 | WS-05 | WS-07 条件恢复/下一步 |
+| FR-01 | WS-03D | WS-07 可见日期语义 |
+| FR-02 | WS-04 方法 | WS-07 动态标签来源 |
+| ID-01 | WS-02 保全＋WS-04/05 适配 | WS-07 相关下一页 |
+| ID-02 | WS-05，OPTIONAL 不强制启用 | WS-07 选择时验证 ranking |
+| SEO-01 | WS-02 保全 NO_CHANGE | WS-06/07 输出回归 |
+| SEO-02 | WS-03C | WS-07 share 同一媒体权威 |
+| SEO-03 | WS-02 保全 NO_CHANGE | WS-06/07 sitemap/robots/可见 schema |
+| AX-01 | WS-02 保留 A3；06A 补实际证据 | WS-06B/07 再验组合 |
+| AX-02 | WS-03A、WS-06 | WS-07 视觉/keyboard 人审 |
+| AX-03 | WS-06A/B | WS-07 组装站矩阵 |
+| PP-01 | WS-02 保全 NO_CHANGE | WS-05/06/07 真实恢复 |
+| PP-02 | WS-02 复用 A2、方法同期同步 | WS-07 机器＋人工残留 |
+| TL-01 | WS-02 复用 S1、方法同期同步 | WS-07 激活/草稿审查 |
+| TL-02 | WS-02 复用 A1、方法同期同步 | WS-07 真实主体/关联声明 |
+| TL-03 | WS-01 方法、WS-06 人审 | WS-07 条件行为/政策对应 |
+| MR-01 | WS-02 保留 seam、WS-05 位置 | WS-06/07 布局与条件 ads 人审 |
+| MR-02 | WS-05 真内容深度 | WS-07 人工价值/目标审查 |
+| PA-01 | WS-01 方法、WS-06 验收实现 | WS-07/08 独立采用 |
+| PA-02 | WS-01/06 例外方法 | WS-07/08 合法 P2/NIT 例外 |
+| RI-01 | WS-05 边界 | WS-06/07 组合、WS-08审计 |
+| RI-02 | WS-07 三类采用 | WS-08 持续回归 |
+| RI-03 | WS-01 baseline、WS-08 delta | WS-08 跨版本 Gate |
+| RI-04 | WS-01 单一规范源/历史 | WS-08 生命周期 Gate |
+
+## 6. 设计关闭时的状态与当时下一动作（历史）
+
+已完成的是证据盘点/清理、版本命名、蓝图与路线设计，蓝图/路线均独立 ACCEPT。八个 workstream 全部为 PLANNED，不产生实现 PASS。A3 浏览器和 AX-03 仍未证明，Farever 原站仍 UNVERIFIED。没有修改/移动冻结三件套、Candidate、参考源码、真实项目或创建产品目录。
+
+路线独立 ACCEPT 后，下一可准备的是 **WS-01 的有限实施计划**：逐文件影响、候选来源、规范迁入与引用策略、验证、回退、停止点。开始 WS-01 实施需要用户对具体实施范围的授权；本轮用户只授权蓝图和路线设计，不以本路线继续写产品代码或恢复 A4。

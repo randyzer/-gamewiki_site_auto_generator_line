@@ -1,0 +1,3885 @@
+{
+  "schemaVersion": "1",
+  "identity": {
+    "starter": {
+      "branch": "v2.7/evolution",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "workingTreeSha256": "423bbb054ede60cf10607e4f5bc83ab6521cc433bbeedfff6e4656079bf5d06d"
+    },
+    "canonicalContract": {
+      "reference": {
+        "version": "2.7",
+        "owningArtifact": "GAME_SOP",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      },
+      "verification": {
+        "mode": "FILE_SHA256",
+        "filePath": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "observedSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      }
+    },
+    "fixture": {
+      "identity": "Field Notes synthetic adoption",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac"
+    },
+    "build": {
+      "distSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139"
+    },
+    "playwright": {
+      "packageVersion": "1.63.0"
+    },
+    "host": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.22.0"
+    },
+    "engines": {
+      "chromium": {
+        "browserName": "chromium",
+        "version": "153.0.8010.12",
+        "revision": "1243"
+      },
+      "firefox": {
+        "browserName": "firefox",
+        "version": "155.0",
+        "revision": "1543"
+      },
+      "webkit": {
+        "browserName": "webkit",
+        "version": "26.6",
+        "revision": "2359"
+      }
+    }
+  },
+  "overall": "FAIL",
+  "infrastructureErrors": [
+    "WEBKIT_STANDARD_TAB_LINK_PROFILE_UNAVAILABLE"
+  ],
+  "cleanup": {
+    "previewStopped": true,
+    "fixtureRemoved": true
+  },
+  "humanReview": {
+    "visualFocus": "DEFERRED",
+    "contrast": "DEFERRED"
+  },
+  "rows": [
+    {
+      "caseId": "baseline:chromium:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5748.545833000001,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":360,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":390}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3318.1356670000005,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 2772.6604160000006,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":650,\"y\":22,\"width\":94,\"height\":44},{\"x\":373,\"y\":133,\"width\":362,\"height\":48},{\"x\":387,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5672.343833999999,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3328.058874999999,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 2773.0142080000005,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.40625}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "44x44 brand; text navigation target review remains human: {\"x\":50,\"y\":22,\"width\":261.609375,\"height\":44}"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5405.145042000004,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3323.911208999998,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 2770.7546250000014,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.08332824707031}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.083343505859375}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5951.859208000002,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":360,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":390}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3496.6196249999994,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 2916.240165999996,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.08332824707031}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":650,\"y\":22,\"width\":94,\"height\":44},{\"x\":373,\"y\":133,\"width\":362,\"height\":48},{\"x\":387,\"y\":229,\"width\":348,\"height\":49.083343505859375}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5921.072583000001,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/guides/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3484.735832999999,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 2906.9595830000035,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.39999389648438}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "44x44 brand; text navigation target review remains human: {\"x\":50,\"y\":22,\"width\":262.3999938964844,\"height\":44}"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5651.651582999999,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/guides/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3458.517125000013,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3163.5384170000034,
+      "failure": null
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6581.186709000001,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/getting-started/\ntarget-size: Target not keyboard reachable: /guides/getting-started/\nnested-cleanup: Target not keyboard reachable: /guides/getting-started/\nordinary-navigation: Target not keyboard reachable: /guides/getting-started/\nsame-document-focus: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":360,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":390}}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 7573.580916999999,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\ntable-local-scroll: Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":360,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":390}}"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3150.034790999998,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nrecovery-navigation: Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6503.9344999999885,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/getting-started/\ntarget-size: Target not keyboard reachable: /guides/getting-started/\nnested-cleanup: Target not keyboard reachable: /guides/getting-started/\nordinary-navigation: Target not keyboard reachable: /guides/getting-started/\nsame-document-focus: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 7588.979082999998,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\ntable-local-scroll: Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}}"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3149.6895000000077,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nrecovery-navigation: Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "44x44 brand; text navigation target review remains human: {\"x\":50,\"y\":22,\"width\":262.15625,\"height\":44}"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 5904.889209000001,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/\nordinary-navigation: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 7577.454708000005,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\ntable-local-scroll: Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}}"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3123.23008400001,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nrecovery-navigation: Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "no-js:chromium:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.078125}]"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3891.8355420000153,
+      "failure": null
+    },
+    {
+      "caseId": "no-js:firefox:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.25,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.08332824707031}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.083343505859375}]"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 4078.60379199998,
+      "failure": null
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 4355.098499999993,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/getting-started/\ntarget-size: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:899x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 899,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":899,\"client\":899}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":715.5,\"y\":22,\"width\":94,\"height\":44},{\"x\":438.5,\"y\":133,\"width\":362,\"height\":48},{\"x\":452.5,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5616.220792000007,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:900x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 900,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":900,\"client\":900}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":716,\"y\":22,\"width\":94,\"height\":44},{\"x\":439,\"y\":133,\"width\":362,\"height\":48},{\"x\":453,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5676.74341700002,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:901x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 901,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":901,\"client\":901}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.40625}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "44x44 brand; text navigation target review remains human: {\"x\":24,\"y\":22,\"width\":261.609375,\"height\":44}"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5415.840541000012,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":619,\"client\":619}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":511,\"y\":15,\"width\":94,\"height\":44},{\"x\":234,\"y\":126,\"width\":362,\"height\":48},{\"x\":248,\"y\":222,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":74,\"descriptor\":\"none\",\"article\":null,\"meta\":null,\"recovery\":null,\"writing\":null,\"transform\":null,\"articleColumns\":null,\"metaColumns\":null,\"recoveryColumns\":null}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 6228.444416000013,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":619,\"client\":619}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":589,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":619,\"documentScroll\":619}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":74,\"descriptor\":\"none\",\"article\":\"591px\",\"meta\":\"591px\",\"recovery\":null,\"writing\":null,\"transform\":null,\"articleColumns\":1,\"metaColumns\":1,\"recoveryColumns\":null}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3848.619875000004,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":619,\"client\":619}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":74,\"descriptor\":\"none\",\"article\":null,\"meta\":null,\"recovery\":\"591px\",\"writing\":\"horizontal-tb\",\"transform\":\"none\",\"articleColumns\":null,\"metaColumns\":null,\"recoveryColumns\":1}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3303.6755840000114,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":620,\"client\":620}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":512,\"y\":15,\"width\":94,\"height\":44},{\"x\":235,\"y\":126,\"width\":362,\"height\":48},{\"x\":249,\"y\":222,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":74,\"descriptor\":\"none\",\"article\":null,\"meta\":null,\"recovery\":null,\"writing\":null,\"transform\":null,\"articleColumns\":null,\"metaColumns\":null,\"recoveryColumns\":null}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 6187.150457999989,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":620,\"client\":620}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":590,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":620,\"documentScroll\":620}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":74,\"descriptor\":\"none\",\"article\":\"592px\",\"meta\":\"592px\",\"recovery\":null,\"writing\":null,\"transform\":null,\"articleColumns\":1,\"metaColumns\":1,\"recoveryColumns\":null}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3826.7456250000105,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":620,\"client\":620}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":74,\"descriptor\":\"none\",\"article\":null,\"meta\":null,\"recovery\":\"592px\",\"writing\":\"horizontal-tb\",\"transform\":\"none\",\"articleColumns\":null,\"metaColumns\":null,\"recoveryColumns\":1}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3300.738666999998,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":621,\"client\":621}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":509,\"y\":22,\"width\":94,\"height\":44},{\"x\":232,\"y\":133,\"width\":362,\"height\":48},{\"x\":246,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":88,\"descriptor\":\"block\",\"article\":null,\"meta\":null,\"recovery\":null,\"writing\":null,\"transform\":null,\"articleColumns\":null,\"metaColumns\":null,\"recoveryColumns\":null}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 6194.706459000008,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":621,\"client\":621}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":583,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":621,\"documentScroll\":621}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":88,\"descriptor\":\"block\",\"article\":\"585px\",\"meta\":\"292.5px 292.5px\",\"recovery\":null,\"writing\":null,\"transform\":null,\"articleColumns\":1,\"metaColumns\":2,\"recoveryColumns\":null}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3867.7049169999955,
+      "failure": null
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":621,\"client\":621}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": true,
+          "detail": "{\"headerHeight\":88,\"descriptor\":\"block\",\"article\":null,\"meta\":null,\"recovery\":\"132.281px 396.844px\",\"writing\":\"vertical-rl\",\"transform\":\"matrix(-1, 0, 0, -1, 0, 0)\",\"articleColumns\":null,\"metaColumns\":null,\"recoveryColumns\":2}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3281.3117920000223,
+      "failure": null
+    },
+    {
+      "caseId": "reduced-motion:chromium:shell-nav:390x844",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 6225.904042000009,
+      "failure": null
+    },
+    {
+      "caseId": "reduced-motion:chromium:content-detail:390x844",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":360,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":390}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3866.155582999985,
+      "failure": null
+    },
+    {
+      "caseId": "reduced-motion:chromium:shell-nav:1280x800",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.40625}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "44x44 brand; text navigation target review remains human: {\"x\":50,\"y\":22,\"width\":261.609375,\"height\":44}"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 5990.141499999998,
+      "failure": null
+    },
+    {
+      "caseId": "reduced-motion:chromium:content-detail:1280x800",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"https://field-notes.example/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "article-content",
+          "passed": true,
+          "detail": "actual WikiArticle/prose visible; original single H2 retained"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 3900.25450000001,
+      "failure": null
+    },
+    {
+      "caseId": "live-resize:chromium:shell-nav:899x800",
+      "category": "live-resize",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 899,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+      "buildSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":899,\"client\":899}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":140.03125,\"height\":42}}; next Tab beyond header: {\"tag\":\"A\",\"href\":\"/guides/getting-started/\",\"beyondHeader\":true,\"inHeader\":false,\"skip\":false}"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":715.5,\"y\":22,\"width\":94,\"height\":44},{\"x\":438.5,\"y\":133,\"width\":362,\"height\":48},{\"x\":452.5,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "same-document home anchor closes menu and focuses visible brand"
+        },
+        {
+          "name": "resize-focus",
+          "passed": true,
+          "detail": "guide.getting-started: mobile child -> desktop child -> mobile trigger"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "PASS",
+      "durationMs": 6236.495290999999,
+      "failure": null
+    }
+  ]
+}

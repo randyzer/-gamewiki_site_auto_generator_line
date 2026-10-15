@@ -1,0 +1,49 @@
+{
+  "status": "BLOCKED",
+  "callbackSerialization": "PASS",
+  "targetedRows": 6,
+  "passedRows": 5,
+  "assertions": 63,
+  "passedAssertions": 62,
+  "failed": [
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "name": "compact-control-minimum",
+      "passed": false,
+      "detail": {
+        "font": "SFMono-Regular, Cascadia Mono, Liberation Mono, monospace",
+        "padding": "12px",
+        "minHeight": "44px",
+        "height": 43.999969482421875,
+        "width": 142.921875,
+        "radius": "8px",
+        "border": "rgb(31, 36, 38)",
+        "transform": "none",
+        "shadow": "none"
+      }
+    }
+  ],
+  "unexpectedErrors": [],
+  "qualificationAttempts": 1,
+  "retryCount": 0,
+  "targeted": "FAIL",
+  "fresh47": "NOT_STARTED",
+  "hypotheses": [
+    "WebKit DOMRect floating-point measurement precision",
+    "True minimum-height geometry defect requiring further evidence"
+  ],
+  "observedComputedMinHeight": "44px",
+  "observedDOMRectHeight": 43.999969482421875,
+  "shortfallCssPx": 0.000030517578125,
+  "productRepairJustified": "NOT_ESTABLISHED",
+  "sourceUnchanged": true,
+  "normalCleanup": true,
+  "post03AReadiness": "STALE",
+  "safariProof": 0,
+  "ws06a": "BLOCKED",
+  "next": "Independent REVIEW25 and finite PLAN26; preserve failure, do not alter CSS or rerun in25"
+}

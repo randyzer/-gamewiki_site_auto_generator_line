@@ -1,0 +1,334 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 14,
+  "workstream": "WS-06A verification-policy decision",
+  "policyStatus": "PROPOSAL_ACCEPTED_NOT_IMPLEMENTED",
+  "sourceManifestBefore": "796b1a6e39ca2df4141e4e65ea4cf2fc70c9d510d3018fef38c3fd60612cfed8",
+  "sourceManifestAfter": "796b1a6e39ca2df4141e4e65ea4cf2fc70c9d510d3018fef38c3fd60612cfed8",
+  "productDelta": 0,
+  "contractDelta": 0,
+  "matrixDelta": 0,
+  "runnerDelta": 0,
+  "dependencyDelta": 0,
+  "canonicalContract": {
+    "systemVersion": "V2.7",
+    "productContractVersion": "V2.7",
+    "capabilityRegistryVersion": "V2.7",
+    "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+    "owningArtifact": "GAME_SOP",
+    "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+    "predecessorContractVersion": "v0.2",
+    "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+  },
+  "frozenKeyHashes": {
+    "scripts/core-browser-matrix.ts": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+    "scripts/run-core-browser-evidence.ts": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+    "src/components/navigation/MobileNav.astro": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+    "src/styles/global.css": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+    "package.json": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+    "package-lock.json": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616"
+  },
+  "qualificationEvidenceSha256": "c24c2371ff8a52453582468165f0f2fb93918ea69bf59fd35e4f511b0bb00cf9",
+  "qualification": {
+    "executed": 47,
+    "pass": 36,
+    "fail": 11,
+    "notRun": 0,
+    "skip": 0,
+    "rerun": false
+  },
+  "nineteenFileHashes": {
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE": {
+      "package.json": {
+        "before": {
+          "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "package-lock.json": {
+        "before": {
+          "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      ".github/workflows/ci.yml": {
+        "before": {
+          "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      ".gitignore": {
+        "before": {
+          "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "README.md": {
+        "before": {
+          "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/QA_CHECKLIST.md": {
+        "before": {
+          "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/CORE_BROWSER_EVIDENCE.md": {
+        "before": {
+          "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "scripts/core-browser-matrix.ts": {
+        "before": {
+          "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "scripts/core-browser-evidence.ts": {
+        "before": {
+          "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "scripts/run-core-browser-evidence.ts": {
+        "before": {
+          "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "tests/core-browser-evidence.test.ts": {
+        "before": {
+          "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "src/styles/global.css": {
+        "before": {
+          "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "src/components/navigation/MobileNav.astro": {
+        "before": {
+          "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "tests/navigation-behavior.test.ts": {
+        "before": {
+          "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "tests/navigation.test.ts": {
+        "before": {
+          "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE": {
+      "docs/NEW_GAME_SITE_SOP_v2.7.md": {
+        "before": {
+          "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/QA_CHECKLIST.md": {
+        "before": {
+          "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+          "mode": 420,
+          "symlink": false
+        }
+      },
+      "docs/EXECUTION_PROMPT.md": {
+        "before": {
+          "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    },
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE": {
+      "CodexMasterPrompt_v2.7Candidate.md": {
+        "before": {
+          "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+          "mode": 420,
+          "symlink": false
+        },
+        "after": {
+          "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    }
+  },
+  "controlIdentity": {
+    "playwright": "1.63.0",
+    "executable": "/Users/randyz/Library/Caches/ms-playwright/webkit-2359/pw_run.sh",
+    "revision": "2359",
+    "host": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.22.0"
+    },
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "html": "<div id=\"scroll\" tabindex=\"0\" style=\"width:320px;overflow-x:auto\"><table style=\"min-width:780px\"><tr><td>Native wide table</td></tr></table></div>",
+    "headless": true
+  },
+  "controlSummary": {
+    "validRuns": 10,
+    "scrolledRuns": 0,
+    "classification": "NATIVE_ARROW_UNAVAILABLE",
+    "independentLaunches": 10,
+    "allBrowsersClosed": true
+  },
+  "command": {
+    "command": "PATH=/Users/randyz/.nvm/versions/node/v22.22.0/bin:$PATH node template/codex/executions/v2.7-ws06a/iteration14/arrowright-repeatability-control.mjs",
+    "exitCode": 0,
+    "output": "arrowright-repeatability.log"
+  },
+  "integrityCheckExitCode": 0,
+  "integrityErrors": [],
+  "capabilityPromotion": "NONE",
+  "gitActions": {
+    "commit": false,
+    "push": false,
+    "tag": false,
+    "merge": false
+  },
+  "filesSha256": {
+    "WEBKIT_VERIFICATION_POLICY_PROPOSAL_V1.md": "2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917",
+    "arrowright-repeatability-control.mjs": "f88ebd53cbcd0d5993bbde3d922438e827aed18a8afdce6cdfd47398c5de8883",
+    "arrowright-repeatability.json": "1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344",
+    "arrowright-repeatability.log": "8dcb730d0e80b83001127d856b621e41898908ae3b5f4ed300100fbf374d061f",
+    "integrity-check.json": "9b5965233a34b65ac0c8e63f7d036f72b1fa4c4e55eec13d6eb4218f702eef4e",
+    "policy-decision-matrix.json": "61fa376a452a341f12452f11b82818eb350a70c5626997737ed42a9bd7fd3cfc",
+    "preflight.json": "30da4319ea609beec6a7bd0df1a1b2c584bdad0f00be275fc76023f99d769b01",
+    "result.md": "1552b6ea9f5e0e849165e23a6a91eaf82ba1aa56f962e50a6e645f86693db0f1"
+  },
+  "planSha256": "5370c9d5827ec1d54963195b434f4224a075174adad9dd96ae9d68da0dba0fd1",
+  "selfHashOmittedToAvoidRecursiveHash": true,
+  "independentReview": {
+    "verdict": "ACCEPT",
+    "source": "result.md / actual ChatGPT review14",
+    "WS06AStatus": "BLOCKED",
+    "nextFiniteDecision": "Authorize iteration15 solely to formulate Live-Resize Core Repair Plan; policy implementation separate",
+    "conversationUrl": "https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c",
+    "assistantDomKey": "fallback-turn-8:2:assistant",
+    "reviewTextSha256": "e16817d2e5e69ce82d78b5cdb669ada72a43f95f84ee2a24a90e003e53084041"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "fixtureRoot": "/tmp/c2c30a.Dgh4sa/starter-adoption-verification-ktUrrF",
+  "starterSourceSha256": "c3c12745b589f0a43ee5d76b4aa971a139a4c2aba0acb43bf80d7b1e1d419573",
+  "prePatchFixtureSourceSha256": "3f0b0d9350f15866d6aa367e95d7bc606200982f6f5e87cb90d1d9b62708cc35",
+  "postPatchFixtureSourceSha256": "b0469e6947cc0f6e3c5089ebc1d84b1fc4712d580cf802f87da7fc9f6fb05d8f",
+  "distSha256": "0334a6d7bb347ac10aa01c80a57bc57fb72466aad67278f6cefc55e6ad0e117a",
+  "assets": [
+    {
+      "id": "qa.explicit-share",
+      "type": "image",
+      "src": "/media/qa-explicit-share.svg",
+      "alt": "Synthetic pale rectangle for explicit share metadata QA",
+      "dimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "rightsRef": "private/qa-explicit-share",
+      "sourceUrl": "https://example.com/qa-explicit-share"
+    },
+    {
+      "id": "qa.default-share",
+      "type": "image",
+      "src": "/media/qa-default-share.svg",
+      "alt": "Synthetic blue share illustration for technical QA",
+      "dimensions": {
+        "width": 1200,
+        "height": 630
+      },
+      "rightsRef": "private/qa-default-share",
+      "sourceUrl": "https://example.com/qa-default-share"
+    }
+  ],
+  "canonicalManifestModified": false,
+  "syntheticOnly": true,
+  "observedAt": "2026-10-08T01:02:20.588Z"
+}

@@ -1,0 +1,285 @@
+{
+  "decision": "BLOCKED",
+  "errors": [
+    "missing/invalid real Safari keyboard evidence"
+  ],
+  "requirements": [
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "target-size",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "nested-cleanup",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "ordinary-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "same-document-focus",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "table-local-scroll",
+          "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "recovery-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "target-size",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "nested-cleanup",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "ordinary-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "same-document-focus",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "table-local-scroll",
+          "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "recovery-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "ordinary-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "table-local-scroll",
+          "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "recovery-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        },
+        {
+          "name": "target-size",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+        }
+      ]
+    }
+  ],
+  "commandResult": {
+    "name": "closure-recheck",
+    "command": "npm run verify:browser-closure",
+    "exitCode": 1,
+    "startedAt": "2026-10-07T17:05:19.939Z",
+    "finishedAt": "2026-10-07T17:05:20.202Z"
+  }
+}

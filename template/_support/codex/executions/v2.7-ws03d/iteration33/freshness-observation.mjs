@@ -1,0 +1,24 @@
+export function observeFreshness() {
+ const metadata=document.querySelector('article .article__meta');
+ const rows=[];
+ for(const row of metadata?.children??[]){
+  const times=[],links=[];
+  for(const t of row.querySelectorAll('time'))times.push({datetime:t.getAttribute('datetime'),text:t.textContent?.trim()});
+  for(const a of row.querySelectorAll('a'))links.push({href:a.getAttribute('href'),text:a.textContent?.trim()});
+  rows.push({label:row.querySelector('dt')?.textContent?.trim(),text:row.querySelector('dd')?.textContent?.trim(),times,links});
+ }
+ const articles=[],parseErrors=[];
+ for(const script of document.querySelectorAll('script[type="application/ld+json"]')){
+  try{
+   const stack=[JSON.parse(script.textContent??'')];
+   while(stack.length){
+    const node=stack.pop();
+    if(Array.isArray(node)){for(let index=node.length-1;index>=0;index--)stack.push(node[index]);continue;}
+    if(!node||typeof node!=='object')continue;
+    if(node['@type']==='Article')articles.push(node);
+    if(node['@graph'])stack.push(node['@graph']);
+   }
+  }catch(e){parseErrors.push(String(e));}
+ }
+ return {rows,articles,parseErrors,bodyText:document.body.innerText,html:document.documentElement.outerHTML};
+}

@@ -1,0 +1,9 @@
+{
+  "startedPid": 57087,
+  "astroStopExit": 0,
+  "pidAliveBeforeStop": true,
+  "pidAliveAfterStop": false,
+  "fallbackSignalUsed": false,
+  "fixtureRemoved": true,
+  "infrastructureError": null
+}

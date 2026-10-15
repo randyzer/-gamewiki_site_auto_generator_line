@@ -1,0 +1,569 @@
+{
+  "kind": "WS03C_SYNTHETIC_SHARE_METADATA",
+  "qualificationAttempts": 1,
+  "retryCount": 0,
+  "rows": [
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/guides/getting-started/",
+      "selection": "explicit-share",
+      "assertions": [
+        {
+          "name": "final-route-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "share-meta-og:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-explicit-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:width",
+          "passed": true,
+          "detail": [
+            "800"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:height",
+          "passed": true,
+          "detail": [
+            "600"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic pale rectangle for explicit share metadata QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-explicit-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic pale rectangle for explicit share metadata QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:card",
+          "passed": true,
+          "detail": [
+            "summary_large_image"
+          ]
+        },
+        {
+          "name": "local-share-asset-http200",
+          "passed": true,
+          "detail": {
+            "status": 200,
+            "contentType": "image/svg+xml",
+            "previewAssetUrl": "http://127.0.0.1:54548/media/qa-explicit-share.svg",
+            "metadataUrl": "https://field-notes.example/media/qa-explicit-share.svg",
+            "note": "HTTP proof is for the disposable local preview asset; declared HTTPS fixture domain is not probed."
+          }
+        },
+        {
+          "name": "private-share-evidence-not-in-head",
+          "passed": true,
+          "detail": {
+            "privateLeak": false
+          }
+        },
+        {
+          "name": "share-only-does-not-render-body-media",
+          "passed": true,
+          "detail": {
+            "bodyFigures": 0,
+            "sharePlacements": 0
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/about/",
+      "selection": "default-fallback",
+      "assertions": [
+        {
+          "name": "final-route-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "share-meta-og:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-default-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:width",
+          "passed": true,
+          "detail": [
+            "1200"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:height",
+          "passed": true,
+          "detail": [
+            "630"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic blue share illustration for technical QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-default-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic blue share illustration for technical QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:card",
+          "passed": true,
+          "detail": [
+            "summary_large_image"
+          ]
+        },
+        {
+          "name": "local-share-asset-http200",
+          "passed": true,
+          "detail": {
+            "status": 200,
+            "contentType": "image/svg+xml",
+            "previewAssetUrl": "http://127.0.0.1:54548/media/qa-default-share.svg",
+            "metadataUrl": "https://field-notes.example/media/qa-default-share.svg",
+            "note": "HTTP proof is for the disposable local preview asset; declared HTTPS fixture domain is not probed."
+          }
+        },
+        {
+          "name": "private-share-evidence-not-in-head",
+          "passed": true,
+          "detail": {
+            "privateLeak": false
+          }
+        },
+        {
+          "name": "share-only-does-not-render-body-media",
+          "passed": true,
+          "detail": {
+            "bodyFigures": 0,
+            "sharePlacements": 0
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/guides/getting-started/",
+      "selection": "explicit-share",
+      "assertions": [
+        {
+          "name": "final-route-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "share-meta-og:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-explicit-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:width",
+          "passed": true,
+          "detail": [
+            "800"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:height",
+          "passed": true,
+          "detail": [
+            "600"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic pale rectangle for explicit share metadata QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-explicit-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic pale rectangle for explicit share metadata QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:card",
+          "passed": true,
+          "detail": [
+            "summary_large_image"
+          ]
+        },
+        {
+          "name": "local-share-asset-http200",
+          "passed": true,
+          "detail": {
+            "status": 200,
+            "contentType": "image/svg+xml",
+            "previewAssetUrl": "http://127.0.0.1:54548/media/qa-explicit-share.svg",
+            "metadataUrl": "https://field-notes.example/media/qa-explicit-share.svg",
+            "note": "HTTP proof is for the disposable local preview asset; declared HTTPS fixture domain is not probed."
+          }
+        },
+        {
+          "name": "private-share-evidence-not-in-head",
+          "passed": true,
+          "detail": {
+            "privateLeak": false
+          }
+        },
+        {
+          "name": "share-only-does-not-render-body-media",
+          "passed": true,
+          "detail": {
+            "bodyFigures": 0,
+            "sharePlacements": 0
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/about/",
+      "selection": "default-fallback",
+      "assertions": [
+        {
+          "name": "final-route-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "share-meta-og:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-default-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:width",
+          "passed": true,
+          "detail": [
+            "1200"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:height",
+          "passed": true,
+          "detail": [
+            "630"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic blue share illustration for technical QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-default-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic blue share illustration for technical QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:card",
+          "passed": true,
+          "detail": [
+            "summary_large_image"
+          ]
+        },
+        {
+          "name": "local-share-asset-http200",
+          "passed": true,
+          "detail": {
+            "status": 200,
+            "contentType": "image/svg+xml",
+            "previewAssetUrl": "http://127.0.0.1:54548/media/qa-default-share.svg",
+            "metadataUrl": "https://field-notes.example/media/qa-default-share.svg",
+            "note": "HTTP proof is for the disposable local preview asset; declared HTTPS fixture domain is not probed."
+          }
+        },
+        {
+          "name": "private-share-evidence-not-in-head",
+          "passed": true,
+          "detail": {
+            "privateLeak": false
+          }
+        },
+        {
+          "name": "share-only-does-not-render-body-media",
+          "passed": true,
+          "detail": {
+            "bodyFigures": 0,
+            "sharePlacements": 0
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/guides/getting-started/",
+      "selection": "explicit-share",
+      "assertions": [
+        {
+          "name": "final-route-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "share-meta-og:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-explicit-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:width",
+          "passed": true,
+          "detail": [
+            "800"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:height",
+          "passed": true,
+          "detail": [
+            "600"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic pale rectangle for explicit share metadata QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-explicit-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic pale rectangle for explicit share metadata QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:card",
+          "passed": true,
+          "detail": [
+            "summary_large_image"
+          ]
+        },
+        {
+          "name": "local-share-asset-http200",
+          "passed": true,
+          "detail": {
+            "status": 200,
+            "contentType": "image/svg+xml",
+            "previewAssetUrl": "http://127.0.0.1:54548/media/qa-explicit-share.svg",
+            "metadataUrl": "https://field-notes.example/media/qa-explicit-share.svg",
+            "note": "HTTP proof is for the disposable local preview asset; declared HTTPS fixture domain is not probed."
+          }
+        },
+        {
+          "name": "private-share-evidence-not-in-head",
+          "passed": true,
+          "detail": {
+            "privateLeak": false
+          }
+        },
+        {
+          "name": "share-only-does-not-render-body-media",
+          "passed": true,
+          "detail": {
+            "bodyFigures": 0,
+            "sharePlacements": 0
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/about/",
+      "selection": "default-fallback",
+      "assertions": [
+        {
+          "name": "final-route-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "share-meta-og:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-default-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:width",
+          "passed": true,
+          "detail": [
+            "1200"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:height",
+          "passed": true,
+          "detail": [
+            "630"
+          ]
+        },
+        {
+          "name": "share-meta-og:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic blue share illustration for technical QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image",
+          "passed": true,
+          "detail": [
+            "https://field-notes.example/media/qa-default-share.svg"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:image:alt",
+          "passed": true,
+          "detail": [
+            "Synthetic blue share illustration for technical QA"
+          ]
+        },
+        {
+          "name": "share-meta-twitter:card",
+          "passed": true,
+          "detail": [
+            "summary_large_image"
+          ]
+        },
+        {
+          "name": "local-share-asset-http200",
+          "passed": true,
+          "detail": {
+            "status": 200,
+            "contentType": "image/svg+xml",
+            "previewAssetUrl": "http://127.0.0.1:54548/media/qa-default-share.svg",
+            "metadataUrl": "https://field-notes.example/media/qa-default-share.svg",
+            "note": "HTTP proof is for the disposable local preview asset; declared HTTPS fixture domain is not probed."
+          }
+        },
+        {
+          "name": "private-share-evidence-not-in-head",
+          "passed": true,
+          "detail": {
+            "privateLeak": false
+          }
+        },
+        {
+          "name": "share-only-does-not-render-body-media",
+          "passed": true,
+          "detail": {
+            "bodyFigures": 0,
+            "sharePlacements": 0
+          }
+        }
+      ],
+      "overall": "PASS"
+    }
+  ],
+  "overall": "PASS",
+  "errors": [],
+  "safariProof": 0,
+  "capabilityPromotion": "NONE"
+}

@@ -1,0 +1,22 @@
+{
+  "overall": "FAIL",
+  "counts": {
+    "PASS": 37,
+    "FAIL": 10
+  },
+  "sameCaseIds": true,
+  "nonWebkitRegressions": [],
+  "changedStatuses": [],
+  "newFailureAssertions": [
+    [
+      "baseline:webkit:content-detail:390x844",
+      "table-local-scroll"
+    ]
+  ],
+  "failedAssertions": 40,
+  "cleanup": {
+    "previewStopped": true,
+    "fixtureRemoved": true
+  },
+  "independentlyCapturedIdentityMatches": true
+}

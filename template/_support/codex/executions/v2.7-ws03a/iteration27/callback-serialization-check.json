@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "homeStructureValid": true,
+  "mode": "actual tsx .ts file import of native .mjs",
+  "rows": [
+    {
+      "name": "collectHomeObservation",
+      "source": "function collectHomeObservation(){const html=document.documentElement,cs=getComputedStyle(html),body=getComputedStyle(document.body);const surfaces=Object.fromEntries([[\"heading\",\".game-hero__copy h1\"],[\"utility\",\".eyebrow\"],[\"card\",\".portal-card\"],[\"control\",\".button\"],[\"shell\",\".shell\"]].map(([key,q])=>{const e=document.querySelector(q);if(!e)throw Error(\"Missing representative surface \"+q);const s=getComputedStyle(e),r=e.getBoundingClientRect();return[key,{font:s.fontFamily,padding:s.paddingTop,minHeight:s.minHeight,height:r.height,width:r.width,radius:s.borderTopLeftRadius,border:s.borderColor,transform:s.transform,shadow:s.boxShadow}]}));return{roles:{font:html.dataset.themeFont,density:html.dataset.themeDensity,shape:html.dataset.themeShape,state:html.dataset.themeState},family:document.body.dataset.pageFamily,bodyFont:body.fontFamily,heading:surfaces.heading,utility:surfaces.utility,card:surfaces.card,control:surfaces.control,shell:surfaces.shell,tokens:Object.fromEntries([\"shell-gutter\",\"card-padding\",\"control-min-height\",\"section-spacing\",\"font-utility\",\"media-radius\"].map(k=>[k,cs.getPropertyValue(\"--role-\"+k).trim()]))}}",
+      "valid": true
+    },
+    {
+      "name": "collectHoveredCardObservation",
+      "source": "function collectHoveredCardObservation(e){const s=getComputedStyle(e);return{transform:s.transform,shadow:s.boxShadow,border:s.borderColor}}",
+      "valid": true
+    },
+    {
+      "name": "collectArticleObservation",
+      "source": "function collectArticleObservation(){return{font:getComputedStyle(document.querySelector(\"h1\")).fontFamily,family:document.body.dataset.pageFamily,fontRole:document.documentElement.dataset.themeFont}}",
+      "valid": true
+    },
+    {
+      "name": "waitForNaturalRevealSettlement",
+      "source": "async function waitForNaturalRevealSettlement(){const element=document.querySelector(\".game-hero__copy.reveal.reveal--1\");if(!element)throw Error(\"Missing representative reveal ancestor\");const initialStyle=getComputedStyle(element),before={animationName:initialStyle.animationName,animationDuration:initialStyle.animationDuration,animationDelay:initialStyle.animationDelay,animationTimingFunction:initialStyle.animationTimingFunction,animationFillMode:initialStyle.animationFillMode,animationPlayState:initialStyle.animationPlayState,animations:element.getAnimations().map(a=>({playState:a.playState,currentTime:a.currentTime})),transform:initialStyle.transform,opacity:initialStyle.opacity};const durations=initialStyle.animationDuration.split(\",\").map(v=>v.trim().endsWith(\"ms\")?parseFloat(v):parseFloat(v)*1e3),delays=initialStyle.animationDelay.split(\",\").map(v=>v.trim().endsWith(\"ms\")?parseFloat(v):parseFloat(v)*1e3);const limitMs=Math.max(...durations.map((d,i)=>d+(delays[i%delays.length]??0)+1e3),2e3),started=performance.now(),observations=[];let consecutive=0;while(performance.now()-started<=limitMs){await new Promise(resolve=>requestAnimationFrame(resolve));const style=getComputedStyle(element),animations=element.getAnimations().map(a=>({playState:a.playState,currentTime:a.currentTime})),identity=style.transform===\"none\"||new DOMMatrixReadOnly(style.transform).isIdentity;const settled=animations.every(a=>a.playState===\"finished\")&&identity&&style.opacity===\"1\";consecutive=settled?consecutive+1:0;observations.push({elapsedMs:performance.now()-started,transform:style.transform,opacity:style.opacity,animations,exactIdentity:identity,settled,consecutiveSettledFrames:consecutive});if(consecutive>=2)return{status:\"PASS\",selector:\".game-hero__copy.reveal.reveal--1\",before,limitMs,observations,naturallyFinished:true,intervention:false}}return{status:\"BLOCKED\",selector:\".game-hero__copy.reveal.reveal--1\",before,limitMs,observations,naturallyFinished:false,intervention:false}}",
+      "valid": true
+    },
+    {
+      "name": "collectControlGeometry",
+      "source": "async function collectControlGeometry(){const element=document.querySelector(\".button\");if(!element)throw Error(\"Missing representative .button\");const samples=[];for(let i=0;i<16;i++){await new Promise(resolve=>requestAnimationFrame(resolve));const style=getComputedStyle(element),rect=element.getBoundingClientRect(),clientRect=element.getClientRects()[0],htmlStyle=getComputedStyle(document.documentElement),ancestors=[];for(let ancestor=element.parentElement;ancestor;ancestor=ancestor.parentElement){const s=getComputedStyle(ancestor);ancestors.push({tag:ancestor.tagName,className:ancestor.className,transform:s.transform,animations:ancestor.getAnimations().map(a=>({playState:a.playState,currentTime:a.currentTime})),zoom:s.getPropertyValue(\"zoom\")})}samples.push({index:i,css:{roleControlMinHeight:htmlStyle.getPropertyValue(\"--role-control-min-height\").trim(),minHeight:style.minHeight,height:style.height,boxSizing:style.boxSizing,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderTopWidth:style.borderTopWidth,borderBottomWidth:style.borderBottomWidth,lineHeight:style.lineHeight,fontSize:style.fontSize,transform:style.transform,zoom:style.getPropertyValue(\"zoom\")},layout:{rect:{top:rect.top,bottom:rect.bottom,height:rect.height,width:rect.width},bottomMinusTop:rect.bottom-rect.top,clientHeight:element.clientHeight,offsetHeight:element.offsetHeight,scrollHeight:element.scrollHeight,clientTop:element.clientTop,clientRectHeight:clientRect?.height??null},scale:{devicePixelRatio:window.devicePixelRatio,innerWidth:window.innerWidth,innerHeight:window.innerHeight,visualViewport:window.visualViewport?{width:window.visualViewport.width,height:window.visualViewport.height,scale:window.visualViewport.scale}:null,documentElement:{clientWidth:document.documentElement.clientWidth,clientHeight:document.documentElement.clientHeight}},ancestors})}return{selector:\".button\",navigationCount:1,samples}}",
+      "valid": true
+    }
+  ]
+}

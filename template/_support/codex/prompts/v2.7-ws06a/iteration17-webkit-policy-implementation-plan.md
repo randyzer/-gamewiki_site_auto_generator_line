@@ -1,0 +1,513 @@
+# 第17轮实际ChatGPT有限实施计划
+
+2026-10-06；原IAB页签实际渲染DOM完整记录。READY FOR EXECUTION UNDER EXISTING HUMAN AUTHORIZATION；不是Codex代写。
+
+```text
+- heading "ChatGPT 说：" [level=4]
+  - paragraph:
+    - text: "[C2C]"
+    - text: "STATE: PLAN"
+    - text: "TASK_ID: c2c_a765"
+    - text: "ITERATION: 17"
+    - text: "WORKSTREAM:"
+    - strong: WebKit verification policy implementation
+    - text: "PLAN_STATUS:"
+    - strong: FINITE / READY FOR EXECUTION UNDER EXISTING HUMAN AUTHORIZATION
+    - text: "WS06A_CURRENT:"
+    - strong: BLOCKED — raw qualification 37 PASS / 10 FAIL
+    - text: "LIVE_RESIZE:"
+    - strong: CLOSED — DO NOT REOPEN
+  - paragraph: 我已确认 workspace 仍是 hot_words_web，并重新读取 iteration14 已接受的 WEBKIT_VERIFICATION_POLICY_PROPOSAL_V1.md、decision matrix、iteration16 ACCEPT、新的 37/10 evidence，以及当前 Starter browser schema/runner、SOP/QA/Execution Prompt/Master Prompt。
+  - paragraph:
+    - text: 这一步不再做诊断。目标是把已接受的政策真正落成一个
+    - strong: fail-closed 的 WS-06A closure mechanism
+    - text: ：
+  - blockquote:
+    - paragraph:
+      - text: 原 47 行自动证据永远保留原始 PASS/FAIL；
+      - text: 环境导致的 WebKit 自动输入路径缺失单独分类；
+      - text: 被阻断的 required keyboard requirements 必须取得真实 Safari 键盘证据；
+      - text: 只有 raw evidence + policy disposition + alternate evidence 全部完整，才允许进入独立 WS-06A closure review。
+  - separator
+  - heading "1. 核心设计：不修改 check:browser 的真相" [level=2]
+  - paragraph: 现有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: npm run check:browser
+  - paragraph: 继续：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47 rows 37 PASS 10 FAIL exit 1
+  - paragraph: 不允许把 WebKit rows：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: FAIL → PASS FAIL → N/A FAIL → SKIP
+  - paragraph: 也不修改：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: scripts/core-browser-matrix.ts scripts/run-core-browser-evidence.ts
+  - paragraph: 因此历史 36/11 和当前 37/10 都保持可追溯。
+  - paragraph: 新增的是第二层：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: RAW QUALIFICATION ↓ POLICY ATTRIBUTION ↓ REAL KEYBOARD ALTERNATE EVIDENCE ↓ WS06A CLOSURE VERIFIER ↓ INDEPENDENT REVIEW
+  - paragraph: 不是重写 qualification。
+  - separator
+  - heading "2. 精确 product / triad 文件范围：10 files" [level=1]
+  - heading "Starter — 6 files" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: MODIFY 1. scripts/core-browser-evidence.ts 2. package.json 3. docs/CORE_BROWSER_EVIDENCE.md 4. docs/QA_CHECKLIST.md ADD 5. scripts/verify-ws06a-browser-closure.ts 6. tests/ws06a-browser-closure.test.ts
+  - heading "SOP — 3 files" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 7. docs/NEW_GAME_SITE_SOP_v2.7.md 8. docs/QA_CHECKLIST.md 9. docs/EXECUTION_PROMPT.md
+  - heading "Master Prompt — 1 file" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 10. CodexMasterPrompt_v2.7Candidate.md
+  - paragraph:
+    - text: 明确
+    - strong: NO CHANGE
+    - text: ：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: scripts/core-browser-matrix.ts scripts/run-core-browser-evidence.ts MobileNav.astro navigation tests CSS package-lock.json CI Canonical Contract CONTRACT_REFERENCE Registry roadmap WS04A inputs
+  - paragraph: 如果实施需要第 11 个 product/triad file：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: STOP
+  - paragraph: 先重新审查范围。
+  - separator
+  - heading "3. core-browser-evidence.ts 只增加“结构验证”，不放宽原 validator" [level=1]
+  - paragraph: 现在：
+  - generic: TypeScript
+  - button "启用自动换行":
+  - button "复制":
+  - code: validateBrowserEvidence(...)
+  - paragraph: 要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47/47 PASS
+  - paragraph:
+    - text: 这个函数必须
+    - strong: 保持完全严格
+    - text: 。
+  - paragraph: 新增类似：
+  - generic: TypeScript
+  - button "启用自动换行":
+  - button "复制":
+  - code: validateBrowserEvidenceSnapshot(...)
+  - paragraph: 职责只验证：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: schema valid exact 47 case IDs matrix fields exact engine/version/revision exact source/build exact Contract binding exact HTTP/status/assertion coverage完整 cleanup complete no NOT_RUN no duplicate/missing/unexpected rows
+  - paragraph: 但允许：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: caseStatus = FAIL overall = FAIL
+  - paragraph: 这样 closure verifier可以安全读取真实 37/10，而不是复制整套 schema。
+  - paragraph: 必须保证：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: validateBrowserEvidence()
+  - paragraph: 仍然拒绝 37/10。
+  - separator
+  - heading "4. 新命令" [level=1]
+  - paragraph: package.json 只新增：
+  - generic: JSON
+  - button "启用自动换行":
+  - button "复制":
+  - code: "\"verify:browser-closure\": \"tsx scripts/verify-ws06a-browser-closure.ts\""
+  - paragraph: 不改变：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: check:browser check verify:unadopted-final verify:adopted-final build
+  - paragraph: 调用形态：
+  - generic: Bash
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS06A_BROWSER_EVIDENCE=<core-browser-evidence.json> \ WS06A_NATIVE_PROBE=<native-keyboard-probe.json> \ WS06A_REAL_KEYBOARD_EVIDENCE=<real-keyboard-evidence.json> \ npm run verify:browser-closure
+  - separator
+  - heading "5. Closure verifier 绝不自动“原谅 WebKit”" [level=1]
+  - paragraph: 它首先读取 raw 47。
+  - heading "若 raw 已经 47/47 PASS" [level=3]
+  - paragraph: 允许输出：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: RAW_QUALIFICATION_COMPLETE
+  - paragraph: 不需要 alternate evidence。
+  - heading "若存在 FAIL" [level=3]
+  - paragraph: 必须全部满足：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 全部 FAIL 都是 WebKit 无 Chromium / Firefox FAIL 无 NOT_RUN 无未知 infrastructure error 无新失败 assertion
+  - paragraph: 否则立即：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: FAIL
+  - separator
+  - heading "6. 当前允许进入 policy path 的失败必须是精确 allowlist" [level=1]
+  - paragraph: 基于实际 fresh 37/10，只允许当前已审查的两种来源。
+  - heading "Plain-Tab/profile dependent" [level=3]
+  - paragraph: 例如：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: skip-keyboard footer-keyboard navigation-keyboard target-size nested-cleanup ordinary-navigation same-document-focus recovery-navigation
+  - paragraph: 仅当该 assertion 的失败详情确实来自：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Target not keyboard reachable First Tab does not focus skip link
+  - paragraph: 等 accepted plain-Tab prerequisite失效路径。
+  - paragraph: 不能仅按 assertion name粗暴豁免。
+  - paragraph: 并要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: native-keyboard-probe.json webkit.plainTabReachesLink == false
+  - paragraph: 且 engine identity必须与 raw evidence一致。
+  - paragraph: Diagnostic disposition：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: ENVIRONMENT_PROFILE_BLOCKED
+  - paragraph:
+    - strong: 不是 PASS。
+  - separator
+  - heading "7. ArrowRight 只能进入 PRODUCT_EVIDENCE_UNRESOLVED" [level=1]
+  - paragraph: 当前仅允许：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: table-local-scroll
+  - paragraph: 且 raw geometry必须仍证明：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: wrapper focused overflow-x auto|scroll scrollWidth > clientWidth document itself no horizontal overflow ArrowRight event received native scrollLeft stayed 0
+  - paragraph: 同时 pin iteration14 accepted native control：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WebKit 26.6 / revision 2359 10 valid fresh processes 0 native scroll NATIVE_ARROW_UNAVAILABLE
+  - paragraph: 若当前 browser version/revision与 accepted control不一致：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: STOP
+  - paragraph: 不能复用旧环境政策。
+  - paragraph: Disposition只能：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: PRODUCT_EVIDENCE_UNRESOLVED
+  - paragraph: 不能：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: ENVIRONMENT PASS PRODUCT PASS
+  - separator
+  - heading "8. Alternate evidence 必须是 WebKit-family 的真实 Safari 键盘证据" [level=1]
+  - paragraph: 为了真正走向 WS-06A closure，我不建议拿 Chromium/Firefox manual evidence替代 WebKit失败。
+  - paragraph: 要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: browser product = Safari engine family = WebKit real user keyboard path
+  - paragraph: 输入方法只接受两种：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: HUMAN_PHYSICAL_KEYBOARD AUTHORIZED_TRUSTED_SYSTEM_KEYBOARD
+  - paragraph: 明确拒绝：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: locator.focus() element.focus() scrollLeft assignment JS dispatch KeyboardEvent Playwright keyboard作为 alternate proof Option/Alt+Tab 替代 modifier workaround
+  - separator
+  - heading "9. real-keyboard-evidence.json 必须绑定真实版本" [level=1]
+  - paragraph: 它是 governance evidence，不加入 Starter product tree。
+  - paragraph: 未来放在：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: template/codex/executions/v2.7-ws06a/iteration17/ real-keyboard-evidence.json
+  - paragraph: 至少包含：
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "schemaVersion: \"1\" policy: id: WS06A_WEBKIT_VERIFICATION_V1 proposalSha256: <accepted iteration14 proposal hash> starter: branch: head: workingTreeSha256: manualBuild: fixtureIdentity: Field Notes synthetic adoption fixtureSourceSha256: distSha256: browser: product: Safari version: engineFamily: WebKit host: platform: darwin arch: arm64 input: method: HUMAN_PHYSICAL_KEYBOARD | AUTHORIZED_TRUSTED_SYSTEM_KEYBOARD keyboardNavigationSettingChangedForTest: false review: operator: observedAt: notes: rows: ..."
+  - paragraph: 如果任何 identity为空：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: FAIL
+  - separator
+  - heading "10. 不要求人手重新填写 47 行，只覆盖实际10个 FAIL rows" [level=1]
+  - paragraph: Closure verifier从 raw 37/10自动生成需要补证的 exact case/assertion清单。
+  - paragraph: 因此 alternate evidence只允许包含：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 那10个 WebKit failed caseIds + 每行 raw 中实际 failed assertions
+  - paragraph: 多写不存在的 PASS：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: FAIL
+  - paragraph: 少一项：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: FAIL
+  - paragraph: case/route/viewport/JS模式不匹配：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: FAIL
+  - paragraph: 这样仍然保持 47-row coverage完整对应关系。
+  - separator
+  - heading "11. Human Safari 要执行的实际场景" [level=1]
+  - paragraph: 不是再做一个泛泛的“Safari看起来正常”。
+  - paragraph: 对应原失败行实际走：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 390×844 768×1024 1280×800
+  - paragraph: 页面角色：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: / guides/getting-started/ /__ws06a_missing_route__/
+  - paragraph: 以及：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 390×844 no-JS shell
+  - paragraph: 针对 raw failed assertions实际验证：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: skip link可通过真实键盘到达并激活 顺序焦点确实跳过重复导航 footer/back-to-top可达 mobile Menu / nested group / child可操作 desktop parent/child可操作 Escape/focus restore正确 ordinary navigation成功 same-document focus正确 404 recovery link可达并激活 required target实际可用
+  - paragraph: ArrowRight的两个失败 detail rows还必须：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 真实键盘 focus 到 .table-scroll 真实按 ArrowRight 观察到内容发生横向移动
+  - paragraph: 不能只说“可以用鼠标横向滚”。
+  - separator
+  - heading "12. No-JS 证据" [level=1]
+  - paragraph: 390×844 no-JS row必须真的：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: JavaScript disabled
+  - paragraph: 然后用真实键盘：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Menu summary → nested summary → child anchor → actual detail page
+  - paragraph: 如果 Safari当前无法提供可审计的 JS-disabled session：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: alternate evidence incomplete WS06A remains BLOCKED
+  - paragraph: 不得拿 JS-enabled结果替代。
+  - separator
+  - heading "13. 不允许为了证据修改 Safari keyboard preference" [level=1]
+  - paragraph: 非常重要：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: keyboardNavigationSettingChangedForTest = false
+  - paragraph: 不允许为了让 Safari能 Tab普通 link 而临时修改：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: macOS keyboard navigation Safari Tab preference 其它系统输入设置
+  - paragraph: 如果 Safari在用户当前真实配置下也无法通过普通 Tab进入链接：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: record FAIL/BLOCKED truthfully
+  - paragraph: 不制造 PASS。
+  - separator
+  - heading "14. Closure verifier 输出不是 capability PASS" [level=1]
+  - paragraph: 成功时输出类似：
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "rawQualification: pass: 37 fail: 10 preserved: true policy: environmentProfileBlockedAssertions: N productEvidenceUnresolvedAssertions: M alternateKeyboardEvidence: complete: true failedChecks: 0 decision: status: WS06A_CLOSURE_ELIGIBLE_FOR_INDEPENDENT_REVIEW"
+  - paragraph: 注意只能写：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: ELIGIBLE_FOR_INDEPENDENT_REVIEW
+  - paragraph: 不能写：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: AX01 PASS AX02 PASS AX03 PASS PA01 PASS RELEASE PASS
+  - paragraph: 最终是否关闭 WS-06A 仍由独立 review判断。
+  - separator
+  - heading "15. Negative tests 是本轮最重要的自动测试" [level=1]
+  - paragraph: tests/ws06a-browser-closure.test.ts 至少覆盖：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: missing raw evidence → reject malformed raw evidence → reject NOT_RUN → reject Chromium FAIL → reject Firefox FAIL → reject unknown WebKit failure → reject unknown failed assertion → reject missing native probe → reject WebKit probe says links reachable but environment-block disposition supplied → reject engine version/revision mismatch → reject missing alternate evidence → reject wrong source hash → reject wrong build identity → reject wrong policy hash/version → reject unknown disposition → reject missing failed case → reject extra invented case → reject missing failed assertion → reject extra invented assertion → reject alternate assertion result FAIL → reject programmatic input method → reject Playwright alternate proof → reject keyboard setting changed for test → reject ArrowRight evidence missing → reject ArrowRight evidence says only programmatic scroll → reject no-JS row recorded with JS enabled → reject missing operator/date → reject
+  - paragraph: Positive cases只有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47/47 raw PASS
+  - paragraph: 或：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: accepted exact WebKit-only profile failures + complete Safari alternate evidence
+  - separator
+  - heading "16. SOP / Prompt 同步后的新规则" [level=1]
+  - paragraph: 必须明确两层 Gate。
+  - heading "Raw browser evidence" [level=3]
+  - paragraph: 仍然：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47/47 matrix必须执行 0 skip 0 NOT_RUN 历史 FAIL永远保留
+  - heading "WS-06A closure" [level=3]
+  - paragraph: 允许：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: A. raw 47/47 PASS OR B. raw全部执行 + 仅 accepted environment-profile failures + exact policy attribution + complete real Safari keyboard evidence + independent review
+  - paragraph:
+    - text: B
+    - strong: 绝不等于把 raw rows算 PASS
+    - text: 。
+  - separator
+  - heading "17. Human / assembled gates继续存在" [level=1]
+  - paragraph: 即使 WS-06A最终 closure：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: AX-02 visual focus quality / contrast assembled AX-03 WS-06B WS-07 REF suite PA-01 release
+  - paragraph: 全部继续独立。
+  - paragraph: 特别是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS06A CLOSED ≠ AX-01/02/03 verifiedOutcome PASS
+  - separator
+  - heading "18. 自动执行顺序" [level=1]
+  - paragraph: 实施完成后按以下顺序：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 1. exact preimages 2. implement 10-file scope 3. targeted closure-validator tests 4. npm run check 5. verify:unadopted-final 6. verify:adopted-final 7. git diff --check 8. fresh npm run check:browser → 必须47 executed → raw failures如实保留 9. verify:browser-closure WITHOUT real keyboard evidence → MUST FAIL CLOSED 10. generate exact required alternate-evidence checklist 11. acquire real Safari keyboard evidence 12. verify:browser-closure WITH evidence 13. independent ChatGPT review
+  - paragraph: 第9步是必须的负例，不能跳。
+  - separator
+  - heading "19. WS-06A exact exit gate" [level=1]
+  - paragraph: 只有下面全部成立，独立 reviewer才可以考虑：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS06A = CLOSED
+  - paragraph: 条件：
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "raw_matrix: planned: 47 executed: 47 not_run: 0 skipped: 0 historical_failures_preserved: true non_webkit: failures: 0 webkit_failures: all_known_policy_classes: true unknown_failures: 0 environment_controls: native_tab_profile_exact: true arrowright_policy_identity_exact: true alternate_real_keyboard: browser: Safari webkit_family: true all_required_rows_covered: true all_required_assertions_covered: true failures: 0 regressions: root: PASS unadopted: EXPECTED_PP02_REJECTION adopted: PASS independent_review: verdict: ACCEPT"
+  - paragraph: 任何一项缺失：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS06A remains BLOCKED
+  - separator
+  - heading "20. 当前真正需要的人类动作 / 工具授权" [level=1]
+  - paragraph: 这是本计划中唯一无法由当前 hot_words_web workspace MCP独立完成的部分。
+  - heading "首选：真实 Safari + 真实键盘" [level=3]
+  - paragraph: 需要人在 Mac 上打开由 iteration17 evidence session提供的 exact local build，然后执行上述 keyboard checklist。
+  - paragraph: 如果由用户本人操作：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 所需人类动作： 1. 用 Safari 打开指定 localhost URL； 2. 按给定 viewport / route执行键盘步骤； 3. no-JS case真正关闭JavaScript； 4. 报告实际 PASS/FAIL； 5. 不修改Safari/macOS键盘导航偏好来迎合测试。
+  - paragraph:
+    - text: 这不是“再审批一轮”，而是
+    - strong: 证据采集动作
+    - text: 。
+  - heading "可替代的人机工具通道" [level=3]
+  - paragraph: 只有当官方 IAB 能证明它具备：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: real Safari application 真实Safari版本可记录 OS/trusted keyboard events 非 programmatic focus 非 Playwright-WebKit 可观察实际焦点和滚动
+  - paragraph: 才可以代替人工键盘。
+  - paragraph: 如果 IAB 需要 macOS 的：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Accessibility / Automation permission
+  - paragraph:
+    - text: 这是
+    - strong: 唯一需要用户在系统弹窗中实际授权的 tool-channel action
+    - text: 。
+  - paragraph: 当前 workspace MCP本身没有这类 Safari GUI / trusted-keyboard能力，因此不能把 MCP执行当 alternate evidence。
+  - paragraph: 如果 IAB实际上只是另一层 Playwright/Chromium控制：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: NOT ACCEPTABLE
+  - separator
+  - heading "本轮边界" [level=2]
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "ITERATION17: objective: implement WebKit verification policy + real-keyboard closure path raw_47_matrix: changed: false runner: changed: false current_live_resize: reopened: false contract: changed: false capability_promotion: allowed: false ws04a: included: false commit_push_release: allowed: false"
+  - paragraph:
+    - text: 这条路线不再需要新的 WebKit“诊断轮”。下一步就是按此有限范围实施 policy validator，然后在唯一真正缺失的地方采集
+    - strong: real Safari keyboard evidence
+    - text: ；证据完整后直接进入 WS-06A 独立 closure review。
+  - button "复制":
+  - button "评价回复":
+  - button "分享":
+  - button "朗读":
+  - button "重新生成回复":
+  - button "更多操作":
+  - generic: ChatGPT 可能会出错。请核查重要信息。
+  - button "滚动到底部":
+  - heading "最新一条回复" [level=4]
+  - status
+  - button "添加文件等内容":
+  - textbox "询问 ChatGPT" [active]:
+    - paragraph: 询问 ChatGPT
+  - button "选择 ChatGPT 模型":
+    - generic: 高
+  - button "听写":
+  - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+```

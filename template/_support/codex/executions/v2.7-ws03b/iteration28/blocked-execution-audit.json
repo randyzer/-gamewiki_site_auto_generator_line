@@ -1,0 +1,113 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 28,
+  "slice": "WS03B",
+  "candidate": "BLOCKED_TARGETED_MEDIA_QUALIFICATION",
+  "red": {
+    "failed": 9,
+    "passed": 189,
+    "exitCode": 1
+  },
+  "green": {
+    "passed": 243,
+    "exitCode": 0
+  },
+  "root": {
+    "passed": 807,
+    "files": 46,
+    "astroErrors": 0,
+    "exitCode": 0
+  },
+  "health": [
+    {
+      "name": "root-check",
+      "command": "npm run check",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-07T23:44:55.811Z",
+      "finishedAt": "2026-10-07T23:45:15.317Z"
+    },
+    {
+      "name": "unadopted-final",
+      "command": "npm run verify:unadopted-final",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-07T23:45:15.318Z",
+      "finishedAt": "2026-10-07T23:45:16.076Z"
+    },
+    {
+      "name": "adopted-final",
+      "command": "npm run verify:adopted-final",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-07T23:45:16.076Z",
+      "finishedAt": "2026-10-07T23:45:39.151Z"
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git diff --check",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-07T23:45:39.151Z",
+      "finishedAt": "2026-10-07T23:45:39.178Z"
+    }
+  ],
+  "targeted": {
+    "attempts": 1,
+    "retries": 0,
+    "rows": 6,
+    "passed": 4,
+    "failed": [
+      {
+        "engine": "webkit",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": false,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 0,
+          "naturalHeight": 0,
+          "complete": false
+        }
+      },
+      {
+        "engine": "webkit",
+        "viewport": {
+          "width": 390,
+          "height": 900
+        },
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": false,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 0,
+          "naturalHeight": 0,
+          "complete": false
+        }
+      }
+    ]
+  },
+  "cleanup": {
+    "normalStopExit": 0,
+    "pidAliveAfterStop": false,
+    "fixtureRemoved": true,
+    "cacheStatus": "PASS",
+    "ownedTmpRootRemoved": true,
+    "fallbackSignalUsed": false
+  },
+  "fresh47": "NOT_STARTED_TARGETED_GATE_FAILED",
+  "closure": "NOT_RERUN",
+  "changedProductAndNormativeFiles": 18,
+  "scopePass": true,
+  "safariProof": 0,
+  "capabilityPromotion": "NONE",
+  "formalWs03Gate": "NOT_ACCEPTED",
+  "ws06a": "BLOCKED",
+  "releaseHold": true,
+  "errors": []
+}

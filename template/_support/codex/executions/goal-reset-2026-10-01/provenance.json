@@ -1,0 +1,68 @@
+{
+  "status": "USER_REQUESTED_PAUSE_AND_AUDIT; no A4 implementation",
+  "candidate": {
+    "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+    "working_tree_clean": true
+  },
+  "frozen_baselines": {
+    "GAME_SOP_V2.6.5": {
+      "head": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "working_tree_clean": true
+    },
+    "GAME_CODEX_MASTER_PROMPT_V2.6.5": {
+      "head": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "working_tree_clean": true
+    },
+    "GAME_SITE_STARTER_BASED_gamesop2.6.5": {
+      "head": "29b25559cf2af859bca359c7f7fda686a4803c95",
+      "working_tree_clean": true
+    }
+  },
+  "source_counts": {
+    "candidate": 188,
+    "template": 336
+  },
+  "review_pending": false,
+  "proposed_moves_applied": false,
+  "candidate_diff": "",
+  "files": [
+    {
+      "path": "template/audit/ASSET_MANIFEST_V1.json",
+      "sha256": "058b2fb416f31c3083a8b60f2a12706f2a99816bbe52a6f0de5787136fcff6fc",
+      "bytes": 500276
+    },
+    {
+      "path": "template/cleanup/CLEANUP_MANIFEST_V1.md",
+      "sha256": "c51b9570f051591cd88ce221c71f74b5859724bd2745ea66ef8df9b422dbfbcb",
+      "bytes": 4042
+    },
+    {
+      "path": "template/governance/TRIAD_EVOLUTION_DECISION_V1.md",
+      "sha256": "29f352b25cdfce3323ce9a5492755d609af58791226270f3b35af2ef99a72e21",
+      "bytes": 3667
+    },
+    {
+      "path": "template/DELIVERY_LAYOUT.md",
+      "sha256": "0e824c3d4f8ba362c8c3364b33af8195edd425a0d7abf1e96431db276fa1e474",
+      "bytes": 1938
+    },
+    {
+      "path": "template/codex/executions/goal-reset-2026-10-01/check.log",
+      "sha256": "526cec02a2a1e820cb9bd9738edaf6214b3017e6755d2db89f20b5a00ef535cf",
+      "bytes": 882
+    },
+    {
+      "path": "template/codex/executions/goal-reset-2026-10-01/focused.log",
+      "sha256": "55d2abc1ca761cd75e7c52fa90fccd3b96e004b4e5d851f126ef7017a265c9de",
+      "bytes": 282
+    },
+    {
+      "path": "template/codex/executions/goal-reset-2026-10-01/prune.log",
+      "sha256": "fb3354295eddd8c91191fbf671154cfd35d1ffd5a25ec96ab74d69b829c9a455",
+      "bytes": 147
+    }
+  ],
+  "review_verdict": "ACCEPT_AUDIT_ONLY",
+  "review_file": "template/codex/verifications/goal-reset-2026-10-01/verification.md",
+  "manifest_scope": "Reviewed immutable inventory snapshot; subsequent record/state changes are enumerated in closure.json"
+}

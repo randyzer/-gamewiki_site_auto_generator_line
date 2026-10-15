@@ -1,0 +1,5 @@
+{
+  "command": "npm run verify:browser-closure (bound actual raw/native/expected/policy/manual fixture; real evidence absent)",
+  "exitCode": 1,
+  "expected": 1
+}

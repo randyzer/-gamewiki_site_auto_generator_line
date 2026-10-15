@@ -1,0 +1,7 @@
+{
+  "previousSlice": "WS03C",
+  "state": "STALE_FOR_CURRENT_SOURCE",
+  "cause": "First PLAN31 source mutation: tests only",
+  "qualificationAttempts": 0,
+  "observedAt": "2026-10-08T01:17:30.756508+00:00"
+}

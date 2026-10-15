@@ -1,0 +1,46 @@
+{
+  "logicalRoot": "/tmp/c2c33d.c2jJH6",
+  "realRoot": "/private/tmp/c2c33d.c2jJH6",
+  "entries": [
+    {
+      "relativePath": "tsx-501",
+      "realPath": "/private/tmp/c2c33d.c2jJH6/tsx-501",
+      "type": "directory",
+      "mode": 493,
+      "size": 192,
+      "symlink": false
+    },
+    {
+      "relativePath": "tsx-501/17914-3083d3d35ff4bb53d154c2c92a4503b4687100b7",
+      "realPath": "/private/tmp/c2c33d.c2jJH6/tsx-501/17914-3083d3d35ff4bb53d154c2c92a4503b4687100b7",
+      "type": "regular-file",
+      "mode": 420,
+      "size": 7712,
+      "symlink": false
+    },
+    {
+      "relativePath": "tsx-501/17914-5dcf56c7e5254028f70ab1bfe59143d566a4b792",
+      "realPath": "/private/tmp/c2c33d.c2jJH6/tsx-501/17914-5dcf56c7e5254028f70ab1bfe59143d566a4b792",
+      "type": "regular-file",
+      "mode": 420,
+      "size": 3349,
+      "symlink": false
+    },
+    {
+      "relativePath": "tsx-501/17914-9058505be62e0276a14b827ab5768e82a219becc",
+      "realPath": "/private/tmp/c2c33d.c2jJH6/tsx-501/17914-9058505be62e0276a14b827ab5768e82a219becc",
+      "type": "regular-file",
+      "mode": 420,
+      "size": 2418,
+      "symlink": false
+    },
+    {
+      "relativePath": "tsx-501/17914-cf49d5830f1e29b745e6350db39f41e5bffe1e86",
+      "realPath": "/private/tmp/c2c33d.c2jJH6/tsx-501/17914-cf49d5830f1e29b745e6350db39f41e5bffe1e86",
+      "type": "regular-file",
+      "mode": 420,
+      "size": 3612,
+      "symlink": false
+    }
+  ]
+}

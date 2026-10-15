@@ -1,0 +1,12 @@
+{
+  "issue": "Browser skill missing and control bindings reset before REVIEW34 message sent",
+  "connectionDoctor": "PASS; no connection repair",
+  "repair": "codex plugin add browser@openai-bundled --json",
+  "officialVersion": "26.930.51102",
+  "skillRestored": true,
+  "originalTab": "1",
+  "originalConversationReused": true,
+  "reviewMessageSubmittedOnce": true,
+  "productRerun": false,
+  "fallbackTransport": false
+}

@@ -1,0 +1,77 @@
+--- before/template/README.md
++++ after/template/README.md
+@@ -2,11 +2,12 @@
+ 
+ 目标：以 V2.6.5 三件套为基础，修复真实项目暴露的问题，吸收五个参考案例的优秀能力，产出协同工作的 V2.7 SOP、Starter 和 Master Prompt。目标版本由用户确定，见 [版本决定](governance/V2.7_VERSION_DECISION.md)；尚未完成产品验收或发布。
+ 
+-2026-10-06：正式路线共8个主任务，WS-01/02已独立ACCEPT关闭；WS-06部分实施且受阻，Core浏览器新源资格37 PASS / 10 FAIL（历史36/11保留）；其余5个尚未开始产品实施，WS-04A已有本地设计输入准备。Browser已从官方本地来源恢复；第16轮两文件修复及RED/GREEN、真实15病例、711测试回归已完成，原ChatGPT已独立ACCEPT关闭有限修复；第17轮策略实现10文件及757测试已获[实际独立ACCEPT](codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md)，仅接受实现机制；10项WebKit/40断言仍需真实Safari补证，[固定样本/清单](codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md)已准备，Safari原生GUI已授权但工具拒绝，Chrome有限补充检查已完成。旧A4保持暂停，最终V2.7交付包未建立。进度入口为[统一任务台账](roadmap/V2.7_TASK_LEDGER.md)，工程上下文见[PROJECT_STATE.md](PROJECT_STATE.md)。三件套关系、目录盘点与有限清理已获[独立ACCEPT](codex/verifications/goal-reset-2026-10-01/verification.md)；本次入口整理不是新的独立验收。
++2026-10-06：正式路线共8个主任务，WS-01/02已独立ACCEPT关闭；WS-06部分实施且受阻，Core浏览器新源资格37 PASS / 10 FAIL（历史36/11保留）；其余5个尚未开始产品实施，WS-04A第18轮[方法设计已独立ACCEPT](codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)，契约Gate仍OPEN，等待WS03接受后的绑定核实。Browser已从官方本地来源恢复；第16轮两文件修复及RED/GREEN、真实15病例、711测试回归已完成，原ChatGPT已独立ACCEPT关闭有限修复；第17轮策略实现10文件及757测试已获[实际独立ACCEPT](codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md)，仅接受实现机制；10项WebKit/40断言仍需真实Safari补证，[固定样本/清单](codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md)已准备，Safari原生GUI已授权但工具拒绝，Chrome有限补充检查已完成。旧A4保持暂停，最终V2.7交付包未建立。进度入口为[统一任务台账](roadmap/V2.7_TASK_LEDGER.md)，工程上下文见[PROJECT_STATE.md](PROJECT_STATE.md)。三件套关系、目录盘点与有限清理已获[独立ACCEPT](codex/verifications/goal-reset-2026-10-01/verification.md)；本次入口整理不是新的独立验收。
+ 
+ | 资产 | 用途与有效性 |
+ | --- | --- |
+ | [统一任务台账](roadmap/V2.7_TASK_LEDGER.md) | 主任务、子阶段、轮次、阻塞与交付里程碑；进度总入口 |
++| [WS-04A方法设计](design/ws04a/GAME_ADAPTATION_METHOD_V1.md) | 第18轮独立ACCEPT仅方法设计；五份文档及检查见[结果](codex/executions/v2.7-ws04a/iteration18/result.md)，等待WS03接口接受后的绑定核实 |
+ | [WS-04A设计输入](roadmap/WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md) | 已有项目/案例依据、现有接口与后续设计边界；本地准备，未独立接受 |
+ | [三件套关系](architecture/GAME_SITE_SYSTEM_EVOLUTION_MODEL.md) | 本次关系核对；各自权威与同步边界 |
+ | [V2.7 架构蓝图](architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md) | 修订后独立 ACCEPT；不授权功能实现 |
+--- before/template/PROJECT_STATE.md
++++ after/template/PROJECT_STATE.md
+@@ -14,7 +14,7 @@
+ 
+ ## 当前阶段
+ 
+-**正式路线共8个主任务：2个关闭，1个部分实施且受阻，5个尚未开始产品实施。** WS-01、WS-02 已独立 ACCEPT；WS-06A新源资格37 PASS / 10 FAIL，历史36/11保留，WS-06B 未开始。第13轮诊断、第14轮WebKit策略提案、第15轮焦点修复计划均已独立接受，但不构成WS-06A通过。第16轮两文件修复已完成本地RED/GREEN、专项15病例和root/adopted711测试，已获原ChatGPT独立ACCEPT并关闭有限修复；整体06A仍BLOCKED。第17轮策略实现已完成87/757测试及新37/10矩阵，已获原ChatGPT实际独立ACCEPT，仅接受实现机制；真实Safari补证待取得。WS-04A 已开始设计输入准备，未开始适配接口实施，未获设计/契约Gate接受。其余主任务未实施，最终交付未创建，A4不恢复。
++**正式路线共8个主任务：2个关闭，1个部分实施且受阻，5个尚未开始产品实施。** WS-01、WS-02 已独立 ACCEPT；WS-06A新源资格37 PASS / 10 FAIL，历史36/11保留，WS-06B 未开始。第13轮诊断、第14轮WebKit策略提案、第15轮焦点修复计划均已独立接受，但不构成WS-06A通过。第16轮两文件修复已完成本地RED/GREEN、专项15病例和root/adopted711测试，已获原ChatGPT独立ACCEPT并关闭有限修复；整体06A仍BLOCKED。第17轮策略实现已完成87/757测试及新37/10矩阵，已获原ChatGPT实际独立ACCEPT，仅接受实现机制；真实Safari补证待取得。WS-04A第18轮方法设计已独立ACCEPT，适配接口实施未开始、契约Gate仍OPEN，等待WS03实际接受后的绑定核实。其余主任务未实施，最终交付未创建，A4不恢复。
+ 
+ 三件套关系、目录盘点与有限清理已获独立 ACCEPT。[V2.7 蓝图](architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md)通过12项设计标准；[路线](roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)通过15项设计标准。2/8只表示主任务关闭数，不表示产品工作量完成25%。协作轮次、41项能力、47项浏览器病例、主任务分别计数。
+ 
+@@ -38,6 +38,8 @@
+ - 第16轮：[两文件本地实施结果](codex/executions/v2.7-ws06a/iteration16/result.md)已获[实际ChatGPT独立ACCEPT](codex/executions/v2.7-ws06a/iteration16/chatgpt-independent-review.md)，有限修复关闭。先仅改测试，旧控制器8 FAIL/21 PASS；应用控制器后29 PASS。Chromium R1–R10、Firefox R1–R3及双浏览器no-JS15/15 PASS；root/adopted45文件711 tests及采用/拒绝生产检查通过。新源未改动47矩阵37 PASS/10 WebKit FAIL，整体FAIL；仅Chromium live-resize由FAIL变PASS，非WebKit无回归、无新失败assertion。235候选仅2文件变化，743保护文件/冻结三件套/既有路线与证据/规范保持一致。专项初始观察器语法错误及正常清理记录保留；有效专项与矩阵预览均正常stop、PID消失、fixture删除、无信号降级。WebKit策略未实施，WS06A/AX/PA/REF/真实采用/release不提升。
+ - 第17轮：[实际有限PLAN](codex/prompts/v2.7-ws06a/iteration17-webkit-policy-implementation-plan.md)在既有用户全权授权下实施10文件，未改Core/原matrix/runner/CI/锁文件/规范/Registry。新增strict snapshot与独立closure verifier、负例及三件套方法同步；87定向/757全量tests通过，采用检查通过。旧source-binding缺口真实RED1后收紧，所有初期失败/前置矩阵保留。最终新源47执行37 PASS/10 WebKit FAIL，40失败断言；原ChatGPT[实际独立ACCEPT](codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md)接受机制实现及新增390px失败归为PRODUCT_EVIDENCE_UNRESOLVED，不再开诊断轮。实际closure绑定raw/native/expected/政策/当前同源样本，exit1且唯一缺失为真实Safari键盘证据。现有IAB无Safari通道；Safari原生GUI已明确授权但工具URL限制拒绝，Chrome有限补充检查已完成；并未取得Safari证据，固定manual preview60522/owned PID89278为取证特意保留，之后正常清理。真实Safari proof为0，完整06A仍BLOCKED；补证必须记录目标实际尺寸并再经独立closure审查，详见[本地结果](codex/executions/v2.7-ws06a/iteration17/result.md)。
+ - 本次进度纠偏：更新两个工作区入口，新增任务台账与[WS-04A设计输入](roadmap/WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md)。仅本地文档准备，尚无实际ChatGPT独立审查；不改变已接受路线、Gate或规范身份。
++
++- 第18轮：[WS-04A方法设计](design/ws04a/GAME_ADAPTATION_METHOD_V1.md)五份文档与实际PLAN已获[原ChatGPT独立ACCEPT](codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)，仅METHODS DESIGN；[实际结果](codex/executions/v2.7-ws04a/iteration18/result.md)。5,759保护文件/237候选文件一致，40引用有效，产品测试NOT_RUN。设计接受不冻结schema、不关闭04A、不提升能力；下一依赖仍为WS03接受→04A绑定核实，06A Safari阻塞保留。
+ 
+ 协作工具更新因本地与上游历史分叉无法快进，经用户明确同意暂缓更新，沿用正常的原 ChatGPT 连接；未改用替代访问工具。
+ 
+--- before/template/roadmap/V2.7_TASK_LEDGER.md
++++ after/template/roadmap/V2.7_TASK_LEDGER.md
+@@ -1,12 +1,12 @@
+ # V2.7 统一任务台账
+ 
+-更新：2026-10-06，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；本次整理尚未经ChatGPT独立审查。
++更新：2026-10-06，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；索引整理不是产品独立验收；第18轮方法设计实际审查见下。
+ 
+ 目标：从V2.6.5三件套、真实项目缺口和五案例可借鉴能力，交付协同工作的V2.7 SOP、Starter、Master Prompt。商业适用性须由真实采用与人审证明；不以技术通过宣称收入、流量或案例商业成功。
+ 
+ ## 计数规则与当前总数
+ 
+-- 正式路线8个主任务：关闭2，部分实施且受阻1，未开始产品实施5（其中WS-04开始设计输入准备）。主任务只有全部所需子Gate独立接受才关闭。
++- 正式路线8个主任务：关闭2，部分实施且受阻1，未开始产品实施5（其中WS-04A方法设计已独立ACCEPT，契约Gate仍OPEN）。主任务只有全部所需子Gate独立接受才关闭。
+ - WS-03A/B/C/D、WS-04A/B、WS-06A/B是子阶段，不加到8个主任务总数。03D搜索/时效、05三组合仍需各自验证。
+ - 协作第16轮两文件修复已独立ACCEPT关闭；第17轮策略实现已实施并完成回归，已获实际独立ACCEPT（仅机制实现），Safari真实补证待取得；第13～15轮分别是诊断、策略提案、修复计划，不是三个新增产品任务。
+ - 2/8不是产品完成25%。不把历史四个安全检查点、文档数量或测试数重复计为新主任务完成。
+@@ -19,7 +19,7 @@
+ | WS-01 | 单一规范源、三件套引用、证据方法 | CLOSED；方法/工程独立ACCEPT | 后续功能变化仍须三件套同期同步 | [result](../codex/executions/v2.7-ws01/result.md)、[审查](../codex/executions/v2.7-ws01/verification.md) |
+ | WS-02 | Core连续性、采用构建/CI流程 | CLOSED；采用fixture与拒绝默认final独立ACCEPT | 本地验证不冒充远程CI、真实游戏验收 | [result](../codex/executions/v2.7-ws02/result.md)、[审查](../codex/executions/v2.7-ws02/verification.md) |
+ | WS-03 | 主题、媒体/视频、分享图、搜索/时效接口 | 产品实施未开始 | 依WS-02/06A ACCEPT，分切片补接口 | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+-| WS-04 | 游戏适配方法/接口与实例验证 | 产品实施未开始；本地设计输入已准备，未独立ACCEPT | 04A设计/接口Gate依WS-03；04B实例依WS-05 | [设计输入](WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md) |
++| WS-04 | 游戏适配方法/接口与实例验证 | 产品实施未开始；第18轮方法设计已独立ACCEPT，仅METHODS DESIGN | 04A设计/接口Gate依WS-03；04B实例依WS-05 | [方法设计](../design/ws04a/GAME_ADAPTATION_METHOD_V1.md)、[实际审查](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md) |
+ | WS-05 | hub/wiki、task-guide、media-rich article三组合 | 产品实施未开始 | 逐组合依03及04A，使用真实Core | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+ | WS-06 | Core及组合独立验收体系 | PARTIAL / BLOCKED；06A工具及部分修复已做，06B未开始 | 06A资格失败未解决；06B需04B/05及06A | [实际结果](../codex/executions/v2.7-ws06a/result.md)、[第16轮本地结果](../codex/executions/v2.7-ws06a/iteration16/result.md) |
+ | WS-07 | WoG、Bomb Farm、任务指南三类真实采用 | 产品实施未开始；V2.7最终采用验收0/3 | 需06B及相关组合通过；历史项目报告仅作输入 | [项目证据对应](../audit/REAL_PROJECT_AND_REFERENCE_EVIDENCE_CROSSWALK_V1.md) |
+@@ -35,7 +35,7 @@
+ | 03B 媒体/视频 | NOT_STARTED | schema/adapter/render、缺失/fallback与证据边界接受 |
+ | 03C 分享媒体 | NOT_STARTED | 03B后，同一媒体权威与实际产物审计接受 |
+ | 03D 搜索/时效 | NOT_STARTED | 搜索与日期两部分分别验证，不冒充实时数据 |
+-| 04A 方法/适配契约 | INPUTS_PREPARED_LOCAL | 准备不等于设计ACCEPT；契约Gate等待03接口 |
++| 04A 方法/适配契约 | METHODS_DESIGN_ACCEPTED / GATE_OPEN | 第18轮仅方法设计接受；等待03实际接口接受→绑定核实，schema未冻结 |
+ | 04B 实例组装 | NOT_STARTED | 05后至少两种不同配置实例接受 |
+ | 06A Core浏览器 | BLOCKED | 修复与真实资格/证据问题解决，再独立验收 |
+ | 06B 组装验收 | NOT_STARTED | 04B/05/06A后，REF-A/B/C与组装验收机制接受 |
+@@ -71,3 +71,5 @@
+ 五份本地代码审计已做；四个原站已观察，Farever原站未取得，不能称五个成功商业站验证完成。Bomb Farm原站TOC实际滚动亦有待复测。[原站记录](../LIVE_SITE_VALIDATION_2026-10-01.md)与本地分析分开；本站内数据未取得的部分不能下市场判断。真实项目旧构建/人审/权利状态不可直接继承为V2.7 PASS。
+ 
+ 进度纠偏仅更新入口与准备设计输入；随后第16轮独立实施两文件修复。已接受路线/DAG、41项规范、历史证据、能力outcome或发布状态未改变。后续实际实现结果出来时同步本台账、PROJECT_STATE和README；历史审查/哈希快照不覆盖。
++
++第18轮：[WS04A有限方法设计结果](../codex/executions/v2.7-ws04a/iteration18/result.md)及[实际独立ACCEPT](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)。五份文档接受，产品增量0，build/tests NOT_RUN；主任务关闭仍2/8，等待WS03接受后的04A绑定核实。06A Safari proof0与既有关键路径保持。

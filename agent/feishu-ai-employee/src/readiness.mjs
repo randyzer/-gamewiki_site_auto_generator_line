@@ -1,0 +1,10 @@
+import 'dotenv/config';
+import {existsSync,readFileSync} from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const missing=['FEISHU_APP_ID','FEISHU_APP_SECRET','FEISHU_ALLOWED_OPEN_IDS'].filter(k=>!process.env[k]);
+const manifestPath=fileURLToPath(new URL('../../config/skill-manifest.json',import.meta.url));
+const manifest=existsSync(manifestPath)?JSON.parse(readFileSync(manifestPath,'utf8')):null;
+const info={localCode:true,feishuCredentialsPresent:missing.length===0,missingConfig:missing,skillsFound:manifest?.skills?.length||0,skillsUnavailable:manifest?.skills?.filter(s=>!s.available).map(s=>s.name)||[],mode:'seven-stage-codex',feishuConnected:false,codexEndToEndVerified:false};
+console.log(JSON.stringify(info,null,2));
+if(missing.length)process.exitCode=2;

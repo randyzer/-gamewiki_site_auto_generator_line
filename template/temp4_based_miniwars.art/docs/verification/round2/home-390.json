@@ -1,0 +1,209 @@
+{
+  "height": 11169,
+  "width": 390,
+  "overflow": false,
+  "sections": [
+    {
+      "tag": "HEADER",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 90.5,
+      "text": "SIGNAL · DEMO\nFRONTIER OPS\n· FIELD CODEX ·"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 90.5,
+      "w": 390,
+      "h": 1266,
+      "text": "FIELD BUILD · OCTOBER 2026\nRAISE A COUNTRY.\nCLAIM YOUR\nFRONTIER.\n\nAn original fi"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 1356.5,
+      "w": 390,
+      "h": 1041,
+      "text": "ABOUT THIS CODEX\nWHAT IS FRONTIER OPS?\n\nFrontier Ops is an original strategy san"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 2397.5,
+      "w": 390,
+      "h": 1076,
+      "text": "FIELD MANUAL\nCHOOSE YOUR DOCTRINE\nPREVIEW\nBUILDINGS\n\n21 structure concepts, rank"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 3473.5,
+      "w": 390,
+      "h": 1291,
+      "text": "DOCTRINE\nTOP STRATEGIES\nVIEW ALL\nPREVIEW\nSTEADY GROWTH\nECONOMY FIRST · BEGINNER\n"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 4764.5,
+      "w": 390,
+      "h": 1016,
+      "text": "MANDATORY PICKS\nSTRUCTURES WORTH PLANNING AROUND\nALL BUILDINGS\nPREVIEW\nINF-01 · "
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 5780.5,
+      "w": 390,
+      "h": 973,
+      "text": "BATTLE PLANS\nFEATURED STRATEGIES\nALL STRATEGIES\nPREVIEW\nECONOMY FIRST\nSTEADY GRO"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 6753.5,
+      "w": 390,
+      "h": 1010.75,
+      "text": "SIGNAL · FIELD FEED\nLATEST FRONTIER DISPATCHES\nALL NEWS\nPREVIEW\nPATCH\nOCT 12, 20"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 7764.25,
+      "w": 390,
+      "h": 912,
+      "text": "FIELD REPORTS\nLATEST GUIDES\nALL GUIDES\nBEGINNER\nOCT 12, 2026\nBEGINNER FIELD GUID"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 8676.25,
+      "w": 390,
+      "h": 1180,
+      "text": "WHY THIS CODEX EXISTS\nA FRONTIER FIELD MANUAL BUILT AROUND CLEAR DECISIONS\n\nA us"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 9856.25,
+      "w": 390,
+      "h": 492,
+      "text": "RECRUIT · STEP 01\nNEW TO THE FRONTIER?\n\nStart with the complete opening briefing"
+    },
+    {
+      "tag": "FOOTER",
+      "x": 0,
+      "y": 10444.25,
+      "w": 390,
+      "h": 725,
+      "text": "FRONTIER OPS\nFIELD CODEX\n\nAn original strategy reference for Frontier Ops, a fic"
+    }
+  ],
+  "heads": [
+    {
+      "text": "RAISE A COUNTRY.\nCLAIM YOUR\nFRONTIER.",
+      "x": 16,
+      "y": 194.5,
+      "w": 358,
+      "h": 192,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "WHAT IS FRONTIER OPS?",
+      "x": 16,
+      "y": 1460.5,
+      "w": 358,
+      "h": 36,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "CHOOSE YOUR DOCTRINE",
+      "x": 16,
+      "y": 2485.5,
+      "w": 251.75,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "TOP STRATEGIES",
+      "x": 16,
+      "y": 3562.5,
+      "w": 168.078125,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "INDUSTRIAL FLOW & DEFENSE BRIEFING",
+      "x": 16,
+      "y": 3890.5,
+      "w": 282.484375,
+      "h": 64,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "MUST-BUILD PICKS",
+      "x": 16,
+      "y": 4364.5,
+      "w": 195.5625,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "STRUCTURES WORTH PLANNING AROUND",
+      "x": 16,
+      "y": 4852.5,
+      "w": 250,
+      "h": 64,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "FEATURED STRATEGIES",
+      "x": 16,
+      "y": 5869.5,
+      "w": 228.59375,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "LATEST FRONTIER DISPATCHES",
+      "x": 16,
+      "y": 6842.5,
+      "w": 274.484375,
+      "h": 64,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "LATEST GUIDES",
+      "x": 16,
+      "y": 7852.25,
+      "w": 153.859375,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "A FRONTIER FIELD MANUAL BUILT AROUND CLEAR DECISIONS",
+      "x": 16,
+      "y": 8773.25,
+      "w": 358,
+      "h": 64,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "FRONTIER OPS AT A GLANCE",
+      "x": 16,
+      "y": 9229.25,
+      "w": 358,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "NEW TO THE FRONTIER?",
+      "x": 49,
+      "y": 9981.25,
+      "w": 292,
+      "h": 72,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    }
+  ]
+}

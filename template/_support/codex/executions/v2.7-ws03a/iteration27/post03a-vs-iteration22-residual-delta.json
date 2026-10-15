@@ -1,0 +1,611 @@
+{
+  "previous22ResidualCount": 39,
+  "previous22Sha256": "13d4a951496c959daa293586571aac4b1d3bd3978f812b260860bf2177353589",
+  "currentResidualCount": 40,
+  "persisted": [
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "target-size",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "nested-cleanup",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "ordinary-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "same-document-focus",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "recovery-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "target-size",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "nested-cleanup",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "ordinary-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "same-document-focus",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "table-local-scroll",
+      "disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+      "detail": "Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}}"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "recovery-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "ordinary-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "table-local-scroll",
+      "disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+      "detail": "Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}}"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "recovery-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /#top"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "First Tab does not focus skip link"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "target-size",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "detail": "Target not keyboard reachable: /guides/getting-started/"
+    }
+  ],
+  "disappeared": [],
+  "reappearedFromFrozen40": [
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "table-local-scroll",
+      "disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+      "detail": "Native ArrowRight did not scroll: {\"before\":{\"active\":true,\"scroll\":0},\"after\":{\"active\":true,\"scroll\":0,\"key\":\"ArrowRight\"},\"geometry\":{\"tableWidth\":780,\"wrapperClient\":360,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":390}}"
+    }
+  ],
+  "newOutsideFrozen40": []
+}

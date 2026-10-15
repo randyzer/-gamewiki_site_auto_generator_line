@@ -1,0 +1,11 @@
+export async function collectControlGeometry(){
+ const element=document.querySelector('.button');if(!element)throw Error('Missing representative .button');
+ const samples=[];
+ for(let i=0;i<16;i++){
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+  const style=getComputedStyle(element),rect=element.getBoundingClientRect(),clientRect=element.getClientRects()[0],htmlStyle=getComputedStyle(document.documentElement),ancestors=[];
+  for(let ancestor=element.parentElement;ancestor;ancestor=ancestor.parentElement){const s=getComputedStyle(ancestor);ancestors.push({tag:ancestor.tagName,className:ancestor.className,transform:s.transform,zoom:s.getPropertyValue('zoom')});}
+  samples.push({index:i,css:{roleControlMinHeight:htmlStyle.getPropertyValue('--role-control-min-height').trim(),minHeight:style.minHeight,height:style.height,boxSizing:style.boxSizing,paddingTop:style.paddingTop,paddingBottom:style.paddingBottom,borderTopWidth:style.borderTopWidth,borderBottomWidth:style.borderBottomWidth,lineHeight:style.lineHeight,fontSize:style.fontSize,transform:style.transform,zoom:style.getPropertyValue('zoom')},layout:{rect:{top:rect.top,bottom:rect.bottom,height:rect.height,width:rect.width},bottomMinusTop:rect.bottom-rect.top,clientHeight:element.clientHeight,offsetHeight:element.offsetHeight,scrollHeight:element.scrollHeight,clientTop:element.clientTop,clientRectHeight:clientRect?.height??null},scale:{devicePixelRatio:window.devicePixelRatio,innerWidth:window.innerWidth,innerHeight:window.innerHeight,visualViewport:window.visualViewport?{width:window.visualViewport.width,height:window.visualViewport.height,scale:window.visualViewport.scale}:null,documentElement:{clientWidth:document.documentElement.clientWidth,clientHeight:document.documentElement.clientHeight}},ancestors});
+ }
+ return {selector:'.button',navigationCount:1,samples};
+}

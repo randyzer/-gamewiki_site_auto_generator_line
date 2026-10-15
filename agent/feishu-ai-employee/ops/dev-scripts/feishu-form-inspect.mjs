@@ -1,0 +1,4 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});
+const p=c.pages()[0]||await c.newPage();await p.goto('https://open.feishu.cn/app?lang=zh-CN',{waitUntil:'domcontentloaded'});await p.getByText('创建企业自建应用',{exact:true}).first().click();await p.waitForTimeout(500);
+console.log(JSON.stringify(await p.locator('input,textarea,button,[role=button]').evaluateAll(es=>es.map(e=>({tag:e.tagName,outer:e.outerHTML.slice(0,300)})).slice(-35)),null,2));await c.close();

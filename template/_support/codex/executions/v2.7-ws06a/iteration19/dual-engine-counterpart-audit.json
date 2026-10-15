@@ -1,0 +1,1215 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 19,
+  "kind": "READ_ONLY_HISTORICAL_RAW_RECOMPUTATION",
+  "rawEvidenceSha256": "ea30f494c31872d3b262fe011859afba14a42bd7f12ec9f685ee92f38ffdb5ef",
+  "failedCases": 10,
+  "failedAssertions": 40,
+  "chromiumMatches": 40,
+  "firefoxMatches": 40,
+  "totalMatches": 80,
+  "rows": [
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "navigation-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "target-size",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "target-size",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "target-size",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "nested-cleanup",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "nested-cleanup",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "nested-cleanup",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "ordinary-navigation",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "ordinary-navigation",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "ordinary-navigation",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:390x844",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "same-document-focus",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:390x844",
+          "assertion": "same-document-focus",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:390x844",
+          "assertion": "same-document-focus",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:390x844",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:390x844",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:390x844",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "table-local-scroll",
+        "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:390x844",
+          "assertion": "table-local-scroll",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:390x844",
+          "assertion": "table-local-scroll",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:390x844",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:390x844",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:390x844",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "recovery-navigation",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:390x844",
+          "assertion": "recovery-navigation",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:390x844",
+          "assertion": "recovery-navigation",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "navigation-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "target-size",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "target-size",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "target-size",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "nested-cleanup",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "nested-cleanup",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "nested-cleanup",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "ordinary-navigation",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "ordinary-navigation",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "ordinary-navigation",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:768x1024",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "same-document-focus",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:768x1024",
+          "assertion": "same-document-focus",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:768x1024",
+          "assertion": "same-document-focus",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:768x1024",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:768x1024",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:768x1024",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:768x1024",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:768x1024",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:768x1024",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:768x1024",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "table-local-scroll",
+        "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:768x1024",
+          "assertion": "table-local-scroll",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:768x1024",
+          "assertion": "table-local-scroll",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:768x1024",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:768x1024",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:768x1024",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:768x1024",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:768x1024",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:768x1024",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:768x1024",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "recovery-navigation",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:768x1024",
+          "assertion": "recovery-navigation",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:768x1024",
+          "assertion": "recovery-navigation",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:1280x800",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:1280x800",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:1280x800",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:1280x800",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:1280x800",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:1280x800",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:1280x800",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "navigation-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:1280x800",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:1280x800",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:shell-nav:1280x800",
+        "category": "baseline",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "ordinary-navigation",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:shell-nav:1280x800",
+          "assertion": "ordinary-navigation",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:shell-nav:1280x800",
+          "assertion": "ordinary-navigation",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:1280x800",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:1280x800",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:1280x800",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:1280x800",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:1280x800",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:1280x800",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:content-detail:1280x800",
+        "category": "baseline",
+        "role": "content-detail",
+        "route": "/guides/getting-started/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "table-local-scroll",
+        "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:content-detail:1280x800",
+          "assertion": "table-local-scroll",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:content-detail:1280x800",
+          "assertion": "table-local-scroll",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:1280x800",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:1280x800",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:1280x800",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:1280x800",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:1280x800",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:1280x800",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "baseline:webkit:recovery-404:1280x800",
+        "category": "baseline",
+        "role": "recovery-404",
+        "route": "/__ws06a_missing_route__/",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "javascript": true,
+        "reducedMotion": "no-preference",
+        "assertion": "recovery-navigation",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "baseline:chromium:recovery-404:1280x800",
+          "assertion": "recovery-navigation",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "baseline:firefox:recovery-404:1280x800",
+          "assertion": "recovery-navigation",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "no-js:webkit:shell-nav:390x844",
+        "category": "no-js",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": false,
+        "reducedMotion": "no-preference",
+        "assertion": "footer-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "no-js:chromium:shell-nav:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "no-js:firefox:shell-nav:390x844",
+          "assertion": "footer-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "no-js:webkit:shell-nav:390x844",
+        "category": "no-js",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": false,
+        "reducedMotion": "no-preference",
+        "assertion": "skip-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "no-js:chromium:shell-nav:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "no-js:firefox:shell-nav:390x844",
+          "assertion": "skip-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "no-js:webkit:shell-nav:390x844",
+        "category": "no-js",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": false,
+        "reducedMotion": "no-preference",
+        "assertion": "navigation-keyboard",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "no-js:chromium:shell-nav:390x844",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "no-js:firefox:shell-nav:390x844",
+          "assertion": "navigation-keyboard",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "residual": {
+        "caseId": "no-js:webkit:shell-nav:390x844",
+        "category": "no-js",
+        "role": "shell-nav",
+        "route": "/",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "javascript": false,
+        "reducedMotion": "no-preference",
+        "assertion": "target-size",
+        "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+      },
+      "counterparts": [
+        {
+          "engine": "chromium",
+          "caseId": "no-js:chromium:shell-nav:390x844",
+          "assertion": "target-size",
+          "passed": true
+        },
+        {
+          "engine": "firefox",
+          "caseId": "no-js:firefox:shell-nav:390x844",
+          "assertion": "target-size",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "limits": "Cross-engine corroboration only; not fresh browser execution, Safari/WebKit equivalence, release or WS06A acceptance."
+}

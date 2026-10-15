@@ -1,0 +1,693 @@
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts
+@@ -145,6 +145,7 @@
+     hero: mediaIdSchema.optional(),
+     gallery: z.array(mediaIdSchema).optional(),
+     trailer: mediaIdSchema.optional(),
++    share: mediaIdSchema.optional(),
+   })
+   .strict();
+ 
+@@ -152,6 +153,7 @@
+   .object({
+     assets: z.array(mediaAssetSchema),
+     pages: z.array(pageMediaSchema),
++    defaultShare: mediaIdSchema.optional(),
+   })
+   .strict()
+   .superRefine((manifest, context) => {
+@@ -168,6 +170,18 @@
+       }
+       assets.set(asset.id, asset);
+     });
++
++    function checkShareReference(id: string, path: (string | number)[]) {
++      const asset = assets.get(id);
++      if (!asset || asset.type !== "image" || asset.alt === "") {
++        context.addIssue({
++          code: "custom",
++          message: `Share image must reference an existing informative image asset: ${id}`,
++          path,
++        });
++      }
++    }
++    if (manifest.defaultShare) checkShareReference(manifest.defaultShare, ["defaultShare"]);
+ 
+     manifest.pages.forEach((page, index) => {
+       if (pageIds.has(page.pageId)) {
+@@ -205,6 +219,7 @@
+         checkReference(id, "image", ["gallery", galleryIndex]),
+       );
+       if (page.trailer) checkReference(page.trailer, "video", ["trailer"]);
++      if (page.share) checkShareReference(page.share, ["pages", index, "share"]);
+     });
+   });
+ 
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts
+@@ -75,6 +75,14 @@
+     getPresentation(id: string) {
+       return resolveMediaPresentation(getAsset(id));
+     },
++    getShareMedia(pageId: string): ImageAsset | undefined {
++      if (!knownPageIds.has(pageId)) return undefined;
++      const mapping = manifest.pages.find((page) => page.pageId === pageId);
++      if (mapping?.share) return getImage(mapping.share);
++      const hero = pages.get(pageId)?.heroMedia;
++      if (hero?.alt) return hero;
++      return manifest.defaultShare ? getImage(manifest.defaultShare) : undefined;
++    },
+     getPageMedia(pageId: string): ResolvedPageMedia {
+       return pages.get(pageId) ?? { galleryMedia: [] };
+     },
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts
+@@ -1,5 +1,6 @@
+ import { createHash } from "node:crypto";
+ 
++import type { ImageAsset } from "../data/schemas/media";
+ import type { GameConfig } from "../config/schema";
+ import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+ 
+@@ -28,6 +29,18 @@
+   projectConfirmed: true;
+   evidenceRef: string;
+ };
++
++/** Formats a resolved manifest asset; it does not select media or approve rights. */
++export function resolveShareMetadata(config: GameConfig, image?: ImageAsset) {
++  if (!image) return undefined;
++  if (!image.alt) throw new Error("Share metadata requires an informative image.");
++  return {
++    url: buildCanonicalUrl(config, image.src),
++    width: image.dimensions.width,
++    height: image.dimensions.height,
++    alt: image.alt,
++  };
++}
+ 
+ export function buildCanonicalUrl(config: GameConfig, route: string): string {
+   return new URL(route, config.site.url).href;
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro
+@@ -1,4 +1,5 @@
+ ---
++import { mediaCatalog } from "../data/media/catalog";
+ import Footer from "../components/Footer.astro";
+ import Header from "../components/Header.astro";
+ import { siteConfig } from "../core/site-data";
+@@ -8,6 +9,7 @@
+   buildCanonicalUrl,
+   collectStructuredIdentityErrors,
+   serializeJsonLd,
++  resolveShareMetadata,
+   type StructuredDataNode,
+ } from "../core/seo";
+ import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+@@ -20,6 +22,7 @@
+ 
+ const { page, structuredData } = Astro.props;
+ const roles = resolveVisualRoles(siteConfig.visualRoles);
++const share = resolveShareMetadata(siteConfig, mediaCatalog.getShareMedia(page.pageId));
+ const canonical = buildCanonicalUrl(siteConfig, page.route);
+ const robots =
+   page.indexability === "index"
+@@ -69,7 +72,15 @@
+     <meta property="og:url" content={canonical} />
+     <meta property="og:title" content={page.title} />
+     <meta property="og:description" content={page.description} />
+-    <meta name="twitter:card" content="summary" />
++    {share && <>
++      <meta property="og:image" content={share.url} />
++      <meta property="og:image:width" content={String(share.width)} />
++      <meta property="og:image:height" content={String(share.height)} />
++      <meta property="og:image:alt" content={share.alt} />
++      <meta name="twitter:image" content={share.url} />
++      <meta name="twitter:image:alt" content={share.alt} />
++    </>}
++    <meta name="twitter:card" content={share ? "summary_large_image" : "summary"} />
+     <meta name="twitter:title" content={page.title} />
+     <meta name="twitter:description" content={page.description} />
+     {siteConfig.social.xHandle && (
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts
+@@ -1,6 +1,8 @@
+ import { realpathSync, statSync } from "node:fs";
+ import { join, resolve, sep } from "node:path";
+ 
++import { resolveShareMetadata } from "../src/core/seo";
++import type { ImageAsset } from "../src/data/schemas/media";
+ import { resolveMediaPresentation } from "../src/core/media-presentation";
+ import type { GameConfig } from "../src/config/schema";
+ import type { ResolvedPageMedia } from "../src/data/media/catalog";
+@@ -67,7 +69,7 @@
+   ]));
+ }
+ 
+-function openingTags(html: string, name: "img" | "iframe" | "video" | "a"): string[] {
++function openingTags(html: string, name: "img" | "iframe" | "video" | "a" | "meta"): string[] {
+   // Astro preserves > inside quoted attributes; it is not a tag boundary there.
+   return html.match(new RegExp(`<${name}\\b(?:[^"'<>]|"[^"]*"|'[^']*')*>`, "g")) ?? [];
+ }
+@@ -238,3 +240,38 @@
+   }
+   return errors;
+ }
++
++
++export function collectShareHtmlErrors(
++  html: string,
++  config: GameConfig,
++  image: ImageAsset | undefined,
++  localFileExists: (src: string) => boolean,
++  required: boolean,
++): string[] {
++  const errors: string[] = [];
++  const head = html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/)?.[1] ?? "";
++  const tags = openingTags(head, "meta").map(attributes);
++  const expected = resolveShareMetadata(config, image);
++  if (!expected) {
++    if (required) errors.push("Share image is required for final indexable output.");
++    if (tags.some(tag => tag.get("property") === "og:image" || tag.get("name") === "twitter:image")) errors.push("Share metadata has no resolved manifest image.");
++    return errors;
++  }
++  const fields = [
++    ["property", "og:image", expected.url],
++    ["property", "og:image:width", String(expected.width)],
++    ["property", "og:image:height", String(expected.height)],
++    ["property", "og:image:alt", expected.alt],
++    ["name", "twitter:image", expected.url],
++    ["name", "twitter:image:alt", expected.alt],
++    ["name", "twitter:card", "summary_large_image"],
++  ];
++  for (const [attribute, field, value] of fields) {
++    const matches = tags.filter(tag => tag.get(attribute) === field);
++    if (matches.length !== 1 || matches[0].get("content") !== value) errors.push(`Share metadata ${field} must match its resolved manifest image exactly once.`);
++  }
++  if (!localFileExists(image!.src)) errors.push(`Share image local output file is missing: ${image!.src}`);
++  if (head.includes(image!.rightsRef) || tags.some(tag => tag.get("name") === "rightsRef" || tag.get("property") === "rightsRef")) errors.push("Share metadata exposes private rights evidence.");
++  return errors;
++}
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/audit-build.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/audit-build.ts
+@@ -29,6 +29,7 @@
+   collectChromeHtmlErrors,
+   collectLocalVideoAdvisories,
+   collectMediaHtmlErrors,
++  collectShareHtmlErrors,
+   isLocalMediaFile,
+   isPublicImageFile,
+ } from "./media-validation";
+@@ -104,6 +105,13 @@
+     (src) => isLocalMediaFile(src, outputDirectory),
+     mediaPageTypes.has(page.pageType) ? expectedPageMedia : undefined,
+   ).map((error) => `[${page.route}] ${error}`));
++  errors.push(...collectShareHtmlErrors(
++    html,
++    siteConfig,
++    mediaCatalog.getShareMedia(page.pageId),
++    (src) => isLocalMediaFile(src, outputDirectory),
++    purpose === "final" && page.indexability === "index",
++  ).map((error) => `[${page.route}] ${error}`));
+   const htmlBytes = Buffer.byteLength(html);
+   const assets = collectReferencedAssetPaths(html);
+   assets.forEach((asset) => referencedAssets.add(asset));
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media.test.ts
+@@ -467,3 +467,44 @@
+     }
+   });
+ });
++
++
++describe("WS03C share references in the media authority", () => {
++  const explicit = { ...image, id: "share.explicit" };
++  const fallback = { ...image, id: "share.default" };
++  it("accepts share references without adding visual placement data", () => {
++    const input = { assets: [image, explicit, fallback], defaultShare: fallback.id, pages: [{ pageId: "home", hero: image.id, share: explicit.id }] };
++    expect(parseMediaManifest(input)).toEqual(input);
++    const catalog = createMediaCatalog(input, ["home", "guide.caldera"]);
++    expect(catalog.getPageMedia("home")).toEqual({ heroMedia: image, galleryMedia: [] });
++  });
++  it("resolves explicit share before informative hero before default", () => {
++    const catalog = createMediaCatalog({ assets: [image, explicit, fallback], defaultShare: fallback.id, pages: [{ pageId: "home", hero: image.id, share: explicit.id }, { pageId: "guide.caldera", hero: image.id }] }, ["home", "guide.caldera", "about"]);
++    const resolve = (catalog as unknown as { getShareMedia: (pageId: string) => unknown }).getShareMedia;
++    expect(resolve).toBeTypeOf("function");
++    expect(resolve("home")).toEqual(explicit);
++    expect(resolve("guide.caldera")).toEqual(image);
++    expect(resolve("about")).toEqual(fallback);
++  });
++  it("skips decorative hero and does not infer share media from galleries", () => {
++    const decorative = { ...image, alt: "" };
++    const catalog = createMediaCatalog({ assets: [decorative, fallback], defaultShare: fallback.id, pages: [{ pageId: "home", hero: decorative.id, gallery: [fallback.id] }] }, ["home"]);
++    const resolve = (catalog as unknown as { getShareMedia: (pageId: string) => unknown }).getShareMedia;
++    expect(resolve).toBeTypeOf("function");expect(resolve("home")).toEqual(fallback);
++    const noDefault = createMediaCatalog({ assets: [decorative, fallback], pages: [{ pageId: "home", hero: decorative.id, gallery: [fallback.id] }] }, ["home"]);
++    expect((noDefault as unknown as { getShareMedia: (pageId: string) => unknown }).getShareMedia("home")).toBeUndefined();
++  });
++  it("returns undefined when no share image exists without inventing a placeholder", () => {
++    const catalog = createMediaCatalog({ assets: [], pages: [] }, ["home"]);
++    const resolve = (catalog as unknown as { getShareMedia: (pageId: string) => unknown }).getShareMedia;
++    expect(resolve).toBeTypeOf("function");expect(resolve("home")).toBeUndefined();
++  });
++  it.each(["missing.asset", video.id, "decorative"])("rejects invalid explicit and default share image %s", id => {
++    const assets = [image, video, { ...image, id: "decorative", alt: "" }];
++    expect(mediaManifestSchema.safeParse({ assets, pages: [{ pageId: "home", share: id }] }).success).toBe(false);
++    expect(mediaManifestSchema.safeParse({ assets, pages: [], defaultShare: id }).success).toBe(false);
++  });
++  it("does not let a share-only mapping create an inventory page", () => {
++    expect(() => createMediaCatalog({ assets: [image], pages: [{ pageId: "unknown", share: image.id }] }, ["home"])).toThrow(/inventory/);
++  });
++});
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/seo.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/seo.test.ts
+@@ -249,3 +249,14 @@
+   });
+ 
+ });
++
++
++it("formats resolved share media as a narrow public HTTPS metadata payload", async () => {
++  const module = await import("../src/core/seo");
++  const resolve = Reflect.get(module, "resolveShareMetadata") as (config: typeof siteConfig, image?: unknown) => unknown;
++  expect(resolve).toBeTypeOf("function");
++  const image = { id: "qa.share", type: "image", src: "/media/share.svg", alt: "A synthetic blue share illustration", dimensions: { width: 1200, height: 630 }, rightsRef: "private/qa-share", sourceUrl: "https://example.com/qa-source", credit: { text: "QA author" } };
++  expect(resolve(siteConfig, image)).toEqual({ url: new URL(image.src, siteConfig.site.url).href, width: 1200, height: 630, alt: image.alt });
++  expect(resolve(siteConfig, undefined)).toBeUndefined();
++  expect(JSON.stringify(resolve(siteConfig, image))).not.toMatch(/rightsRef|sourceUrl|credit|private\/qa-share/);
++});
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts
+@@ -175,3 +175,37 @@
+     expect(collectMediaHtmlErrors(videoHtml.replace(video.accessibleEquivalent.text, '<a href="/about/">A different label</a>'), [link], () => true).join(" ")).toMatch(/equivalent/);
+   });
+ });
++
++
++describe("WS03C generated share metadata audit", () => {
++  const config = { site: { url: "https://field-notes.example" } };
++  const share = { ...image, alt: "A synthetic route share illustration" };
++  const url = new URL(share.src, config.site.url).href;
++  const html = `<head><meta property="og:image" content="${url}"><meta property="og:image:width" content="800"><meta property="og:image:height" content="600"><meta property="og:image:alt" content="${share.alt}"><meta name="twitter:image" content="${url}"><meta name="twitter:image:alt" content="${share.alt}"><meta name="twitter:card" content="summary_large_image"></head>`;
++  async function audit() {
++    const module = await validation();
++    const collect = Reflect.get(module, "collectShareHtmlErrors") as (html: string, config: unknown, share: unknown, exists: (path: string) => boolean, required: boolean) => string[];
++    expect(collect).toBeTypeOf("function");return collect;
++  }
++  it("requires share metadata on final indexable output but permits no-image optional output", async () => {
++    const collect = await audit();
++    expect(collect(html, config, share, () => true, true)).toEqual([]);
++    expect(collect("<head></head>", config, undefined, () => true, true).join(" ")).toMatch(/share|required/i);
++    expect(collect("<head></head>", config, undefined, () => true, false)).toEqual([]);
++  });
++  it.each([
++    [url, "https://wrong.example/other.svg"],
++    ['content="800"', 'content="1"'],
++    ['content="600"', 'content="1"'],
++    [share.alt, "A different illustration"],
++    ['content="summary_large_image"', 'content="summary"'],
++  ])("rejects conflicting share metadata: %s", async (before, after) => {
++    expect((await audit())(html.replace(before, after), config, share, () => true, true).length).toBeGreaterThan(0);
++  });
++  it("rejects missing local output, duplicate metadata and private evidence leaks", async () => {
++    const collect = await audit();
++    expect(collect(html, config, share, () => false, true).join(" ")).toMatch(/missing|local/);
++    expect(collect(html.replace("</head>", `<meta property="og:image" content="${url}"></head>`), config, share, () => true, true).length).toBeGreaterThan(0);
++    expect(collect(html.replace("</head>", `<meta name="rightsRef" content="${share.rightsRef}"></head>`), config, share, () => true, true).join(" ")).toMatch(/private|rights/i);
++  });
++});
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-build.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-build.test.ts
+@@ -57,12 +57,15 @@
+ 
+ beforeAll(() => {
+   fixtureRoot = createCoreBuildFixture();
++  // This test replaces the manifest, so remove the helper-owned default asset as well.
++  rmSync(join(fixtureRoot, "public/media/qa-default-share.svg"));
+   writeFileSync(
+     join(fixtureRoot, "game.config.ts"),
+     `import { defineGameConfig } from "./src/config/schema";\n\nexport default defineGameConfig(${JSON.stringify(adoptFixtureConfig(mediaBuildConfig), null, 2)});\n`,
+   );
+   writeFileSync(join(fixtureRoot, "src/data/media/media.json"), JSON.stringify({
+     ...mediaFixture,
++    defaultShare: "qa.overview",
+     assets: mediaFixture.assets.map(asset => {
+       // Explicit migration of these known synthetic assets; never a production schema default.
+       if (asset.id === "qa.overview") return { ...asset, dimensions: { width: 1200, height: 675 }, rightsRef: "private/qa-overview" };
+@@ -146,3 +149,44 @@
+   expect(html).not.toContain("rightsRef");
+   expect(html).not.toContain("private/qa-");
+ });
++
++
++it("generates page hero fallback and project default share metadata without a visual share placement", () => {
++  for (const route of ["guides/getting-started/index.html", "about/index.html"]) {
++    const html = readFileSync(join(fixtureRoot, "dist", route), "utf8");
++    expect(html).toContain('property="og:image"');
++    expect(html).toContain('property="og:image:width" content="1200"');
++    expect(html).toContain('property="og:image:height" content="675"');
++    expect(html).toContain('name="twitter:image"');
++    expect(html).toContain('name="twitter:card" content="summary_large_image"');
++    expect(html).not.toContain('data-media-placement="share"');
++    expect(html).not.toContain("private/qa-");
++  }
++});
++
++
++it("rejects a final indexable build with no share references and no image fallback", () => {
++  const path = join(fixtureRoot, "src/data/media/media.json");
++  const original = readFileSync(path, "utf8");
++  const registered = JSON.parse(original);
++  writeFileSync(path, JSON.stringify({ assets: registered.assets, pages: [] }));
++  try {
++    expect(() => execFileSync("npm", ["run", "build"], { cwd: fixtureRoot, encoding: "utf8", stdio: "pipe", env: { ...process.env, NODE_ENV: "production" } })).toThrow(/share image.*required/i);
++  } finally {
++    writeFileSync(path, original);
++    execFileSync("npm", ["run", "build"], { cwd: fixtureRoot, encoding: "utf8", stdio: "pipe", env: { ...process.env, NODE_ENV: "production" } });
++  }
++}, 60_000);
++
++it.each(["url", "dimensions", "alt"])("rejects actual generated share metadata tampering: %s", field => {
++  const path = join(fixtureRoot, "dist/guides/getting-started/index.html");
++  const original = readFileSync(path, "utf8");
++  const property = field === "url" ? "og:image" : field === "dimensions" ? "og:image:width" : "og:image:alt";
++  const pattern = new RegExp(`(<meta property="${property}" content=")[^"]*(")`);
++  expect(original).toMatch(pattern);
++  const tampered = original.replace(pattern, '$1invalid-share-value$2');
++  writeFileSync(path, tampered);
++  try {
++    expect(() => execFileSync(join(fixtureRoot, "node_modules/.bin/tsx"), ["scripts/audit-build.ts"], { cwd: fixtureRoot, encoding: "utf8", stdio: "pipe" })).toThrow(/share metadata/i);
++  } finally { writeFileSync(path, original); }
++}, 30_000);
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/helpers/core-build-fixture.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/helpers/core-build-fixture.ts
+@@ -1,7 +1,9 @@
+ import { spawnSync, type SpawnSyncReturns } from "node:child_process";
+ import {
+   cpSync,
++  existsSync,
+   mkdtempSync,
++  mkdirSync,
+   readFileSync,
+   rmSync,
+   symlinkSync,
+@@ -73,6 +75,21 @@
+ function adoptCoreBuildFixture(fixtureRoot: string): void {
+   try {
+     writeFixtureGameConfig(fixtureRoot, adoptFixtureConfig(gameConfig));
++    // Reuse only our identical asset when an adopted QA project creates nested fixtures.
++    const mediaPath = join(fixtureRoot, "src/data/media/media.json");
++    const manifest = JSON.parse(readFileSync(mediaPath, "utf8"));
++    const asset = { id: "qa.default-share", type: "image", src: "/media/qa-default-share.svg", alt: "Synthetic blue share illustration for technical QA", dimensions: { width: 1200, height: 630 }, rightsRef: "private/qa-default-share", sourceUrl: "https://example.com/qa-default-share" };
++    const sharePath = join(fixtureRoot, "public/media/qa-default-share.svg");
++    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#255588"/></svg>';
++    const existing = manifest.assets.find((entry: { id: string }) => entry.id === asset.id);
++    if (existing) {
++      if (JSON.stringify(existing) !== JSON.stringify(asset) || !existsSync(sharePath) || readFileSync(sharePath, "utf8") !== svg) throw new Error("Synthetic share asset ID/content conflict.");
++    } else {
++      if (existsSync(sharePath)) throw new Error("Unregistered synthetic share path conflict.");
++      mkdirSync(join(fixtureRoot, "public/media"), { recursive: true });
++      writeFileSync(sharePath, svg);
++    }
++    writeFileSync(mediaPath, JSON.stringify({ ...manifest, assets: existing ? manifest.assets : [...manifest.assets, asset], defaultShare: asset.id }));
+     adoptFixtureInventory(fixtureRoot);
+     writeFileSync(join(fixtureRoot, "src/content/guides/getting-started.mdx"), "---\npageId: guide.getting-started\n---\n\nChoose a route and compare the available options before your next session.\n\n## First route\n\nReview the tested choices and use the source notes to check what changed.\n");
+     const aboutPath = join(fixtureRoot, "src/core/static-page-copy.ts");
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/media/README.md
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/media/README.md
+@@ -38,6 +38,7 @@
+       "credit": { "text": "Reviewed project author" }
+     }
+   ],
++  "defaultShare": "overview",
+   "pages": [{ "pageId": "guide.getting-started", "hero": "overview" }]
+ }
+ ```
+@@ -148,3 +149,42 @@
+ These examples describe syntax, not verified game media. Synthetic fixtures stay
+ in disposable QA projects. WS03C OG/share, provider abstractions, rights engines,
+ processing and new placement types remain outside this slice.
++
++## V2.7 candidate WS03C — share media authority
++
++Sharing references the existing media manifest and ImageAsset schema:
++`defaultShare` is an optional top-level image ID; `pages[].share` is an optional
++page-specific image ID. Both must reference an existing informative local image;
++unknown IDs, video assets and decorative images are rejected. The fixed visual
++placements remain hero/gallery/trailer; share is metadata and creates no body
++figure or `data-media-placement="share"` wrapper.
++
++The catalog resolves `page.share → informative page.hero → defaultShare → none`.
++It never guesses from galleries, filenames, routes or another image registry.
++Page Inventory continues to own page/publication/indexability; no new image field
++is added to Inventory or Game Config. `resolveShareMetadata` formats the selected
++asset as absolute HTTPS URL, width, height and alt only. Private rights references,
++source/credit and approval/workflow metadata are excluded from this public payload.
++
++BaseLayout emits one OG image URL, dimensions and alt plus the matching Twitter
++image/alt and summary_large_image card when resolved. No image metadata or fake
++placeholder is emitted when nothing resolves. The generic empty manifest remains
++structurally valid, but a **final build of an enabled indexable page requires a
++resolved share image**. Missing share media alone does not fail noindex pages.
++The generated audit checks exact values/cardinality and the local output asset;
++missing/conflicting URL/dimensions/alt, duplicate tags or private evidence leaks
++fail the final audit. Evidence-purpose structural output still does not grant
++production acceptance.
++
++For adoption, author and review a suitable local image with measured dimensions,
++descriptive alt, source and private rights evidence, then set a project default
++and/or explicit page share references. Rights and visual suitability remain human
++SOP decisions; valid metadata never supplies approval. Only disposable adopted QA
++fixtures receive synthetic default share media. Production media.json remains
++empty until project material is explicitly authored. No image service, separate
++SEO image registry, processing/provider abstraction, search or freshness feature
++is added by this slice.
++
++This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
++close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
++absent; release hold active and capability promotion NONE.
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
+@@ -230,6 +230,7 @@
+       "accessibleEquivalent": { "kind": "text", "text": "Describe the information conveyed by the local clip." }
+     }
+   ],
++  "defaultShare": "opening-route",
+   "pages": [
+     {
+       "pageId": "guide.example-topic",
+@@ -390,3 +391,42 @@
+ content; equivalents and sources remain available when YouTube is blocked. Missing
+ local assets/posters fail validation. Refer to `docs/media/README.md` for migration
+ and bounded schema examples; page placement and Inventory authority are unchanged.
++
++## V2.7 candidate WS03C — share media authority
++
++Sharing references the existing media manifest and ImageAsset schema:
++`defaultShare` is an optional top-level image ID; `pages[].share` is an optional
++page-specific image ID. Both must reference an existing informative local image;
++unknown IDs, video assets and decorative images are rejected. The fixed visual
++placements remain hero/gallery/trailer; share is metadata and creates no body
++figure or `data-media-placement="share"` wrapper.
++
++The catalog resolves `page.share → informative page.hero → defaultShare → none`.
++It never guesses from galleries, filenames, routes or another image registry.
++Page Inventory continues to own page/publication/indexability; no new image field
++is added to Inventory or Game Config. `resolveShareMetadata` formats the selected
++asset as absolute HTTPS URL, width, height and alt only. Private rights references,
++source/credit and approval/workflow metadata are excluded from this public payload.
++
++BaseLayout emits one OG image URL, dimensions and alt plus the matching Twitter
++image/alt and summary_large_image card when resolved. No image metadata or fake
++placeholder is emitted when nothing resolves. The generic empty manifest remains
++structurally valid, but a **final build of an enabled indexable page requires a
++resolved share image**. Missing share media alone does not fail noindex pages.
++The generated audit checks exact values/cardinality and the local output asset;
++missing/conflicting URL/dimensions/alt, duplicate tags or private evidence leaks
++fail the final audit. Evidence-purpose structural output still does not grant
++production acceptance.
++
++For adoption, author and review a suitable local image with measured dimensions,
++descriptive alt, source and private rights evidence, then set a project default
++and/or explicit page share references. Rights and visual suitability remain human
++SOP decisions; valid metadata never supplies approval. Only disposable adopted QA
++fixtures receive synthetic default share media. Production media.json remains
++empty until project material is explicitly authored. No image service, separate
++SEO image registry, processing/provider abstraction, search or freshness feature
++is added by this slice.
++
++This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
++close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
++absent; release hold active and capability promotion NONE.
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -1614,3 +1614,42 @@
+ Safari keyboard evidence is still absent; capability promotion is NONE and the
+ release hold remains active. A source-bound continuation review cannot replace
+ full browser acceptance or human rights/visual approval.
++
++## V2.7 candidate WS03C — share media authority
++
++Sharing references the existing media manifest and ImageAsset schema:
++`defaultShare` is an optional top-level image ID; `pages[].share` is an optional
++page-specific image ID. Both must reference an existing informative local image;
++unknown IDs, video assets and decorative images are rejected. The fixed visual
++placements remain hero/gallery/trailer; share is metadata and creates no body
++figure or `data-media-placement="share"` wrapper.
++
++The catalog resolves `page.share → informative page.hero → defaultShare → none`.
++It never guesses from galleries, filenames, routes or another image registry.
++Page Inventory continues to own page/publication/indexability; no new image field
++is added to Inventory or Game Config. `resolveShareMetadata` formats the selected
++asset as absolute HTTPS URL, width, height and alt only. Private rights references,
++source/credit and approval/workflow metadata are excluded from this public payload.
++
++BaseLayout emits one OG image URL, dimensions and alt plus the matching Twitter
++image/alt and summary_large_image card when resolved. No image metadata or fake
++placeholder is emitted when nothing resolves. The generic empty manifest remains
++structurally valid, but a **final build of an enabled indexable page requires a
++resolved share image**. Missing share media alone does not fail noindex pages.
++The generated audit checks exact values/cardinality and the local output asset;
++missing/conflicting URL/dimensions/alt, duplicate tags or private evidence leaks
++fail the final audit. Evidence-purpose structural output still does not grant
++production acceptance.
++
++For adoption, author and review a suitable local image with measured dimensions,
++descriptive alt, source and private rights evidence, then set a project default
++and/or explicit page share references. Rights and visual suitability remain human
++SOP decisions; valid metadata never supplies approval. Only disposable adopted QA
++fixtures receive synthetic default share media. Production media.json remains
++empty until project material is explicitly authored. No image service, separate
++SEO image registry, processing/provider abstraction, search or freshness feature
++is added by this slice.
++
++This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
++close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
++absent; release hold active and capability promotion NONE.
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -421,3 +421,13 @@
+ - [ ] Empty manifest/no-slot pages remain complete without empty hero/gallery/trailer shells; disposable synthetic QA assets never enter the canonical manifest.
+ - [ ] Targeted three-engine desktop/mobile media evidence and fresh unchanged 47-row regression are bound to current source/build/tool/host identities.
+ - [ ] Formal WS03/WS06A acceptance and release holds remain explicit while genuine Safari keyboard evidence is absent; no capability promotion from this candidate slice.
++
++## WS03C share metadata QA
++
++- [ ] Explicit/default share IDs reference existing informative ImageAssets in the same media manifest; no video/decorative/unknown share references or separate SEO image registry.
++- [ ] Selection is page.share, then informative hero, then defaultShare, then none; no gallery/filename/route guessing or approval inference.
++- [ ] Every enabled indexable final page resolves share media and emits exactly one matching OG/Twitter image, correct intrinsic dimensions/alt and summary_large_image card.
++- [ ] Local share assets exist in final dist; missing/tampered/duplicate metadata and private evidence leaks fail generated audit.
++- [ ] Share-only references create no body image or new visual placement; empty manifest remains structurally valid and missing share alone is not a noindex failure.
++- [ ] Synthetic default media stays in disposable adopted QA projects; real-project rights and suitability require human review.
++- [ ] Current three-engine head/local-asset proof, fresh unchanged47, residual/counterpart/closure identities and normal cleanup are recorded; original failures and Safari/formal/release holds remain explicit.
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -485,3 +485,42 @@
+ Safari keyboard evidence is still absent; capability promotion is NONE and the
+ release hold remains active. A source-bound continuation review cannot replace
+ full browser acceptance or human rights/visual approval.
++
++## V2.7 candidate WS03C — share media authority
++
++Sharing references the existing media manifest and ImageAsset schema:
++`defaultShare` is an optional top-level image ID; `pages[].share` is an optional
++page-specific image ID. Both must reference an existing informative local image;
++unknown IDs, video assets and decorative images are rejected. The fixed visual
++placements remain hero/gallery/trailer; share is metadata and creates no body
++figure or `data-media-placement="share"` wrapper.
++
++The catalog resolves `page.share → informative page.hero → defaultShare → none`.
++It never guesses from galleries, filenames, routes or another image registry.
++Page Inventory continues to own page/publication/indexability; no new image field
++is added to Inventory or Game Config. `resolveShareMetadata` formats the selected
++asset as absolute HTTPS URL, width, height and alt only. Private rights references,
++source/credit and approval/workflow metadata are excluded from this public payload.
++
++BaseLayout emits one OG image URL, dimensions and alt plus the matching Twitter
++image/alt and summary_large_image card when resolved. No image metadata or fake
++placeholder is emitted when nothing resolves. The generic empty manifest remains
++structurally valid, but a **final build of an enabled indexable page requires a
++resolved share image**. Missing share media alone does not fail noindex pages.
++The generated audit checks exact values/cardinality and the local output asset;
++missing/conflicting URL/dimensions/alt, duplicate tags or private evidence leaks
++fail the final audit. Evidence-purpose structural output still does not grant
++production acceptance.
++
++For adoption, author and review a suitable local image with measured dimensions,
++descriptive alt, source and private rights evidence, then set a project default
++and/or explicit page share references. Rights and visual suitability remain human
++SOP decisions; valid metadata never supplies approval. Only disposable adopted QA
++fixtures receive synthetic default share media. Production media.json remains
++empty until project material is explicitly authored. No image service, separate
++SEO image registry, processing/provider abstraction, search or freshness feature
++is added by this slice.
++
++This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
++close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
++absent; release hold active and capability promotion NONE.
+--- before/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ after/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -1423,3 +1423,42 @@
+ Safari keyboard evidence is still absent; capability promotion is NONE and the
+ release hold remains active. A source-bound continuation review cannot replace
+ full browser acceptance or human rights/visual approval.
++
++## V2.7 candidate WS03C — share media authority
++
++Sharing references the existing media manifest and ImageAsset schema:
++`defaultShare` is an optional top-level image ID; `pages[].share` is an optional
++page-specific image ID. Both must reference an existing informative local image;
++unknown IDs, video assets and decorative images are rejected. The fixed visual
++placements remain hero/gallery/trailer; share is metadata and creates no body
++figure or `data-media-placement="share"` wrapper.
++
++The catalog resolves `page.share → informative page.hero → defaultShare → none`.
++It never guesses from galleries, filenames, routes or another image registry.
++Page Inventory continues to own page/publication/indexability; no new image field
++is added to Inventory or Game Config. `resolveShareMetadata` formats the selected
++asset as absolute HTTPS URL, width, height and alt only. Private rights references,
++source/credit and approval/workflow metadata are excluded from this public payload.
++
++BaseLayout emits one OG image URL, dimensions and alt plus the matching Twitter
++image/alt and summary_large_image card when resolved. No image metadata or fake
++placeholder is emitted when nothing resolves. The generic empty manifest remains
++structurally valid, but a **final build of an enabled indexable page requires a
++resolved share image**. Missing share media alone does not fail noindex pages.
++The generated audit checks exact values/cardinality and the local output asset;
++missing/conflicting URL/dimensions/alt, duplicate tags or private evidence leaks
++fail the final audit. Evidence-purpose structural output still does not grant
++production acceptance.
++
++For adoption, author and review a suitable local image with measured dimensions,
++descriptive alt, source and private rights evidence, then set a project default
++and/or explicit page share references. Rights and visual suitability remain human
++SOP decisions; valid metadata never supplies approval. Only disposable adopted QA
++fixtures receive synthetic default share media. Production media.json remains
++empty until project material is explicitly authored. No image service, separate
++SEO image registry, processing/provider abstraction, search or freshness feature
++is added by this slice.
++
++This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
++close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
++absent; release hold active and capability promotion NONE.
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-sentinels.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-sentinels.test.ts
+@@ -1,6 +1,6 @@
+ import { spawnSync } from "node:child_process";
+ import { gzipSync } from "node:zlib";
+-import { writeFileSync } from "node:fs";
++import { readFileSync, writeFileSync } from "node:fs";
+ import { join } from "node:path";
+ import { describe, expect, it } from "vitest";
+ 
+@@ -128,8 +128,9 @@
+     const root = createCoreBuildFixture("starter-pp02-media-quote-");
+     try {
+       writeFileSync(join(root, "public/media/quote.svg"), '<svg xmlns="http://www.w3.org/2000/svg"><text>Game Atlas is quoted as a reference.</text></svg>');
++      const manifest = JSON.parse(readFileSync(join(root, "src/data/media/media.json"), "utf8")) as { assets: Array<{ src: string; poster?: string }> };
+       const result = collectCopiedTextResidueSignals({ publicDirectory: join(root, "public"), readDirectory: join(root, "public"),
+-        config: adoptFixtureConfig(gameConfig), mediaAssets: [{ src: "/media/quote.svg" }], purpose: "final" });
++        config: adoptFixtureConfig(gameConfig), mediaAssets: [...manifest.assets, { src: "/media/quote.svg" }], purpose: "final" });
+       expect(result.errors).toEqual([]);
+     } finally { cleanupCoreBuildFixture(root); }
+   });

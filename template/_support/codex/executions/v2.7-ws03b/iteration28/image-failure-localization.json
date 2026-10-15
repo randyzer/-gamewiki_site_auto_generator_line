@@ -1,0 +1,183 @@
+{
+  "source": "preserved original qualification assertion ordering plus read-only helper inspection",
+  "observations": [
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "heroImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      },
+      "galleryImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      }
+    },
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "heroImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      },
+      "galleryImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      }
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "heroImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      },
+      "galleryImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      }
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "heroImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      },
+      "galleryImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "heroImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      },
+      "galleryImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": false,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 0,
+          "naturalHeight": 0,
+          "complete": false
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "heroImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": true,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "complete": true
+        }
+      },
+      "galleryImage": {
+        "name": "image-intrinsic-dimensions-natural-file",
+        "passed": false,
+        "detail": {
+          "width": "1200",
+          "height": "675",
+          "naturalWidth": 0,
+          "naturalHeight": 0,
+          "complete": false
+        }
+      }
+    }
+  ],
+  "hypothesis": "WebKit off-screen lazy gallery image observed before request/load; hero loaded in all six rows",
+  "notProven": "No viewport reveal/load diagnosis performed; original FAIL retained",
+  "screenshot": "screenshots/webkit-390-media.png",
+  "noRequalification": true
+}

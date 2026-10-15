@@ -1,0 +1,8 @@
+{
+  "startedPid": null,
+  "astroStopExit": null,
+  "pidAliveBeforeStop": false,
+  "pidAliveAfterStop": false,
+  "fallbackSignalUsed": false,
+  "fixtureRemoved": true
+}

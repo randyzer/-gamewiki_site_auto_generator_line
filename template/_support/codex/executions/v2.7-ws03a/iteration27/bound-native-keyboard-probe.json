@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1",
+  "rawEvidenceSha256": "68b090e1fa2e2d87b119a2bb6ac1866a7546a147ac5864009b02d30e595af1ba",
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.22.0"
+  },
+  "engine": {
+    "browserName": "webkit",
+    "version": "26.6",
+    "revision": "2359"
+  },
+  "webkit": {
+    "sequence": [
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      }
+    ],
+    "plainTabReachesLink": false
+  }
+}

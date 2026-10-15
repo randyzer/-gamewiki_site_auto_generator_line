@@ -1,0 +1,327 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 29"
+      - text: "WORKSTREAM: WS03B"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03B IMPLEMENTATION FOR CONTINUATION
+    - paragraph:
+      - text: 我独立复核后，iteration29 可以接受为
+      - strong: continuation ACCEPT
+      - text: ，但仅限 WS03B 候选实现，不关闭正式 WS03 Gate。
+    - paragraph:
+      - text: 这次最关键的是 iteration28 的两个 WebKit FAIL 已经被真正解释，而不是“通过多等一会儿刷绿”。诊断把两个同 URL 的 qa.image 分成 hero/gallery DOM instance：WebKit 下 hero 已 complete=true / 1200×675，off-screen gallery 为 loading=lazy / complete=false / naturalWidth=0；一次自然 scrollIntoViewIfNeeded() 后，WebKit 两个 viewport 都新增真实 /media/qa-contract.svg request +
+      - strong: 200 response
+      - text: ，随后 gallery 变为 complete=true / naturalWidth=1200 / naturalHeight=675。这足以支持 HARNESS_LAZY_LOAD_CONFIRMED，而 iteration28 原 FAIL 仍原样保留。
+    - paragraph: 独立验收要点如下：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "diagnostic: 1 session 0 qualification 0 retry WebKit lazy gallery diagnosis = CONFIRMED conditional audit defect: RED = 3 FAIL / 23 PASS GREEN targeted = 247 PASS changed = media-validation.ts + media-audit.test.ts only visible whitespace normalized symmetrically different credit/equivalent text still rejected root: 46 files 811 tests PASS Astro 0 unadopted/adopted/diff PASS 03B targeted: 6 / 6 rows PASS 156 / 156 assertions PASS 1 attempt 0 retry original assertion lines unchanged fresh47: 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN raw FAIL retained residual: 40 current 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED outside frozen40 = 0 vs iteration27: 40 persisted 0 disappeared 0 reappeared 0 new counterparts: Chromium 40 / 40 PASS Firefox 40 / 40 PASS closure: BLOCKED sole error = missing/invalid real Safari keyboard evidence"
+    - paragraph: Integrity 也成立：iteration29 只增加了 PLAN29 条件授权的两个文件变化；iteration28 历史冻结，6293 protected files unchanged，Contract 仍为 41 unique IDs，Core matrix/runner/closure/policy身份未改变。诊断、targeted、fresh47 三组临时环境也都正常 stop、PID gone、fixture gone、无 fallback signal、无未知 TMP residue。
+    - paragraph: 因此正式状态更新为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03B: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03A: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03 FORMAL GATE: NOT ACCEPTED WS06A FULL: BLOCKED Safari proof: 0 SEO-02 / MC-* capability PASS: NOT CLAIMED Capability promotion: NONE Release hold: ACTIVE"
+    - paragraph:
+      - text: 现在 standing authorization 允许进入
+      - strong: WS03C 单切片
+      - text: 。
+    - button "添加到资料库":
+      - generic: PLAN30 — WS03C Share Media Authority and Generated Metadata Audit
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 30"
+        - text: "WORKSTREAM: WS03C"
+        - text: "SLICE: SHARE / OG MEDIA ONLY"
+        - text: "PREDECESSOR: REVIEW29 WS03B CONTINUATION ACCEPT"
+        - text: "SCOPE: ONE FINITE SLICE"
+        - text: "03D_SEARCH: OUT_OF_SCOPE"
+        - text: "03D_FRESHNESS: OUT_OF_SCOPE"
+        - text: "WS06A_FULL: BLOCKED"
+        - text: "SAFARI_PROOF: 0"
+      - heading "1. Goal" [level=2]
+      - paragraph: "Implement SEO-02's missing share-media seam while preserving the existing authority model:"
+      - code: Media Manifest ↓ same ImageAsset IDs ↓ share resolver ↓ BaseLayout OG/Twitter metadata ↓ generated-build audit
+      - paragraph: "No separate:"
+      - code: ogImage config SEO image registry remote social-image provider generated image service
+      - separator
+      - heading "2. Current gap" [level=2]
+      - paragraph:
+        - code: BaseLayout.astro
+        - text: "already emits:"
+      - code: og:type og:site_name og:locale og:url og:title og:description twitter:card twitter:title twitter:description twitter:site
+      - paragraph: "but has no:"
+      - code: og:image twitter:image
+      - paragraph: Contract SEO-02 requires appropriate share media for indexable pages.
+      - paragraph: "03B already supplies the media facts required by 03C:"
+      - code: local ImageAsset dimensions alt sourceUrl rightsRef credit
+      - paragraph: 03C must consume those exact assets, not define a second image schema.
+      - separator
+      - heading "3. Media Manifest extension" [level=2]
+      - paragraph: Extend the existing manifest only.
+      - paragraph: "Top level:"
+      - code: "defaultShare?: MediaAssetId"
+      - paragraph: "Page mapping:"
+      - code: "{ pageId, hero?, gallery?, trailer?, share?, }"
+      - paragraph:
+        - code: share
+        - text: is a
+        - strong: metadata reference
+        - text: ", not a rendered placement."
+      - paragraph: "Therefore the runtime placement vocabulary remains:"
+      - code: hero gallery trailer
+      - paragraph: "There is no:"
+      - code: data-media-placement="share"
+      - separator
+      - heading "4. Reference restrictions" [level=2]
+      - paragraph: "Both:"
+      - code: defaultShare page.share
+      - paragraph:
+        - text: must reference an existing
+        - strong: ImageAsset
+        - text: .
+      - paragraph: "Reject:"
+      - code: unknown ID video ID decorative image with alt:""
+      - paragraph: "A share asset must retain normal 03B requirements:"
+      - code: dimensions rightsRef sourceUrl descriptive alt
+      - paragraph: Field validity still does not mean rights approval.
+      - separator
+      - heading "5. Resolution priority" [level=2]
+      - paragraph: "Add one deterministic resolver:"
+      - code: page.share ↓ page.hero when informative ↓ manifest.defaultShare ↓ undefined
+      - paragraph: "Rules:"
+      - code: "explicit share always wins hero may fallback only when: asset is image alt is non-empty decorative hero: must not become share metadata automatically defaultShare: project-wide final fallback"
+      - paragraph: No gallery guessing.
+      - paragraph: No “first available image”.
+      - paragraph: No route-based image inference.
+      - separator
+      - heading "6. Why this stays one authority" [level=2]
+      - paragraph: "All three candidates:"
+      - code: explicit share hero fallback default fallback
+      - paragraph: "are IDs into:"
+      - code: src/data/media/media.json → assets[]
+      - paragraph: "So:"
+      - code: Media Manifest = asset authority Page Inventory = page/publication authority SEO = metadata formatting only
+      - paragraph:
+        - text: Neither
+        - code: game.config.ts
+        - text: nor Page Inventory gains an image field.
+      - separator
+      - heading "7. Public share metadata adapter" [level=2]
+      - paragraph:
+        - text: Add a narrow SEO helper consuming an already resolved
+        - code: ImageAsset
+        - text: ":"
+      - code: resolveShareMetadata(config, image)
+      - paragraph: "Output:"
+      - code: "{ url: absolute HTTPS URL, width, height, alt, }"
+      - paragraph: "Do not return publicly:"
+      - code: rightsRef credit sourceUrl workflow state human approval
+      - paragraph: Those remain evidence/review metadata.
+      - separator
+      - heading "8. BaseLayout output" [level=2]
+      - paragraph: "When share media resolves, emit:"
+      - code: <meta property="og:image" ...> <meta property="og:image:width" ...> <meta property="og:image:height" ...> <meta property="og:image:alt" ...> <meta name="twitter:image" ...> <meta name="twitter:image:alt" ...>
+      - paragraph: "and:"
+      - code: twitter:card = summary_large_image
+      - paragraph: "When no share media exists:"
+      - code: no fake/default external image
+      - paragraph: No placeholder is emitted.
+      - separator
+      - heading "9. Required-vs-optional behavior" [level=2]
+      - paragraph: "Schema allows:"
+      - code: "{\"assets\":[],\"pages\":[]}"
+      - paragraph: so the generic Starter remains structurally valid.
+      - paragraph:
+        - text: But
+        - strong: final generated output
+        - text: "must enforce SEO-02:"
+      - code: indexable page → resolved share image REQUIRED
+      - paragraph: "For:"
+      - code: indexability = noindex
+      - paragraph: missing share media does not independently fail SEO-02.
+      - paragraph: This keeps publication truth with Inventory.
+      - separator
+      - heading "10. Final build audit" [level=2]
+      - paragraph: "Extend generated build audit so every enabled indexable page verifies:"
+      - code: exactly one og:image exactly one twitter:image same expected absolute URL og:image width/height match asset dimensions OG/Twitter alt match share asset alt local share file exists in dist no private rightsRef leaks
+      - paragraph: "Missing or conflicting share metadata:"
+      - code: final build audit FAIL
+      - separator
+      - heading "11. Adopted fixture migration" [level=2]
+      - paragraph: Because adopted-final represents a valid production-shaped build, migrate only its synthetic fixture.
+      - paragraph:
+        - code: createFullProjectFixture(true)
+        - text: "/ adopted fixture receives:"
+      - code: one synthetic local share image valid dimensions synthetic rightsRef descriptive alt defaultShare reference
+      - paragraph: No real-game claim.
+      - paragraph: "Canonical production:"
+      - code: src/data/media/media.json
+      - paragraph: stays empty.
+      - separator
+      - heading "12. Share fallback tests" [level=2]
+      - paragraph: "Must explicitly cover:"
+      - code: explicit page.share > hero > defaultShare explicit share asset hero fallback default fallback decorative hero skipped missing all three => undefined unknown share ID rejected video share rejected decorative explicit/default share rejected
+      - paragraph: No automatic rights approval.
+      - separator
+      - heading "13. RED first" [level=2]
+      - paragraph: "Before first mutation bind:"
+      - code: iteration29 continuation ACCEPT current source identity next slice = WS03C
+      - paragraph: First mutation is tests only.
+      - paragraph: "Recommended RED files:"
+      - code: tests/media.test.ts tests/seo.test.ts tests/media-audit.test.ts tests/media-build.test.ts
+      - paragraph: RED must be real non-zero before implementation.
+      - paragraph: "After first mutation:"
+      - code: WS03B continuation evidence becomes STALE for post-03C source purposes
+      - paragraph: Historical ACCEPT remains intact.
+      - separator
+      - heading "14. Exact product scope" [level=2]
+      - paragraph: "Allowed Starter files:"
+      - code: 1. src/data/schemas/media.ts 2. src/data/media/catalog.ts 3. src/core/seo.ts 4. src/layouts/BaseLayout.astro 5. scripts/media-validation.ts 6. scripts/audit-build.ts 7. tests/media.test.ts 8. tests/seo.test.ts 9. tests/media-audit.test.ts 10. tests/media-build.test.ts 11. tests/helpers/core-build-fixture.ts 12. docs/media/README.md 13. docs/CONTENT_AND_DATA_GUIDE.md
+      - paragraph: "Triad synchronization:"
+      - code: 14. GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md 15. GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md 16. GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md 17. GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph: "Exact limit:"
+      - code: 17 product/governance/test files
+      - paragraph: "If an 18th is genuinely required:"
+      - code: STOP PREFLIGHT_SCOPE_REPLAN
+      - paragraph: before mutation outside scope.
+      - separator
+      - heading "15. Protected files" [level=2]
+      - paragraph: "Do not modify:"
+      - code: canonical production media.json page inventory schema/data game.config.ts media-readiness lifecycle 03B dimensions/rights/equivalent semantics routes search/Pagefind dates/freshness ads package.json package-lock.json CI core browser matrix runner browser evidence validator closure verifier WebKit policy/control
+      - separator
+      - heading "16. GREEN requirements" [level=2]
+      - paragraph: "After implementation:"
+      - code: targeted 03C tests PASS
+      - paragraph: "Then:"
+      - code: npm run check npm run verify:unadopted-final npm run verify:adopted-final git diff --check
+      - paragraph: Root test count may increase above 811.
+      - paragraph: Unadopted behavior remains its intentional final rejection.
+      - paragraph: Adopted final must now satisfy share metadata through the synthetic media authority.
+      - separator
+      - heading "17. Generated-output negative evidence" [level=2]
+      - paragraph: "At minimum prove these final-build failures:"
+      - code: "indexable page with: no page.share no informative hero no defaultShare → FAIL share asset missing local file → FAIL share metadata URL/dimensions/alt tampered → FAIL"
+      - paragraph: Do not satisfy these cases by adding placeholders.
+      - separator
+      - heading "18. Targeted browser evidence" [level=2]
+      - paragraph: Use one disposable adopted synthetic fixture.
+      - paragraph: "Provide synthetic media states sufficient to prove:"
+      - code: explicit share route fallback route
+      - paragraph: "Across:"
+      - code: Chromium Firefox WebKit
+      - paragraph:
+        - text: Targeted browser checks only
+        - code: <head>
+        - text: and local share asset availability.
+      - paragraph: "Verify:"
+      - code: og:image absolute URL twitter:image same URL width/height/alt exact twitter:card summary_large_image share asset HTTP 200 no rightsRef/source workflow leakage
+      - paragraph: Browser evidence does not determine rights legality.
+      - separator
+      - heading "19. No visual-placement regression" [level=2]
+      - paragraph: "The targeted fixture must additionally confirm:"
+      - code: share-only reference does not render a new figure/body image no data-media-placement="share"
+      - paragraph: A share reference is metadata, not page composition.
+      - separator
+      - heading "20. Targeted qualification rule" [level=2]
+      - paragraph: "Use one short owned TMP:"
+      - code: /tmp/c2c30a.*
+      - paragraph: "Exactly:"
+      - code: 1 attempt 0 retry
+      - paragraph: All targeted rows must PASS before fresh47.
+      - paragraph: "Any new-surface failure:"
+      - code: STOP fresh47 NOT_STARTED
+      - separator
+      - heading "21. Fresh unchanged47" [level=2]
+      - paragraph: "After targeted PASS only, run:"
+      - code: npm run check:browser
+      - paragraph: "through unchanged Core runner using:"
+      - code: /tmp/c2c30b.*
+      - paragraph: "Exactly:"
+      - code: 47 executed 0 NOT_RUN 1 attempt 0 retry
+      - paragraph: All non-WebKit rows must PASS.
+      - separator
+      - heading "22. Existing residual discipline" [level=2]
+      - paragraph: "Current WebKit failures must remain:"
+      - code: subset of iteration19 frozen40
+      - paragraph: Compute current Chromium and Firefox counterpart PASS for every current residual.
+      - paragraph: "Also compare against iteration29:"
+      - code: persisted disappeared reappeared newOutsideFrozen40
+      - paragraph: No new residual is allowed.
+      - separator
+      - heading "23. Current identity and closure" [level=2]
+      - paragraph: "Bind post03C:"
+      - code: Starter/SOP/Prompt source Contract SHA fixture source/dist Playwright engine versions/revisions host matrix/runner/closure policy/control/native probe
+      - paragraph: Then rerun unchanged closure.
+      - paragraph: "With current WebKit residuals and no Safari evidence, expected:"
+      - code: "BLOCKED exit1 sole error: missing/invalid real Safari keyboard evidence"
+      - separator
+      - heading "24. Cleanup" [level=2]
+      - paragraph: "Targeted and fresh47 roots independently require:"
+      - code: normal Astro stop PID gone fixture gone known Node/tsx cache only 0 fallback signals 0 symlink 0 escape 0 unknown owned root removed
+      - separator
+      - heading "25. Acceptance boundary" [level=2]
+      - paragraph: "Even if PLAN30 passes completely, Codex may report only:"
+      - code: "WS03C: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: "It may not claim:"
+      - code: SEO-02 PASS MC-02 PASS MC-03 PASS WS03 formal Gate ACCEPT WS06A ACCEPT capability promotion release ready
+      - paragraph: Human/project review still owns whether a real game's chosen share image is appropriate and rights-safe.
+      - separator
+      - heading "26. Next step after independent ACCEPT" [level=2]
+      - paragraph: "Only after independent REVIEW30 grants:"
+      - code: "WS03C: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION"
+      - paragraph: "may standing authorization move to:"
+      - code: PLAN31 — WS03D-search
+      - paragraph: Not freshness yet.
+      - paragraph: "The required slice order remains:"
+      - code: 03C → 03D-search → 03D-freshness
+      - separator
+      - heading "System holds" [level=2]
+      - paragraph: "Throughout PLAN30:"
+      - code: Safari proof = 0 WS06A FULL = BLOCKED WS03 formal Gate = NOT_ACCEPTED 04A formal binding = BLOCKED 05+ = BLOCKED Capability promotion = NONE Release hold = ACTIVE
+      - heading "Core design sentence" [level=2]
+      - code: "Share media is not a second media system: the page selects or inherits an existing ImageAsset ID from the existing Media Manifest, and SEO only formats that already-authorized asset into generated OG/Twitter metadata."
+    - paragraph:
+      - text: PLAN30 的关键边界就是：
+      - strong: 新增的是“share 引用与解析”，不是新的图片资产模型。
+      - text: 03B 已经建立的 dimensions / rightsRef / source / accessible-media 权威继续原封不动承接到 03C。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

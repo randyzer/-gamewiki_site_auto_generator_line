@@ -1,0 +1,639 @@
+{
+  "schemaVersion": "1",
+  "policy": {
+    "id": "WS06A_WEBKIT_VERIFICATION_V1",
+    "proposalSha256": "2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917",
+    "arrowControlSha256": "1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344"
+  },
+  "rawEvidenceSha256": "ea30f494c31872d3b262fe011859afba14a42bd7f12ec9f685ee92f38ffdb5ef",
+  "starter": {
+    "branch": "v2.7/evolution",
+    "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+    "workingTreeSha256": "423bbb054ede60cf10607e4f5bc83ab6521cc433bbeedfff6e4656079bf5d06d"
+  },
+  "manualBuild": {
+    "fixtureIdentity": "Field Notes synthetic adoption",
+    "fixtureSourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+    "distSha256": "5af57170dac4c473f46a3893352c81aba2193b50140dc47be657d52e52f42d48"
+  },
+  "browser": {
+    "product": "Safari",
+    "version": null,
+    "engineFamily": "WebKit"
+  },
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.22.0"
+  },
+  "input": {
+    "method": null,
+    "keyboardNavigationSettingChangedForTest": false
+  },
+  "review": {
+    "operator": null,
+    "observedAt": null,
+    "notes": "PENDING ONLY; all results/observations must be captured from actual Safari. This file is intentionally invalid and must not pass verification."
+  },
+  "rows": [
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "target-size",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "nested-cleanup",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "ordinary-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "same-document-focus",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "table-local-scroll",
+          "disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null,
+            "scrollBefore": null,
+            "scrollAfter": null,
+            "trustedKeyReceived": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "recovery-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "target-size",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "nested-cleanup",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "ordinary-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "same-document-focus",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "table-local-scroll",
+          "disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null,
+            "scrollBefore": null,
+            "scrollAfter": null,
+            "trustedKeyReceived": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "recovery-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "ordinary-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "table-local-scroll",
+          "disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null,
+            "scrollBefore": null,
+            "scrollAfter": null,
+            "trustedKeyReceived": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "recovery-navigation",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "assertions": [
+        {
+          "name": "footer-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "skip-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "navigation-keyboard",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        },
+        {
+          "name": "target-size",
+          "disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+          "result": null,
+          "observation": {
+            "keys": [],
+            "before": null,
+            "after": null,
+            "focusVisible": null,
+            "artifact": null
+          }
+        }
+      ]
+    }
+  ]
+}

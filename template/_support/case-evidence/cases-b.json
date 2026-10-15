@@ -1,0 +1,171 @@
+{
+  "observedAt": "2026-10-01",
+  "timezone": "Asia/Taipei",
+  "method": "在用户日常 Chrome 的已连接浏览器实例中创建自有后台 tab，读取实际 DOM、站内点击和渲染截图；没有公开搜索或匿名抓取。",
+  "scope": "每站首页、由首页发现的 guides 目录页、由目录发现的第一篇新手文章。",
+  "boundaries": [
+    "仅证明页面及具体组件在观察时存在；未核实编辑声明、游戏数值、流量、搜索排名、收入或广告填充率。",
+    "桌面视口约 1910 × 968；移动端和键盘交互未验证。",
+    "没有复制文章正文；提炼项为自有观察。"
+  ],
+  "sites": [
+    {
+      "id": "miniwars",
+      "urls": {
+        "home": "https://miniwars.art/",
+        "directory": "https://miniwars.art/guides",
+        "article": "https://miniwars.art/guides/beginner-opening-guide"
+      },
+      "observed": {
+        "homeHierarchy": [
+          "窄状态条和十项主导航（含站内搜索）",
+          "主张/双 CTA/内容数量统计 + S-tier 摘要面板",
+          "游戏介绍与新人阅读路径",
+          "八类内容入口",
+          "策略精选、版本更新摘要、重点建筑",
+          "新闻、指南、FAQ/入门引导"
+        ],
+        "visual": "黑绿底、橙色高亮、窄体大标题、等宽标签、边框和切角营造战术手册主题；截图确认。",
+        "media": {
+          "imgCountAcrossSamplePages": 0,
+          "observed": "样本三页无 img，背景只发现 CSS 渐变/网格；文章 OG 使用通用 SVG。",
+          "unverified": "未逐页审查其他页面，不推断全站不存在游戏媒体。"
+        },
+        "discovery": "首页的 Guides 导航点击进入目录；目录的 beginner 链接点击进入文章；目录给出按经验水平阅读顺序、8 篇卡片以及 buildings/strategy/tier-list/systems 的交叉入口。",
+        "directory": "有长篇类别说明、按水平阅读路径、主题范围、快速条目链接、8 篇带分类/日期/阅读时间的文章卡片；未见输入框、筛选按钮或分页。",
+        "articleTools": {
+          "observed": [
+            "返回目录",
+            "作者组织、2026-05-06、7 分钟阅读时长、三个主题标签",
+            "分节标题、步骤清单、实体内链",
+            "文末关联分类入口与三篇相关阅读"
+          ],
+          "absentInSample": [
+            "页内目录锚点（main href=# 数为 0）",
+            "分享/复制/打印按钮",
+            "媒体或视频"
+          ]
+        },
+        "freshness": "首页仍把 May 2026 称为 live/current；样本目录日期区间为 2026-04-06 至 2026-05-06。日期可见但截至 2026-10-01 的更新及时性未经证明；S-tier/META 标签是编辑断言，不是统计排名。",
+        "monetization": "这三页未发现广告 iframe、ins.adsbygoogle 或名称匹配的广告占位；不能据此证明全站无广告或无收入。",
+        "seo": {
+          "allSamplePages": "存在独立 title、description、canonical。",
+          "home": "OG/Twitter 大图字段、robots/index-follow，通用 og-default.svg。",
+          "article": "Article + BreadcrumbList；datePublished 和 dateModified 均为 2026-05-06T00:00:00.000Z；组织作者、关键词和 article:* meta。",
+          "directory": "未发现 JSON-LD。"
+        },
+        "interaction": "桌面导航和文章链接实际点击成功；移动菜单仅确认按钮存在，没有移动视口实测。"
+      },
+      "starterLessons": [
+        "按玩家任务和经验设计阅读路径，而不只是内容类别卡片。",
+        "内容实体、策略、指南和版本日志互相链接，支持持续发现。",
+        "统一主题可由字体、标签、色彩和边框建立，但不能替代游戏截图与媒体。",
+        "current/live 标签应要求真实校验日期，避免长期固定装饰。"
+      ],
+      "screenshots": [
+        "/tmp/hot-words-mini-home.png",
+        "/tmp/hot-words-mini-article.png"
+      ]
+    },
+    {
+      "id": "bombfarm",
+      "urls": {
+        "home": "https://bombfarm.wiki/",
+        "directory": "https://bombfarm.wiki/guides/",
+        "article": "https://bombfarm.wiki/guides/getting-started/"
+      },
+      "observed": {
+        "homeHierarchy": [
+          "导航/分类下拉/语言菜单/Steam CTA",
+          "顶部空白广告预留",
+          "游戏截图 Hero、入门 CTA 和事实统计",
+          "介绍与事实表",
+          "六个 content hub",
+          "精选、最新日期列表、编号 Popular 列表",
+          "五步 quick-start、其他内容索引、FAQ、末尾 CTA、legal footer"
+        ],
+        "visual": "暖黑底、奶油文字、黄橙高亮与圆角卡片，主视觉为游戏战斗 UI 截图；文章首图则是游戏题材插画，不能一概称为实机图。",
+        "media": {
+          "home": [
+            {
+              "url": "https://bombfarm.wiki/images/home-hero.jpg",
+              "type": "游戏战斗 UI 截图",
+              "loaded": true
+            },
+            {
+              "url": "https://bombfarm.wiki/images/home-overview.jpg",
+              "type": "Map UI 截图",
+              "loaded": true
+            }
+          ],
+          "directory": {
+            "url": "https://bombfarm.wiki/images/game-squad.jpg",
+            "loaded": true
+          },
+          "article": {
+            "url": "https://bombfarm.wiki/images/game-header.jpg",
+            "type": "游戏题材/标题插画",
+            "loaded": true
+          },
+          "video": {
+            "poster": "https://i.ytimg.com/vi/maqaV7c7ZrU/hqdefault.jpg",
+            "facadeClass": "yt-facade",
+            "loadedPoster": true,
+            "observed": "有带 Play video aria-label 的点击式视频预览；尚未播放时没有 iframe。",
+            "unverified": "未点播放，不证明视频可播放或作者许可。"
+          }
+        },
+        "discovery": "首页 Guides 菜单点击展开分类而未直接导航；从已观察的站内 /guides/ 链接打开目录。目录有建议阅读顺序、工具内链与相关阅读卡；点击 Getting Started 成功到达文章。",
+        "directory": "使用文章式 category hub：介绍、按问题组织的内链、阅读顺序、诚实说明、工具、FAQ、6 张相关阅读；没有输入筛选/分页。",
+        "articleTools": {
+          "observed": [
+            "可见面包屑",
+            "最后更新 <time datetime=2026-08-30>",
+            "7 项页内目录，toc 容器 CSS sticky",
+            "分节与步骤/首小时 checklist",
+            "视频预览",
+            "7 个 FAQ 折叠",
+            "六个相关阅读"
+          ],
+          "absentInSample": [
+            "分享/复制/打印按钮",
+            "可交互 checklist（没有 checkbox/input）"
+          ]
+        },
+        "freshness": "首页最新列表含 2026-09-07、2026-09-05；目录更新为 2026-08-29，文章为 2026-08-30；标题和描述包含 Sep 2026。首页 Popular 列表有编号，但没有公开浏览量、算法或样本期，不能认定真实热门。",
+        "monetization": {
+          "observed": "首页/目录/文章均存在空 ad-banner/ad-banner-inner；文章顶部渲染高度为 91 px，截图显示明显空白带。全局存在 Play on Steam 链接。",
+          "unverified": "无已渲染广告 creative 的证据，未核实广告服务接入、填充、收入；Steam CTA 不证明联盟佣金。"
+        },
+        "seo": {
+          "allSamplePages": "独立 title/description/canonical；OG/Twitter 图片。",
+          "home": "WebSite、FAQPage、ItemList。",
+          "directoryArticle": "WebSite、Article、BreadcrumbList、FAQPage；组织作者，dateModified 与可见时间一致。",
+          "articleHreflang": [
+            "en",
+            "es",
+            "pt-BR",
+            "x-default"
+          ],
+          "qualityIssue": "首页 FAQ 的语言支持 answer 把 site.meta.json 与 npm run generate:i18n 之类实现说明泄露到公开结构化内容，属于应清理的模板残留。"
+        },
+        "interaction": {
+          "verified": "FAQ 的第一条 summary 点击后 open 从 false 变为 true；文章页/目录页链路正常。",
+          "tocCaveat": "点击目录链接后 URL hash 成功变为 #first-hour-checklist，但随后读取 scrollY/html.scrollTop/body.scrollTop 仍为 0，目标 top 约 3771.5 px。可能与后台 tab 的滚动行为有关，不能认定目录滚动已成功，需前台实测。",
+          "unverified": "语言切换、移动菜单、视频播放、外部 Steam 页面和任何真实游戏事实。"
+        }
+      },
+      "starterLessons": [
+        "媒体模型要区分实机截图、插画和视频预览，显示用途及来源，不以数量代替真实性。",
+        "商业 slot 应显式启用；空 slot 不宜默认占用首屏空间。",
+        "最新与热门需不同数据语义，热门没有统计证据时应标为编辑推荐。",
+        "文章可复用 breadcrumb、time、TOC、FAQ、related reading，并测试真实锚点滚动。",
+        "多语字段和结构化数据应与真实页面语言对应；公开内容不能夹带生成命令。"
+      ],
+      "screenshots": [
+        "/tmp/hot-words-bomb-home.png",
+        "/tmp/hot-words-bomb-article.png"
+      ]
+    }
+  ]
+}

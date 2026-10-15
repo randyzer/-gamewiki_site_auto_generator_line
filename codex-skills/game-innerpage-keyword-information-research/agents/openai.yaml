@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Innerpage Keyword Research"
+  short_description: "Research verified source material for game keyword pages."
+  default_prompt: "Use $game-innerpage-keyword-information-research to classify my game keywords and create verified material files for every final keyword."

@@ -1,0 +1,10 @@
+{
+  "exitCode": 0,
+  "command": "tsx iteration27/browser-new-roles.ts",
+  "targetedAttempts": 1,
+  "diagnosticSessions": 1,
+  "retryCount": 0,
+  "childPid": 7921,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c27a.RPRZNi"
+}

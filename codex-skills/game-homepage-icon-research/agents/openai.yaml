@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Homepage & Icon Research"
+  short_description: "Research game homepages and build favicon packages"
+  default_prompt: "Use $game-homepage-icon-research to research a game guide-site homepage and create its favicon package."

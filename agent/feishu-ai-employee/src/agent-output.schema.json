@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASSED",
+        "WAITING_FOR_USER",
+        "FAILED"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "missing_inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "status",
+    "summary",
+    "missing_inputs",
+    "artifact_paths"
+  ],
+  "additionalProperties": false
+}

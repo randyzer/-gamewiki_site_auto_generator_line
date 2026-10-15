@@ -1,0 +1,1485 @@
+{
+  "starterSourceManifest": "796b1a6e39ca2df4141e4e65ea4cf2fc70c9d510d3018fef38c3fd60612cfed8",
+  "postflight": {
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE": {
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1",
+      "branch": "v2.7/evolution",
+      "files": {
+        "docs/CORE_BROWSER_EVIDENCE.md": {
+          "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/core-browser-evidence.ts": {
+          "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/core-browser-matrix.ts": {
+          "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/run-core-browser-evidence.ts": {
+          "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/verify-adoption.ts": {
+          "sha256": "1eb6e1021f29cf4396d4c1b59db4d0420eb6d678520e4863c54abb4c723da77e",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/core-browser-evidence.test.ts": {
+          "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+          "mode": 420,
+          "symlink": false
+        },
+        ".github/workflows/ci.yml": {
+          "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+          "mode": 420,
+          "symlink": false
+        },
+        ".gitignore": {
+          "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+          "mode": 420,
+          "symlink": false
+        },
+        ".nvmrc": {
+          "sha256": "4137094e7792cb49fe1afddc3f87208f0ef4adfef7d3acd1def0198786d393c2",
+          "mode": 420,
+          "symlink": false
+        },
+        "README.md": {
+          "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+          "mode": 420,
+          "symlink": false
+        },
+        "V2.6.1_STARTER_IMPLEMENTATION_REPORT.md": {
+          "sha256": "d8b94f3cdf02fd18732a523bc1380a634b19f573a453472184309f4455b20e62",
+          "mode": 420,
+          "symlink": false
+        },
+        "V2.6_STARTER_IMPLEMENTATION_REPORT.md": {
+          "sha256": "6061d7c95b118f83a941a4ca9b7b325d13bc2afc2b5ec561d0262ba4be030d92",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/V2.6_STARTER_BASELINE_AUDIT.md": {
+          "sha256": "19ae32a10f2568bb09e38b8fc507bc9657e6daab0631539a63f26af1a86d149a",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/V2.6_STARTER_CHANGE_PLAN.md": {
+          "sha256": "1a29d137653ee3d874b8d79c1df20b32b5ee0bd6ac07c6247bf1c7ae2ab7b3b5",
+          "mode": 420,
+          "symlink": false
+        },
+        "astro.config.ts": {
+          "sha256": "825a18f031c22ff88c5441fdf68717780440ab2061551bc3bf11816463644fe3",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/ARCHITECTURE_GAP_ANALYSIS.md": {
+          "sha256": "5cb5fa6e980d55cfac88a2963cb078311a8dc4fc124ba72669992e94a9f30e85",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/ARCHITECTURE_PROPOSAL.md": {
+          "sha256": "cedf3f4fa86b9ab1299e318336a6f52b693331e4a19ca518b8522b8729492892",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/ARCHITECTURE_REFACTOR_REPORT.md": {
+          "sha256": "d78367e34474313bb8908a68d8436800eef526026855ed975655db24caa3c663",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/CODE_REVIEW_REPORT.md": {
+          "sha256": "b13ab3c1e232c8b6839140be835de6b8450a2029f8ec8cff886bf686a7a77b89",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/CONTENT_AND_DATA_GUIDE.md": {
+          "sha256": "04724f778338718e02940de76dcfee607cb51e13642cdd18ca91407ca50c22c1",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/DEPLOYMENT.md": {
+          "sha256": "9a05b019e9c06a8adf875142cbc1431bc508910b2fa099e4912afc7575d55716",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/PATCH_WORKFLOW.md": {
+          "sha256": "e9ec1f66ae4c4fbb93ad8adb2e18f0b52b4ed55c11b61244117b8ae6630de0cd",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/PP02_PRODUCTION_RESIDUE.md": {
+          "sha256": "ea384caf5e647ef608c94873beba748146ab80638692af70572a779a66974b30",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/QA_CHECKLIST.md": {
+          "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/RELEASE_AUDIT.md": {
+          "sha256": "e3e6eaf369af1c891bea1f880379c3100f0d1554d704f1313fe049c4b297c88a",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/SOP_READING_REPORT.md": {
+          "sha256": "6cd3b48806ad94249fa36475d66c06b43f683de963beb49f5843c42c058481d4",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_2.0_ARCHITECTURE_PROPOSAL.md": {
+          "sha256": "ada7abb0743843e3d4fe0f66d6c7dffc20076ef4403fa73b3f887ce5a4bb1beb",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_2.0_MIGRATION.md": {
+          "sha256": "ec3b1b5e32aefc741171919fd4a9cc110157710b0d6a84fb47149a123d491d6a",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_2.0_PHASE_B_REPORT.md": {
+          "sha256": "1e560abe06c2982db7512785e60be82d6068f90291f667f0920edb3e68c81b09",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_2.0_PHASE_C_REPORT.md": {
+          "sha256": "e923a311830b5c614cb306bb40a1ea31fcbf50384bf594806160105a9da0d8e2",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_2.0_PHASE_D_REPORT.md": {
+          "sha256": "7c362b15d4221083ad97096a7a8faccee0f42f65ffe7c9c09aa7735eeb2f7218",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_2.0_RELEASE_AUDIT.md": {
+          "sha256": "98f005ac4421db04b26e0c4268d9530e87d6d0a33b9b030853f989c7349b5f8f",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/STARTER_V2.5_CHANGE_PROPOSAL.md": {
+          "sha256": "3b430d915f5db5d49856df5fe5d4500ecdce6b12080bebc80fc1b9bf54e8b540",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/media/README.md": {
+          "sha256": "37a81f5eea9db4311117f577ccf693e39e7f248e4c7512a632d366ba528fe4fb",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/superpowers/plans/2026-09-01-game-site-starter-foundation.md": {
+          "sha256": "aecb6ab72b491df6013023a86c78232d4ad166dc8497cc84721b6b18b556419b",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/superpowers/plans/2026-09-01-page-models-and-static-routes.md": {
+          "sha256": "caf63656d19b455857543edc6b551aa9c40db96bba7ab25c39d0905d5eacc91a",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/superpowers/plans/2026-09-01-production-seo-interaction-delivery.md": {
+          "sha256": "ea3ae2a5c8e2c718d7881bdd59d6cfe76b2eb43882e41b1ddda23d1c531d16d1",
+          "mode": 420,
+          "symlink": false
+        },
+        "game.config.ts": {
+          "sha256": "a9208d174981cdc56f17f9f71486c95a1eb85e554fc3099dfd0044f3d188dbed",
+          "mode": 420,
+          "symlink": false
+        },
+        "package-lock.json": {
+          "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+          "mode": 420,
+          "symlink": false
+        },
+        "package.json": {
+          "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+          "mode": 420,
+          "symlink": false
+        },
+        "public/favicon.svg": {
+          "sha256": "3a725ff215654ea3c74dabb0bb491407b88fe382e1cc46ac867506cd6081051c",
+          "mode": 420,
+          "symlink": false
+        },
+        "public/logo.svg": {
+          "sha256": "375068e496560945db7e0c0037d97196f7e9cf26f206bf58f92507892315866f",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/audit-build.ts": {
+          "sha256": "703333216c45c0fdc21e31e88e5f561571779b2b46d6173596696f74692496d1",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/build-site.ts": {
+          "sha256": "07f4f5024f737f27415f421a5ec9c43d61851548ec1523724280a63248f4c23a",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/core-safety-sentinels.ts": {
+          "sha256": "a23ee8df90a702d68b21434a6d5def9702dbc191d0043a014992eaed4d8a018a",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/media-validation.ts": {
+          "sha256": "42c56ac789187e3c7f449441c1f05cec1551c1c42c913f5583860d439c67ef37",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/normalize-pagefind-output.ts": {
+          "sha256": "b0202114b173cb19c1cc6db4e47ea66b5570979b88d969413c849e4f6cda913e",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/patch-impact.ts": {
+          "sha256": "11c87852f5c5938135a71d147ee1edfc60b8ed769c02f8c27b25a0eda49b39ff",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/reconcile-output.ts": {
+          "sha256": "00d1f7a51fc19ca283a0c2af77ea60a524f46e6d42b25b46bc49bb0c05a8b3a8",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/residue-artifacts.ts": {
+          "sha256": "bf6eec5b2de4a2a264e545b77f72ed8913e0e552dbaa14c25fb9661827ec5295",
+          "mode": 420,
+          "symlink": false
+        },
+        "scripts/validate-site.ts": {
+          "sha256": "4db62b38ace38628d4208e9cabaa3aeaf12c5bcbcddf0029fcc4ebc87968a4da",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/EditorialArticle.astro": {
+          "sha256": "d0544aa61bf90834cb38715da262d955f87fb65d0c1c228e0104202c2d0241d6",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/EntityDatabase.astro": {
+          "sha256": "38e20153439ebb6371bd8618221a07f5522befd1a43b2f27635c175be30cf444",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/EntityDetail.astro": {
+          "sha256": "aac656b750df14e3284949796a96f0ab8d06d0cd6fa22c8bef274b8cb8daa13c",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/Footer.astro": {
+          "sha256": "71b0a89c1efb022819ca7fbf2007d302bf8af431a314393e73f5aa0c5ff00721",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/Header.astro": {
+          "sha256": "101f1769b252fe359e1633c9a55f7c68b0b9d5a609ec975975ee78e5c581fd2b",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/LegalPage.astro": {
+          "sha256": "62d8bb85b3c6d5046a976f8e37d75045dcc8ee85542f342e877df9cfbf2956b7",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/StaticWikiPage.astro": {
+          "sha256": "37e37eafbb4489731758c112349a6218883e88f7f46d07c05a8689cf5dae0782",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/ToolShell.astro": {
+          "sha256": "0af7f4e889bbb2a17e7228e468d9809a528d57297a203eebc151aa75d096d9c6",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/ads/AdSlot.astro": {
+          "sha256": "9a77b99822c59aaaf56a2654432389c5d2bdae17df04ed2997c1cf4b9ded7311",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/ads/ProjectAd.astro": {
+          "sha256": "f1970b3ee01784a74737d720c640b767112f87b855b8d27e67c8388c2eb8a5b1",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/home/GameHero.astro": {
+          "sha256": "01ab66321396edd7366b2fac614b3f69503d64954592dd6b268979946cc99d39",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/home/PageCollection.astro": {
+          "sha256": "8d73e93ac080839d183b41cd527af5c53d5ea43e6364fc8956dafdff68c7fc67",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/home/WikiCategories.astro": {
+          "sha256": "0da4d197dca51e9a6dd024e90c39c130b9f395cd1bed1a845a246f27ab6eb781",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/home/home-model.ts": {
+          "sha256": "f80b886c9a3e785273b137ccbc0c3881341bc243994479038d83057baf13f059",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/islands/CalculatorIsland.tsx": {
+          "sha256": "d9d4d71ddb9fed8e65add286233a596eedcbb41d11ca401845bc30eb5e4174b7",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/islands/EntityFilterIsland.tsx": {
+          "sha256": "591f43d8d3e43baaffb0669d67b2933e7d74ad90b4a1b91cafe6db6f0ec6bf90",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/islands/PlannerIsland.tsx": {
+          "sha256": "e26b4e70e6f6a92b45e8cca10933be124cb9eec5ced6300596e8bebd6667e639",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/islands/SearchIsland.tsx": {
+          "sha256": "ea0ec16cafa269a80d053907d5b7bce35a227e62deaf3aa64dd9fd241ad5b483",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/media/GameMedia.astro": {
+          "sha256": "09a783dcc0ffc5d90a24645cae3f460e74b8742fe972e680978cea66b2426161",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/media/ScreenshotGallery.astro": {
+          "sha256": "d6f0ccb7b9fa98da2f13eb8595af5e02387acce85b8a89e1af75456c5cdb2fe8",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/media/VideoEmbed.astro": {
+          "sha256": "d7dd811209976e3391adb1f3b35e6227aa7954f0165576005a22de4b226993cd",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/navigation/DesktopNav.astro": {
+          "sha256": "5e1b7be9c3942672a56fffd2c84fbe4da82227759cb824714bac19b06df7194a",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/navigation/MobileNav.astro": {
+          "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/wiki/FAQ.astro": {
+          "sha256": "08a6e0378e2bd7f195bbdc18f6b5b1a7862b416259b8963e07c2ce8b966ca760",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/wiki/QuickFacts.astro": {
+          "sha256": "538f7d22d8dccc29bfea5fc8fbe492c8f656bed5e6ae60ca51c8c88bc59dd3f7",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/wiki/RelatedPages.astro": {
+          "sha256": "1e06764543a4bb53502d5f0a8a4214e168cf1de6c921897f0c99f6fc9edfb36b",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/wiki/Sources.astro": {
+          "sha256": "ac5814f51f530432a5a2d40623cc5729e46fd91047630ed7e9a9dc65832d92c9",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/wiki/WikiArticle.astro": {
+          "sha256": "87f330448a1f89b51f0e6abdbf83f20c7c43167865daeb405e215f0cef506b41",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/components/wiki/wiki-article.ts": {
+          "sha256": "902ceea4adebff46547acaea24af4578a1ebd682fe5fdc7ae7052ae06d7f8b53",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/config/ads.ts": {
+          "sha256": "4ad13b9a28da849b3f39e6823f201370f358046a16d261fa3491eb8eb251bd7d",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/config/load-config.ts": {
+          "sha256": "b72f19dbef9b030d9d2c426027fbb25c02e112141bf295b7e01de6d3e4fa7669",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/config/schema.ts": {
+          "sha256": "f56fdf95fdcceee4c69de98967dea6542b6901c1603e29f5c5598585aa4b0beb",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/content.config.ts": {
+          "sha256": "46d650736ae661a5dfd05eb7ed4270e765e11a5e6cf6bcae462b5f449ed7d2a2",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/content/guides/getting-started.mdx": {
+          "sha256": "91901f32e14a86bc44c667b0ea641daf8952f2f61916c1023adca870239e3196",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/content/meta/README.txt": {
+          "sha256": "32f9e75ed6de16ccf84c22ddf2f10a7b545a709ce925b6f59e4cf534a6bd4069",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/content/news/README.txt": {
+          "sha256": "9e4d2dad5fee511f7c2daded0d61f6be1312e08e162073f558e7fc750f33d932",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/brand.ts": {
+          "sha256": "3ebb9c0d75e569c1c4b33f3e454f2f2d6259dbdf4e9ac3411d66745e17d8ceb0",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/catalog.ts": {
+          "sha256": "d38f92df0d93495c21e41914d9c95af40d0449e5c703eac47b45239ba7a8b4bb",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/content-files.ts": {
+          "sha256": "383be91f9a7f085379a22fb2172c28407f5b5e7087944f1f08e89d391898b350",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/entity-route-model.ts": {
+          "sha256": "1b0ae72d175ed370d1491cb373356d9045ace172506e2c34bd698bf7fe5583b1",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/fact-loader.ts": {
+          "sha256": "981b9a16f5a100eba1553cc3047c2b3693a15b702eb26cd021efc9c1671bb634",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/filter-state.ts": {
+          "sha256": "73c8ebe9eb86f1549ec8e401603065425f9630f3106f196cbf137acab73a52d3",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/html-audit.ts": {
+          "sha256": "eeb3440b1ca8fc6d0473fa03068f1f8df3a99f5ba886430932e3037c030ae3db",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/legal-safety.ts": {
+          "sha256": "75ffe35dde7bfa296153621906a74fec999df4a669d515472702bfbbd19095d9",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/media-readiness.ts": {
+          "sha256": "570b1abcb6f46e75dcc27a478c96dca7622668a6a51848d679e3df1cae484f84",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/optional-routes.ts": {
+          "sha256": "509da0cac4aeb7c3ddabbf99c26039d05bea65cc1b1c103638c45905a8f1aa26",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/output-reconciliation.ts": {
+          "sha256": "ea3e836b76fc374d00295964e1e1a270b0e5dd688f86d60078a8844825bb6c15",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/page-models.ts": {
+          "sha256": "dbd0c63f6dedb18636fa7bbe1f3fd61d52f9b7d3d42b66179fc525e63b028930",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/page-resolution.ts": {
+          "sha256": "6c96562fe6819828401c6e84b827b3c8ac148259159be1d7f81c166256bfde00",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/pagefind-artifacts.ts": {
+          "sha256": "a98815d6a6bc255b54161eef4e17d00568941c4b0b48080d5e7e16fefa539542",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/patch-impact.ts": {
+          "sha256": "69b8afa1017e42874c2e4bb1ea117e95dd9d6ddc0a114be9ee03cea83bf53fa5",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/public-sources.ts": {
+          "sha256": "994eb93f19b8a79e6515b37b43b1949ab49b52ec2742039b7fe58eab119f651e",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/search-state.ts": {
+          "sha256": "bb8ca0c5a671fef336bd046533bd6887afe1c02ea1e6f79fd7796b8748740c67",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/seo.ts": {
+          "sha256": "25b12273995bd259102e41dfa8d0528934729b22701ffde27510d2610fa5be2b",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/site-data.ts": {
+          "sha256": "06314e2bc5c2a6b8306a26e8198d147a4eab54937f2016a8fd1c083aabb9c1e0",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/site-validation.ts": {
+          "sha256": "8473d0fd04b056c39c018185fc005e70b982bd14f211519fadc3ca35c15463f4",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/static-page-copy.ts": {
+          "sha256": "6bfea92a82afd47ee17ca184900cf10f41c30c694364e2da10d23d11dc7f7b03",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/tool-definitions.ts": {
+          "sha256": "e58b23700e8b4e84076d39ab79d743b41035fd103e7508c910d7e34df4dadd91",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/core/tool-loader.ts": {
+          "sha256": "aed03d16bb3c24dff0898126feafeb69b21c86fc36019d926bbc5c6405c61659",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/entity-modules.ts": {
+          "sha256": "726c13b855cca7a43999f545ceda541a2deb98f7d81d0c93e7aee7518030e2ec",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/facts/README.md": {
+          "sha256": "014bce80c2b5a1245d903512246ceb084c52f062885b0c82966f74c6db990130",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/legal-content.ts": {
+          "sha256": "ece5c206349e0c9211e30956c90bf58985e7900f4e3bf05103ee3590fb661722",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/media/catalog.ts": {
+          "sha256": "f39b960d53a84a703d8e2204b569c2db78e44cdc4e1898cb168b186725547a0d",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/media/media.json": {
+          "sha256": "d4d3085c8b38b834198eb020d82fdb567cb5e53320b67c2f9d50a992c686be01",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/page-inventory.json": {
+          "sha256": "464224e0c0dca6fa37cdd7a1a7197e3ffe86a7e81285d6f580e56dd95c6d0aa6",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/schemas/facts.ts": {
+          "sha256": "c4fd3ffb42f9323a0082f2b475332477aea30ad74bebf11595190449dc8964d2",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/schemas/media.ts": {
+          "sha256": "68e11bf8f697097d6381dc6de509ecb7a9cbc1444eccb33a8bc113cf81353009",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/schemas/page-inventory.ts": {
+          "sha256": "830b01c93da63e02c7fddfbee3c8294994da72fa711b4da68ce2648445fddbc6",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/schemas/provenance.ts": {
+          "sha256": "4f501fc774387a47043aa38ecc59836d0dc801b7de0ab10148afb8a2f96059c3",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/schemas/tools.ts": {
+          "sha256": "0c4f5276141dd1e4985ca105a155f28d0373d10e6b37e93effda3adddd3b7ba5",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/data/tools/README.md": {
+          "sha256": "038a628f49d92527c564d996512fc96946c7ea05e5c45643e25ac90c4f9c841a",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/layouts/BaseLayout.astro": {
+          "sha256": "93fad97ad8ba018a881f5da9175300a35db87ff41271688bbb04fe70547f1c2d",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/404.astro": {
+          "sha256": "762955630f6dce67d0c418448df12d76f749f66324ff1bb90480380d16157c63",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/about.astro": {
+          "sha256": "c853158856f24bbace3442564a786520d07b10659c09b60ada79e966861edd36",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/guides/[...slug].astro": {
+          "sha256": "efe5c15a47d60e142020998b9e5e98bbba9b37f41fdf435a32e7a32a0e17e511",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/heroes/[...path].astro": {
+          "sha256": "9aab7b9e2ed1fa9b3f35085437b4c41e241d78447b941bacd029798612583834",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/index.astro": {
+          "sha256": "5cafae5ded69109c9d929c8e65f79c8a89c1d53e95c7b6a200f19e7f864a980b",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/items/[...path].astro": {
+          "sha256": "178937abd543544db8455e9ef2016ffbe8cace7898ad29f535ac6073de7dff6f",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/maps/[...path].astro": {
+          "sha256": "09b3beccbf85310c2575188b77d26b464b83fa4ad46e5f1c4938e3d208071a6e",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/meta/[slug].astro": {
+          "sha256": "9d71fa768c44a2ba5a12ab44db02ed186e8707793b4418b4f3276d2dbbec7f19",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/news/[slug].astro": {
+          "sha256": "bb752b772635e3e1ae3cb30383de122b754cd008bfac21972c80933c59d60e1e",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/privacy/[...path].astro": {
+          "sha256": "1049e3dc07340935cfb965e59f79796656b97835ffefc42041c7e2ec2dd090a5",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/robots.txt.ts": {
+          "sha256": "75b545c278113532c4e91eb2467dffabcaaa78d5adeb84b22bf9a37ae7f4ded0",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/search/[...path].astro": {
+          "sha256": "bf009b55e15e52a5c8431f293df68b2d385af8c0107c10367d076881ab47455a",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/terms/[...path].astro": {
+          "sha256": "0365b10200b899e1f808a8182f50c11c3ca52d398d15c0dd84fbc4f34138dd93",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/tools/[slug].astro": {
+          "sha256": "f64801fd647a35c2b58be0f5746264e78ea034d35b439a10999d405a4308486a",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/pages/weapons/[...path].astro": {
+          "sha256": "358b270a92c9b405ebdcc34f3771c57cd4e731a00e3df06178dd56dae699d98d",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/styles/global.css": {
+          "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/styles/page-families.css": {
+          "sha256": "fbc025172bd681a10dedbc3edd118c81438bcf8c25a98cf2093a22d4c0868016",
+          "mode": 420,
+          "symlink": false
+        },
+        "src/styles/theme.css": {
+          "sha256": "9361db9a3a1376621eea8b7b88b2019c6465e47cd54ef215e455d03bb0235174",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/ads.test.ts": {
+          "sha256": "f713dd15f16828e30b1b752ae6bb91f49df26b57b26e995be829e2a55655fe7b",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/brand.test.ts": {
+          "sha256": "27e8639cb3a13b53ec1dd44cd4721adb8bf141fc0517b087719a379aa1e5a98b",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/catalog.test.ts": {
+          "sha256": "09da84a62b0f961cb960375f098c00e3f7def7a7c15989be78abd4b4d2fd41e6",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/config.test.ts": {
+          "sha256": "f1e53ddf19717b58abdefd76e51e85e99bc518b4a1b12f1951b00cdec5942af2",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/content-files.test.ts": {
+          "sha256": "ff3c7811ed88175ab6b6fbbcff22d0dbf04ab9e2ec1ef6bd4b36f96246b81645",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/core-safety-build.test.ts": {
+          "sha256": "fb7f7bbc26743b256010e0080a6b7de3321aec590d99cc2f4f7b203acec0bbce",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/core-safety-sentinels.test.ts": {
+          "sha256": "5fa3085433b6fa618742bc4b5cf96d6860c0c32397f0df1d264b744ee1b7ff8c",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/editorial-article.test.ts": {
+          "sha256": "747ccc1d1b9ef25615aa3b38b9e6055e0643fac3dd69b58a5df1ffa803aeb760",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/entity-modules.test.ts": {
+          "sha256": "a996e9261f7519bba51530a597b3ea4340c8f89422c0b1abb387a339e1eb0188",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/entity-route-model.test.ts": {
+          "sha256": "ad20fd048aabf503758ad068275e98d5b24b43b5d8d348f7178950152f8e6558",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/evidence-build.test.ts": {
+          "sha256": "ba8b6f4b8c9956c2859f124b7b298984f279bc7668bea5f3c82befea03ed94e1",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/fact-loader.test.ts": {
+          "sha256": "06f7483471a86a7c9dac807bbca4c6568b7854c7dbb7e5a83f387f12e7fd7430",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/facts.test.ts": {
+          "sha256": "f9952014f9a430a19a99faad032d67269989491e947fe9e9cc4438272a5e87b3",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/filter-state.test.ts": {
+          "sha256": "ab7722c1848a134af9efc83b422302e64594882d866aba0b761ef89b3d75d909",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/fixtures/ads/TestAdProvider.astro": {
+          "sha256": "a895df91f41115af31ece12fe1383e00bc03becbf2bdab1779beb3e19133972e",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/fixtures/media/media-decision-table-sop-v2.6.1.md": {
+          "sha256": "564144337a03d9e5dc48c5b37b462d746343d7d136458efb4c7a826bece88f7f",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/fixtures/media/media-rich.json": {
+          "sha256": "5bd2747d2ee70e0af0a15900a4a4f4b681c8554d41a15cdac2fae548efaf0992",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/fixtures/media/qa-detail.svg": {
+          "sha256": "64b9a4ca1edfcf44e9b353a9bb1243120e0ec45fa01cae0706616c0bb98cd716",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/fixtures/media/qa-overview.svg": {
+          "sha256": "ce904484a26533ba97ff807e43ccc4b0bd8ca8f68d269bab1c0debed88156256",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/helpers/core-build-fixture.ts": {
+          "sha256": "c3129956ef8915f658cb3c10329b65e11b08e39dcfc5d798b08cb6685f5bbdb6",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/homepage.test.ts": {
+          "sha256": "6a9437c1557c2b6a25943302259254fb2f61621330ba007ca45c95281910cfd0",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/html-audit.test.ts": {
+          "sha256": "a5a19b871f8833d276ec04f6ab1b99820c93bbcfa30ab7e8c16985b62f5f28d5",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/legal-safety.test.ts": {
+          "sha256": "156979495d6fa80892eb6629fd4866607cd95959ee8f1de7f3b921c32593a8c9",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/media-audit.test.ts": {
+          "sha256": "388d980dadc20b0e0498d9215166aba2af8f5145184c7c2b61129990cfb6a38f",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/media-build.test.ts": {
+          "sha256": "d642ea86df9f6814ad7d830fe8499954918ce39a7673a463caaada3ddf9d3988",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/media-readiness.test.ts": {
+          "sha256": "13e35d482c22286f1d72eaa62eb24a955b1d0502eac7d24339ec229f45790570",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/media-rendering.test.ts": {
+          "sha256": "9eb5a904fe725529e2602d9fd4d688e9944eb5e5665667df6a4eefd32ac24b07",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/media.test.ts": {
+          "sha256": "07015fe2428fd197e949708953f93ebd755bd4ebd64bccc7d6401aa8dfae2dd0",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/navigation-behavior.test.ts": {
+          "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/navigation.test.ts": {
+          "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/optional-routes.test.ts": {
+          "sha256": "cc4d6b072864848192cbcd5d8d8e5fdcfd7cc0f12d30763fa0530be564aad4e0",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/output-reconciliation.test.ts": {
+          "sha256": "17e0f83bf28d91efcb3d3d899ada916e6eebd614617a33f13f8c786e3d794f40",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/page-models.test.ts": {
+          "sha256": "0ead07e5752b8c2fe115f5411671905b86f274cf369c10c022ec740b0ce72868",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/page-resolution.test.ts": {
+          "sha256": "b62545a007cf15838dee69a84c0ebdbb94376a0dffbb9ea54fc85c9d078a5d2f",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/pagefind-artifacts.test.ts": {
+          "sha256": "9000b65176589423e1116238c5a65ac55a67a2c93afb73c71ae6f7613efb0294",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/patch-impact.test.ts": {
+          "sha256": "8cd3456c3f1f0b6521df01449a4f6ae4ee7fb8b85b0e8df918bd981b11f90294",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/player-facing-metadata.test.ts": {
+          "sha256": "961bc4f773a0bc1bc9f58267254c9b70c5fdd3826dc85244511119a11d81fa7f",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/public-sources.test.ts": {
+          "sha256": "c3dac963e27b8943cc4cd0c9d5146de94d67a3ef4abc74321afec2a90565b138",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/release-identity.test.ts": {
+          "sha256": "86c74e2b2c09786800b4241ec5633f3208d8b161e1a0354dfdeab5902a9c9677",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/residue-build.test.ts": {
+          "sha256": "58a1d7d0d9696285106038b85420f4c71e2cece125bb9afe5136e494e4921611",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/runtime-contract.test.ts": {
+          "sha256": "204f134218777e4be5c1f8b6929d1ce94ff899741bdd18d2f6a59449d4032910",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/search-state.test.ts": {
+          "sha256": "b9f614a4ab7a4cedaa3eab7dc8fc7497df554a72915ee7e0c5efb196f2015d70",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/seo.test.ts": {
+          "sha256": "805f53fa5810f6b1ca53649ed30e32eba53fbd7bc2f0c9826b4cf9782838b124",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/site-data.test.ts": {
+          "sha256": "9fbad26dbbe5b802f5559474b9abe6bf7355b037fbaa24819a031ac309f7453b",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/site-validation.test.ts": {
+          "sha256": "1baeb616cbb269d07a5005547acf4c8e088e4c7e16558fb9aa50b0df08873741",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/static-page-copy.test.ts": {
+          "sha256": "e979f9912c56aa091daeb250194c3251dbe1963725d835ca11c1402f1c9cdcc7",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/theme.test.ts": {
+          "sha256": "6997ae3dc9dc1a5719b3c88472ea73a02fbb7a4feef2e93727e43e5265a151f3",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/tool-definitions.test.ts": {
+          "sha256": "5d56eeb512f90c39a223d666112a83eb258b11c734588e08b6795663990f16ad",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/tool-island-boundary.test.ts": {
+          "sha256": "0876a79695ff9f98f267b35903b8e11576483493b4228ff95e64c12bcf0a0f1f",
+          "mode": 420,
+          "symlink": false
+        },
+        "tests/wiki-article.test.ts": {
+          "sha256": "2b0fb91d3baa99ea0c29de6b7c8fddf9cbfa16143e2bc6e2cd9cc0e61e8c1e33",
+          "mode": 420,
+          "symlink": false
+        },
+        "tsconfig.json": {
+          "sha256": "74fd35ab193dc7e218b330714133a7dd040cfeb8dd8ef831988781749ddfea4c",
+          "mode": 420,
+          "symlink": false
+        },
+        "vitest.config.ts": {
+          "sha256": "7760f541ccb5ff37329e1f7aa233c9ff526536e090dba4b4cdcea14acf3fed73",
+          "mode": 420,
+          "symlink": false
+        },
+        "wrangler.jsonc": {
+          "sha256": "a462cdbb7268db59c0fee4d8f717ded54dbe3428ab6c9402baa4cab2b67b9dfe",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE": {
+      "head": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "tree": "e485499deac3dafea83391000d9cfa6e37d4a0c3",
+      "branch": "v2.7/normative-foundation",
+      "files": {
+        "docs/CAPABILITY_EVIDENCE_TEMPLATE_V2.7.md": {
+          "sha256": "0a5d6c2fa7508c78ddc2e297a42ca2e4cce588419459a84e0182971a942139b8",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md": {
+          "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/NEW_GAME_SITE_SOP_v2.7.md": {
+          "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+          "mode": 420,
+          "symlink": false
+        },
+        ".gitignore": {
+          "sha256": "0872dcdf253b699b7281f9e99f72bd23d6cd22924a9ffd544bfba45fcae13742",
+          "mode": 420,
+          "symlink": false
+        },
+        "CHANGELOG.md": {
+          "sha256": "99a7941537b1e2111d8affdcad1c5b1ed0e1fb21366dbb2217b688eef078613c",
+          "mode": 420,
+          "symlink": false
+        },
+        "PACKAGE_MANIFEST.json": {
+          "sha256": "f115022b1d5d816bd70d90c794ab6c6bf7a543234a08da889d50e4f8c7d16f39",
+          "mode": 420,
+          "symlink": false
+        },
+        "README.md": {
+          "sha256": "b457d38eb16541920944ab5ad4a3229e9e1f15308e396e1c9535acaa2ec59dbd",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6.1/V2.6.1_SOP_IMPLEMENTATION_REPORT.md": {
+          "sha256": "6f35e6cfd0e887434199973524bf01a0ca7e61a1f92b229d6ebc9f96ac2fc9fb",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/V2.6_CHANGE_IMPLEMENTATION_REPORT.md": {
+          "sha256": "c8634650e0d5d18b22fe5fccde8486407b0eb1e0220d7a7c21b71205cc2e480a",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/V2.6_CHANGE_PROPOSAL_V0.2.md": {
+          "sha256": "8ae2fb687f179441b29f096a1e8c50d2c43271b4d525f446555d90e3ca2dbae7",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/COMPETITOR_ANALYSIS_TEMPLATE.md": {
+          "sha256": "6509b325b7202da1333ebedabee5189e093bba82d5fcfb7758b194eabd82cbd0",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/CONTENT_PAGE_TEMPLATE.md": {
+          "sha256": "23a55cd635d1f6cd132a185429b3b1f220b5296f8722d5e73e17421ba17a8884",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/CURRENT_STATUS_TEMPLATE.md": {
+          "sha256": "2490e598170e32ea690f38da781835322903d41ccc6006d35e2a3f7084630996",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/EXECUTION_PROMPT.md": {
+          "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/FACT_DATABASE_SCHEMA.md": {
+          "sha256": "f2b43f5775cb816840c53620442a3270a9a5d50052f9ec252deb812226fb9d3b",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/HUMAN_VISUAL_REVIEW_EVIDENCE_TEMPLATE.md": {
+          "sha256": "d7eeca900de01095431e9d7f5e16cdb9ed18f67955952fd51601dce5a90a0a4e",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/KEYWORD_RESEARCH_TEMPLATE.md": {
+          "sha256": "6538889bd3376a2cb2c7b324ee697bf9747968be52be239b27811364cb49acd9",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/MEDIA_DECISION_TABLE_TEMPLATE.md": {
+          "sha256": "24a7b8febd6d36929c0d77b6859a3a9d9af6690fdd0edcd3b9d5b4670efd464c",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/NEW_GAME_SITE_SOP_v2.6.5.md": {
+          "sha256": "b0f65af92a96aeb17670fbd23f94d320dd4a40fbb52439018125e8d25424fb03",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/P0_P1_P2_TEMPLATE.md": {
+          "sha256": "2d7f21b358d006b2eddac3f23a21fbe1ea7478663dc0022c6484031ddb8eb3e6",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/PAGE_INVENTORY_TEMPLATE.md": {
+          "sha256": "0a9de160d9805730ae5a0954791af34b82451292c7ac565d1348b9805500cd70",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/PATCH_MAINTENANCE_SOP.md": {
+          "sha256": "d5c8c52e8670903145460ffd6a762b3ddc7a72ebc7a88b71f392e68cda8e9c80",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/PROJECT_BRIEF_TEMPLATE.md": {
+          "sha256": "669e6a7e3c9a29094b6385fdb275c404c4c6c5a1b9428dee8360832a63d51725",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/QA_CHECKLIST.md": {
+          "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/RESEARCH_SOURCES_TEMPLATE.md": {
+          "sha256": "f5d0688fb0f93c56e419a1dec86d36c075788c6a697f41b791af058afb475766",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/SITE_STRUCTURE_TEMPLATE.md": {
+          "sha256": "8f532bcf238bfb69ad80f54b29c0e4ad240ed985475b29fe5af0f5ba6df0ad36",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/SOURCE_POLICY.md": {
+          "sha256": "76734ab7977d056ec8d41311152ae7f552dac0eca221e6a072ab51ececb3e302",
+          "mode": 420,
+          "symlink": false
+        },
+        "docs/TECHNICAL_SEO_SPEC.md": {
+          "sha256": "fd9848bb989491b85fa817d813d5ad6a96dba0e69f84828604c40e1268d00c5d",
+          "mode": 420,
+          "symlink": false
+        },
+        "game.config.example.json": {
+          "sha256": "4ef0a81ccebbfc014cf226ceb12b021091c62737681d179fbdd0fead0e16ca36",
+          "mode": 420,
+          "symlink": false
+        },
+        "\u65b0\u624b\u5fc5\u8bfb.md": {
+          "sha256": "f535bd20145338a6b4c8f0bfa55478016315f3f96a69b3322439c1dd1ed98d80",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    },
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE": {
+      "head": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "tree": "6adc7107c498459ed92696cb189cfc1ec9915258",
+      "branch": "v2.7/normative-foundation",
+      "files": {
+        "CONTRACT_REFERENCE.json": {
+          "sha256": "662469504c0ff31ba4119f815387d66a304b90f582b9405c8eb5f1b7cbaed201",
+          "mode": 420,
+          "symlink": false
+        },
+        "CodexMasterPrompt_v2.7Candidate.md": {
+          "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+          "mode": 420,
+          "symlink": false
+        },
+        "README.md": {
+          "sha256": "c9b7d4b10c0b76461ae502ef98374a7bdbe34531706180a2b3cdd096a3401861",
+          "mode": 420,
+          "symlink": false
+        },
+        "CodexMasterPrompt_v2.6.5Final.md": {
+          "sha256": "c4f6297c88e3dff7ee94057ef8abbe9ca77d6d456d5f58519e92917e86baea78",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6.1/CodexMasterPrompt_v2.6.1Final.md": {
+          "sha256": "742cc68e48fe48bb7f40c82571529c94c5f07964bce677c47efa50abfeadbeeb",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6.1/V2.6.1_MASTER_PROMPT_IMPLEMENTATION_REPORT.md": {
+          "sha256": "67d3ecb65441daf76ecae457c5878d3694094a42cd57671e9a46d5fcd5cd171e",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6.2/CodexMasterPrompt_v2.6.2Final.md": {
+          "sha256": "7544d1d1e665583e9ea3f4e446594b481548178d28915c6094788222851316cf",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6.3/CodexMasterPrompt_v2.6.3Final.md": {
+          "sha256": "9b77b2d3e409bbf4a1a4be084d884638ba70228ed879dd6181f1e3d051af8c0a",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/CodexMasterPrompt_v2.6Final.md": {
+          "sha256": "b8a7b67c730b12a8c758044b08eb9073e4f66a70ce652082b96d88e368c25734",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/V2.6_CHANGE_MAPPING_INTERNAL.md": {
+          "sha256": "13ac5086498fb60b6d56d2fe68e1814ae937587edfd76bb3bae5e5abcc140341",
+          "mode": 420,
+          "symlink": false
+        },
+        "archive/v2.6/V2.6_MASTER_PROMPT_IMPLEMENTATION_REPORT.md": {
+          "sha256": "a69f82f87eeda64fbd7cb35e02ae3531126068837e78d2ab1f94866b4b8625a5",
+          "mode": 420,
+          "symlink": false
+        }
+      }
+    }
+  },
+  "nineteenFileHashes": {
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE": {
+      "package.json": {
+        "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+        "mode": 420,
+        "symlink": false
+      },
+      "package-lock.json": {
+        "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+        "mode": 420,
+        "symlink": false
+      },
+      ".github/workflows/ci.yml": {
+        "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+        "mode": 420,
+        "symlink": false
+      },
+      ".gitignore": {
+        "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+        "mode": 420,
+        "symlink": false
+      },
+      "README.md": {
+        "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+        "mode": 420,
+        "symlink": false
+      },
+      "docs/QA_CHECKLIST.md": {
+        "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+        "mode": 420,
+        "symlink": false
+      },
+      "docs/CORE_BROWSER_EVIDENCE.md": {
+        "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+        "mode": 420,
+        "symlink": false
+      },
+      "scripts/core-browser-matrix.ts": {
+        "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+        "mode": 420,
+        "symlink": false
+      },
+      "scripts/core-browser-evidence.ts": {
+        "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+        "mode": 420,
+        "symlink": false
+      },
+      "scripts/run-core-browser-evidence.ts": {
+        "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+        "mode": 420,
+        "symlink": false
+      },
+      "tests/core-browser-evidence.test.ts": {
+        "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+        "mode": 420,
+        "symlink": false
+      },
+      "src/styles/global.css": {
+        "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+        "mode": 420,
+        "symlink": false
+      },
+      "src/components/navigation/MobileNav.astro": {
+        "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+        "mode": 420,
+        "symlink": false
+      },
+      "tests/navigation-behavior.test.ts": {
+        "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+        "mode": 420,
+        "symlink": false
+      },
+      "tests/navigation.test.ts": {
+        "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+        "mode": 420,
+        "symlink": false
+      }
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE": {
+      "docs/NEW_GAME_SITE_SOP_v2.7.md": {
+        "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+        "mode": 420,
+        "symlink": false
+      },
+      "docs/QA_CHECKLIST.md": {
+        "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+        "mode": 420,
+        "symlink": false
+      },
+      "docs/EXECUTION_PROMPT.md": {
+        "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+        "mode": 420,
+        "symlink": false
+      }
+    },
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE": {
+      "CodexMasterPrompt_v2.7Candidate.md": {
+        "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+        "mode": 420,
+        "symlink": false
+      }
+    }
+  },
+  "canonicalContract": {
+    "systemVersion": "V2.7",
+    "productContractVersion": "V2.7",
+    "capabilityRegistryVersion": "V2.7",
+    "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+    "owningArtifact": "GAME_SOP",
+    "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+    "predecessorContractVersion": "v0.2",
+    "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+  },
+  "frozenKeyHashes": {
+    "scripts/core-browser-matrix.ts": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+    "scripts/run-core-browser-evidence.ts": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+    "src/components/navigation/MobileNav.astro": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+    "src/styles/global.css": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+    "package.json": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+    "package-lock.json": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616"
+  },
+  "qualificationEvidenceSha256": "c24c2371ff8a52453582468165f0f2fb93918ea69bf59fd35e4f511b0bb00cf9",
+  "qualification": {
+    "executed": 47,
+    "pass": 36,
+    "fail": 11,
+    "notRun": 0,
+    "skip": 0
+  },
+  "roadmapFiles": {
+    "template/roadmap/GAME_SITE_SYSTEM_EVOLUTION_ROADMAP_V1.md": {
+      "sha256": "caae1a021bec1fd604fc9758e4c18be7c51d1bf4b5a85b37eb63a859a57323c0",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md": {
+      "sha256": "523fbddeb3b30f67e3636688fafded6fa8d167f05dcd5650ed124a8be3b983e9",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/roadmap/PHASE_A_IMPLEMENTATION_PLAN_V1.md": {
+      "sha256": "d4331513d53a3602e468dd77b4b161bc320e7bf86e6afabc380d2b4e28004062",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/roadmap/WS01_V2.7_NORMATIVE_FOUNDATION_IMPLEMENTATION_PLAN_V1.md": {
+      "sha256": "af59b8b3b016394e2dbd43af644504c8321f63232b6dfc0e36fe4e2cd10358ae",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "taskId": "c2c_a765",
+  "iteration": 15,
+  "planStatus": "PLAN_ONLY",
+  "priorEvidenceFiles": {
+    "template/codex/executions/v2.7-ws06a/iteration13/classification.json": {
+      "sha256": "8589600ce84313ace970737f46181a45bdb165b0980d8281a774cc22de2a9105",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/diagnose-ws06a.ts": {
+      "sha256": "9afc78ed4068cb8c9e770e50b638eb1609d50e2bee85f9b389edc88d226449d0",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/diagnostic.log": {
+      "sha256": "b9821fd2bbad6d4b055218d114185177d5f229bd0ce26a3b5aa5f2357f7a4a60",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/native-focus-profile.json": {
+      "sha256": "f37dce16cbc87950357daf22842c31fcb91d20b512cf3646212a3e6b0e762c86",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/preflight.json": {
+      "sha256": "b0cb0d336fcd8b924c21bf8807ff0ffde2b12ca34e77be13310eb89b02797138",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/preview-cleanup-audit.json": {
+      "sha256": "0c07943a05899e5b948933149ddf2b0ca0ed4acac9a90a443b57b26db7c2d10a",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/provenance.json": {
+      "sha256": "d19e18d1dcd0dd3e61c79f7d78c6ec530f93edb4bfccdd736c9e424170a6b85f",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/resize-forward-trace.json": {
+      "sha256": "2ebd73ecb37fb8b0a0ab69b67318add9012a7845f4803d2ac8dcb568dbb166c1",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/resize-reverse-trace.json": {
+      "sha256": "1ec722481278a44cc2d9a15381c13ff3e999df6f04c7c8743c7b8d196cd4bfc8",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/resize-roundtrip-trace.json": {
+      "sha256": "ac2f9bd17ab56a07fe4e35bf17d33592ce7f07cc8115e25ccba093de8280fcda",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/result.md": {
+      "sha256": "32372645010c15821cc2be45cb0aaa42b89a06960cae347a6b0ebf66221bb992",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/screenshots/chatgpt-independent-review.png": {
+      "sha256": "8358f860a57355d59cfce6ac80de8132a10d6675f2352d789f979d671c3eea4e",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration13/table-arrowright-profile.json": {
+      "sha256": "1a7b6cafabb3786562917c92f505f67ee7ed5eff9bc840dee0b374f7e723ffee",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/WEBKIT_VERIFICATION_POLICY_PROPOSAL_V1.md": {
+      "sha256": "2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/arrowright-repeatability-control.mjs": {
+      "sha256": "f88ebd53cbcd0d5993bbde3d922438e827aed18a8afdce6cdfd47398c5de8883",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/arrowright-repeatability.json": {
+      "sha256": "1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/arrowright-repeatability.log": {
+      "sha256": "8dcb730d0e80b83001127d856b621e41898908ae3b5f4ed300100fbf374d061f",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/integrity-check.json": {
+      "sha256": "9b5965233a34b65ac0c8e63f7d036f72b1fa4c4e55eec13d6eb4218f702eef4e",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/policy-decision-matrix.json": {
+      "sha256": "61fa376a452a341f12452f11b82818eb350a70c5626997737ed42a9bd7fd3cfc",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/preflight.json": {
+      "sha256": "30da4319ea609beec6a7bd0df1a1b2c584bdad0f00be275fc76023f99d769b01",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/provenance.json": {
+      "sha256": "2b8f5130b0f4ff48b9d6bc98548f38ff4f41fd13d4426b3faaa852797e831dd4",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/executions/v2.7-ws06a/iteration14/result.md": {
+      "sha256": "1552b6ea9f5e0e849165e23a6a91eaf82ba1aa56f962e50a6e645f86693db0f1",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "futureProductScope": [
+    "src/components/navigation/MobileNav.astro",
+    "tests/navigation-behavior.test.ts"
+  ],
+  "futureProductPreimageHashes": {
+    "src/components/navigation/MobileNav.astro": {
+      "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+      "mode": 420,
+      "symlink": false
+    },
+    "tests/navigation-behavior.test.ts": {
+      "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "protectedFilesVerified": 743,
+  "errors": []
+}

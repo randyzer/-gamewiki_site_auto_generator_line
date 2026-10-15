@@ -1,0 +1,106 @@
+{
+  "archivedAt": "2026-10-08T04:03:46.828390+00:00",
+  "authorization": "2026-10-08 user approval: iteration35 ARCHIVE + Simplification Amendment governance integration only",
+  "disposition": "ARCHIVE",
+  "activeImplementation": false,
+  "files": [
+    {
+      "originalPath": "template/codex/executions/v2.7-ws06a/iteration35/preflight.mjs",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/executions/v2.7-ws06a/iteration35/preflight.mjs",
+      "sha256": "90a9d804abf86311ed2d085a5a67e726c300cfdd60db83cb80a4900c8343fd6c",
+      "sizeBytes": 1720,
+      "mode": 420,
+      "mtimeNs": 1791429286604935978
+    },
+    {
+      "originalPath": "template/codex/executions/v2.7-ws06a/iteration35/preflight.json",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/executions/v2.7-ws06a/iteration35/preflight.json",
+      "sha256": "a9cd14c79222303ee050c7eda13cd2b64f010b2f683597466fcfa47d5a960121",
+      "sizeBytes": 1494489,
+      "mode": 420,
+      "mtimeNs": 1791429288258943913
+    },
+    {
+      "originalPath": "template/codex/executions/v2.7-ws06a/iteration35/capture-bridge.mjs",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/executions/v2.7-ws06a/iteration35/capture-bridge.mjs",
+      "sha256": "4afc572ce7887abb007a11db16490853842e42f7790b125f07f5465a6d1c4c38",
+      "sizeBytes": 8666,
+      "mode": 420,
+      "mtimeNs": 1791429485324967527
+    },
+    {
+      "originalPath": "template/codex/executions/v2.7-ws06a/iteration35/bridge.test.mjs",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/executions/v2.7-ws06a/iteration35/bridge.test.mjs",
+      "sha256": "f79ed530ab3a69ebcd8040a0ef33247d10f601a439d2f8f54bc905a71056c44f",
+      "sizeBytes": 4918,
+      "mode": 420,
+      "mtimeNs": 1791429286605206480
+    },
+    {
+      "originalPath": "template/codex/executions/v2.7-ws06a/iteration35/self-test-red.log",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/executions/v2.7-ws06a/iteration35/self-test-red.log",
+      "sha256": "ee796672ab0620be426c0bd963abb446dedc18897f0d1833dd95feb28522ff67",
+      "sizeBytes": 4104,
+      "mode": 420,
+      "mtimeNs": 1791429288349997444
+    },
+    {
+      "originalPath": "template/codex/executions/v2.7-ws06a/iteration35/self-test-green.log",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/executions/v2.7-ws06a/iteration35/self-test-green.log",
+      "sha256": "7a70c24703f0f7449528fedf135acbe1e4d47b7779357d6d4e757318a50513fc",
+      "sizeBytes": 1785,
+      "mode": 420,
+      "mtimeNs": 1791429486005589906
+    },
+    {
+      "originalPath": "template/codex/prompts/v2.7-ws06a/iteration35-real-safari-capture-bridge-plan.md",
+      "archivedPath": "template/archive/iteration35-safari-capture-bridge-2026-10-08/codex/prompts/v2.7-ws06a/iteration35-real-safari-capture-bridge-plan.md",
+      "sha256": "7312d21a1f6a4c29b1a654197eec0c522802795ff3ddcab2d5b9efcb9105c13d",
+      "sizeBytes": 20527,
+      "mode": 420,
+      "mtimeNs": 1791429181255095398
+    }
+  ],
+  "keep": {
+    "path": "template/codex/executions/v2.7-ws04a/iteration34/chatgpt-independent-review.md",
+    "sha256": "61a6d7d21c301c69f61d8ef2d93403cdf7dc62bf9170206fb854075da04efa9e"
+  },
+  "latestTests": {
+    "pass": 3,
+    "fail": 1,
+    "greenLogWasNotSuccessful": true
+  },
+  "governanceChangedFiles": [
+    "template/architecture/V2.7_ARCHITECTURE_SIMPLIFICATION_AMENDMENT_V1.md",
+    "template/PROJECT_STATE.md",
+    "template/roadmap/V2.7_TASK_LEDGER.md",
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md"
+  ],
+  "governancePostimages": {
+    "template/architecture/V2.7_ARCHITECTURE_SIMPLIFICATION_AMENDMENT_V1.md": "628c108e03236a0042ac0ca8c89f5e6a997ebaf56b98bf3ce0482bb3dc6a5012",
+    "template/PROJECT_STATE.md": "9f4b0cfc050cd243f0ca716b83d4c0dd5096e686d60cb9076e26fbfa6aa8512c",
+    "template/roadmap/V2.7_TASK_LEDGER.md": "a6bd0468c1cb641dff60be8e6c26c92e30689b32201ad03d2c1b541e3299ced1",
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md": "2c321e922a84a46a3dd5d8d47e531d17e51080ce5ddda55536d4b282691e633c"
+  },
+  "checks": {
+    "archivedOriginalFiles": 7,
+    "archiveBytesModesTimestampsExact": true,
+    "originalHistoryTextPreserved": true,
+    "keepReview34Unchanged": true,
+    "amendmentExactCopy": true,
+    "productCodeDelta": 0,
+    "candidateAndFrozenRepositoriesUnchanged": true,
+    "canonicalContractUnchanged": true,
+    "bridgeRepairPerformed": false,
+    "testsRerun": false,
+    "browserRerun": false,
+    "safariProof": 0,
+    "ax01ax03FullyProven": false,
+    "ws03TechReviewStarted": false,
+    "ws04RuntimeSchemaStarted": false,
+    "ws05ImplementationStarted": false,
+    "nextStep": "consolidated WS03 TECH Review",
+    "independentReview": "PENDING",
+    "stop": true
+  }
+}

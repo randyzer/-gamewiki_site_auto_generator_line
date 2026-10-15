@@ -1,0 +1,310 @@
+# Actual ChatGPT REVIEW23 and PLAN24
+
+Observed: 2026-10-07T16:29:56.364Z
+Source: https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 23"
+      - text: "WORKSTREAM: WS03A semantic visual roles"
+      - text: "VERDICT:"
+      - strong: BLOCKED — TARGETED BROWSER HARNESS FAILURE
+    - paragraph:
+      - text: 独立复核后，iteration23 的 STOP 是正确的。当前证据只能说明
+      - strong: 03A 产品候选通过了 RED/GREEN、780 tests、adoption 和静态边界检查，但新浏览器表面尚未得到有效证明
+      - text: 。
+    - paragraph: 关键事实很清楚：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "exact product/governance delta = 13 files RED = 8 fail / 45 pass GREEN = 53 pass root = 46 files / 780 tests PASS Astro = 0 errors / 0 warnings / 0 hints unadopted/adopted/diff = PASS targeted: 3 engines × 2 viewports = 6 rows HTTP response = 200 for all 6 actual style assertions executed = NO all 6 stop at page.evaluate ReferenceError: __name"
+    - paragraph: 我也直接读了 browser-new-roles.ts。故障点与 diagnosis 一致：tsx 对 browser-context callback 内局部赋值函数
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: const one = (...) => ...
+    - paragraph:
+      - text: 做了 name-preservation transform，序列化进浏览器后留下 __name(...)，但浏览器上下文没有这个 transpiler helper。Chromium、Firefox、WebKit 三者以同一机制失败，所以
+      - strong: 没有证据指向 13 个产品文件存在浏览器缺陷，也没有证据证明它们浏览器正确
+      - text: 。
+    - paragraph: 同时：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: normal Astro stop = PASS PID gone = PASS fixture gone = PASS owned cache cleanup = PASS fresh47 = NOT_STARTED readiness = STALE continuation = BLOCKED Safari = 0 WS06A FULL = BLOCKED
+    - paragraph: 因此正式 REVIEW23：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03A CANDIDATE IMPLEMENTATION: NOT ACCEPTED FOR CONTINUATION PRODUCT REPAIR JUSTIFIED: NO HARNESS REPAIR JUSTIFIED: YES FRESH47: NOT RUN NEXT: finite harness-only PLAN24"
+    - paragraph: 下面直接按 standing authorization 继续。
+    - button "添加到资料库":
+      - generic: PLAN24 — WS03A Targeted Harness Repair and Continuation Completion
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 24"
+        - text: "WORKSTREAM: WS03A continuation evidence"
+        - text: "SCOPE: EXECUTION HARNESS ONLY"
+        - text: "PRODUCT_DELTA_ALLOWED: 0"
+        - text: "PREDECESSOR: ITERATION23 BLOCKED"
+        - text: "NEXT_IF_ACCEPTED: WS03A IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION"
+      - heading "1. 唯一目标" [level=2]
+      - paragraph: 修复 iteration23 的 browser-context serialization 问题，然后完成原 PLAN23 尚未完成的两类证据：
+      - code: A. WS03A targeted new-surface browser evidence B. post-change unchanged fresh47 + continuation audit
+      - paragraph: 本轮不修改03A产品。
+      - separator
+      - heading "2. 冻结 iteration23" [level=2]
+      - paragraph: 以下全部只读、不得修改或覆盖：
+      - code: template/codex/executions/v2.7-ws03a/iteration23/**
+      - paragraph: 尤其：
+      - code: 13 source postimages RED/GREEN 780-test health failed targeted raw __name diagnosis cleanup evidence scope-check
+      - paragraph: iteration23 的 6-row FAIL 永久保留。
+      - separator
+      - heading "3. 13 个产品/治理文件也冻结" [level=2]
+      - paragraph: 执行前逐字节比较当前13文件与：
+      - code: iteration23/postimages/**
+      - paragraph: 必须：
+      - code: 13 / 13 exact match
+      - paragraph: 任何一个不同：
+      - code: STOP
+      - paragraph: PLAN24 不做产品 repair。
+      - paragraph: 因此 iteration23 已完成的：
+      - code: RED GREEN root 780 unadopted adopted git diff --check
+      - paragraph: 可作为当前同一 post-change source 的已有证据，不重复运行。
+      - separator
+      - heading "4. iteration24 只允许 execution artifacts" [level=2]
+      - paragraph: Actual PLAN：
+      - code: template/codex/prompts/v2.7-ws03a/ iteration24-ws03a-browser-harness-continuation-plan.md
+      - paragraph: Execution：
+      - code: template/codex/executions/v2.7-ws03a/iteration24/**
+      - paragraph: 不得修改 Starter/SOP/Prompt 的任何文件。
+      - separator
+      - heading "5. Harness修复采用 plain-JS browser callbacks" [level=2]
+      - paragraph: 不在 product repo增加 helper。
+      - paragraph: 新增 execution-only：
+      - code: iteration24/browser-readonly-callbacks.mjs
+      - paragraph: 只导出三个纯 browser-context 函数：
+      - code: collectHomeObservation collectHoveredCardObservation collectArticleObservation
+      - paragraph: 它们：
+      - code: 只读 DOM / getComputedStyle / getBoundingClientRect 无 Node API 无 process 无 require 无 filesystem 无外部状态
+      - paragraph:
+        - text: 由于它是原生
+        - code: .mjs
+        - text: ，read-only callback本身不经过 tsx TypeScript transform。
+      - paragraph: 这是本轮唯一机制修复。
+      - separator
+      - heading "6. 保持 assertions 原封不动" [level=2]
+      - paragraph: 创建：
+      - code: iteration24/browser-new-roles.ts
+      - paragraph: 以 iteration23 helper为基础。
+      - paragraph: 只允许变化：
+      - code: "iteration23 output path → iteration24 新增 import: browser-readonly-callbacks.mjs page.evaluate(inline callback) → page.evaluate(imported pure callback) locator.evaluate(inline callback) → locator.evaluate(imported pure callback)"
+      - paragraph: iteration23 所有：
+      - code: check("...", condition, detail)
+      - paragraph: 行必须保持相同 assertion name 和相同判定逻辑。
+      - paragraph: 仍然必须是：
+      - code: "profile: interface / compact / soft / quiet engines: chromium / firefox / webkit viewports: 800x900 1000x900"
+      - paragraph: 不得缩减。
+      - separator
+      - heading "7. Callback serialization preflight" [level=2]
+      - paragraph: 浏览器启动前保存：
+      - code: callback-serialization-check.json
+      - paragraph: 对三个实际 callback执行：
+      - code: Function.prototype.toString.call(callback)
+      - paragraph: 必须：
+      - code: 不含 "__name" 不含 "process." 不含 "require(" 不含 Node globals
+      - paragraph: 若任一个失败：
+      - code: STOP BEFORE TARGETED RUN
+      - paragraph: 禁止通过：
+      - code: window.__name = ... globalThis.__name = ...
+      - paragraph: 之类注入修复。
+      - separator
+      - heading "8. Harness diff Gate" [level=2]
+      - paragraph: 生成：
+      - code: harness-diff-check.json
+      - paragraph: 确认 iteration23→24：
+      - code: assertion names unchanged profile unchanged engines unchanged viewports unchanged build path unchanged fixture mutation unchanged preview lifecycle unchanged cleanup rules unchanged
+      - paragraph: 只有 callback transport和 execution output path变化。
+      - separator
+      - heading "9. Targeted run只有一次新尝试" [level=2]
+      - paragraph: 使用新的短 owned TMP：
+      - code: /tmp/c2c24a.XXXXXX
+      - paragraph: 运行一次：
+      - code: node iteration24/run-targeted-browser.mjs
+      - paragraph: 它仍调用：
+      - code: tsx iteration24/browser-new-roles.ts
+      - paragraph: Qualification：
+      - code: attempts = 1 retry = 0
+      - paragraph: iteration23 的失败不算本轮 retry；它是冻结的前代 evidence。
+      - separator
+      - heading "10. Targeted成功条件" [level=2]
+      - paragraph: 必须：
+      - code: 6 rows executed 6 PASS 0 unexpected-error
+      - paragraph: 三个 engine、两个 viewport 都实际完成原03A assertions：
+      - code: four explicit role bindings Inventory family authority interface font utility font compact density 44px minimum control soft shape quiet hover + visible feedback site-wide article role
+      - paragraph: 若任一 actual assertion FAIL：
+      - code: STOP
+      - paragraph: 此时才有资格另做产品修复计划；PLAN24自己不修。
+      - paragraph: 若再次出现 harness/infrastructure FAIL：
+      - code: STOP NO SECOND ATTEMPT
+      - separator
+      - heading "11. Targeted cleanup" [level=2]
+      - paragraph: 沿用已接受短 TMP规则：
+      - code: normal Astro stop PID gone fixture gone known Node/tsx cache only 0 symlink 0 path escape 0 unknown no signal fallback owned root removed
+      - paragraph: 否则 STOP。
+      - separator
+      - heading "12. Targeted PASS 后才启动 fresh47" [level=2]
+      - paragraph: 在此之前 fresh47仍禁止启动。
+      - paragraph: 捕获当前：
+      - code: Starter post03A working-tree identity SOP identity Prompt identity Contract SHA Playwright 3 engines host matrix/runner/closure hashes
+      - paragraph: 它们必须仍与 iteration23 13-postimage source一致。
+      - separator
+      - heading "13. Fresh47必须使用原 runner" [level=2]
+      - paragraph:
+        - text: 新的 execution-only observer可基于 iteration23
+        - code: run-fresh47.mjs
+        - text: ，仅修改：
+      - code: output directory → iteration24 TMP prefix → /tmp/c2c24b.XXXXXX
+      - paragraph: 实际 qualification必须仍然是：
+      - code: npm run check:browser
+      - paragraph: 禁止修改：
+      - code: matrix runner assertions engines timeout policy closure browser flags
+      - separator
+      - heading "14. Fresh47一次原则" [level=2]
+      - code: qualification attempts = 1 retry = 0
+      - paragraph: 要求：
+      - code: 47 planned 47 executed 0 NOT_RUN 0 skip
+      - paragraph: 所有非 WebKit：
+      - code: PASS
+      - separator
+      - heading "15. WebKit residual Gate" [level=2]
+      - paragraph: 当前 post03A residual必须：
+      - code: ⊆ iteration19 frozen residual40
+      - paragraph: 生成：
+      - code: post03a-residual-comparison.json
+      - paragraph: 任何 frozen40之外的新失败：
+      - code: STOP
+      - separator
+      - heading "16. 与 pre-03A iteration22 明确比较" [level=2]
+      - paragraph: 生成：
+      - code: post03a-vs-iteration22-residual-delta.json
+      - paragraph: iteration22 baseline：
+      - code: 39 residual 37 environment 2 product-unresolved
+      - paragraph: 输出：
+      - code: persisted disappeared reappearedFromFrozen40 newOutsideFrozen40
+      - paragraph: 注意：
+      - paragraph: 若 iteration22 暂时消失的：
+      - code: baseline:webkit:content-detail:390x844 table-local-scroll
+      - paragraph: 重新出现：
+      - code: 不自动判03A产品回归
+      - paragraph: 但必须：
+      - code: 仍属于 frozen40 当前 policy classification有效 当前 Chromium counterpart PASS 当前 Firefox counterpart PASS 独立review明确披露
+      - separator
+      - heading "17. Current counterpart必须 fresh" [level=2]
+      - paragraph: 对本轮 post-change WebKit residual N 条重新计算：
+      - code: Chromium N/N row + assertion PASS Firefox N/N row + assertion PASS
+      - paragraph: 不得引用 iteration22 的：
+      - code: 39/39
+      - paragraph: 作为新 source证据。
+      - separator
+      - heading "18. Policy / native / control重新绑定" [level=2]
+      - paragraph: Fresh run重新核：
+      - code: WebKit version/revision host native keyboard probe policy SHA Arrow control SHA
+      - paragraph: 如存在 identity drift：
+      - code: STOP
+      - paragraph: 不能扩 policy。
+      - separator
+      - heading "19. Fresh cleanup / identity" [level=2]
+      - paragraph: 继续要求：
+      - code: independent fixture source capture independent dist capture capture before raw report raw.identity == independent expected identity
+      - paragraph: Runner cleanup：
+      - code: Astro stop 0 PID gone fixture gone no signal fallback
+      - paragraph:
+        - text: Owned
+        - code: /tmp/c2c24b.*
+        - text: cleanup：
+      - code: known cache only 0 symlink 0 unknown 0 escape root removed
+      - separator
+      - heading "20. Closure negative recheck" [level=2]
+      - paragraph: 用现有、未修改的：
+      - code: verify:browser-closure
+      - paragraph: Safari evidence仍不提供。
+      - paragraph: 如果还有 accepted residual，要求：
+      - code: "decision = BLOCKED exit = 1 sole error: missing/invalid real Safari keyboard evidence"
+      - paragraph: 任何额外 closure error：
+      - code: STOP
+      - paragraph: 若 raw恰好47/47，则按原 verifier 的 raw-complete分支记录，但：
+      - code: Safari proof仍0 WS06A FULL仍BLOCKED
+      - separator
+      - heading "21. Contract / scope integrity" [level=2]
+      - paragraph: 最终必须证明：
+      - code: current 13 product/governance files == iteration23 postimages PLAN24 product delta = 0 PLAN24 governance delta = 0 Contract SHA unchanged 41 IDs 0 duplicates package/lock unchanged CI unchanged matrix unchanged runner unchanged closure unchanged policy/control unchanged iteration23 history unchanged
+      - separator
+      - heading "22. Continuation audit" [level=2]
+      - paragraph: 生成：
+      - code: continuation-audit.json
+      - paragraph: 要求全部：
+      - code: "iteration23 exact13 implementation retained RED/GREEN evidence bound to same source root780 evidence bound to same source adoption evidence bound to same source targeted03A: 6/6 PASS postchange fresh47: 47/47 executed 0 NOT_RUN non-WebKit failures 0 WebKit: subset frozen40 newOutside40 = 0 current Chromium counterparts complete current Firefox counterparts complete policy/native/control valid normal cleanup exact post-change identities Safari0 WS06A FULL BLOCKED"
+      - separator
+      - heading "23. Codex只能输出 candidate" [level=2]
+      - paragraph: 若全部通过：
+      - code: "WS03A: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: 不能自行写：
+      - code: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION FORMAL ACCEPT VF/GI PASS
+      - separator
+      - heading "24. 独立 review 的可能结果" [level=2]
+      - paragraph: ChatGPT只能给：
+      - code: ACCEPT — WS03A IMPLEMENTATION FOR CONTINUATION
+      - paragraph: 或 finite：
+      - code: BLOCKED / REVISE
+      - paragraph: 若 ACCEPT，准确状态才变为：
+      - code: "WS03A CANDIDATE: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03A FORMAL GATE: NOT CLOSED WS03 FORMAL GATE: NOT ACCEPTED WS06A FULL: BLOCKED Safari: 0 Capability promotion: NONE"
+      - separator
+      - heading "25. PLAN24 STOP" [level=2]
+      - paragraph: 立即停止且不修产品：
+      - code: 13 current files != iteration23 postimages callback serialized source仍含__name 需要注入browser global helper assertion发生变化 targeted任一row FAIL targeted infrastructure再次失败 fresh47缺行 non-WebKit regression new WebKit residual outside40 counterpart缺失 policy/control drift identity mismatch cleanup异常 Contract/Registry变化
+      - paragraph: 并且明确：
+      - code: NO MEDIA NO 03B NO 03C NO 03D NO 04 NO commit/push/tag/merge/deploy/release
+      - heading "正确终点" [level=2]
+      - paragraph: PLAN24不新增任何03A产品代码。
+      - paragraph: 它只回答：
+      - code: “iteration23已经写出的那13个文件， 在真正执行完新03A browser surfaces和post-change Core回归后， 是否足以获得 continuation ACCEPT？”
+    - paragraph:
+      - text: 所以当前不用重写03A，也不应因为 __name 去碰 CSS/schema。先把
+      - strong: 证据 harness 修正并把 PLAN23 没跑完的后半段跑完
+      - text: ；只有 targeted assertions 真正失败时，才有依据讨论产品修复。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

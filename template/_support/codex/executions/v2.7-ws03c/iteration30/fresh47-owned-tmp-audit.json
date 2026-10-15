@@ -1,0 +1,10 @@
+{
+  "logicalRoot": "/tmp/c2c30b.WOCubn",
+  "realRoot": "/private/tmp/c2c30b.WOCubn",
+  "createdByObserverPid": 42846,
+  "fresh": true,
+  "owned": true,
+  "short": true,
+  "closed": true,
+  "cleanupArtifact": "fresh47-owned-tmp-cleanup.json"
+}

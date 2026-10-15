@@ -1,0 +1,50 @@
+--- accepted-preimage/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ ws06a/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -1503,3 +1503,15 @@
+ And visibly:
+ 
+ > **Recognizable enough to feel like the specific game, resilient enough to verify evidence through approved channels, and disciplined enough to avoid fake media, filler visuals, broken embeds, and unapproved release shortcuts.**
++
++## V2.7 WS-06A — Core browser evidence method
++
++Selected Starter must actually implement check:browser with a locked dev-only browser dependency. Core technical evidence uses one disposable, final-built Field Notes adoption of the actual Core, not a duplicated shell or a real-game claim. Require Chromium/Firefox/WebKit × 390×844, 768×1024, 1280×800 × shell-nav/content-detail/true404 = 27; three no-JS mobile rows; Chromium navigation899/900/901 plus layout619/620/621 × three roles =12; mobile/desktop reduced-motion × shell/detail=4; live899→901→899 focus migration=1. Total47; missing/duplicate/unexpected/skipped/FAIL/NOT_RUN or an absent required assertion blocks the gate.
++
++Evidence binds exact engine/revision and package, actual uncommitted source manifest, fixture source and one final dist; each row records viewport, JS/motion, HTTP, individual assertions, duration and failure. Canonical Contract remains the sole Requirement authority; record its exact identity and the actual supported input verification mode. HEAD alone is insufficient. Case status is a browser execution status, separate from Contract §W verifiedOutcome.
++
++Check <=1 CSS px document overflow, Core .table-scroll local keyboard scroll, main/skip/footer and Tab/Shift+Tab/Enter/Space/Escape, nested disclosure cleanup, same-document/native anchor behavior, <=900 mode and live focus migration, true HTTP404 recovery, reduced motion and mobile44x44 target intent. At620 test actual header/meta/404 changes; the current single article remains single at619/620/621. No inline overflow/test CSS, source runtime modification or raw-table contract is added by the fixture.
++
++Automated focus outlines/geometry are partial evidence. Human visual focus quality/contrast remains DEFERRED; AX-02 needs automated plus manual evidence. AX-03 needs Core and assembled project evidence, and PA-01 needs assembled-site acceptance. WS-06A technical PASS cannot substitute for06B, REF suites, WS-07 real-game/human evidence or release. Do not overwrite WS-01's capability baseline or promote current null outcomes. Retain failure evidence; runtime defects require a finite amendment.
++
++Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
+--- accepted-preimage/docs/QA_CHECKLIST.md
++++ ws06a/docs/QA_CHECKLIST.md
+@@ -341,3 +341,15 @@
+ - enabled monetization lacks required Human Ads Review, obstructs core content/navigation, or has a severe unexplained layout region;
+ - `requested`, `rendered`, or `viewable` is overclaimed, or automation failure is mislabeled as production-delivery proof;
+ - material mismatch between approved Site Structure/Navigation and actual implementation.
++
++## V2.7 WS-06A Core evidence checklist
++
++- [ ] Selected Starter supplies the real check:browser command; pinned dev dependency and Chromium/Firefox/WebKit are available.
++- [ ]47/47 same-build rows pass (27 baseline/3 no-JS/12 boundary/4 reduced-motion/1 resize); no skips, missing assertions or NOT_RUN.
++- [ ] Source/build/engine/revision/Contract identities are exact; uncommitted work is included, and Contract input verification is accurately labelled.
++- [ ] True404 recovery, local long-table keyboard scroll, <=1px document overflow, keyboard disclosure/focus cleanup and final link reachability pass.
++- [ ]899/900/901 navigation and619/620/621 actual header/meta/404 changes, live child-focus migration, no-JS and reduced-motion pass.
++- [ ] Existing WS-02 gates remain green; runtime/config/Inventory and canonical Contract remain unchanged; cleanup succeeds.
++- [ ] Human visual focus/contrast, assembled evidence, real-game adoption, REF suite and release remain separately required. Browser execution statuses are not capability outcomes.
++
++Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
+--- accepted-preimage/docs/EXECUTION_PROMPT.md
++++ ws06a/docs/EXECUTION_PROMPT.md
+@@ -398,3 +398,11 @@
+ 13. final production-origin preflight passes for canonical, sitemap, robots sitemap reference, placeholder/example domains, custom-domain vs `vercel.app` canonical, apex/www choice, redirects, and live production behavior;
+ 14. disabled/deferred/unconfigured monetization has zero ad-specific output, or enabled monetization has reconciled placement evidence and Human Ads Review;
+ 15. `CURRENT_STATUS.md` reflects remaining blockers.
++
++## V2.7 WS-06A command and evidence enforcement
++
++Read selected Starter package.json first. If check:browser is absent, HARD STOP; do not infer it from this document or the roadmap. Verify its exact pinned development dependency and all three engines before running. Preserve npm run check and both WS-02 adoption gates. Run npm run check:browser only with the actual supported canonical Contract input and a fresh CORE_BROWSER_EVIDENCE_DIR for audited results.
++
++Require47 planned/executed/PASS,0 FAIL/NOT_RUN/skip, every required assertion and matching source/build/engine/revision. Record uncommitted source plus HEAD, real HTTP404, local .table-scroll, breakpoints, live focus migration, no-JS/reduced-motion and successful cleanup. Missing engine, incomplete evidence, build/server failure or unavailable identity blocks. Machine checks cannot fill human focus/contrast approval. Core proof does not complete composed-site, real-game, REF or release acceptance; do not promote capability outcomes. Runtime bugs require a narrowly reviewed plan amendment.
++
++Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.

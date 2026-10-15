@@ -1,0 +1,288 @@
+# Actual ChatGPT REVIEW24 and PLAN25
+
+Observed: 2026-10-07T16:34:29.877Z
+Source: https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 24"
+      - text: "WORKSTREAM: WS03A continuation evidence"
+      - text: "VERDICT:"
+      - strong: BLOCKED — PRE-QUALIFICATION HARNESS SERIALIZATION
+    - paragraph:
+      - text: 独立复核通过。Iteration24 的 STOP 是正确的，而且比 iteration23 更早：
+      - strong: 0 次 browser qualification attempt
+      - text: ，因此没有产生新的产品结论。
+    - paragraph: 实际事实是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: collectHomeObservation → FAIL collectHoveredCardObservation → PASS collectArticleObservation → PASS
+    - paragraph: 真实 Function.prototype.toString() 已证明：
+    - generic: JavaScript
+    - button "启用自动换行":
+    - button "复制":
+    - code: "const one=__name(q=>{...},\"one\")"
+    - paragraph: 仍被注入 home callback。也就是说，“把 callback 放到 .mjs 就能避开 tsx transform”这个假设已经被实际环境推翻。
+    - paragraph: 同时确认：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: targeted browser = NOT_STARTED fresh47 = NOT_STARTED retry = 0 exact13 = unchanged iteration23 = frozen protected files = 6076 unchanged product delta = 0 governance delta = 0 readiness = STALE Safari proof = 0 WS06A FULL = BLOCKED
+    - paragraph: 没有任何产品修复依据。
+    - paragraph: 下面直接按 standing authorization 进入 PLAN25。
+    - button "添加到资料库":
+      - generic: PLAN25 — Remove Home Callback Name-Transform Dependency
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 25"
+        - text: "WORKSTREAM: WS03A browser-evidence harness"
+        - text: "SCOPE: EXECUTION-ONLY"
+        - text: "PRODUCT_DELTA_ALLOWED: 0"
+        - text: "GOVERNANCE_DELTA_ALLOWED: 0"
+        - text: "PREDECESSOR: REVIEW24 BLOCKED"
+      - heading "1. 唯一修复点" [level=2]
+      - paragraph: "只修改 iteration25 execution-only copy of:"
+      - code: browser-readonly-callbacks.mjs
+      - paragraph: 目标：
+      - blockquote:
+        - paragraph:
+          - code: collectHomeObservation
+          - text: 内不再声明任何 local function、function expression 或 assigned arrow function。
+      - paragraph: 不修改产品13文件，不修改 assertion。
+      - separator
+      - heading "2. Home observation改写方式" [level=2]
+      - paragraph: 删除 iteration24 的：
+      - code: "const one = (q) => { ... };"
+      - paragraph:
+        - text: 改成数据驱动的 inline anonymous
+        - code: map
+        - text: 。
+      - paragraph: 结构类似：
+      - code: "export function collectHomeObservation() { const html = document.documentElement; const cs = getComputedStyle(html); const body = getComputedStyle(document.body); const surfaces = Object.fromEntries( [ [\"heading\", \".game-hero__copy h1\"], [\"utility\", \".eyebrow\"], [\"card\", \".portal-card\"], [\"control\", \".button\"], [\"shell\", \".shell\"], ].map(([key, selector]) => { const element = document.querySelector(selector); if (!element) { throw Error(\"Missing representative surface \" + selector); } const style = getComputedStyle(element); const rect = element.getBoundingClientRect(); return [ key, { font: style.fontFamily, padding: style.paddingTop, minHeight: style.minHeight, height: rect.height, width: rect.width, radius: style.borderTopLeftRadius, border: style.borderColor, transform: style.transform, shadow: style.boxShadow, }, ]; }), ); return { roles: { ... }, family: document.body.dataset.pageFamily, bodyFont: body.fontFamily, heading: surfaces.heading, utility: surfaces.utility, card: surfaces.card, control: surfaces.control, shell: surfaces.shell, tokens: Object.fromEntries( [...].map((key) => [ key, cs.getPropertyValue(\"--role-\" + key).trim(), ]), ), }; }"
+      - paragraph: 关键点：
+      - code: map callbacks = inline anonymous callbacks
+      - paragraph: 而不是：
+      - code: const one = ... const readSurface = ... function one()...
+      - paragraph: iteration24 的实际 transform 已证明 inline：
+      - code: .map(k => ...)
+      - paragraph:
+        - text: 没有被注入
+        - code: __name
+        - text: ，因此采用同一形态。
+      - separator
+      - heading "3. 返回内容必须完全兼容 iteration23/24" [level=2]
+      - paragraph: 以下 keys 一个都不能改变：
+      - code: roles family bodyFont heading utility card control shell tokens
+      - paragraph: 每个 surface仍必须返回：
+      - code: font padding minHeight height width radius border transform shadow
+      - paragraph: Selectors必须原样：
+      - code: .game-hero__copy h1 .eyebrow .portal-card .button .shell
+      - paragraph: 不得借 harness修复改变采样对象。
+      - separator
+      - heading "4. Assertions零变化" [level=2]
+      - paragraph: Iteration25 targeted helper必须保持 iteration23/24 所有 assertion：
+      - code: name condition detail
+      - paragraph: 逐项相同。
+      - paragraph: 特别不能为了 PASS：
+      - code: 删 assertion 放宽 == 条件 改 viewport 改 profile 改 engine 改 hover timing 改 computed-style expectation
+      - paragraph: 仍然：
+      - code: "profile: interface / compact / soft / quiet engines: Chromium Firefox WebKit viewports: 800×900 1000×900"
+      - separator
+      - heading "5. Actual serialization preflight 是硬 Gate" [level=2]
+      - paragraph: 在启动任何 browser之前，必须实际运行：
+      - code: tsx iteration25/check-callback-serialization.ts
+      - paragraph:
+        - text: 这一步必须通过
+        - strong: 与 browser helper 相同的真实 import 路径
+        - text: ：
+      - code: .ts → import browser-readonly-callbacks.mjs → installed tsx
+      - paragraph: 不能直接：
+      - code: node import .mjs
+      - paragraph: 来证明安全。
+      - separator
+      - heading "6. Serialization检查内容" [level=2]
+      - paragraph: 对三个实际 callbacks：
+      - code: collectHomeObservation collectHoveredCardObservation collectArticleObservation
+      - paragraph: 记录：
+      - code: Function.prototype.toString.call(callback)
+      - paragraph: 保存：
+      - code: callback-serialization-check.json
+      - paragraph: 必须全部不包含：
+      - code: __name __toESM __commonJS process. require( Buffer globalThis __dirname __filename
+      - paragraph:
+        - text: 其中
+        - code: globalThis
+        - text: 禁止是为了防止以后通过注入 helper绕过。
+      - separator
+      - heading "7. Home callback额外结构检查" [level=2]
+      - paragraph: Preflight还必须证明 home serialized source 不包含：
+      - code: const <identifier> = <arrow/function> let <identifier> = <arrow/function> function <nested-name>
+      - paragraph: 即不得换一个名字重新制造同类问题。
+      - paragraph: 允许：
+      - code: .map((...) => ...)
+      - paragraph: 因为它是 inline browser-context callback。
+      - separator
+      - heading "8. 若 serialization仍 FAIL" [level=2]
+      - paragraph: 直接：
+      - code: ITERATION25 = BLOCKED targetedAttempts = 0 fresh47 = NOT_STARTED
+      - paragraph: 不得：
+      - code: 修改 tsx 注入 __name window.__name = ... globalThis.__name = ... eval helper retry另一种callback写法
+      - paragraph: 同一 iteration 只做这一种有限修复。
+      - separator
+      - heading "9. Frozen source preflight" [level=2]
+      - paragraph: 运行 qualification 前再次证明：
+      - code: current exact13 == iteration23/postimages exact13
+      - paragraph: 同时：
+      - code: iteration23 history unchanged iteration24 history unchanged Contract unchanged 41 IDs unchanged matrix unchanged runner unchanged closure unchanged policy/control unchanged
+      - paragraph: 任何不符：
+      - code: STOP
+      - separator
+      - heading "10. Harness diff" [level=2]
+      - paragraph: 生成：
+      - code: harness-diff-check.json
+      - paragraph: 要求相对于 iteration24：
+      - paragraph: 允许变化仅：
+      - code: execution output paths collectHomeObservation internal implementation
+      - paragraph: 必须保持：
+      - code: assertionNamesUnchanged = true assertionLogicUnchanged = true selectorsUnchanged = true returnedObservationKeysUnchanged = true profileUnchanged = true enginesUnchanged = true viewportsUnchanged = true fixtureMutationUnchanged = true buildPathUnchanged = true previewLifecycleUnchanged = true cleanupRulesUnchanged = true
+      - separator
+      - heading "11. Targeted qualification" [level=2]
+      - paragraph: Serialization PASS后才允许创建：
+      - code: /tmp/c2c25a.XXXXXX
+      - paragraph: 然后只运行一次：
+      - code: node iteration25/run-targeted-browser.mjs
+      - paragraph: 要求：
+      - code: qualificationAttempts = 1 retryCount = 0
+      - separator
+      - heading "12. Targeted结果" [level=2]
+      - paragraph: 唯一成功条件：
+      - code: 6 rows 6 PASS 0 FAIL 0 unexpected-error
+      - paragraph: 每个 row都必须实际执行全部原03A style assertions。
+      - paragraph: 如果出现真正 assertion FAIL：
+      - code: STOP
+      - paragraph: 此时才产生：
+      - code: product repair may be justified
+      - paragraph: 但 PLAN25 不修改产品。
+      - paragraph: 如果仍是 infrastructure/harness错误：
+      - code: STOP no second targeted attempt
+      - separator
+      - heading "13. Targeted cleanup" [level=2]
+      - paragraph: 继续使用已接受的短 TMP规则：
+      - code: Astro normal stop = 0 PID gone fixture gone 0 signals 0 symlinks 0 path escape 0 unknown entry known Node/tsx caches individually cleaned owned TMP root removed
+      - separator
+      - heading "14. Targeted PASS 后完成 PLAN23 后半程" [level=2]
+      - paragraph: 只有 targeted 6/6 PASS 后才启动：
+      - code: post-change fresh47
+      - paragraph: 使用：
+      - code: /tmp/c2c25b.XXXXXX
+      - paragraph: 实际调用仍必须：
+      - code: npm run check:browser
+      - paragraph: Qualification：
+      - code: 1 attempt 0 retry
+      - separator
+      - heading "15. Fresh47要求" [level=2]
+      - code: 47 planned 47 executed 0 NOT_RUN 0 skip all Chromium PASS all Firefox PASS
+      - paragraph: WebKit residual必须：
+      - code: subset of iteration19 frozen40
+      - paragraph: 任何集合外失败：
+      - code: STOP
+      - separator
+      - heading "16. 与 iteration22 baseline比较" [level=2]
+      - paragraph: 重新生成：
+      - code: post03a-vs-iteration22-residual-delta.json
+      - paragraph: 基线：
+      - code: iteration22 = 39 current residuals
+      - paragraph: 输出：
+      - code: persisted disappeared reappearedFromFrozen40 newOutsideFrozen40
+      - paragraph: 只有：
+      - code: newOutsideFrozen40 = 0
+      - paragraph: 才允许继续。
+      - separator
+      - heading "17. Fresh counterparts" [level=2]
+      - paragraph: 针对 post-change 当前 N 个 WebKit residual：
+      - code: Chromium N/N PASS Firefox N/N PASS
+      - paragraph: 必须来自 iteration25 fresh47。
+      - paragraph: 不能复用 iteration22 39/39。
+      - separator
+      - heading "18. Identity / policy / cleanup" [level=2]
+      - paragraph: 重新绑定当前：
+      - code: Starter post03A source SOP source Prompt source Contract fixture source dist Playwright Chromium Firefox WebKit host matrix runner closure policy Arrow control native probe
+      - paragraph: 要求 independent expected identity与 raw exact match。
+      - paragraph: TMP/preview仍必须 normal cleanup。
+      - separator
+      - heading "19. Closure recheck" [level=2]
+      - paragraph: 使用原：
+      - code: npm run verify:browser-closure
+      - paragraph: 仍不提供 Safari evidence。
+      - paragraph: 若仍有 accepted residual：
+      - code: "exit1 decision BLOCKED sole error: missing/invalid real Safari keyboard evidence"
+      - paragraph: 任何额外 error：
+      - code: STOP
+      - separator
+      - heading "20. Continuation audit" [level=2]
+      - paragraph: 最终生成：
+      - code: continuation-audit.json
+      - paragraph: 必须证明：
+      - code: "iteration23 exact13 retained RED evidence retained GREEN 53 PASS retained root 780 PASS retained adoption PASS retained iteration25 callback serialization PASS targeted: 6/6 PASS fresh47: 47 executed 0 NOT_RUN non-WebKit failures 0 WebKit: subset frozen40 new outside frozen40 = 0 current counterpart: Chromium complete Firefox complete identity exact normal cleanup Contract41 unchanged Safari0 WS06A FULL BLOCKED"
+      - separator
+      - heading "21. PLAN25范围" [level=2]
+      - paragraph: 允许新增：
+      - code: template/codex/prompts/v2.7-ws03a/ iteration25-... template/codex/executions/v2.7-ws03a/iteration25/**
+      - paragraph: 不允许任何：
+      - code: Starter product modification SOP modification Master Prompt modification Roadmap modification Contract/Registry modification package/lock/CI modification runner/matrix/closure modification
+      - separator
+      - heading "22. 最终 candidate 状态" [level=2]
+      - paragraph: 若全部通过，Codex只能报告：
+      - code: "WS03A: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: 不得自签：
+      - code: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION FORMAL ACCEPT VF/GI PASS
+      - paragraph: 最终仍由独立 REVIEW25裁定。
+      - separator
+      - heading "23. 不变的系统状态" [level=2]
+      - paragraph: 整个 PLAN25 中始终：
+      - code: Safari proof = 0 WS06A FULL = BLOCKED WS03 formal Gate = NOT ACCEPTED capability promotion = NONE release hold = ACTIVE 03B = NOT STARTED media/search = OUT OF SCOPE
+      - heading "核心原则" [level=2]
+      - paragraph: 这轮不再尝试“绕过 tsx”。
+      - paragraph: 只做一件更稳妥的事：
+      - blockquote:
+        - paragraph:
+          - strong: 让发送到 browser context 的函数源码本身不包含任何需要 tsx name-preservation helper 的代码形态，并在真实 tsx import 后先证明这一点，再允许浏览器启动。
+    - paragraph: 这次 PLAN25 比24更窄：不再假设文件扩展名能隔离 transpiler，只控制真正被序列化的函数源码形态。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

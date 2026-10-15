@@ -1,0 +1,11 @@
+--- WS01-ACCEPT/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ WS02/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -117,6 +117,8 @@
+ Never cross a Human Gate because the next step seems obvious.
+ 
+ # 5. PHASE 0 - BASELINE + SOP / STARTER VERIFICATION
++
++WS-02 reusable-template verification: read the actual selected Starter package.json. Only when its scripts really provide `verify:unadopted-final` and `verify:adopted-final`, run root `npm run check` and those two commands; missing required commands = HARD STOP, never guess from roadmap names. The unadopted command proves expected PP-02 rejection of both validate and canonical final build, not an exemption for a production failure. The adopted command requires actual validate/check/final build on a complete disposable Field Notes synthetic project, no evidence marker and no unapproved privacy/terms output. Preserve all existing suites/negative cases; no skip or PP-02 bypass. Their success is portable synthetic adoption pipeline proof, not real-game, Human, AX browser or V2.7 release PASS. In QA the real project still runs its own `npm run validate`, `npm run check` and canonical `npm run build`; `build:evidence` never substitutes for final. AX-01 browser proof remains pending WS-06A.
+ 
+ Goal:
+ 1. Confirm the real project workspace.

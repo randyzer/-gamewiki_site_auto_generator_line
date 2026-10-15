@@ -1,0 +1,18 @@
+{
+  "sourceExact13Postimages": true,
+  "redGreenValid": true,
+  "root780Valid": true,
+  "evidence": {
+    "red-theme-tests.json": "1d3b758f7eab4c098d3466505ddc05aa59b92a8b324f9d12eed5e270b91137dd",
+    "red-theme-tests.log": "96b5f0887c6ec2af8b7ae9db072708419c73436b95bd7311f7a9e417a3b47766",
+    "green-theme-tests.json": "ab25c6aa6804e490dc5b26afdf09796630379b9a88738c24fcb405fdef0b8710",
+    "green-theme-tests.log": "31d23e46f9db0d89d36bd5c70ee80a4c7664cc6e5f67d5e4b04bc9d7b9f3f9b8",
+    "product-health-command-results.json": "e505dd1de9a9a1d72ad7f737ddd7fb0669d5bdc90bc4ca2228cd49000e783013",
+    "root-check.log": "aa5400d57e341c5f981db6acfe2c0757b3e8cbacf2bb608a2b4faf81a848574b",
+    "unadopted-final.log": "a11ad06e8abcfcf7cbedfca1d42fe903a3faa893fe25bf3186534c690e085bb6",
+    "adopted-final.log": "5bc83be6c4d851908316f8ad07afa46d229242cab02664baa30e17e248928ea4",
+    "git-diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scope-check.json": "ba4070a0b7507559b2271291ecad2e9f9aa4a6ab0c97ef26b8e2e715cde2e25b"
+  },
+  "rerun": false
+}

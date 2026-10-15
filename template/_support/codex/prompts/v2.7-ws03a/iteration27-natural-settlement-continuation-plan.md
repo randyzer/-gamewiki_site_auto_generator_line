@@ -1,0 +1,353 @@
+# Actual ChatGPT REVIEW26 and PLAN27
+
+Observed: 2026-10-07T16:55:52.415Z
+Source: https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 26"
+      - text: "WORKSTREAM: WS03A geometry diagnosis"
+      - text: "VERDICT:"
+      - strong: ACCEPT — DIAGNOSIS COMPLETE / INCONCLUSIVE
+    - paragraph: 独立复核支持 iteration26 的结论，不能升级为 PRECISION_ARTIFACT_SUPPORTED，也没有证据支持产品缺陷。
+    - paragraph: 关键事实已经很强：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "6 rows / 96 raw samples diagnostic sessions = 1 qualification attempts = 0 retries = 0 all 6: token = 44px computed min-height = 44px computed used height = 44px box-sizing = border-box offsetHeight = 44 Playwright boundingBox = 44 button transform = none DPR = 1 visualViewport.scale = 1"
+    - paragraph: WebKit 1000 的 DOMRect.height 在：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 43.999969482421875 44 44.000030517578125
+    - paragraph: 之间变化；更重要的是，Chromium 1000 也观察到了 44 / 44.000030517578125 的同量级波动。
+    - paragraph:
+      - text: 同时我核对了真实 CSS：.reveal 的自然动画是
+      - strong: 620ms
+      - text: ，.reveal--1 还有
+      - strong: 80ms delay
+      - text: ，即该祖先从导航后约
+      - strong: 700ms
+      - text: 才自然结束。iteration26 的16次采样期间，祖先 .game-hero__copy.reveal.reveal--1 明确仍在从 translateY(...) 向 0 收敛；最后才达到 identity。
+    - paragraph: 所以 iteration26 严格不宣称 A 是正确的：PLAN26 要求16个 settled/stable samples，而实际16个样本包含动画过程。
+    - paragraph: 当前状态仍然：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: iteration25 FAIL = retained WS03A continuation = BLOCKED fresh47 = NOT_STARTED product repair = NOT JUSTIFIED oracle change = NOT JUSTIFIED Safari proof = 0 WS06A FULL = BLOCKED
+    - paragraph: 下面直接进入 PLAN27。
+    - button "添加到资料库":
+      - generic: PLAN27 — Natural Animation Settlement, Targeted Requalification and Fresh47
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 27"
+        - text: "WORKSTREAM: WS03A continuation evidence"
+        - text: "SCOPE: EXECUTION-ONLY"
+        - text: "PRODUCT_DELTA_ALLOWED: 0"
+        - text: "ORACLE_DELTA_ALLOWED: 0"
+        - text: "PREDECESSOR: REVIEW26 ACCEPT INCONCLUSIVE"
+        - text: "STANDING_AUTHORIZATION: ACTIVE"
+      - heading "1. 本轮目标" [level=2]
+      - paragraph:
+        - text: 在
+        - strong: 不改变页面环境
+        - text: 的条件下，等待现有 reveal animation 自然结束，然后：
+      - list:
+        - paragraph: 做 settled geometry diagnosis；
+        - paragraph: 只有 diagnosis 足以支持 precision artifact 时，才重新跑原 WS03A targeted6；
+        - paragraph: targeted6 PASS 后，才运行 post-change fresh47；
+        - paragraph: 完成 residual / counterpart / closure / continuation audit。
+      - paragraph: 本轮尽量把证据链闭合，但保持严格阶段 STOP。
+      - separator
+      - heading "2. 全部既有事实冻结" [level=2]
+      - paragraph: 不得修改：
+      - code: iteration23/** iteration24/** iteration25/** iteration26/**
+      - paragraph: iteration25 的：
+      - code: WebKit1000 compact-control-minimum = FAIL
+      - paragraph: 永久保留，不重写。
+      - paragraph: 当前13个 WS03A product/governance files必须继续：
+      - code: 13 / 13 == iteration23/postimages
+      - paragraph: 任何差异立即 STOP。
+      - separator
+      - heading "3. 禁止项" [level=2]
+      - paragraph: PLAN27禁止：
+      - code: CSS修改 44px token修改 epsilon round/floor/ceil Math.abs(height - 44) 44 - tolerance 修改原 compact-control-minimum oracle 修改 selector 修改 profile 修改 engine/viewports reducedMotion 改为 reduce style injection animation-duration override animation-play-state override DOM class修改 transform reset zoom/deviceScaleFactor修改
+      - paragraph: 不能通过“关动画”解决问题。
+      - separator
+      - heading "Phase A — Natural settlement diagnosis" [level=1]
+      - heading "4. 同一真实动画环境" [level=2]
+      - paragraph: 仍使用：
+      - code: interface compact soft quiet
+      - paragraph: adopted disposable fixture。
+      - paragraph: Playwright page仍创建：
+      - code: "reducedMotion: \"no-preference\""
+      - paragraph:
+        - text: 不改为
+        - code: reduce
+        - text: 。
+      - separator
+      - heading "5. Settlement Gate只观察，不干预" [level=2]
+      - paragraph: 首页导航完成后，定位真实祖先：
+      - code: .game-hero__copy.reveal.reveal--1
+      - paragraph: 先记录：
+      - code: animationName animationDuration animationDelay animationTimingFunction animationFillMode animationPlayState / Web Animations playState computed transform computed opacity
+      - paragraph: 实际 CSS基线预期：
+      - code: animation = enter duration = 620ms delay = 80ms
+      - paragraph: 但运行时必须读取实际值，不能硬编码700ms作为 PASS依据。
+      - separator
+      - heading "6. 自然等待完成条件" [level=2]
+      - paragraph:
+        - text: 用
+        - strong: 只读 polling
+        - text: 等待，不修改任何 style/DOM。
+      - paragraph: settled条件必须同时满足：
+      - code: "all animations associated with reveal ancestor: playState == \"finished\" OR no active animation remains computed transform: none OR exact identity matrix computed opacity = 1"
+      - paragraph: 同时连续两个 animation frame仍满足上述条件。
+      - paragraph: 允许使用：
+      - code: requestAnimationFrame getAnimations() getComputedStyle()
+      - paragraph: 只读观察。
+      - paragraph: 禁止：
+      - code: finish() cancel() pause() playbackRate change
+      - separator
+      - heading "7. Settlement timeout" [level=2]
+      - paragraph: timeout不是 qualification timeout inflation。
+      - paragraph: 应依据实际：
+      - code: computed animation delay + computed animation duration
+      - paragraph: 计算一个有限观察上限，例如：
+      - code: max( actual delay + duration + 1000ms, 2000ms )
+      - paragraph: 只是防止死等。
+      - paragraph: 若动画无法自然结束：
+      - code: PHASE A = BLOCKED targeted qualification = NOT_STARTED fresh47 = NOT_STARTED
+      - separator
+      - heading "8. Settled16采样" [level=2]
+      - paragraph: Settlement Gate PASS后，再开始新的16次样本。
+      - paragraph: 这16次必须全部发生在：
+      - code: animation settled
+      - paragraph: 之后。
+      - paragraph:
+        - text: 每个 sample仍跨自然
+        - code: requestAnimationFrame
+        - text: 。
+      - paragraph: 不得 reload、resize、re-navigation。
+      - paragraph: 保存：
+      - code: settled-geometry-observations.json
+      - separator
+      - heading "9. 每个 settled sample保留原始值" [level=2]
+      - paragraph: 仍记录：
+      - code: role token computed minHeight computed height boxSizing DOMRect.top DOMRect.bottom DOMRect.height bottom-top clientHeight offsetHeight scrollHeight getClientRects()[0].height ancestor transform ancestor animation state DPR visual viewport scale
+      - paragraph: 不得做 rounding。
+      - separator
+      - heading "10. 仍运行六个比较 row" [level=2]
+      - code: Chromium 800 Chromium 1000 Firefox 800 Firefox 1000 WebKit 800 WebKit 1000
+      - paragraph: 每行：
+      - code: 16 settled samples
+      - paragraph: 共96个 post-settlement raw samples。
+      - separator
+      - heading "11. Phase A 分类规则" [level=2]
+      - heading "SETTLED_PRECISION_ARTIFACT_SUPPORTED" [level=3]:
+        - code: SETTLED_PRECISION_ARTIFACT_SUPPORTED
+      - paragraph: 要求所有六行：
+      - code: token = 44px computed minHeight = 44px computed used height = 44px offsetHeight = 44 boundingBox.height = 44 button transform = none ancestor transform = none / identity animation finished DPR = 1 visualViewport.scale = 1
+      - paragraph: 此外 WebKit1000的 settled16：
+      - paragraph: 理想情况：
+      - code: all DOMRect.height = 44
+      - paragraph: 如果仍出现 ±1/32768，但所有 used/layout/protocol signals持续44，也不能自动 FAIL；必须记录为：
+      - code: SETTLED_DOMRECT_QUANTIZATION
+      - paragraph: 其判定依据必须是：
+      - blockquote:
+        - paragraph: 动画已经自然结束，而多个独立 used/layout geometry channels严格保持44。
+      - paragraph: 这不是 epsilon oracle。
+      - separator
+      - heading "REAL_GEOMETRY_DEFECT_SUPPORTED" [level=3]:
+        - code: REAL_GEOMETRY_DEFECT_SUPPORTED
+      - paragraph: 若 settled后出现：
+      - code: computed height < 44 offsetHeight < 44 boundingBox.height materially < 44 或实际 scale/transform造成尺寸缩小
+      - paragraph: 立即 STOP，后续另做产品修复。
+      - separator
+      - heading "INCONCLUSIVE" [level=3]:
+        - code: INCONCLUSIVE
+      - paragraph: 如果 settled状态无法证明、关键 channels冲突、或几何仍不能解释：
+      - code: STOP
+      - paragraph: 不进入 targeted。
+      - separator
+      - heading "Phase B — Targeted6 requalification" [level=1]
+      - heading "12. 进入条件" [level=2]
+      - paragraph: 只有独立 execution logic得到：
+      - code: SETTLED_PRECISION_ARTIFACT_SUPPORTED
+      - paragraph: 才可以继续 Phase B。
+      - separator
+      - heading "13. 原 targeted assertions保持不变" [level=2]
+      - paragraph: 仍是 iteration25 原63 assertions：
+      - code: same assertion names same selectors same profile same conditions same numeric oracle
+      - paragraph: 尤其仍必须：
+      - code: observed.control.minHeight === "44px" && observed.control.height >= 44
+      - paragraph: 不改成 offsetHeight，也不增加 tolerance。
+      - separator
+      - heading "14. 唯一允许的 harness时序变化" [level=2]
+      - paragraph:
+        - text: 在首页读取
+        - code: collectHomeObservation
+        - strong: 之前
+        - text: ：
+      - code: waitForNaturalRevealSettlement()
+      - paragraph: 只等待第5-6节定义的自然 settled Gate。
+      - paragraph: 然后才采集原 observation。
+      - paragraph: 这不是 assertion change，而是避免在已知正在执行的入场动画过程中测量最终布局。
+      - separator
+      - heading "15. Hover / article逻辑保持" [level=2]
+      - paragraph: 原：
+      - code: hover quiet-state assertion article navigation site-wide font assertion
+      - paragraph: 全部保持。
+      - paragraph: 不因为等待 animation而删除或弱化。
+      - separator
+      - heading "16. Targeted run" [level=2]
+      - paragraph: 使用新的：
+      - code: /tmp/c2c27a.XXXXXX
+      - paragraph: 一次 qualification：
+      - code: attempts = 1 retry = 0
+      - paragraph: 成功要求：
+      - code: 6/6 rows PASS 63/63 assertions PASS 0 unexpected errors
+      - paragraph: 任一 FAIL：
+      - code: STOP fresh47 = NOT_STARTED
+      - separator
+      - heading "Phase C — Post-change Fresh47" [level=1]
+      - heading "17. Targeted PASS 后才运行" [level=2]
+      - paragraph: 使用独立：
+      - code: /tmp/c2c27b.XXXXXX
+      - paragraph: 原始：
+      - code: npm run check:browser
+      - paragraph: 不得给 Core runner增加 settlement逻辑。
+      - paragraph: 也就是说：
+      - blockquote:
+        - paragraph: WS03A targeted新表面可在“自然最终布局”时验证；原 Core47仍完全保持原验证时序和原行为。
+      - separator
+      - heading "18. Fresh47一次原则" [level=2]
+      - code: 1 attempt 0 retry 47 planned 47 executed 0 NOT_RUN
+      - paragraph: Chromium / Firefox：
+      - code: all PASS
+      - separator
+      - heading "19. WebKit residual" [level=2]
+      - paragraph: post03A residual必须：
+      - code: ⊆ iteration19 frozen40
+      - paragraph: 任何集合外 residual：
+      - code: STOP
+      - separator
+      - heading "20. 与 iteration22 pre-change baseline比较" [level=2]
+      - paragraph: 生成：
+      - code: post03a-vs-iteration22-residual-delta.json
+      - paragraph: 明确：
+      - code: persisted disappeared reappearedFromFrozen40 newOutsideFrozen40
+      - paragraph: 要求：
+      - code: newOutsideFrozen40 = 0
+      - separator
+      - heading "21. 当前 counterparts" [level=2]
+      - paragraph: 对 post-change当前 N 条 WebKit residual：
+      - code: Chromium = N/N PASS Firefox = N/N PASS
+      - paragraph: 必须来自 iteration27 fresh47。
+      - separator
+      - heading "22. Current identity binding" [level=2]
+      - paragraph: 重新捕获：
+      - code: Starter post03A source SOP Prompt Contract fixture source dist Playwright 3 engine versions/revisions host matrix runner closure policy/control native probe
+      - paragraph: fresh raw必须与 independent expected identity exact match。
+      - separator
+      - heading "23. Closure recheck" [level=2]
+      - paragraph: 仍使用未修改：
+      - code: verify:browser-closure
+      - paragraph: Safari evidence仍不传。
+      - paragraph: 若存在 accepted WebKit residual：
+      - code: "exit = 1 decision = BLOCKED errors exactly: missing/invalid real Safari keyboard evidence"
+      - paragraph: 若多任何错误：
+      - code: STOP
+      - separator
+      - heading "Phase D — Cleanup & continuation audit" [level=1]
+      - heading "24. 两个 TMP root分别严格 cleanup" [level=2]
+      - paragraph: 诊断/targeted：
+      - code: /tmp/c2c27a.*
+      - paragraph: fresh47：
+      - code: /tmp/c2c27b.*
+      - paragraph: 都要求：
+      - code: normal Astro stop PID gone fixture gone 0 signal fallback 0 symlink 0 path escape 0 unknown entries owned root removed
+      - separator
+      - heading "25. Integrity" [level=2]
+      - paragraph: 最终证明：
+      - code: exact13 unchanged histories23-26 unchanged productDelta = 0 governanceDelta = 0 Contract SHA unchanged 41 unique IDs 0 duplicates package/lock unchanged CI unchanged matrix unchanged runner unchanged closure unchanged policy/control unchanged
+      - separator
+      - heading "26. Continuation audit" [level=2]
+      - paragraph: 若 A/B/C/D全部通过，生成：
+      - code: continuation-audit.json
+      - paragraph: 应绑定：
+      - code: "iteration23: RED/GREEN root780 adoption iteration27: settled diagnosis targeted6 final proof fresh47 residual comparison counterparts closure cleanup exact identities"
+      - paragraph: 不能用 iteration25失败的 targeted evidence作为 PASS。
+      - paragraph: 它只保留为问题发现历史。
+      - separator
+      - heading "27. Codex最终只能报" [level=2]
+      - paragraph: 如果全部证据通过：
+      - code: "WS03A: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: 不能自行写：
+      - code: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION
+      - separator
+      - heading "28. 任一 Phase STOP" [level=2]
+      - paragraph: 顺序严格为：
+      - code: A settled diagnosis ↓ PASS only B targeted6 ↓ PASS only C fresh47 ↓ valid only D continuation audit
+      - paragraph:
+        - text: 前一阶段失败时，后续阶段全部
+        - code: NOT_STARTED
+        - text: 。
+      - paragraph: 因此这轮虽然允许顺序闭环，但不是“失败了还继续跑”。
+      - separator
+      - heading "29. 状态边界始终不变" [level=2]
+      - paragraph: 即使 PLAN27 全部执行成功：
+      - code: Safari proof = 0 WS06A FULL = BLOCKED WS03 formal Gate = NOT_ACCEPTED capability promotion = NONE release hold = ACTIVE 03B = NOT_STARTED
+      - paragraph: 最终是否签：
+      - code: WS03A IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION
+      - paragraph: 仍需独立 REVIEW27。
+      - heading "PLAN27核心判断" [level=2]
+      - paragraph: 真正要验证的是：
+      - code: 动画运行中： DOMRect可能出现1/32768px量化波动 动画自然结束后： 这个44px control是否稳定表现为真正的44px used/layout geometry？
+      - paragraph:
+        - text: 只有先回答这个问题，才允许重新跑原来的严格
+        - code: height >= 44
+        - text: targeted assertion。
+    - paragraph:
+      - text: 这一轮允许在
+      - strong: 同一次有限执行中
+      - text: 从 settled diagnosis 顺序走到 targeted6、fresh47 和 continuation audit，但每一阶段都有硬 STOP，因此不会为了减少轮次而牺牲证据边界。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

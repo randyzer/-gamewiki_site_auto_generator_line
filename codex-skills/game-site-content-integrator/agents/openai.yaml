@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Site Content Integrator"
+  short_description: "Fill a selected game template with verified content"
+  default_prompt: "Use $game-site-content-integrator to integrate verified homepage, icon, and keyword research into my selected game-site template."

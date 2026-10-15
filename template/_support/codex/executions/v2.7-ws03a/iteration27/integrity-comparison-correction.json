@@ -1,0 +1,14 @@
+{
+  "initialStatus": "FAIL",
+  "reason": "Final auditor excluded actualplan27 but preflight included it. Missing inventory entry was wrongly counted as governance mutation.",
+  "actualPlanPreflightSha256": "ebb3992d96490488baa24ab8b94c5b95c7e07c2a013ab69aae47bb0075d9a24d",
+  "actualPlanCurrentSha256": "ebb3992d96490488baa24ab8b94c5b95c7e07c2a013ab69aae47bb0075d9a24d",
+  "bytesExact": true,
+  "protectedCount": 6145,
+  "sourceOrVerificationChanged": false,
+  "qualificationRepeated": false,
+  "closureRepeated": false,
+  "initialIntegritySha256": "42e2e47e71d06223d0b1c7a23bc2eb2e6f5407e488d6adc85842350596f916c0",
+  "initialContinuationSha256": "e36bb21d2b4d30849101ccfd6f29c90753a33d347c0318f0c23990d446f6c2ba",
+  "correctedIntegritySha256": "aa563051b287f19e458506f57f1153d33df87baa0691d5c3587ee5f1cce6237b"
+}

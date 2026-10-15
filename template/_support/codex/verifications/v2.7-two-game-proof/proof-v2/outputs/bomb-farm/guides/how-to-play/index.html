@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="en" data-theme-font="editorial" data-theme-density="comfortable" data-theme-shape="square" data-theme-state="lifted"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="robots" content="index, follow, max-image-preview:large"><title>How to Play Bomb Farm: The Mine and Three-Team Loop</title><meta name="description" content="Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers."><link rel="canonical" href="https://bombfarmwiki.wiki/guides/how-to-play/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:site_name" content="Bomb Farm Wiki"><meta property="og:locale" content="en"><meta property="og:url" content="https://bombfarmwiki.wiki/guides/how-to-play/"><meta property="og:title" content="How to Play Bomb Farm: The Mine and Three-Team Loop"><meta property="og:description" content="Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers."><meta property="og:image" content="https://bombfarmwiki.wiki/media/proof/three-team-switching.svg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="675"><meta property="og:image:alt" content="Original diagram showing three teams available for switching to keep the mine running"><meta name="twitter:image" content="https://bombfarmwiki.wiki/media/proof/three-team-switching.svg"><meta name="twitter:image:alt" content="Original diagram showing three teams available for switching to keep the mine running"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="How to Play Bomb Farm: The Mine and Three-Team Loop"><meta name="twitter:description" content="Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers."><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://bombfarmwiki.wiki/#website","url":"https://bombfarmwiki.wiki/","name":"Bomb Farm Wiki","description":"Understand the bomber squad's mine loop, observe progress and use the recorded three-team switching concept without invented timers.","inLanguage":"en"},{"@type":"WebPage","@id":"https://bombfarmwiki.wiki/guides/how-to-play/#webpage","url":"https://bombfarmwiki.wiki/guides/how-to-play/","name":"How to Play Bomb Farm: The Mine and Three-Team Loop","description":"Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.","datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"en","isPartOf":{"@id":"https://bombfarmwiki.wiki/#website"}},{"@type":"BreadcrumbList","@id":"https://bombfarmwiki.wiki/guides/how-to-play/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Bomb Farm Wiki","item":"https://bombfarmwiki.wiki/"},{"@type":"ListItem","position":2,"name":"Bomb Farm Mine Guides — Start with the Core Loop","item":"https://bombfarmwiki.wiki/guides/"},{"@type":"ListItem","position":3,"name":"How to Play Bomb Farm: The Mine and Three-Team Loop","item":"https://bombfarmwiki.wiki/guides/how-to-play/"}]},{"@type":"Article","@id":"https://bombfarmwiki.wiki/guides/how-to-play/#article","headline":"How to Play Bomb Farm: The Mine and Three-Team Loop","description":"Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.","datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"en","mainEntityOfPage":{"@id":"https://bombfarmwiki.wiki/guides/how-to-play/#webpage"}}]}</script><link rel="stylesheet" href="/_astro/BaseLayout.yppudl0a.css"></head><body id="top" data-page-family="guides"><a class="skip-link" href="#main-content">Skip to content</a><header class="site-header"><div class="site-header__inner shell"><a class="brand" href="/" aria-label="Bomb Farm Wiki home"><span class="brand__mark" aria-hidden="true">BF</span><span class="brand__copy"><strong>BF Wiki</strong><small>Understand the mine. Switch teams with a purpose.</small></span></a><nav class="desktop-nav" aria-label="Primary navigation"><ul class="desktop-nav__list"><li class="desktop-nav__group" data-nav-page-id="home"><a class="desktop-nav__link" href="/">Mine overview</a></li><li class="desktop-nav__group" data-active="true" data-nav-page-id="hub.guides"><a class="desktop-nav__link" href="/guides/">Mine guides</a><ul class="desktop-nav__menu" aria-label="Mine guides pages"><li data-nav-page-id="guide.how-to-play"><a href="/guides/how-to-play/" aria-current="page"><span>How to Play Bomb Farm: The Mine and Three-Team Loop</span><small>Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.</small></a></li></ul></li></ul></nav><details class="mobile-nav"><summary class="mobile-nav__toggle">Menu <span aria-hidden="true">+</span></summary><nav class="mobile-nav__panel" aria-label="Primary navigation"><ul class="mobile-nav__list"><li data-nav-page-id="home"><a href="/">Mine overview</a></li><li data-active="true"><details class="mobile-nav__group"><summary>Mine guides</summary><div class="mobile-nav__children"><a class="mobile-nav__overview" href="/guides/" data-nav-page-id="hub.guides">Overview <span aria-hidden="true">→</span></a><ul><li data-nav-page-id="guide.how-to-play"><a href="/guides/how-to-play/" aria-current="page">How to Play Bomb Farm: The Mine and Three-Team Loop</a></li></ul></div></details></li></ul></nav></details><script>
+  (() => {
+    const mobile = document.querySelector(".mobile-nav");
+    const header = mobile?.closest(".site-header");
+    const desktop = header?.querySelector(".desktop-nav");
+    const home = header?.querySelector(".brand");
+    const summary = mobile?.querySelector(":scope > summary");
+    if (!(mobile instanceof HTMLDetailsElement) || !(desktop instanceof HTMLElement) ||
+      !(home instanceof HTMLElement) || !(summary instanceof HTMLElement) ||
+      typeof window.matchMedia !== "function") return;
+
+    // This matches the existing CSS navigation boundary, including exactly 900px.
+    const mobileMode = window.matchMedia("(max-width: 900px)");
+    const trigger = (disclosure) => disclosure.querySelector(":scope > summary");
+    const close = (disclosure) => {
+      disclosure.open = false;
+      for (const nested of disclosure.querySelectorAll("details")) nested.open = false;
+    };
+    const restore = (disclosure) => {
+      let visible = disclosure;
+      for (let ancestor = disclosure.parentElement?.closest("details"); ancestor;
+        ancestor = ancestor.parentElement?.closest("details")) {
+        if (!ancestor.open) visible = ancestor;
+      }
+      trigger(visible)?.focus({ preventScroll: true });
+    };
+
+    const currentMode = () => mobileMode.matches ? "mobile" : "desktop";
+    const rootFor = (mode) => mode === "mobile" ? mobile : desktop;
+    const visible = (element) => element instanceof HTMLElement && element.isConnected &&
+      element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden" &&
+      getComputedStyle(element).display !== "none";
+    const identityFor = (element) => {
+      if (!(element instanceof HTMLElement) || !element.isConnected) return null;
+      const mode = mobile.contains(element) ? "mobile" : desktop.contains(element) ? "desktop" : null;
+      if (!mode) return null;
+      const group = mode === "mobile" ? element.closest(".mobile-nav__group") : null;
+      const pageId = element.closest("[data-nav-page-id]")?.getAttribute("data-nav-page-id") ??
+        group?.querySelector(".mobile-nav__overview")?.getAttribute("data-nav-page-id") ?? null;
+      return { mode, pageId, kind: mode === "desktop" ? "desktop-page" : element === summary ?
+        "mobile-trigger" : group && element === trigger(group) ? "mobile-group" : "mobile-page" };
+    };
+    const sourceFor = (identity) => {
+      if (!identity) return null;
+      if (identity.kind === "mobile-trigger") return summary;
+      if (identity.kind === "mobile-group") {
+        const group = [...mobile.querySelectorAll(".mobile-nav__group")].find((element) =>
+          element.querySelector(".mobile-nav__overview")?.getAttribute("data-nav-page-id") === identity.pageId);
+        return group ? trigger(group) : null;
+      }
+      if (!identity.pageId) return null;
+      return [...rootFor(identity.mode).querySelectorAll("a[href]")].find((element) =>
+        identityFor(element)?.pageId === identity.pageId) ?? null;
+    };
+    let pendingIdentity = null;
+    let intentRevoked = false;
+    let previousMode = currentMode();
+    const revoke = () => { pendingIdentity = null; intentRevoked = true; };
+    const responsiveLoss = (identity, active) => {
+      if (!identity || identity.mode === currentMode() ||
+        active !== document.body && active !== document.documentElement) return false;
+      const source = sourceFor(identity);
+      return source instanceof HTMLElement && source.isConnected && !visible(source);
+    };
+    document.addEventListener("focusin", (event) => {
+      const identity = identityFor(event.target);
+      if (identity && identity.mode === currentMode() && visible(event.target)) {
+        pendingIdentity = identity;
+        intentRevoked = false;
+      } else if (!responsiveLoss(pendingIdentity, event.target)) revoke();
+    }, true);
+    document.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof Element) || !mobile.contains(event.target) && !desktop.contains(event.target)) revoke();
+    }, true);
+    document.addEventListener("focusout", () => {
+      const observed = pendingIdentity;
+      if (!observed) return;
+      queueMicrotask(() => {
+        // An old event must not invalidate a newer focus record made by the handoff.
+        if (pendingIdentity !== observed) return;
+        if (identityFor(document.activeElement)) return;
+        if (!responsiveLoss(observed, document.activeElement)) revoke();
+      });
+    }, true);
+
+    mobile.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !(event.target instanceof Element)) return;
+      const disclosure = event.target.closest("details[open]");
+      if (!(disclosure instanceof HTMLDetailsElement) || !mobile.contains(disclosure)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      close(disclosure);
+      restore(disclosure);
+    });
+
+    mobile.addEventListener("toggle", (event) => {
+      const disclosure = event.target;
+      if (!(disclosure instanceof HTMLDetailsElement) || !mobile.contains(disclosure) || disclosure.open) return;
+      const hiddenFocus = disclosure.contains(document.activeElement) &&
+        !trigger(disclosure)?.contains(document.activeElement);
+      close(disclosure);
+      if (hiddenFocus) restore(disclosure);
+    }, true);
+
+    mobile.addEventListener("click", (event) => {
+      if (event.defaultPrevented || !(event.target instanceof Element)) return;
+      const link = event.target.closest("a[href]");
+      if (!(link instanceof HTMLElement) || !mobile.contains(link)) return;
+      close(mobile);
+      summary.focus({ preventScroll: true });
+      const destination = new URL(link.href, window.location.href);
+      const current = new URL(window.location.href);
+      if (destination.origin !== current.origin || destination.pathname !== current.pathname ||
+        destination.search !== current.search) return;
+      if (destination.href === current.href) event.preventDefault();
+      let target;
+      try { target = destination.hash ? document.getElementById(decodeURIComponent(destination.hash.slice(1))) : home; }
+      catch { return; }
+      if (!(target instanceof HTMLElement) || target.getClientRects().length === 0) return;
+      if (!target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+        target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+      }
+      target.focus({ preventScroll: true });
+    });
+
+    mobileMode.addEventListener("change", () => {
+      const mode = currentMode();
+      if (mode === previousMode) return;
+      const outgoingMode = previousMode;
+      previousMode = mode;
+      const live = identityFor(document.activeElement);
+      const identity = intentRevoked ? null : live?.mode === outgoingMode ? live :
+        pendingIdentity?.mode === outgoingMode && responsiveLoss(pendingIdentity, document.activeElement) ? pendingIdentity : null;
+      revoke();
+      close(mobile);
+      if (!identity) {
+        const current = identityFor(document.activeElement);
+        if (current?.mode === mode && visible(document.activeElement)) {
+          pendingIdentity = current;
+          intentRevoked = false;
+        }
+        return;
+      }
+      if (mode === "mobile") {
+        if (visible(summary)) summary.focus({ preventScroll: true });
+        return;
+      }
+      const match = [...desktop.querySelectorAll("[data-nav-page-id]")]
+        .find((element) => element.getAttribute("data-nav-page-id") === identity.pageId);
+      const destination = match?.matches("a[href]") ? match : match?.querySelector("a[href]");
+      const parent = destination?.closest(".desktop-nav__group")?.querySelector(".desktop-nav__link");
+      if (visible(parent)) parent.focus({ preventScroll: true });
+      if (visible(destination)) destination.focus({ preventScroll: true });
+      else if (visible(home)) home.focus({ preventScroll: true });
+    });
+    if (!mobileMode.matches) close(mobile);
+  })();
+</script></div></header><main id="main-content"><article class="article wiki-article shell" data-pagefind-body="true"><nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="https://bombfarmwiki.wiki/">Bomb Farm Wiki</a></li><li><a href="https://bombfarmwiki.wiki/guides/">Bomb Farm Mine Guides — Start with the Core Loop</a></li><li aria-current="page">How to Play Bomb Farm: The Mine and Three-Team Loop</li></ol></nav><header class="article__header wiki-article__header reveal reveal--1"><p class="eyebrow">Player guide</p><h1 data-pagefind-meta="title">How to Play Bomb Farm: The Mine and Three-Team Loop</h1><p class="article__dek" data-pagefind-meta="description">Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.</p><dl class="article__meta wiki-article__meta"><div><dt>Published</dt><dd><time datetime="2026-10-08">2026-10-08</time></dd></div><div><dt>Last updated</dt><dd><time datetime="2026-10-08">2026-10-08</time></dd></div><div><dt>Sources checked</dt><dd><time datetime="2026-09-04">2026-09-04</time></dd></div></dl></header><div class="page-media" data-media-placement="hero"><figure class="game-media" data-media-id="proof.three-team-switching"><img src="/media/proof/three-team-switching.svg" alt="Original diagram showing three teams available for switching to keep the mine running" width="1200" height="675" loading="eager" decoding="async"><figcaption><span>Project-authored explanatory diagram of three-team switching; not an in-game UI capture or a timing or recovery guide.</span><a href="https://store.steampowered.com/app/4892010/Bomb_Farm/" rel="noreferrer">Image source <span aria-hidden="true">↗</span></a></figcaption></figure></div><div class="article__layout wiki-article__layout"><aside class="article__rail wiki-article__toc"><nav aria-labelledby="wiki-toc-title"><p class="eyebrow" id="wiki-toc-title">On this page</p><ol><li data-depth="2"><a href="#read-the-three-team-diagram">Read the three-team diagram</a></li><li data-depth="2"><a href="#follow-one-mine-session">Follow one mine session</a></li><li data-depth="2"><a href="#between-pushes-inspect-rather-than-guess">Between pushes: inspect rather than guess</a></li><li data-depth="2"><a href="#know-when-this-guide-has-answered-the-question">Know when this guide has answered the question</a></li><li data-depth="2"><a href="#your-next-check">Your next check</a></li></ol></nav></aside><div class="prose"><p>Start by observing the bomber squad’s mine progress, then inspect an available upgrade and the teams you can select. The recorded official description supports <strong>switching between three teams to keep the mine running</strong>; it does not prescribe when to switch or a mandatory order.</p>
+<h2 id="read-the-three-team-diagram">Read the three-team diagram</h2>
+<p>The three cards above represent three team choices, not three stages of a recovery cycle. TEAM 1, TEAM 2 and TEAM 3 are editorial labels. The shared mine task connects them; the picture does not show simultaneous team activity, cooldowns or energy values.</p>
+<p>Use it to understand the switching concept, then inspect the actual state in the current game before acting. It is an explanatory diagram, not a screenshot or a simulator.</p>
+<h2 id="follow-one-mine-session">Follow one mine session</h2>
+<ol>
+<li><strong>Observe the current push.</strong> Check whether the mine and squad are progressing through auto battles and stages.</li>
+<li><strong>Inspect the rewards.</strong> Look for an upgrade opportunity in the systems available to you; the recorded store description names equipment, heroes and account-level progression.</li>
+<li><strong>Check your team choices.</strong> Consider switching between the three teams using the current interface. Do not infer that a numbered team must act next.</li>
+<li><strong>Observe the result.</strong> Recheck whether progress continues and whether the next decision is clear. Change one decision at a time so you can tell what happened.</li>
+</ol>
+<p>This sequence is editorial guidance for observation. It is not a sourced optimal build order or a guarantee that switching fixes a stalled run.</p>
+<h2 id="between-pushes-inspect-rather-than-guess">Between pushes: inspect rather than guess</h2>
+<p>The recorded store description names gear, Forge upgrades and a skill tree. Their presence gives you places to inspect an upgrade opportunity; it does not establish which upgrade is best for your current squad.</p>
+<p>If you cannot tell what an action changes, stop before spending resources and inspect the current details. Do not substitute a guessed cost, recovery rule or damage formula.</p>
+<h2 id="know-when-this-guide-has-answered-the-question">Know when this guide has answered the question</h2>
+<p>You have the bounded answer when you can locate the mine progress, identify a decision to inspect and explain what the three-team switching concept means. You do not need to know a timer or adopt an optimal build to finish this guide.</p>
+<p>If progress remains unclear after a change, return to observation and check the game details. This page cannot diagnose every stalled run.</p>
+<h2 id="your-next-check">Your next check</h2>
+<p>Read the <a href="https://store.steampowered.com/app/4892010/Bomb_Farm/">official Steam description</a> if you need to compare the current game with the source. Return to the <a href="/">mine overview</a> to revisit this bounded route. This proof does not offer a separate build, Market or timer tool.</p>
+<p>The source record used here was accessed on <strong>4 September 2026</strong>. Writing this guide on 8 October does not mean the source or current mechanics were reverified on that date.</p></div></div><section class="faq section-rule" aria-labelledby="faq-title"><header class="faq__header"><p class="eyebrow">Quick answers</p><h2 id="faq-title">Frequently asked questions</h2></header><div class="faq__list"><details><summary>Does three-team switching establish an exact recovery timer?</summary><p>No. The recorded official description supports switching between three teams to keep the mine running. It does not establish recovery rates, readiness states or an optimal rotation order.</p></details><details><summary>When should I stop and check the current game?</summary><p>Stop when the available upgrade, team state or action is unclear. Inspect the current interface and official information rather than assuming a timing or best-build rule.</p></details></div></section><nav class="related-pages next-dispatch" aria-label="Related pages"><span class="eyebrow">Keep exploring</span><a href="/guides/"><span><strong>Bomb Farm Mine Guides — Start with the Core Loop</strong><small>One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database.</small></span><span aria-hidden="true">→</span></a><a href="/"><span><strong>Bomb Farm Wiki — Understand the Mine Loop</strong><small>Start with the mine loop: observe squad progress, check an upgrade opportunity and understand the sourced three-team switching concept.</small></span><span aria-hidden="true">→</span></a></nav><section class="sources evidence section-rule" aria-labelledby="sources-title"><div><p class="eyebrow">Sources & verification</p><h2 id="sources-title">How this page was checked</h2><p class="sources__verified">Sources checked <time datetime="2026-09-04">2026-09-04</time></p></div><ol><li><span>01</span><div><strong>store.steampowered.com</strong><small>official</small><a href="https://store.steampowered.com/app/4892010/Bomb_Farm/" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div><time datetime="2026-09-04">Checked 2026-09-04</time></li></ol></section></article></main><footer class="site-footer"><div class="shell site-footer__grid"><div><span class="eyebrow">BF Wiki</span><p class="site-footer__statement">Understand the mine. Switch teams with a purpose.</p></div><div class="site-footer__meta"><p>Bomb Farm Wiki / 2026</p><p>Understand the mine. Switch teams with a purpose.</p><nav class="site-footer__links" aria-label="Company and legal"><a href="/about/">about</a></nav><a href="/#top">Back to top ↑</a></div></div></footer></body></html>

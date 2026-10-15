@@ -1,0 +1,251 @@
+# Actual PLAN28 scope amendment
+
+Observed: 2026-10-07T23:25:28.617Z
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: 核对后，这次扩 scope 是合理且必要的，而且
+      - strong: 不代表产品边界扩大
+      - text: 。media-audit.test.ts 直接把旧 image/video fixture 当 MediaAsset[] 传入验证器，并手写正向 HTML；homepage.test.ts 也把旧 ImageAsset fixture 传入 homepage model / GameHero → GameMedia。如果新字段变为必填，这两个测试必须同步 synthetic metadata，否则 GREEN 阶段会因旧测试 fixture 失配而失败。
+    - paragraph: 原 PLAN28 保持 immutable。下面只增加这份 amendment。
+    - button "添加到资料库":
+      - generic: PLAN28 Amendment — Existing Media Fixture Test Migration
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN_AMENDMENT"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 28"
+        - text: "WORKSTREAM: WS03B"
+        - text: "AMENDMENT_SCOPE: TEST FIXTURE / POSITIVE HTML MIGRATION ONLY"
+        - text: "ORIGINAL_PLAN28: IMMUTABLE"
+        - text: "PRODUCT_MUTATIONS_SO_FAR: 0"
+        - text: "TEST_MUTATIONS_SO_FAR: 0"
+        - text: "WS03A_CONTINUATION: ACCEPTED"
+        - text: "NEXT_SLICE: WS03B ONLY"
+      - heading "1. Amendment decision" [level=2]
+      - paragraph:
+        - code: scope-replan-needed.json
+        - text: is accepted.
+      - paragraph: "Original PLAN28 allowed:"
+      - code: 12 Starter files + 4 SOP/Prompt files = 16 files
+      - paragraph: "Amended exact scope becomes:"
+      - code: original 16 + 17. tests/media-audit.test.ts 18. tests/homepage.test.ts = 18 files total
+      - paragraph:
+        - text: The two new files are permitted
+        - strong: only as compatibility migrations for existing synthetic fixtures and positive rendered HTML expectations
+        - text: .
+      - paragraph: They do not create new product requirements.
+      - separator
+      - heading "2. Why tests/media-audit.test.ts is required" [level=2]:
+        - text: 2. Why
+        - code: tests/media-audit.test.ts
+        - text: is required
+      - paragraph: "The current file directly defines old-shape fixtures:"
+      - code: image video localVideo
+      - paragraph: "and passes them to:"
+      - code: collectLocalVideoAdvisories() collectMediaHtmlErrors() ResolvedPageMedia-shaped expected mappings
+      - paragraph: "It also owns handcrafted positive HTML:"
+      - code: imageHtml videoHtml localVideoHtml
+      - paragraph: "Once WS03B requires:"
+      - code: dimensions rightsRef video.accessibleEquivalent
+      - paragraph: these fixtures and positive HTML must represent the new valid contract.
+      - paragraph: Therefore this file is an allowed migration dependency.
+      - separator
+      - heading "3. Allowed changes in media-audit.test.ts" [level=2]:
+        - text: 3. Allowed changes in
+        - code: media-audit.test.ts
+      - paragraph: "Only:"
+      - heading "Synthetic asset fixture migration" [level=3]
+      - paragraph: "Add synthetic metadata equivalent to:"
+      - code: "image: dimensions rightsRef video: dimensions rightsRef accessibleEquivalent localVideo: inherits valid video metadata"
+      - paragraph: Values must remain obviously synthetic/test-only.
+      - paragraph:
+        - code: rightsRef
+        - text: must not imply actual legal approval.
+      - separator
+      - heading "Positive HTML migration" [level=3]
+      - paragraph: "Update:"
+      - code: imageHtml videoHtml localVideoHtml
+      - paragraph: "only as required to match the final WS03B rendering contract, including where applicable:"
+      - code: image width/height derived video aspect presentation visible accessible equivalent optional/public credit only if fixture explicitly authors it existing source link
+      - paragraph: No unrelated markup redesign.
+      - separator
+      - heading "4. Existing negative assertions in media-audit.test.ts are protected" [level=2]:
+        - text: 4. Existing negative assertions in
+        - code: media-audit.test.ts
+        - text: are protected
+      - paragraph: "All existing negative cases remain meaningful and must continue testing the same failure behavior, including:"
+      - code: missing local files remote/wrong image src wrong alt broken YouTube title wrong loading wrong youtube-nocookie origin missing fullscreen wrong permissions missing video wrapper missing native controls missing playsinline wrong preload wrong local video src wrong poster unsupported iframe unknown asset ID placement mismatch empty wrapper rejection duplicate rendered placement
+      - paragraph: Do not remove, weaken, rename away, or convert them to snapshots merely to accommodate WS03B.
+      - paragraph: If a negative fixture needs the new required metadata to reach the intended old negative condition, add the metadata first and preserve the original failure trigger.
+      - paragraph: "Example principle:"
+      - code: test "wrong alt" must fail because alt is wrong, not earlier because dimensions are missing.
+      - separator
+      - heading "5. No new media-audit behavior scope" [level=2]
+      - paragraph:
+        - text: This amendment does
+        - strong: not
+        - text: authorize new
+        - code: media-audit.test.ts
+        - text: requirements beyond PLAN28.
+      - paragraph: "In particular do not introduce through this file:"
+      - code: new placement vocabulary share/OG media runtime provider failure engine rights approval checks new lifecycle states remote image support
+      - separator
+      - heading "6. Why tests/homepage.test.ts is required" [level=2]:
+        - text: 6. Why
+        - code: tests/homepage.test.ts
+        - text: is required
+      - paragraph: "The current homepage tests define synthetic:"
+      - code: "heroMedia: ImageAsset"
+      - paragraph: "and pass it through:"
+      - code: buildHomepageModel() GameHero.astro GameMedia.astro
+      - paragraph: Those fixtures currently lack the new required WS03B metadata.
+      - paragraph:
+        - text: Therefore the test would cease to represent a valid
+        - code: ImageAsset
+        - text: once schema migration lands.
+      - separator
+      - heading "7. Allowed changes in homepage.test.ts" [level=2]:
+        - text: 7. Allowed changes in
+        - code: homepage.test.ts
+      - paragraph: "Only existing homepage media fixtures may receive:"
+      - code: dimensions rightsRef
+      - paragraph: "Example shape:"
+      - code: "id type: image src alt sourceUrl dimensions rightsRef"
+      - paragraph: No fake game identity.
+      - paragraph: No production manifest mutation.
+      - separator
+      - heading "8. Homepage behavioral assertions remain protected" [level=2]
+      - paragraph: "Existing assertions about:"
+      - code: homepage model pass-through object identity resolved start page hero media presence game-hero--has-media game-hero--no-media absence of empty media wrapper homepage section behavior
+      - paragraph: must remain unchanged in meaning.
+      - paragraph: "Do not use WS03B as justification to alter:"
+      - code: homepage composition hero selection Start Here logic publication filtering media placement ownership no-media behavior
+      - separator
+      - heading "9. Positive renderer migration is allowed, behavior redesign is not" [level=2]
+      - paragraph:
+        - text: If
+        - code: GameMedia
+        - text: "now renders intrinsic:"
+      - code: width height
+      - paragraph:
+        - text: the homepage test may additionally observe those attributes
+        - strong: only if necessary to confirm the existing hero successfully renders the new valid asset contract
+        - text: .
+      - paragraph: But this amendment does not require turning homepage tests into another complete WS03B renderer suite.
+      - paragraph: "The authoritative new renderer assertions remain in the original PLAN28:"
+      - code: tests/media-rendering.test.ts tests/media-build.test.ts targeted WS03B browser evidence
+      - separator
+      - heading "10. Revised exact 18-file scope" [level=2]
+      - heading "Starter/product/docs" [level=3]
+      - code: 1. src/data/schemas/media.ts 2. src/core/media-presentation.ts NEW 3. src/data/media/catalog.ts 4. src/components/media/GameMedia.astro 5. src/components/media/VideoEmbed.astro 6. src/styles/global.css 7. scripts/media-validation.ts 8. tests/media.test.ts 9. tests/media-rendering.test.ts 10. tests/media-build.test.ts 11. docs/media/README.md 12. docs/CONTENT_AND_DATA_GUIDE.md
+      - heading "Existing compatibility test migrations" [level=3]
+      - code: 13. tests/media-audit.test.ts 14. tests/homepage.test.ts
+      - heading "SOP / Prompt synchronization" [level=3]
+      - code: 15. GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md 16. GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md 17. GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md 18. GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph:
+        - text: If implementation requires a
+        - strong: 19th product/governance/test file
+        - text: ":"
+      - code: STOP REPLAN
+      - paragraph: Execution artifacts do not count toward 18.
+      - separator
+      - heading "11. RED sequence remains strict" [level=2]
+      - paragraph:
+        - text: The amendment does
+        - strong: not
+        - text: authorize fixture migration before RED evidence.
+      - paragraph: "Sequence remains:"
+      - code: verify continuation-acceptance.json ↓ freeze preimages for all 18 files ↓ first mutation occurs only in original RED tests ↓ readiness/continuation becomes STALE ↓ run original targeted RED ↓ capture genuine non-zero RED ↓ only then implement GREEN
+      - paragraph: "Initial RED mutation remains limited to:"
+      - code: tests/media.test.ts tests/media-rendering.test.ts tests/media-build.test.ts
+      - paragraph:
+        - text: Do
+        - strong: not
+        - text: update
+        - code: media-audit.test.ts
+        - text: or
+        - code: homepage.test.ts
+        - text: before RED has been captured.
+      - separator
+      - heading "12. GREEN phase revised scope" [level=2]
+      - paragraph: "After valid RED:"
+      - code: implement original PLAN28 product changes + migrate media-audit synthetic fixtures/positive HTML + migrate homepage synthetic ImageAsset fixtures + sync SOP/Prompt
+      - paragraph:
+        - text: Then run the original targeted GREEN suite
+        - strong: plus both migrated existing test files
+        - text: .
+      - paragraph: "At minimum:"
+      - code: tests/media.test.ts tests/media-rendering.test.ts tests/media-build.test.ts tests/media-audit.test.ts tests/homepage.test.ts
+      - paragraph: must PASS together before root regression.
+      - separator
+      - heading "13. Compatibility principle for migrated tests" [level=2]
+      - paragraph: "Every migrated fixture must answer:"
+      - code: “What minimum explicit WS03B metadata makes this same old synthetic scenario valid?”
+      - paragraph: "It must not answer:"
+      - code: “How can we redesign this test around the new implementation?”
+      - paragraph: "Therefore preserve:"
+      - code: same fixture purpose same placement same image/video type same old negative trigger same homepage behavior same validation boundary
+      - separator
+      - heading "14. Production sources remain unchanged where previously excluded" [level=2]
+      - paragraph: "Still no modification to:"
+      - code: src/data/media/media.json src/core/media-readiness.ts page-inventory game.config.ts routes SEO/share search/Pagefind ads package.json package-lock.json CI browser matrix browser runner closure verifier WebKit policy/control
+      - paragraph: "Canonical production manifest remains:"
+      - code: "{\"assets\":[],\"pages\":[]}"
+      - paragraph: No synthetic WS03B asset may be placed into it.
+      - separator
+      - heading "15. All downstream PLAN28 gates unchanged" [level=2]
+      - paragraph:
+        - text: This amendment changes
+        - strong: only file scope from 16 → 18
+        - text: .
+      - paragraph: "Everything else remains exactly as original PLAN28:"
+      - code: bounded media schema pure media presentation adapter dimensions derived ratio rightsRef evidence pointer optional public credit video accessible equivalent rightsRef ≠ approval sourceUrl ≠ rights no rights engine no provider abstraction empty/no-media compatibility RED → GREEN root regression unadopted/adopted targeted 03B browsers valid-media state no-media state blocked-third-party embed state invalid local asset negative state short-owned TMP cleanup post-change fresh47 frozen40 subset fresh Chromium/Firefox counterparts policy/native/control binding closure sole-Safari BLOCK Contract41 unchanged 03C not started no commit/push/tag/merge/release
+      - separator
+      - heading "16. Amendment STOP conditions" [level=2]
+      - paragraph: "Stop if either added test requires:"
+      - code: product API beyond original WS03B new page behavior new placement new schema field rights lifecycle change new renderer feature homepage architecture change
+      - paragraph: Also STOP if satisfying an existing negative test would require weakening its original failure assertion.
+      - separator
+      - heading "17. Authorized next action" [level=2]
+      - code: "PLAN28 AMENDMENT: ACCEPTED EXACT SCOPE: 18 files PRODUCT/TEST MUTATIONS SO FAR: 0 NEXT: execute original RED phase first"
+      - paragraph: After RED is captured, proceed with the amended PLAN28 under standing authorization.
+      - paragraph: "System state remains:"
+      - code: "WS03A: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03B: NOT YET ACCEPTED Safari proof: 0 WS06A FULL: BLOCKED WS03 formal Gate: NOT ACCEPTED Capability promotion: NONE Release hold: ACTIVE"
+    - paragraph:
+      - text: 这次不需要重启 iteration，也不需要另开 29。
+      - strong: Iteration28 继续执行，只是把两个真实受 schema 迁移影响的既有测试纳入有限 scope；RED 仍然必须先于这两个 fixture 的 GREEN 迁移。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

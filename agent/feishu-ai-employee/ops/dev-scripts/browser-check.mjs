@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';
+import {mkdirSync} from 'node:fs';
+import path from 'node:path';
+const dir=path.resolve('data/feishu-browser-profile');mkdirSync(dir,{recursive:true});
+const browser=await chromium.launchPersistentContext(dir,{channel:'chrome',headless:false,viewport:{width:1280,height:850}});
+const page=browser.pages()[0]||await browser.newPage();
+await page.goto('https://open.feishu.cn/app?lang=zh-CN',{waitUntil:'domcontentloaded',timeout:45000});
+await page.waitForTimeout(3500);
+console.log(JSON.stringify({url:page.url(),title:await page.title(),text:(await page.locator('body').innerText()).slice(0,1600)},null,2));
+await browser.close();

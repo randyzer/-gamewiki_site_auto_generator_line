@@ -1,0 +1,295 @@
+{
+  "forbidden": [
+    "reset --hard",
+    "checkout .",
+    "git clean",
+    "delete branch",
+    "delete shared browser cache"
+  ],
+  "files": [
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package.json",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package.json",
+      "preimageFingerprint": {
+        "sha256": "a22896f1b2aa492be67026cf7da434759505086a1c580ed8f22e112635699847",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "c15c92d70c7fa8a3dfe9239511c6956893a53dd6a3eb9712286f3f9a76d34162",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package-lock.json",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package-lock.json",
+      "preimageFingerprint": {
+        "sha256": "d3e015461e4bcba8419cd6d262d5842efeca3495851c3c677f52b4069df989c5",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.github/workflows/ci.yml",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.github/workflows/ci.yml",
+      "preimageFingerprint": {
+        "sha256": "5b7b83296c98ab25efbd4fbd2b27921a2e2deb18abac4edc84bdf0500caa5e7a",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "16b2297ae3200c9687f462a08332d90079d4350d03eebd8253731043e522bf73",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.gitignore",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.gitignore",
+      "preimageFingerprint": {
+        "sha256": "0d540003eb586be1729bca6dbbada59313c66cd9ca98501966caf331c8780dc3",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "5dd514707edbe8335a4e5b329d61a4c2e9858215da210cd29ab79fce6fbc2c2f",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md",
+      "preimageFingerprint": {
+        "sha256": "d44448d5bbad9d526837b2103a31555c00a49128424c02a67159e11503bcd409",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "aa7e49011b6796156992332e26bbebae260c2fb438596042afa8472453236cbc",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md",
+      "preimageFingerprint": {
+        "sha256": "1ac6315defd76dbead98e82a0b93787dac80b94d8b493d950494e4de4cc0e2d2",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "b6154f0b3ca3f4f05a6b0301204a8fea0f444f522127f7cfde0397381cd74e66",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CORE_BROWSER_EVIDENCE.md",
+      "preimage": null,
+      "preimageFingerprint": null,
+      "postimageFingerprint": {
+        "sha256": "b1eefa3517c23e79712b2e4dd0cde47419996bc33b9ba6502c1b82cdd69b6dd8",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "remove_new_file",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/core-browser-matrix.ts",
+      "preimage": null,
+      "preimageFingerprint": null,
+      "postimageFingerprint": {
+        "sha256": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "remove_new_file",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/core-browser-evidence.ts",
+      "preimage": null,
+      "preimageFingerprint": null,
+      "postimageFingerprint": {
+        "sha256": "9edb01baf19ac2d410e6d1eb94aa402dd82184d7e67676d92f82f4ac4fd3da89",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "remove_new_file",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/run-core-browser-evidence.ts",
+      "preimage": null,
+      "preimageFingerprint": null,
+      "postimageFingerprint": {
+        "sha256": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "remove_new_file",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-browser-evidence.test.ts",
+      "preimage": null,
+      "preimageFingerprint": null,
+      "postimageFingerprint": {
+        "sha256": "0b7e35f35479712a1a2fb9c7ce3b58e2e8f644e89ad9adf7ebd21b7699621af6",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "remove_new_file",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/styles/global.css",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/iteration12-source-fix/src/styles/global.css",
+      "preimageFingerprint": {
+        "sha256": "68d2411bfab2fafec93758182afc4c5e79d6ad4654358916170a9240dface0b4",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "50a80ef60e2389043fc5fb9ce61f81b40187d7b579fd2fa3a4b8e6dc8bfb6109",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/navigation/MobileNav.astro",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/iteration12-source-fix/src/components/navigation/MobileNav.astro",
+      "preimageFingerprint": {
+        "sha256": "2dba29ceacb31b0d4089afed1c847a9e0e4c1ae78338df8cad7d78d7b08fc6b1",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/navigation-behavior.test.ts",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/iteration12-source-fix/tests/navigation-behavior.test.ts",
+      "preimageFingerprint": {
+        "sha256": "238ae2843caaf3e5a80cc60fb91e4db608ebf4871776bb72612ec14860444855",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/navigation.test.ts",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/iteration12-source-fix/tests/navigation.test.ts",
+      "preimageFingerprint": {
+        "sha256": "40a7efa4425ee3b02f3e27c02babfa5bf7255a4c5dfb6309dfcad15cc9c18bef",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "34a60665b2e3e59fab4f7dbe085d602e87a381a338aa19d14cf9a18c42721912",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "preimageFingerprint": {
+        "sha256": "756071ee2dbaaf3425b2b44aa6ab71645ce3bbacf0b4a1a190e8dfc47a87968f",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "8bfb83739a7c67800aa2577cddda968e356bba161f6e0a11051e84e9f70500db",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+      "preimageFingerprint": {
+        "sha256": "2f476fe6f24ec212df7e09d49ba5e35f1ed284aa7f3563b6977e1e9761adad63",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "0f4d081faec97d313d9206899741a388c24575c7c7345f8e788100c42273998a",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "preimageFingerprint": {
+        "sha256": "dc7f149485298c5712c449ef41543b0a632ec64ec58e526feb99e1757bbc6784",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "6dfddc56285f82cdb5b141126bad9ceb4a988d4d917f350616ab16684c7a89db",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "preimage": "template/codex/executions/v2.7-ws06a/preimages/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "preimageFingerprint": {
+        "sha256": "1927454758171b08884dfb2217637938dc03953d87c0e259f9335962f91405db",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "fced56fda5eb4b65f9a36491def10c76c6caf442da8142d583feaed3234b81f9",
+        "mode": 420,
+        "symlink": false
+      },
+      "action": "restore_exact_preimage",
+      "guard": "current fingerprint must equal recorded WS06A postimage; otherwise STOP"
+    }
+  ]
+}

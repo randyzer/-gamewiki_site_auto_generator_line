@@ -1,0 +1,8 @@
+{
+  "command": "npm run check:browser",
+  "startedAt": "2026-10-07T15:22:58.401Z",
+  "finishedAt": "2026-10-07T15:22:59.024Z",
+  "exitCode": 1,
+  "observerErrors": [],
+  "fixtureCaptured": false
+}

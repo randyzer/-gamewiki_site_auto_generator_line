@@ -1,0 +1,9 @@
+{
+  "exitCode": 0,
+  "command": "tsx iteration31/browser-search.ts",
+  "targetedAttempts": 1,
+  "retryCount": 0,
+  "childPid": 51246,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c31a.72Os3n"
+}

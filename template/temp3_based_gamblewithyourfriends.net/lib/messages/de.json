@@ -1,0 +1,274 @@
+{
+  "home": "Startseite",
+  "guide": "Anleitung",
+  "complete": "Komplette Anleitung",
+  "beginner": "Einsteiger-Anleitung",
+  "nav": [
+    "Anleitung",
+    "Online-Hilfe",
+    "Mods",
+    "Strategie",
+    "Items",
+    "Erfolge",
+    "Spiele",
+    "Plattformen"
+  ],
+  "steam": "Auf Steam",
+  "viewSteam": "Auf Steam ansehen →",
+  "buySteam": "Auf Steam kaufen →",
+  "preview": "Vorschau",
+  "read": "Anleitung lesen →",
+  "open": "Anleitung öffnen →",
+  "openMenu": "Menü öffnen",
+  "closeMenu": "Menü schließen",
+  "navLabel": "Hauptnavigation",
+  "heroBadge": "Koop-Wegweiser · Erst die Bank, dann die Tische",
+  "heroTitle": "Gamble With Your Friends",
+  "heroHighlight": "Komplette Anleitung",
+  "heroDescription": "Dein Einstieg in die gemeinsame Bank, Teamplanung, Casinotische und Items. Versteht den Ablauf, plant gemeinsam und haltet die Gruppe zusammen.",
+  "heroButton": "Komplette Anleitung öffnen",
+  "fixButton": "Online-Koop-Hilfe",
+  "stats": [
+    "Glücksspiele",
+    "Erfolge",
+    "Etagen",
+    "Enden"
+  ],
+  "aboutTitle": "Was ist Gamble With Your Friends?",
+  "about": [
+    "Gamble With Your Friends führt eine Gruppe in ein fiktives Casino mit gemeinsamer Bank. Jede Entscheidung betrifft das gesamte Team. Gute Absprachen sind deshalb ebenso wichtig wie die Regeln am nächsten Tisch.",
+    "Der Ablauf besteht aus Vorbereitung, einem zeitlich begrenzten Casinobesuch und der Auswertung des Tages. Steigende Ziele machen eine Tischwahl, eine Ausgabenregel und eine Person für die Uhr sinnvoll.",
+    "Diese eigenständige Fananleitung erklärt den Ablauf ohne Erfolgsgarantie. Beginnt mit dem Einsteigerartikel. Die Vorschauen zeigen, welche Themen eine größere Sammlung später abdecken könnte."
+  ],
+  "features": [
+    [
+      "1–6 Spieler",
+      "Gemeinsam oder solo"
+    ],
+    [
+      "Gemeinsame Bank",
+      "Ein Teamguthaben"
+    ],
+    [
+      "Zeitlimit",
+      "Die Uhr im Blick"
+    ],
+    [
+      "Tagesziel",
+      "Auf das Ziel planen"
+    ],
+    [
+      "Casinotische",
+      "Regeln kennenlernen"
+    ],
+    [
+      "Auswertung",
+      "Den Tag besprechen"
+    ]
+  ],
+  "allTitle": "Alle Anleitungen",
+  "allDescription": "Ein klarer Einstieg und Vorschauen auf die Themen einer umfassenden Koop-Sammlung.",
+  "cardTitles": [
+    "Wiki-Übersicht",
+    "Komplette Anleitung",
+    "Einsteiger-Anleitung",
+    "Teamstrategie",
+    "Tipps & Planung",
+    "Erfolge & Enden",
+    "Erfolgs-Checkliste",
+    "Accessoires",
+    "Casinospiele",
+    "Items & Timing",
+    "Kamera-Notizen",
+    "Mod-Kompatibilität",
+    "Plattformübersicht",
+    "Online-Koop-Hilfe"
+  ],
+  "cardTags": [
+    "Index",
+    "Start",
+    "Grundlagen",
+    "Taktik",
+    "Beliebt",
+    "Abschluss",
+    "Checkliste",
+    "Kosmetik",
+    "Spielregeln",
+    "Items",
+    "Timing",
+    "Community",
+    "PC",
+    "Koop"
+  ],
+  "cardDescriptions": [
+    "Eine Vorschau der Sammlung zu Spielregeln, Items, Teamvorbereitung und späteren Abschlusszielen.",
+    "Der Einstieg in gemeinsame Finanzen, Tischwahl, Itemvorbereitung und die Checkliste für den ersten Tag.",
+    "Legt vor dem ersten Besuch einen Plan fest und versteht, wie das gemeinsame Guthaben euer Team beeinflusst.",
+    "Eine Vorschau zu Rollen, Ausgabenlimits und sichtbaren Entscheidungen bei riskanten Teamaktionen.",
+    "Planung für weitere Versuche: Fehler auswerten, eine Stoppregel festlegen und neue Tische kennenlernen.",
+    "Eine spätere Route für Erfolge, gemeinsame Ziele und getrennte Versuche für unterschiedliche Enden.",
+    "Vorschau einer Checkliste, die normales Spielen von gezielten Herausforderungen trennt.",
+    "Ein geplanter Überblick über kosmetische Optionen und das Trennen von Einkaufen und konzentrierten Versuchen.",
+    "Tischnamen und wichtige Fragen, bevor das gemeinsame Guthaben an einem unbekannten Spiel eingesetzt wird.",
+    "Eine Vorschau zu Itemwahl, Trägern und dem passenden Einsatzfenster für einen vereinbarten Versuch.",
+    "Ein späterer Blick auf Kameratiming, Kommunikation und Fragen vor einer geplanten Kombination.",
+    "Vorschau zum Abgleich von Versionen und zur Vorbereitung vor dem Einsatz von Community-Mods.",
+    "Ein geplanter Überblick darüber, wo aktuelle offizielle Plattforminformationen geprüft werden können.",
+    "Vorschau einer Lobby-Checkliste zu Versionen, Einladungen, Steam-Verbindung und gleichen Mods."
+  ],
+  "gamesTitle": "Anleitungen zu Casinospielen",
+  "gamesDescription": "Vorschau der Tischthemen. Diese Einträge zeigen die geplante Sammlung; einzelne Spielanleitungen sind noch nicht veröffentlicht.",
+  "gamesButton": "Spielvorschauen ansehen",
+  "tipsTitle": "Tipps für neue Spieler",
+  "tipsDescription": "Sechs Gewohnheiten für euren ersten gemeinsamen Casinobesuch.",
+  "tipsButton": "Einsteiger-Anleitung öffnen",
+  "tips": [
+    [
+      "Eine Bankregel vereinbaren",
+      "Alle teilen dasselbe Guthaben. Legt eine Reserve fest und sagt den Einsatz laut an, bevor jemand einen größeren Versuch startet."
+    ],
+    [
+      "Ein sicheres Ergebnis schützen",
+      "Wenn das Ziel erreicht ist, prüft gemeinsam den Nutzen einer weiteren Wette. Eine kleine Zugabe rechtfertigt selten ungeplantes Teamrisiko."
+    ],
+    [
+      "Erst lernen, dann wiederholen",
+      "Testet einen unbekannten Tisch mit kleinem Einsatz. Besprecht das Ergebnis, bevor ihr denselben Fehler teurer wiederholt."
+    ],
+    [
+      "Jedem Item eine Aufgabe geben",
+      "Legt Träger und Einsatzmoment fest. Der Kauf allein macht ein Item noch nicht zu einem abgestimmten Plan."
+    ],
+    [
+      "Notlösungen gemeinsam besprechen",
+      "Manche Rettungsaktionen beeinflussen auch den nächsten Tag. Besprecht die Kosten und holt die Zustimmung betroffener Spieler ein."
+    ],
+    [
+      "Den Versuch zusammen auswerten",
+      "Nutzt das Tagesergebnis für bessere Rollen und Planung. Ein Verlust ist Rückmeldung, kein Anlass für eine persönliche Aufholjagd."
+    ]
+  ],
+  "faqTitle": "Häufige Fragen",
+  "faq": [
+    [
+      "Was ist Co-op Fieldnotes?",
+      "Eine unabhängige Vorlage für eine Koop-Fananleitung. Der Einsteigerartikel ist verfügbar, andere Themen sind als Vorschau gekennzeichnet."
+    ],
+    [
+      "Welches Spiel wird vorgestellt?",
+      "Gamble With Your Friends: ein Videospiel mit fiktiven Casinotischen und gemeinsamer Bank. Aktuelle offizielle Angaben stehen auf Steam."
+    ],
+    [
+      "Ist das ein offizielles Wiki?",
+      "Nein. Diese Fananleitung ist unabhängig von Entwicklern und Publisher."
+    ],
+    [
+      "Garantiert eine Anleitung den Erfolg?",
+      "Nein. Absprachen können helfen, aber Zufall, Entscheidungen und Updates verändern Ergebnisse."
+    ],
+    [
+      "Wo sollte eine neue Gruppe beginnen?",
+      "Öffnet die komplette Anleitung und lest den Einsteigerartikel gemeinsam. Vereinbart zuerst eine Bankregel."
+    ],
+    [
+      "Wo finde ich Plattforminformationen?",
+      "Prüft die offizielle Steam-Seite und Entwicklerankündigungen. Die Plattformkarte ist nur eine Vorschau."
+    ],
+    [
+      "Wie bereiten wir eine Online-Sitzung vor?",
+      "Vergleicht Versionen, prüft Steam und vereinbart vor der Einladung, ob Mods verwendet werden."
+    ],
+    [
+      "Wo gibt es Community-Ratschläge?",
+      "Nutzt vom Entwickler oder auf Steam verlinkte Communities. Diese Vorlage betreibt keine offizielle Community."
+    ],
+    [
+      "Was tun bei Verbindungsproblemen?",
+      "Prüft Versionen und Steam-Status, dann versucht eine neue Einladung. Ein eigener Fehlerleitfaden ist noch nicht verfügbar."
+    ],
+    [
+      "Gibt es Erfolgsanleitungen?",
+      "Die Karten sind Vorschauen. In dieser kleinen Vorlage ist nur der Einsteigerartikel veröffentlicht."
+    ],
+    [
+      "Sind die Bilder Spielaufnahmen?",
+      "Nein. Hintergrund und Diagramme sind eigenständige Illustrationen, wie in den Bildunterschriften angegeben."
+    ],
+    [
+      "Sind Mod-Anleitungen verfügbar?",
+      "Noch nicht. Die Karten bewahren das Referenzlayout und sind klar als Vorschau markiert."
+    ]
+  ],
+  "ctaTitle": "Bereit für den ersten Versuch?",
+  "ctaDescription": "Beginnt mit dem Wegweiser und lest die Grundlagen mit eurem Team, bevor ihr einen Tisch auswählt.",
+  "ctaSecondary": "Einsteiger-Anleitung",
+  "footerDescription": "Unabhängige Notizen zum gemeinsamen Spielen: Bankregeln, Vorbereitung, Items und ein abgestimmter erster Versuch.",
+  "footerDisclaimer": "Fanvorlage ohne Verbindung zu den Entwicklern. Die Bilder sind eigene Platzhalter.",
+  "footerGuides": "ANLEITUNGEN",
+  "footerInfo": "SPIELINFOS",
+  "footerCopyright": "© 2026 Co-op Fieldnotes — Unabhängige Fananleitung.",
+  "footerCredit": "Spielnamen gehören ihren Eigentümern. Eigene Illustrationen.",
+  "guideTitle": "Gamble With Your Friends Anleitung",
+  "guideDescription": "Ein praktischer Einstieg für euer Team: gemeinsames Guthaben verstehen, einen Tisch wählen, Items vorbereiten und vor dem zeitlich begrenzten Besuch eine Stoppregel vereinbaren.",
+  "quickTitle": "Schnellstart",
+  "quickDescription": "Besprecht zuerst die gemeinsame Bank. Wählt einen Tisch, einen Itemplan und eine klare Reserve. Legt fest, wer größere Einsätze tätigt und wer die Uhr beobachtet. Ist das Tagesziel gedeckt, entscheidet gemeinsam, bevor ihr wieder Geld riskiert.",
+  "strategyButton": "Strategieroute",
+  "figureCaption": "Eigene Casinoillustration: Der gemeinsame Plan beginnt vor dem ersten Tisch.",
+  "mainGuides": "Die wichtigsten Anleitungen",
+  "checklistTitle": "Checkliste für den ersten Versuch",
+  "checklist": [
+    [
+      "Gemeinsame Ausgabenregel",
+      "Legt fest, wer größere Einsätze tätigen darf und welche Reserve das Team behalten möchte."
+    ],
+    [
+      "Einen bekannten Tisch wählen",
+      "Wählt ein Spiel, dessen Regeln jemand erklären kann. Ein vertrauter Tisch gibt dem Team einen gemeinsamen Ausgangspunkt."
+    ],
+    [
+      "Items vor Abfahrt vorbereiten",
+      "Bestimmt einen Träger und den Zweck jedes Hilfsmittels. Prüft vor Beginn des Timers, ob das Item wirklich bereit ist."
+    ],
+    [
+      "Beim sicheren Ziel pausieren",
+      "Prüft das Guthaben gemeinsam vor dem nächsten Einsatz. Ein erreichtes Ziel zu schützen ist Teil des Plans."
+    ]
+  ],
+  "answersTitle": "Antworten auf häufige Suchen",
+  "answers": [
+    [
+      "Ist das Glücksspiel mit echtem Geld?",
+      "Nein. Diese Anleitung behandelt ein Videospiel mit fiktivem Spielgeld und bietet keine echten Glücksspieldienste."
+    ],
+    [
+      "Wo prüfen wir Plattformen?",
+      "Aktuelle Anforderungen stehen im offiziellen Store; neue Plattformen werden durch die Entwickler angekündigt."
+    ],
+    [
+      "Was ist ein guter Anfängerplan?",
+      "Eine gemeinsame Ausgabenregel, ein bekannter Tisch, ein vorbereiteter Itemträger und klare Ansagen vor großen Einsätzen."
+    ],
+    [
+      "Ist das Ergebnis immer gleich?",
+      "Nein. Prüft Beobachtungen in eurer aktuellen Spielversion und versteht einen Plan niemals als Erfolgsgarantie."
+    ]
+  ],
+  "moreHelp": "Weitere Hilfe",
+  "moreRows": [
+    "Plattformen und offizielle Systemanforderungen",
+    "Community-Mods und gleiche Versionen",
+    "Weitere Versuche und Ergebnisauswertung",
+    "Kameraplanung und gemeinsames Timing",
+    "Kosmetik und getrennte Einkaufsrunden",
+    "Eine Übersicht über künftige Anleitungen"
+  ],
+  "articleBadge": "Hier beginnen",
+  "articleGame": "Gamble With Your Friends",
+  "articleTitle": "Einsteiger-Anleitung",
+  "articleMeta": "Eigene Einstiegsnotizen · Teamspiel · Illustrierte Vorlage",
+  "articleMore": "Wie geht es weiter?",
+  "articleMoreDescription": "Kehrt zum Wegweiser zurück oder besprecht die Checkliste nochmals mit der Gruppe.",
+  "notFound": "Seite nicht gefunden",
+  "notFoundText": "Dieser Artikel ist nicht veröffentlicht. Im Wegweiser findet ihr verfügbare Inhalte.",
+  "footerEnding": "Leitfaden für Enden"
+}

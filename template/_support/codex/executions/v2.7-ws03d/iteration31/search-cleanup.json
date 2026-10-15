@@ -1,0 +1,20 @@
+[
+  {
+    "enabled": true,
+    "normalStopExit": 0,
+    "pidAliveBeforeStop": true,
+    "pidAliveAfterStop": false,
+    "fallbackSignalUsed": false,
+    "fixtureRemoved": true,
+    "startedPid": 51309
+  },
+  {
+    "enabled": false,
+    "normalStopExit": 0,
+    "pidAliveBeforeStop": true,
+    "pidAliveAfterStop": false,
+    "fallbackSignalUsed": false,
+    "fixtureRemoved": true,
+    "startedPid": 51452
+  }
+]

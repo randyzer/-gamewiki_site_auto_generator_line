@@ -1,0 +1,543 @@
+--- iteration17-preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/core-browser-evidence.ts
++++ iteration17-postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/core-browser-evidence.ts
+@@ -64,13 +64,23 @@
+ 
+ // Expected identity comes from the running source/build, never from the report being checked.
+ export function validateBrowserEvidence(input: unknown, expected: EvidenceIdentity): string[] {
++  return validateSnapshot(input, expected, true);
++}
++
++// Read failed runs without changing the strict qualification gate above.
++export function validateBrowserEvidenceSnapshot(input: unknown, expected: EvidenceIdentity): string[] {
++  return validateSnapshot(input, expected, false);
++}
++
++function validateSnapshot(input: unknown, expected: EvidenceIdentity, requirePass: boolean): string[] {
+   const errors = validateMatrix();
+   const parsed = reportSchema.safeParse(input);
+   if (!parsed.success) return [...errors, ...parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`)];
+   const report = parsed.data;
+   if (report.identity.canonicalContract.verification === null) errors.push("Contract input not verified/bound");
+   if (JSON.stringify(report.identity) !== JSON.stringify(identitySchema.parse(expected))) errors.push("source/build/engine identity mismatch");
+-  if (report.overall !== "PASS" || report.infrastructureErrors.length) errors.push("overall/infrastructure failure");
++  if (requirePass && (report.overall !== "PASS" || report.infrastructureErrors.length)) errors.push("overall/infrastructure failure");
++  if (!requirePass && report.overall !== (report.rows.every(row => row.caseStatus === "PASS") && !report.infrastructureErrors.length ? "PASS" : "FAIL")) errors.push("inconsistent overall status");
+   if (!report.cleanup.previewStopped || !report.cleanup.fixtureRemoved) errors.push("cleanup incomplete");
+   if (report.rows.length !== 47) errors.push("47 evidence rows required");
+   const seen = new Set<string>();
+@@ -87,11 +97,13 @@
+     if (engine.browserName !== planned.engine || row.browserVersion !== engine.version || row.browserRevision !== engine.revision) errors.push(`${row.caseId}: engine identity mismatch`);
+     if (row.sourceSha256 !== expected.fixture.sourceSha256 || row.buildSha256 !== expected.build.distSha256) errors.push(`${row.caseId}: build/source mismatch`);
+     if (row.httpStatus !== (planned.role === "recovery-404" ? 404 : 200)) errors.push(`${row.caseId}: HTTP status mismatch`);
+-    if (row.caseStatus !== "PASS" || row.failure !== null) errors.push(`${row.caseId}: case did not pass`);
++    if (requirePass && (row.caseStatus !== "PASS" || row.failure !== null)) errors.push(`${row.caseId}: case did not pass`);
++    if (!requirePass && (row.caseStatus === "NOT_RUN" || (row.caseStatus === "PASS") !== row.assertions.every(a => a.passed) ||
++      (row.caseStatus === "PASS" ? row.failure !== null : !row.failure))) errors.push(`${row.caseId}: incomplete/inconsistent case`);
+     const names = row.assertions.map((assertion) => assertion.name);
+     if (names.length !== planned.requiredAssertions.length || new Set(names).size !== names.length ||
+       planned.requiredAssertions.some((name) => !names.includes(name))) errors.push(`${row.caseId}: assertion coverage mismatch`);
+-    if (row.assertions.some((assertion) => !assertion.passed)) errors.push(`${row.caseId}: assertion failed`);
++    if (requirePass && row.assertions.some((assertion) => !assertion.passed)) errors.push(`${row.caseId}: assertion failed`);
+   }
+   for (const planned of coreBrowserMatrix) if (!seen.has(planned.caseId)) errors.push(`missing case ${planned.caseId}`);
+   return errors;
+--- iteration17-preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package.json
++++ iteration17-postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package.json
+@@ -19,7 +19,8 @@
+     "patch:impact": "tsx scripts/patch-impact.ts",
+     "preview": "astro preview",
+     "test": "vitest run",
+-    "test:watch": "vitest"
++    "test:watch": "vitest",
++    "verify:browser-closure": "tsx scripts/verify-ws06a-browser-closure.ts"
+   },
+   "dependencies": {
+     "@astrojs/mdx": "8.0.0",
+--- iteration17-preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CORE_BROWSER_EVIDENCE.md
++++ iteration17-postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CORE_BROWSER_EVIDENCE.md
+@@ -20,7 +20,7 @@
+ | Chromium reduced motion, mobile/desktop × shell/detail | 4 |
+ | Chromium live 899→901→899 with child focus migration | 1 |
+ 
+-All 47 must execute and pass. Required rows/assertions, exact engine/revision, source/build identity, HTTP404 and cleanup are checked; missing, duplicate, unexpected, skipped, failed or NOT_RUN evidence rejects the gate. Ordinary case failures are recorded while remaining cases run. A build/server/identity failure records all unexecuted cases as NOT_RUN and exits unsuccessfully. Missing engines never reduce the matrix.
++The strict raw qualification requires all 47 to execute and pass; the separately described closure policy never rewrites that result. Required rows/assertions, exact engine/revision, source/build identity, HTTP404 and cleanup are checked; missing, duplicate, unexpected, skipped, failed or NOT_RUN evidence rejects the gate. Ordinary case failures are recorded while remaining cases run. A build/server/identity failure records all unexecuted cases as NOT_RUN and exits unsuccessfully. Missing engines never reduce the matrix.
+ 
+ The evidence binds the actual branch/HEAD plus the uncommitted source manifest, fixture source, final dist, exact package version, installed revisions (including platform overrides), launched browser versions, host, viewport, JS/motion and individual assertions. Manifest hashing excludes generated caches, dependencies, build output, evidence output and credential files. HEAD alone cannot identify uncommitted work. Run evidence is checked against independently computed source/build identity; the validator's unit fixtures are never real browser results.
+ 
+@@ -32,4 +32,33 @@
+ 
+ CI retains all WS-02 gates and adds engine installation plus this command. A local run proves the local command only; it does not claim a remote GitHub Actions run. Browser-discovered runtime defects require a separately scoped amendment before source changes.
+ 
+-A minimal native engine probe records plain Tab/Shift+Tab across anchors/buttons/inputs. Unavailable standard link traversal remains a failure; no Alt/Option substitute, browser flag, OS change or programmatic focus is allowed to turn it green. Live resize waits for actual media-query/CSS state before judging focus, and native table scrolling records active target, key arrival and scrollLeft. Any unresolved failure stops this finite workstream.
++A minimal native engine probe records plain Tab/Shift+Tab across anchors/buttons/inputs. Unavailable standard link traversal remains a failure; no Alt/Option substitute, browser flag, OS change or programmatic focus is allowed to turn it green. Live resize waits for actual media-query/CSS state before judging focus, and native table scrolling records active target, key arrival and scrollLeft. Any unresolved failure blocks raw qualification; finite workstream closure additionally follows the evidence policy below.
++
++## WS-06A WebKit verification policy V1 — separate closure evidence
++
++The canonical Contract and its capability requirements remain unchanged. `check:browser` and `validateBrowserEvidence` retain the strict raw 47/47 PASS gate. Every one of the 47 matrix cases must execute, with no skip/NOT_RUN/missing assertion. Preserve each original FAIL and every historical evidence file. A policy disposition never changes a raw row to PASS, N/A, SKIP or an exception.
++
++The selected Starter must actually supply `verify:browser-closure`; inspect package.json rather than infer availability. This separate command can find the finite Core workstream **eligible for independent closure review** through either strict raw 47/47 PASS, or complete raw execution with only the exact accepted WebKit26.6/rev2359/darwin-arm64 input-profile failures plus complete independent Safari keyboard evidence. It is not automatic WS-06A acceptance. Chromium/Firefox failures, unknown infrastructure/failure details, missing or invalid evidence and stale source/build/engine identity fail closed. CI and the raw browser command remain strict and unchanged.
++
++Plain-Tab dependent failures must match the accepted prerequisite failure detail and a bound native link-traversal probe, classified `ENVIRONMENT_PROFILE_BLOCKED`. A failed local table scroll must still prove focused wrapper, genuine overflow, no document overflow, received ArrowRight and unchanged native scroll; the pinned accepted 10-process control supports only `PRODUCT_EVIDENCE_UNRESOLVED`. Neither disposition is a product PASS. Pin policy ID `WS06A_WEBKIT_VERIFICATION_V1`, accepted proposal SHA256 `2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917`, and ArrowRight control SHA256 `1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344`.
++
++Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
++
++Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
++
++### Closure command inputs and provenance
++
++```sh
++WS06A_BROWSER_EVIDENCE=/absolute/fresh/core-browser-evidence.json \
++WS06A_EXPECTED_IDENTITY=/absolute/session/expected-identity.json \
++WS06A_NATIVE_PROBE=/absolute/session/bound-native-keyboard-probe.json \
++WS06A_POLICY_PROPOSAL=/absolute/accepted/WEBKIT_VERIFICATION_POLICY_PROPOSAL_V1.md \
++WS06A_ARROW_CONTROL=/absolute/accepted/arrowright-repeatability.json \
++WS06A_MANUAL_PROJECT_ROOT=/absolute/session/disposable-project \
++WS06A_REAL_KEYBOARD_EVIDENCE=/absolute/session/real-keyboard-evidence.json \
++npm run verify:browser-closure
++```
++
++`WS06A_EXPECTED_IDENTITY` is captured independently by the build/session owner before qualification; never copy the raw report's own identity as its oracle. The command independently verifies current Starter manifest/HEAD/branch and actual Contract bytes. Manual source/dist hashes are computed directly from `WS06A_MANUAL_PROJECT_ROOT`. Exact accepted proposal/control bytes are read and hash-checked. The bound native probe envelope contains schemaVersion1, rawEvidenceSha256, independently captured host/engine, and the unmodified WebKit probe `{plainTabReachesLink,sequence}` from the same qualification run. The raw digest prevents rebinding a different report. A probe or expected-identity file requires its own captured provenance; handwritten assertions do not establish a run.
++
++Without `WS06A_REAL_KEYBOARD_EVIDENCE`, the command exits1 and prints the exact remaining case/assertion checklist. Without an independently captured identity it also fails closed. Neither command writes to raw evidence or modifies capability records. Keep all closure/session evidence outside the shipped Starter and preserve preview PID/cleanup audits. Stop the owned preview normally after real capture; a failed or signal-assisted cleanup blocks review.
+--- iteration17-preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
++++ iteration17-postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -389,7 +389,7 @@
+ 
+ - [ ] Actual package.json provides check:browser; exact dev-only playwright 1.63.0 and all three real engines are installed.
+ - [ ] Run npm run check, verify:unadopted-final and verify:adopted-final before check:browser; all existing suites remain active.
+-- [ ] 47/47 cases execute and PASS: 27 baseline, 3 no-JS, 12 boundary, 4 reduced-motion, 1 live resize; 0 skip/FAIL/NOT_RUN.
++- [ ] Raw qualification: all47 cases execute (27 baseline/3 no-JS/12 boundary/4 reduced-motion/1 resize),0 skip/NOT_RUN; strict raw PASS additionally requires0 FAIL. For finite workstream closure follow the separate policy below.
+ - [ ] Real engine version/revision, current uncommitted source, fixture source and final build bind every row to one build. Record canonical Contract identity using the actual supported input mode.
+ - [ ] Verify true HTTP404 recovery, document overflow <=1 CSS px, keyboard-accessible local .table-scroll, original heading/main/skip/footer paths, <=900 navigation and <=620 actual header/meta/404 changes.
+ - [ ] Verify Tab/Shift+Tab/Enter/Space/Escape, native no-JS nested anchors, ancestor cleanup and live 899→901→899 child-focus migration. Check reduced-motion scroll/animations and 44x44 mobile target intent.
+@@ -399,3 +399,15 @@
+ Full method: CORE_BROWSER_EVIDENCE.md. Unsupported raw-table authoring is outside this test scope; never add test CSS or bypass safety to produce PASS.
+ 
+ Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
++
++## WS-06A WebKit verification policy V1 — separate closure evidence
++
++The canonical Contract and its capability requirements remain unchanged. `check:browser` and `validateBrowserEvidence` retain the strict raw 47/47 PASS gate. Every one of the 47 matrix cases must execute, with no skip/NOT_RUN/missing assertion. Preserve each original FAIL and every historical evidence file. A policy disposition never changes a raw row to PASS, N/A, SKIP or an exception.
++
++The selected Starter must actually supply `verify:browser-closure`; inspect package.json rather than infer availability. This separate command can find the finite Core workstream **eligible for independent closure review** through either strict raw 47/47 PASS, or complete raw execution with only the exact accepted WebKit26.6/rev2359/darwin-arm64 input-profile failures plus complete independent Safari keyboard evidence. It is not automatic WS-06A acceptance. Chromium/Firefox failures, unknown infrastructure/failure details, missing or invalid evidence and stale source/build/engine identity fail closed. CI and the raw browser command remain strict and unchanged.
++
++Plain-Tab dependent failures must match the accepted prerequisite failure detail and a bound native link-traversal probe, classified `ENVIRONMENT_PROFILE_BLOCKED`. A failed local table scroll must still prove focused wrapper, genuine overflow, no document overflow, received ArrowRight and unchanged native scroll; the pinned accepted 10-process control supports only `PRODUCT_EVIDENCE_UNRESOLVED`. Neither disposition is a product PASS. Pin policy ID `WS06A_WEBKIT_VERIFICATION_V1`, accepted proposal SHA256 `2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917`, and ArrowRight control SHA256 `1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344`.
++
++Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
++
++Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
+--- iteration17-preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/verify-ws06a-browser-closure.ts
++++ iteration17-postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/verify-ws06a-browser-closure.ts
+@@ -0,0 +1,173 @@
++import { z } from "zod";
++import { createHash } from "node:crypto";
++import { lstatSync, readFileSync, readdirSync, readlinkSync } from "node:fs";
++import { dirname, join, relative, resolve } from "node:path";
++import { pathToFileURL } from "node:url";
++import { execFileSync } from "node:child_process";
++import { validateBrowserEvidence, validateBrowserEvidenceSnapshot, type CoreBrowserEvidence, type EvidenceIdentity } from "./core-browser-evidence";
++
++export const webkitPolicy = {
++  id: "WS06A_WEBKIT_VERIFICATION_V1",
++  proposalSha256: "2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917",
++  arrowControlSha256: "1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344",
++} as const;
++const digest = z.string().regex(/^[a-f0-9]{64}$/);
++const text = z.string().trim().min(1);
++const manualBuildSchema = z.object({ fixtureIdentity: z.literal("Field Notes synthetic adoption"), fixtureSourceSha256: digest, distSha256: digest }).strict();
++const hostSchema = z.object({ platform: z.literal("darwin"), arch: z.literal("arm64"), node: text.optional() }).strict();
++const probeSchema = z.object({ schemaVersion: z.literal("1"), rawEvidenceSha256: digest, host: hostSchema,
++  engine: z.object({ browserName: z.literal("webkit"), version: z.literal("26.6"), revision: z.literal("2359") }).strict(),
++  webkit: z.object({ plainTabReachesLink: z.literal(false), sequence: z.array(z.object({ key: text, tag: text, text: z.string() }).strict()).min(1) }).strict(),
++}).strict();
++const alternateSchema = z.object({ schemaVersion: z.literal("1"), rawEvidenceSha256: digest,
++  policy: z.object({ id: z.literal(webkitPolicy.id), proposalSha256: z.literal(webkitPolicy.proposalSha256), arrowControlSha256: z.literal(webkitPolicy.arrowControlSha256) }).strict(),
++  starter: z.object({ branch: text, head: z.string().regex(/^[a-f0-9]{40}$/), workingTreeSha256: digest }).strict(),
++  manualBuild: manualBuildSchema,
++  browser: z.object({ product: z.literal("Safari"), version: z.string().regex(/^\d+\.\d+(?:\.\d+)*$/), engineFamily: z.literal("WebKit") }).strict(),
++  host: hostSchema,
++  input: z.object({ method: z.enum(["HUMAN_PHYSICAL_KEYBOARD", "AUTHORIZED_TRUSTED_SYSTEM_KEYBOARD"]), keyboardNavigationSettingChangedForTest: z.literal(false) }).strict(),
++  review: z.object({ operator: text, observedAt: z.iso.datetime(), notes: text }).strict(),
++  rows: z.array(z.object({ caseId: text, route: text,
++    viewport: z.object({ width: z.number().int().positive(), height: z.number().int().positive() }).strict(), javascript: z.boolean(),
++    assertions: z.array(z.object({ name: text, result: z.literal("PASS"), disposition: z.enum(["ENVIRONMENT_PROFILE_BLOCKED", "PRODUCT_EVIDENCE_UNRESOLVED"]),
++      observation: z.object({ keys: z.array(text).min(1), before: text, after: text, focusVisible: z.literal(true), artifact: text,
++        scrollBefore: z.number().nonnegative().optional(), scrollAfter: z.number().nonnegative().optional(), trustedKeyReceived: z.boolean().optional() }).strict(),
++    }).strict()).min(1),
++  }).strict()).min(1),
++}).strict();
++export type ManualBuildIdentity = z.infer<typeof manualBuildSchema>;
++type ClosureInput = { rawEvidence: unknown; expectedIdentity: EvidenceIdentity; nativeProbe?: unknown; realKeyboardEvidence?: unknown;
++  expectedManualBuild?: ManualBuildIdentity; rawEvidenceSha256: string };
++type Requirement = { caseId: string; route: string; viewport: { width: number; height: number }; javascript: boolean;
++  assertions: Array<{ name: string; disposition: "ENVIRONMENT_PROFILE_BLOCKED" | "PRODUCT_EVIDENCE_UNRESOLVED" }> };
++const plainNames = new Set(["skip-keyboard", "footer-keyboard", "navigation-keyboard", "target-size", "nested-cleanup", "ordinary-navigation", "same-document-focus", "recovery-navigation"]);
++const plainTargets = new Set(["/", "/#top", "/guides/", "/guides/getting-started/"]);
++function classify(name: string, detail: string): Requirement["assertions"][number]["disposition"] | null {
++  if (plainNames.has(name) && (name === "skip-keyboard" && detail === "First Tab does not focus skip link" ||
++    detail.startsWith("Target not keyboard reachable: ") && plainTargets.has(detail.slice("Target not keyboard reachable: ".length)))) return "ENVIRONMENT_PROFILE_BLOCKED";
++  if (name !== "table-local-scroll" || !detail.startsWith("Native ArrowRight did not scroll: ")) return null;
++  try {
++    const data = JSON.parse(detail.slice("Native ArrowRight did not scroll: ".length));
++    const g = data.geometry;
++    if (data.before.active === true && data.after.active === true && data.before.scroll === 0 && data.after.scroll === 0 && data.after.key === "ArrowRight" &&
++      ["auto", "scroll"].includes(g.overflow) && Number.isFinite(g.wrapperClient) && g.wrapperClient > 0 && g.wrapperScroll > g.wrapperClient + 1 &&
++      g.tableWidth > g.wrapperClient + 1 && g.documentClient > 0 && g.documentScroll <= g.documentClient + 1) return "PRODUCT_EVIDENCE_UNRESOLVED";
++  } catch { /* A changed or malformed oracle is outside this accepted policy. */ }
++  return null;
++}
++const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
++
++export function verifyBrowserClosure(input: ClosureInput) {
++  const errors = validateBrowserEvidenceSnapshot(input.rawEvidence, input.expectedIdentity);
++  const requirements: Requirement[] = [];
++  const blocked = () => ({ decision: "BLOCKED" as const, errors, requirements });
++  if (!digest.safeParse(input.rawEvidenceSha256).success) errors.push("raw evidence digest missing/invalid");
++  if (errors.length) return blocked();
++  const raw = input.rawEvidence as CoreBrowserEvidence;
++  if (raw.identity.canonicalContract.verification?.mode !== "FILE_SHA256") errors.push("closure requires actual Contract file binding");
++  if (!errors.length && validateBrowserEvidence(raw, input.expectedIdentity).length === 0)
++    return { decision: "RAW_QUALIFICATION_COMPLETE" as const, errors, requirements };
++  if (raw.identity.host.platform !== "darwin" || raw.identity.host.arch !== "arm64" || raw.identity.engines.webkit.version !== "26.6" || raw.identity.engines.webkit.revision !== "2359")
++    errors.push("accepted engine/host control identity mismatch");
++  if (raw.infrastructureErrors.some(e => e !== "WEBKIT_STANDARD_TAB_LINK_PROFILE_UNAVAILABLE")) errors.push("unknown infrastructure failure");
++  for (const row of raw.rows.filter(r => r.caseStatus === "FAIL")) {
++    if (row.engine !== "webkit" || !["baseline", "no-js"].includes(row.category)) { errors.push(row.caseId + ": failure outside policy"); continue; }
++    const assertions: Requirement["assertions"] = [];
++    for (const a of row.assertions.filter(a => !a.passed)) {
++      const disposition = classify(a.name, a.detail);
++      if (!disposition) errors.push(row.caseId + ": unknown failure " + a.name);
++      else assertions.push({ name: a.name, disposition });
++    }
++    requirements.push({ caseId: row.caseId, route: row.route, viewport: row.viewport, javascript: row.javascript, assertions });
++  }
++  if (!requirements.length) errors.push("no policy-covered failed rows");
++  const probe = probeSchema.safeParse(input.nativeProbe);
++  if (!probe.success) errors.push("missing/invalid bound native probe");
++  else {
++    if (probe.data.rawEvidenceSha256 !== input.rawEvidenceSha256 || !same(probe.data.engine, raw.identity.engines.webkit) ||
++      probe.data.host.platform !== raw.identity.host.platform || probe.data.host.arch !== raw.identity.host.arch) errors.push("native probe identity mismatch");
++    if (probe.data.webkit.sequence.some(s => s.key === "Tab" && s.tag === "A") || !probe.data.webkit.sequence.some(s => s.key === "Tab" && s.tag !== "BODY"))
++      errors.push("native probe does not establish unavailable standard link traversal");
++  }
++  const alternate = alternateSchema.safeParse(input.realKeyboardEvidence);
++  if (!alternate.success) errors.push("missing/invalid real Safari keyboard evidence");
++  else {
++    const proof = alternate.data;
++    if (proof.rawEvidenceSha256 !== input.rawEvidenceSha256 || !same(proof.starter, input.expectedIdentity.starter) ||
++      !manualBuildSchema.safeParse(input.expectedManualBuild).success || !same(proof.manualBuild, input.expectedManualBuild) ||
++      input.expectedManualBuild?.fixtureSourceSha256 !== input.expectedIdentity.fixture.sourceSha256) errors.push("alternate source/build identity mismatch");
++    if (proof.host.platform !== raw.identity.host.platform || proof.host.arch !== raw.identity.host.arch) errors.push("alternate host mismatch");
++    if (proof.rows.length !== requirements.length || new Set(proof.rows.map(r => r.caseId)).size !== proof.rows.length) errors.push("alternate case coverage mismatch");
++    for (const row of proof.rows) {
++      const required = requirements.find(r => r.caseId === row.caseId);
++      if (!required || row.route !== required.route || !same(row.viewport, required.viewport) || row.javascript !== required.javascript) { errors.push(row.caseId + ": alternate case identity mismatch"); continue; }
++      if (row.assertions.length !== required.assertions.length || new Set(row.assertions.map(a => a.name)).size !== row.assertions.length) errors.push(row.caseId + ": alternate assertion coverage mismatch");
++      for (const a of row.assertions) {
++        const requirement = required.assertions.find(r => r.name === a.name);
++        if (!requirement || a.disposition !== requirement.disposition) errors.push(row.caseId + ": alternate disposition mismatch");
++        if (a.observation.keys.some(k => /alt|option|modifier/i.test(k))) errors.push(row.caseId + ": modifier workaround forbidden");
++        if (a.name === "table-local-scroll" && (!a.observation.keys.includes("ArrowRight") || a.observation.trustedKeyReceived !== true ||
++          a.observation.scrollBefore === undefined || a.observation.scrollAfter === undefined || a.observation.scrollAfter <= a.observation.scrollBefore)) errors.push(row.caseId + ": real native ArrowRight evidence missing");
++        if (a.name !== "table-local-scroll" && !a.observation.keys.includes("Tab")) errors.push(row.caseId + ": real sequential keyboard path missing");
++      }
++    }
++  }
++  return errors.length ? blocked() : { decision: "WS06A_CLOSURE_ELIGIBLE_FOR_INDEPENDENT_REVIEW" as const, errors, requirements };
++}
++
++export function sourceManifest(base: string): string {
++  const files: Array<{ path: string; sha256: string; mode: number; symlink: boolean }> = [];
++  const excluded = new Set([".git", "node_modules", "dist", ".astro", ".astro-cache", ".vite-cache", ".vitest-cache", ".wrangler", "coverage", ".browser-evidence", ".DS_Store"]);
++  function visit(dir: string) {
++    for (const name of readdirSync(dir).sort()) {
++      if (excluded.has(name) || name.startsWith(".env")) continue;
++      const path = join(dir, name), s = lstatSync(path);
++      if (s.isDirectory()) visit(path);
++      else files.push({ path: relative(base, path), sha256: createHash("sha256").update(s.isSymbolicLink() ? readlinkSync(path) : readFileSync(path)).digest("hex"), mode: s.mode & 0o777, symlink: s.isSymbolicLink() });
++    }
++  }
++  visit(base); return createHash("sha256").update(JSON.stringify(files)).digest("hex");
++}
++function main() {
++  const required = (name: string) => { const value = process.env[name]; if (!value) throw Error(name + " required"); return value; };
++  const read = (path: string) => JSON.parse(readFileSync(path, "utf8"));
++  const rawPath = required("WS06A_BROWSER_EVIDENCE");
++  // Captured independently by the fresh build/session owner; never use report.identity as its own oracle.
++  const expected = read(required("WS06A_EXPECTED_IDENTITY")) as EvidenceIdentity;
++  const root = process.cwd();
++  const git = (...args: string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
++  if (expected.starter.workingTreeSha256 !== sourceManifest(root) || expected.starter.head !== git("rev-parse", "HEAD") || expected.starter.branch !== git("branch", "--show-current")) throw Error("current Starter differs from independently captured identity");
++  const contract = expected.canonicalContract.verification;
++  if (contract?.mode !== "FILE_SHA256" || createHash("sha256").update(readFileSync(contract.filePath)).digest("hex") !== contract.observedSha256) throw Error("actual canonical Contract not bound");
++  let manualBuild: ManualBuildIdentity | undefined;
++  if (process.env.WS06A_MANUAL_PROJECT_ROOT) {
++    const base = process.env.WS06A_MANUAL_PROJECT_ROOT;
++    manualBuild = { fixtureIdentity: "Field Notes synthetic adoption", fixtureSourceSha256: sourceManifest(base), distSha256: sourceManifest(join(base, "dist")) };
++  }
++  const result = verifyBrowserClosure({ rawEvidence: read(rawPath), expectedIdentity: expected,
++    rawEvidenceSha256: createHash("sha256").update(readFileSync(rawPath)).digest("hex"),
++    nativeProbe: process.env.WS06A_NATIVE_PROBE ? read(process.env.WS06A_NATIVE_PROBE) : undefined,
++    realKeyboardEvidence: process.env.WS06A_REAL_KEYBOARD_EVIDENCE ? read(process.env.WS06A_REAL_KEYBOARD_EVIDENCE) : undefined,
++    expectedManualBuild: manualBuild });
++  if (result.decision !== "RAW_QUALIFICATION_COMPLETE") {
++    for (const [name, digest] of [["WS06A_POLICY_PROPOSAL", webkitPolicy.proposalSha256], ["WS06A_ARROW_CONTROL", webkitPolicy.arrowControlSha256]]) {
++      const path = required(name);
++      if (createHash("sha256").update(readFileSync(path)).digest("hex") !== digest) throw Error(name + " accepted policy/control bytes mismatch");
++    }
++  }
++  if (result.decision === "WS06A_CLOSURE_ELIGIBLE_FOR_INDEPENDENT_REVIEW") {
++    const proofPath = resolve(required("WS06A_REAL_KEYBOARD_EVIDENCE"));
++    const proof = alternateSchema.parse(read(proofPath));
++    for (const row of proof.rows) for (const assertion of row.assertions) {
++      const artifact = resolve(dirname(proofPath), assertion.observation.artifact);
++      if (!artifact.startsWith(dirname(proofPath) + "/") || artifact === proofPath || !/\.(png|jpe?g|webm|mp4|json)$/.test(artifact)) throw Error("Invalid local observation artifact reference");
++      const file = lstatSync(artifact);
++      if (!file.isFile() || file.isSymbolicLink() || file.size === 0) throw Error("Observation artifact missing/empty");
++    }
++  }
++  console.log(JSON.stringify(result, null, 2));
++  if (result.errors.length) process.exitCode = 1;
++}
++if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
++  try { main(); } catch (error) { console.error(String(error)); process.exitCode = 1; }
++}
+--- iteration17-preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/ws06a-browser-closure.test.ts
++++ iteration17-postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/ws06a-browser-closure.test.ts
+@@ -0,0 +1,146 @@
++import { describe, expect, it } from "vitest";
++import { coreBrowserMatrix } from "../scripts/core-browser-matrix";
++import { canonicalContractReference, validateBrowserEvidence, validateBrowserEvidenceSnapshot, type CoreBrowserEvidence, type EvidenceIdentity } from "../scripts/core-browser-evidence";
++import { verifyBrowserClosure, webkitPolicy, type ManualBuildIdentity } from "../scripts/verify-ws06a-browser-closure";
++
++// These are rejection fixtures, never records of Safari or real browser execution.
++function fixture() {
++  const identity: EvidenceIdentity = {
++    starter: { branch: "test", head: "a".repeat(40), workingTreeSha256: "b".repeat(64) },
++    canonicalContract: { reference: canonicalContractReference, verification: { mode: "FILE_SHA256", filePath: "contract.md", observedSha256: canonicalContractReference.sha256 } },
++    fixture: { identity: "Field Notes synthetic adoption", sourceSha256: "c".repeat(64) },
++    build: { distSha256: "d".repeat(64) }, playwright: { packageVersion: "1.63.0" },
++    host: { platform: "darwin", arch: "arm64", node: "v22.22.0" },
++    engines: { chromium: { browserName: "chromium", version: "153.0.8010.12", revision: "1243" }, firefox: { browserName: "firefox", version: "155.0", revision: "1543" }, webkit: { browserName: "webkit", version: "26.6", revision: "2359" } },
++  };
++  const raw: CoreBrowserEvidence = {
++    schemaVersion: "1", identity: structuredClone(identity), overall: "PASS", infrastructureErrors: [],
++    cleanup: { previewStopped: true, fixtureRemoved: true }, humanReview: { visualFocus: "DEFERRED", contrast: "DEFERRED" },
++    rows: coreBrowserMatrix.map(({ requiredAssertions, ...row }) => ({ ...structuredClone(row), browserVersion: identity.engines[row.engine].version,
++      browserRevision: identity.engines[row.engine].revision, sourceSha256: identity.fixture.sourceSha256,
++      buildSha256: identity.build.distSha256, httpStatus: row.role === "recovery-404" ? 404 : 200,
++      assertions: requiredAssertions.map(name => ({ name, passed: true, detail: "synthetic rejection fixture" })),
++      caseStatus: "PASS", durationMs: 1, failure: null })),
++  };
++  const row = raw.rows.find(r => r.engine === "webkit" && r.role === "shell-nav")!;
++  const failed = row.assertions.find(a => a.name === "skip-keyboard")!;
++  failed.passed = false; failed.detail = "First Tab does not focus skip link";
++  row.caseStatus = "FAIL"; row.failure = failed.detail; raw.overall = "FAIL";
++  raw.infrastructureErrors = ["WEBKIT_STANDARD_TAB_LINK_PROFILE_UNAVAILABLE"];
++  const manualBuild: ManualBuildIdentity = { fixtureIdentity: "Field Notes synthetic adoption", fixtureSourceSha256: identity.fixture.sourceSha256, distSha256: "f".repeat(64) };
++  const rawEvidenceSha256 = "1".repeat(64);
++  const probe = { schemaVersion: "1", rawEvidenceSha256, host: identity.host, engine: identity.engines.webkit,
++    webkit: { plainTabReachesLink: false, sequence: [{ key: "Tab", tag: "BUTTON", text: "button" }, { key: "Tab", tag: "INPUT", text: "" }] } };
++  const alternate = { schemaVersion: "1", policy: webkitPolicy, rawEvidenceSha256,
++    starter: identity.starter, manualBuild, browser: { product: "Safari", version: "26.6", engineFamily: "WebKit" },
++    host: identity.host, input: { method: "HUMAN_PHYSICAL_KEYBOARD", keyboardNavigationSettingChangedForTest: false },
++    review: { operator: "synthetic operator", observedAt: "2026-10-06T00:00:00Z", notes: "Unit fixture only" },
++    rows: [{ caseId: row.caseId, route: row.route, viewport: row.viewport, javascript: row.javascript,
++      assertions: [{ name: failed.name, result: "PASS", disposition: "ENVIRONMENT_PROFILE_BLOCKED",
++        observation: { keys: ["Tab", "Enter"], before: "body", after: "main content", focusVisible: true, artifact: "synthetic-only.png" } }] }],
++  };
++  return { rawEvidence: raw as unknown, expectedIdentity: identity, nativeProbe: probe as unknown,
++    realKeyboardEvidence: alternate as unknown, expectedManualBuild: manualBuild, rawEvidenceSha256 };
++}
++
++describe("WS06A closure evidence, independent from strict raw qualification", () => {
++  it("allows complete policy evidence for review without rewriting any raw failure", () => {
++    const input = fixture(); const before = JSON.stringify(input.rawEvidence);
++    expect(verifyBrowserClosure(input).errors).toEqual([]);
++    expect(verifyBrowserClosure(input).decision).toBe("WS06A_CLOSURE_ELIGIBLE_FOR_INDEPENDENT_REVIEW");
++    expect(JSON.stringify(input.rawEvidence)).toBe(before);
++    expect(validateBrowserEvidence(input.rawEvidence, input.expectedIdentity).length).toBeGreaterThan(0);
++    expect(validateBrowserEvidenceSnapshot(input.rawEvidence, input.expectedIdentity)).toEqual([]);
++  });
++  it("allows strict raw 47/47 without supplemental evidence", () => {
++    const input = fixture(), raw = input.rawEvidence as CoreBrowserEvidence;
++    raw.overall = "PASS"; raw.infrastructureErrors = [];
++    for (const row of raw.rows) { row.caseStatus = "PASS"; row.failure = null; for(const a of row.assertions) a.passed = true; }
++    input.realKeyboardEvidence = undefined; input.nativeProbe = undefined;
++    expect(verifyBrowserClosure(input).decision).toBe("RAW_QUALIFICATION_COMPLETE");
++    expect(verifyBrowserClosure(input).errors).toEqual([]);
++  });
++  const defects: Record<string, (input: ReturnType<typeof fixture>) => void> = {
++    missingRaw: i => { i.rawEvidence = undefined; }, malformedRaw: i => { i.rawEvidence = {}; },
++    missingProbe: i => { i.nativeProbe = undefined; }, missingAlternate: i => { i.realKeyboardEvidence = undefined; },
++    wrongExpectedSource: i => { i.expectedIdentity.starter.workingTreeSha256 = "0".repeat(64); },
++    notRun: i => { (i.rawEvidence as any).rows[0].caseStatus = "NOT_RUN"; },
++    chromiumFailure: i => { const r=(i.rawEvidence as any).rows[0];r.caseStatus="FAIL";r.failure="input failure";r.assertions[0].passed=false; },
++    firefoxFailure: i => { const r=(i.rawEvidence as any).rows.find((r:any)=>r.engine==="firefox");r.caseStatus="FAIL";r.failure="input failure";r.assertions[0].passed=false; },
++    unknownInfrastructure: i => { (i.rawEvidence as any).infrastructureErrors.push("SERVER_FAILURE"); },
++    unknownFailureDetail: i => { const r=(i.rawEvidence as any).rows.find((r:any)=>r.caseStatus==="FAIL");r.assertions.find((a:any)=>!a.passed).detail="Core focus regression"; },
++    missingAssertion: i => { (i.rawEvidence as any).rows[0].assertions.pop(); },
++    duplicateRow: i => { (i.rawEvidence as any).rows.push((i.rawEvidence as any).rows[0]); },
++    probeReachable: i => { (i.nativeProbe as any).webkit.plainTabReachesLink=true; },
++    probeContradictsSequence: i => { (i.nativeProbe as any).webkit.sequence.push({key:"Tab",tag:"A",text:"link"}); },
++    probeVersion: i => { (i.nativeProbe as any).engine={...i.expectedIdentity.engines.webkit,version:"26.7"}; },
++    probeDigest: i => { (i.nativeProbe as any).rawEvidenceSha256="0".repeat(64); },
++    wrongSource: i => { (i.realKeyboardEvidence as any).starter={...i.expectedIdentity.starter,workingTreeSha256:"0".repeat(64)}; },
++    wrongBuild: i => { (i.realKeyboardEvidence as any).manualBuild={...i.expectedManualBuild,distSha256:"0".repeat(64)}; },
++    unrelatedManualSource: i => {
++      i.expectedManualBuild = { ...i.expectedManualBuild, fixtureSourceSha256: "e".repeat(64) };
++      (i.realKeyboardEvidence as any).manualBuild = i.expectedManualBuild;
++    },
++    wrongPolicy: i => { (i.realKeyboardEvidence as any).policy={...webkitPolicy,proposalSha256:"0".repeat(64)}; },
++    wrongPolicyVersion: i => { (i.realKeyboardEvidence as any).policy={...webkitPolicy,id:"UNKNOWN"}; },
++    unknownDisposition: i => { (i.realKeyboardEvidence as any).rows[0].assertions[0].disposition="EXCEPTION"; },
++    missingFailedRow: i => { (i.realKeyboardEvidence as any).rows=[]; },
++    inventedRow: i => { (i.realKeyboardEvidence as any).rows.push({...((i.realKeyboardEvidence as any).rows[0]),caseId:"invented"}); },
++    missingFailedAssertion: i => { (i.realKeyboardEvidence as any).rows[0].assertions=[]; },
++    inventedAssertion: i => { (i.realKeyboardEvidence as any).rows[0].assertions.push({...((i.realKeyboardEvidence as any).rows[0].assertions[0]),name:"invented"}); },
++    failedAlternate: i => { (i.realKeyboardEvidence as any).rows[0].assertions[0].result="FAIL"; },
++    programmatic: i => { (i.realKeyboardEvidence as any).input.method="PROGRAMMATIC_FOCUS"; },
++    playwright: i => { (i.realKeyboardEvidence as any).input.method="PLAYWRIGHT_KEYBOARD"; },
++    changedPreference: i => { (i.realKeyboardEvidence as any).input.keyboardNavigationSettingChangedForTest=true; },
++    wrongBrowser: i => { (i.realKeyboardEvidence as any).browser.product="Chromium"; },
++    wrongRoute: i => { (i.realKeyboardEvidence as any).rows[0].route="/wrong/"; },
++    wrongViewport: i => { (i.realKeyboardEvidence as any).rows[0].viewport={width:1,height:1}; },
++    wrongJavascript: i => { (i.realKeyboardEvidence as any).rows[0].javascript=false; },
++    missingOperator: i => { (i.realKeyboardEvidence as any).review.operator=""; },
++    invalidDate: i => { (i.realKeyboardEvidence as any).review.observedAt="not a date"; },
++    emptyObservation: i => { (i.realKeyboardEvidence as any).rows[0].assertions[0].observation.after=""; },
++  };
++  it.each(Object.entries(defects))("fails closed: %s", (_name, mutate) => {
++    const input = fixture(); mutate(input);
++    expect(verifyBrowserClosure(input).errors.length).toBeGreaterThan(0);
++    expect(verifyBrowserClosure(input).decision).toBe("BLOCKED");
++  });
++  function arrowFixture() {
++    const input = fixture(), raw = input.rawEvidence as CoreBrowserEvidence;
++    const row = raw.rows.find(r => r.engine === "webkit" && r.role === "content-detail" && r.viewport.width === 768)!;
++    const a = row.assertions.find(a => a.name === "table-local-scroll")!;
++    a.passed = false;
++    a.detail = "Native ArrowRight did not scroll: " + JSON.stringify({ before: { active: true, scroll: 0 }, after: { active: true, scroll: 0, key: "ArrowRight" },
++      geometry: { tableWidth: 780, wrapperClient: 718, wrapperScroll: 780, overflow: "auto", documentClient: 768, documentScroll: 768 } });
++    row.caseStatus = "FAIL"; row.failure = a.detail;
++    (input.realKeyboardEvidence as any).rows.push({ caseId: row.caseId, route: row.route, viewport: row.viewport, javascript: true,
++      assertions: [{ name: a.name, result: "PASS", disposition: "PRODUCT_EVIDENCE_UNRESOLVED", observation: {
++        keys: ["Tab", "ArrowRight"], before: "table wrapper", after: "table visibly moved", focusVisible: true, artifact: "unit-fixture-only.png",
++        scrollBefore: 0, scrollAfter: 40, trustedKeyReceived: true } }] });
++    return input;
++  }
++  it("requires actual ArrowRight evidence for unresolved native scrolling", () => {
++    expect(verifyBrowserClosure(arrowFixture()).errors).toEqual([]);
++  });
++  it.each(["missing-key", "missing-scroll", "untrusted", "programmatic-only", "bad-geometry"])("rejects ArrowRight %s", kind => {
++    const input = arrowFixture(); const a = (input.realKeyboardEvidence as any).rows[1].assertions[0];
++    if (kind === "missing-key") a.observation.keys = ["Tab"];
++    if (kind === "missing-scroll") delete a.observation.scrollAfter;
++    if (kind === "untrusted") a.observation.trustedKeyReceived = false;
++    if (kind === "programmatic-only") a.observation.scrollAfter = 0;
++    if (kind === "bad-geometry") {
++      const row = (input.rawEvidence as CoreBrowserEvidence).rows.find(r => r.engine === "webkit" && r.role === "content-detail" && r.viewport.width === 768)!;
++      row.assertions.find(a => a.name === "table-local-scroll")!.detail = "Local table overflow contract failed: {}";
++    }
++    expect(verifyBrowserClosure(input).errors.length).toBeGreaterThan(0);
++  });
++  it("never substitutes JS-enabled proof for a no-JS failed row", () => {
++    const input = fixture(), raw = input.rawEvidence as CoreBrowserEvidence;
++    const row = raw.rows.find(r => r.engine === "webkit" && r.category === "no-js")!;
++    const a = row.assertions.find(a => a.name === "skip-keyboard")!;
++    a.passed = false; a.detail = "First Tab does not focus skip link"; row.caseStatus = "FAIL"; row.failure = a.detail;
++    (input.realKeyboardEvidence as any).rows.push({ caseId: row.caseId, route: row.route, viewport: row.viewport, javascript: true,
++      assertions: [structuredClone((input.realKeyboardEvidence as any).rows[0].assertions[0])] });
++    expect(verifyBrowserClosure(input).errors).toContain(row.caseId + ": alternate case identity mismatch");
++  });
++});
+--- iteration17-preimage/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ iteration17-postimage/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -1506,7 +1506,7 @@
+ 
+ ## V2.7 WS-06A — Core browser evidence method
+ 
+-Selected Starter must actually implement check:browser with a locked dev-only browser dependency. Core technical evidence uses one disposable, final-built Field Notes adoption of the actual Core, not a duplicated shell or a real-game claim. Require Chromium/Firefox/WebKit × 390×844, 768×1024, 1280×800 × shell-nav/content-detail/true404 = 27; three no-JS mobile rows; Chromium navigation899/900/901 plus layout619/620/621 × three roles =12; mobile/desktop reduced-motion × shell/detail=4; live899→901→899 focus migration=1. Total47; missing/duplicate/unexpected/skipped/FAIL/NOT_RUN or an absent required assertion blocks the gate.
++Selected Starter must actually implement check:browser with a locked dev-only browser dependency. Core technical evidence uses one disposable, final-built Field Notes adoption of the actual Core, not a duplicated shell or a real-game claim. Require Chromium/Firefox/WebKit × 390×844, 768×1024, 1280×800 × shell-nav/content-detail/true404 = 27; three no-JS mobile rows; Chromium navigation899/900/901 plus layout619/620/621 × three roles =12; mobile/desktop reduced-motion × shell/detail=4; live899→901→899 focus migration=1. Total47; missing/duplicate/unexpected/skipped/NOT_RUN or an absent required assertion blocks both gates; FAIL blocks strict raw qualification and may enter only the separately defined fail-closed closure policy.
+ 
+ Evidence binds exact engine/revision and package, actual uncommitted source manifest, fixture source and one final dist; each row records viewport, JS/motion, HTTP, individual assertions, duration and failure. Canonical Contract remains the sole Requirement authority; record its exact identity and the actual supported input verification mode. HEAD alone is insufficient. Case status is a browser execution status, separate from Contract §W verifiedOutcome.
+ 
+@@ -1515,3 +1515,15 @@
+ Automated focus outlines/geometry are partial evidence. Human visual focus quality/contrast remains DEFERRED; AX-02 needs automated plus manual evidence. AX-03 needs Core and assembled project evidence, and PA-01 needs assembled-site acceptance. WS-06A technical PASS cannot substitute for06B, REF suites, WS-07 real-game/human evidence or release. Do not overwrite WS-01's capability baseline or promote current null outcomes. Retain failure evidence; runtime defects require a finite amendment.
+ 
+ Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
++
++## WS-06A WebKit verification policy V1 — separate closure evidence
++
++The canonical Contract and its capability requirements remain unchanged. `check:browser` and `validateBrowserEvidence` retain the strict raw 47/47 PASS gate. Every one of the 47 matrix cases must execute, with no skip/NOT_RUN/missing assertion. Preserve each original FAIL and every historical evidence file. A policy disposition never changes a raw row to PASS, N/A, SKIP or an exception.
++
++The selected Starter must actually supply `verify:browser-closure`; inspect package.json rather than infer availability. This separate command can find the finite Core workstream **eligible for independent closure review** through either strict raw 47/47 PASS, or complete raw execution with only the exact accepted WebKit26.6/rev2359/darwin-arm64 input-profile failures plus complete independent Safari keyboard evidence. It is not automatic WS-06A acceptance. Chromium/Firefox failures, unknown infrastructure/failure details, missing or invalid evidence and stale source/build/engine identity fail closed. CI and the raw browser command remain strict and unchanged.
++
++Plain-Tab dependent failures must match the accepted prerequisite failure detail and a bound native link-traversal probe, classified `ENVIRONMENT_PROFILE_BLOCKED`. A failed local table scroll must still prove focused wrapper, genuine overflow, no document overflow, received ArrowRight and unchanged native scroll; the pinned accepted 10-process control supports only `PRODUCT_EVIDENCE_UNRESOLVED`. Neither disposition is a product PASS. Pin policy ID `WS06A_WEBKIT_VERIFICATION_V1`, accepted proposal SHA256 `2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917`, and ArrowRight control SHA256 `1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344`.
++
++Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
++
++Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
+--- iteration17-preimage/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ iteration17-postimage/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -345,7 +345,7 @@
+ ## V2.7 WS-06A Core evidence checklist
+ 
+ - [ ] Selected Starter supplies the real check:browser command; pinned dev dependency and Chromium/Firefox/WebKit are available.
+-- [ ]47/47 same-build rows pass (27 baseline/3 no-JS/12 boundary/4 reduced-motion/1 resize); no skips, missing assertions or NOT_RUN.
++- [ ]All47 same-build rows execute (27 baseline/3 no-JS/12 boundary/4 reduced-motion/1 resize); no skips, missing assertions or NOT_RUN. Strict raw PASS requires0 FAIL; separate workstream closure policy below preserves raw FAIL.
+ - [ ] Source/build/engine/revision/Contract identities are exact; uncommitted work is included, and Contract input verification is accurately labelled.
+ - [ ] True404 recovery, local long-table keyboard scroll, <=1px document overflow, keyboard disclosure/focus cleanup and final link reachability pass.
+ - [ ]899/900/901 navigation and619/620/621 actual header/meta/404 changes, live child-focus migration, no-JS and reduced-motion pass.
+@@ -353,3 +353,15 @@
+ - [ ] Human visual focus/contrast, assembled evidence, real-game adoption, REF suite and release remain separately required. Browser execution statuses are not capability outcomes.
+ 
+ Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
++
++## WS-06A WebKit verification policy V1 — separate closure evidence
++
++The canonical Contract and its capability requirements remain unchanged. `check:browser` and `validateBrowserEvidence` retain the strict raw 47/47 PASS gate. Every one of the 47 matrix cases must execute, with no skip/NOT_RUN/missing assertion. Preserve each original FAIL and every historical evidence file. A policy disposition never changes a raw row to PASS, N/A, SKIP or an exception.
++
++The selected Starter must actually supply `verify:browser-closure`; inspect package.json rather than infer availability. This separate command can find the finite Core workstream **eligible for independent closure review** through either strict raw 47/47 PASS, or complete raw execution with only the exact accepted WebKit26.6/rev2359/darwin-arm64 input-profile failures plus complete independent Safari keyboard evidence. It is not automatic WS-06A acceptance. Chromium/Firefox failures, unknown infrastructure/failure details, missing or invalid evidence and stale source/build/engine identity fail closed. CI and the raw browser command remain strict and unchanged.
++
++Plain-Tab dependent failures must match the accepted prerequisite failure detail and a bound native link-traversal probe, classified `ENVIRONMENT_PROFILE_BLOCKED`. A failed local table scroll must still prove focused wrapper, genuine overflow, no document overflow, received ArrowRight and unchanged native scroll; the pinned accepted 10-process control supports only `PRODUCT_EVIDENCE_UNRESOLVED`. Neither disposition is a product PASS. Pin policy ID `WS06A_WEBKIT_VERIFICATION_V1`, accepted proposal SHA256 `2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917`, and ArrowRight control SHA256 `1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344`.
++
++Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
++
++Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
+--- iteration17-preimage/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ iteration17-postimage/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -406,3 +406,15 @@
+ Require47 planned/executed/PASS,0 FAIL/NOT_RUN/skip, every required assertion and matching source/build/engine/revision. Record uncommitted source plus HEAD, real HTTP404, local .table-scroll, breakpoints, live focus migration, no-JS/reduced-motion and successful cleanup. Missing engine, incomplete evidence, build/server failure or unavailable identity blocks. Machine checks cannot fill human focus/contrast approval. Core proof does not complete composed-site, real-game, REF or release acceptance; do not promote capability outcomes. Runtime bugs require a narrowly reviewed plan amendment.
+ 
+ Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
++
++## WS-06A WebKit verification policy V1 — separate closure evidence
++
++The canonical Contract and its capability requirements remain unchanged. `check:browser` and `validateBrowserEvidence` retain the strict raw 47/47 PASS gate. Every one of the 47 matrix cases must execute, with no skip/NOT_RUN/missing assertion. Preserve each original FAIL and every historical evidence file. A policy disposition never changes a raw row to PASS, N/A, SKIP or an exception.
++
++The selected Starter must actually supply `verify:browser-closure`; inspect package.json rather than infer availability. This separate command can find the finite Core workstream **eligible for independent closure review** through either strict raw 47/47 PASS, or complete raw execution with only the exact accepted WebKit26.6/rev2359/darwin-arm64 input-profile failures plus complete independent Safari keyboard evidence. It is not automatic WS-06A acceptance. Chromium/Firefox failures, unknown infrastructure/failure details, missing or invalid evidence and stale source/build/engine identity fail closed. CI and the raw browser command remain strict and unchanged.
++
++Plain-Tab dependent failures must match the accepted prerequisite failure detail and a bound native link-traversal probe, classified `ENVIRONMENT_PROFILE_BLOCKED`. A failed local table scroll must still prove focused wrapper, genuine overflow, no document overflow, received ArrowRight and unchanged native scroll; the pinned accepted 10-process control supports only `PRODUCT_EVIDENCE_UNRESOLVED`. Neither disposition is a product PASS. Pin policy ID `WS06A_WEBKIT_VERIFICATION_V1`, accepted proposal SHA256 `2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917`, and ArrowRight control SHA256 `1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344`.
++
++Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
++
++Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
+--- iteration17-preimage/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ iteration17-postimage/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -1346,3 +1346,15 @@
+ Core browser technical PASS does not mean06B assembled PASS, WS-07 real-project PASS, REF suite PASS or V2.7 release PASS. Automated outline/target checks do not sign off human visible focus/contrast. Browser row statuses are separate from Contract §W capability outcomes; do not replace the WS-01 baseline or promote null outcomes. Runtime fixes need a finite scope amendment, not a test-only exemption or silent oracle relaxation. CONTRACT_REFERENCE.json and canonical Requirements remain unchanged.
+ 
+ Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.
++
++## WS-06A WebKit verification policy V1 — separate closure evidence
++
++The canonical Contract and its capability requirements remain unchanged. `check:browser` and `validateBrowserEvidence` retain the strict raw 47/47 PASS gate. Every one of the 47 matrix cases must execute, with no skip/NOT_RUN/missing assertion. Preserve each original FAIL and every historical evidence file. A policy disposition never changes a raw row to PASS, N/A, SKIP or an exception.
++
++The selected Starter must actually supply `verify:browser-closure`; inspect package.json rather than infer availability. This separate command can find the finite Core workstream **eligible for independent closure review** through either strict raw 47/47 PASS, or complete raw execution with only the exact accepted WebKit26.6/rev2359/darwin-arm64 input-profile failures plus complete independent Safari keyboard evidence. It is not automatic WS-06A acceptance. Chromium/Firefox failures, unknown infrastructure/failure details, missing or invalid evidence and stale source/build/engine identity fail closed. CI and the raw browser command remain strict and unchanged.
++
++Plain-Tab dependent failures must match the accepted prerequisite failure detail and a bound native link-traversal probe, classified `ENVIRONMENT_PROFILE_BLOCKED`. A failed local table scroll must still prove focused wrapper, genuine overflow, no document overflow, received ArrowRight and unchanged native scroll; the pinned accepted 10-process control supports only `PRODUCT_EVIDENCE_UNRESOLVED`. Neither disposition is a product PASS. Pin policy ID `WS06A_WEBKIT_VERIFICATION_V1`, accepted proposal SHA256 `2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917`, and ArrowRight control SHA256 `1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344`.
++
++Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
++
++Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.

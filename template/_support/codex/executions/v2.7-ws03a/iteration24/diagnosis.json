@@ -1,0 +1,17 @@
+{
+  "status": "BLOCKED",
+  "hypothesis": "Native .mjs import escapes tsx transform",
+  "experiment": "Actual .ts file imported callbacks under installed tsx",
+  "actual": "Home callback still contains const one=__name(...); hover/article safe",
+  "qualificationAttempts": 0,
+  "callbackPreflightExit": 1,
+  "targeted": "NOT_STARTED",
+  "fresh47": "NOT_STARTED",
+  "productRepairJustified": false,
+  "scope": "execution harness only",
+  "sourceUnchanged": true,
+  "post03AReadiness": "STALE",
+  "safariProof": 0,
+  "ws06a": "BLOCKED",
+  "next": "Independent REVIEW24 and finite repair PLAN25; no retry in iteration24"
+}

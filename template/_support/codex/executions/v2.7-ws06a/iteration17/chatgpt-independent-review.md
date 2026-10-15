@@ -1,0 +1,346 @@
+# 第17轮 ChatGPT 实际独立审查
+
+来源：原 ChatGPT 协作页签 https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c 。2026-10-06 保存实际完成回复的渲染 DOM；以下是原始观察，不是 Codex 转述。
+
+```text
+- heading "ChatGPT 说：" [level=4]
+  - paragraph:
+    - text: "[C2C]"
+    - text: "STATE: REVIEW"
+    - text: "TASK_ID: c2c_a765"
+    - text: "ITERATION: 17"
+    - text: "WORKSTREAM: WebKit verification policy implementation candidate"
+    - text: "VERDICT:"
+    - strong: ACCEPT — IMPLEMENTATION MECHANISM ONLY
+    - text: "WS06A:"
+    - strong: STILL BLOCKED
+    - text: "CAPABILITY_PROMOTION:"
+    - strong: NONE
+  - paragraph: 我已独立核对 iteration17 的 execution outputs 53–71、result.md、10-file product.diff、integrity-check.json、最终 raw qualification/comparison、identity capture、closure negative run，以及实际 closure verifier/schema/tests。
+  - paragraph:
+    - text: 结论：
+    - strong: iteration17 的 WebKit policy implementation candidate 可以 ACCEPT。
+    - text: 但这只是机制实现通过；没有 Safari 实证，所以 WS-06A 仍不能关闭。
+  - heading "1. 原始 47-row qualification 没被弱化" [level=3]
+  - paragraph: 这一点成立，而且是本轮最关键的要求。
+  - paragraph: 原来的：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: validateBrowserEvidence()
+  - paragraph: 仍然严格要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47/47 PASS 0 FAIL 0 NOT_RUN 无 infrastructure error
+  - paragraph: 新增的是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: validateBrowserEvidenceSnapshot()
+  - paragraph: 它只允许读取一个完整、身份正确、真实执行过的失败快照，用于后续 policy attribution。
+  - paragraph: 它仍然拒绝：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: NOT_RUN missing row duplicate row wrong matrix identity wrong engine/version/revision wrong source/build inconsistent PASS/FAIL/assertions bad cleanup
+  - paragraph: 所以没有发生：
+  - blockquote:
+    - paragraph: “为了 policy 把原 validator 改松”。
+  - separator
+  - heading "2. 10-file scope真实成立" [level=3]
+  - paragraph: 实际 delta正好是 PLAN17允许的 10 个文件。
+  - paragraph: Starter：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: scripts/core-browser-evidence.ts scripts/verify-ws06a-browser-closure.ts tests/ws06a-browser-closure.test.ts package.json docs/CORE_BROWSER_EVIDENCE.md docs/QA_CHECKLIST.md
+  - paragraph: SOP：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: docs/NEW_GAME_SITE_SOP_v2.7.md docs/QA_CHECKLIST.md docs/EXECUTION_PROMPT.md
+  - paragraph: Master Prompt：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: CodexMasterPrompt_v2.7Candidate.md
+  - paragraph: 同时确认没有修改：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47-row matrix browser runner MobileNav/Core source Contract / Registry package-lock CI roadmap WS04A
+  - paragraph: 完整性审计：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: candidateFilesVerified = 237 protectedFilesVerified = 743 errors = []
+  - separator
+  - heading "3. Closure verifier是真正 fail-closed，而不是 WebKit 白名单" [level=3]
+  - paragraph: 它不是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: engine === webkit → ignore FAIL
+  - paragraph: 而是逐条检查失败 assertion。
+  - paragraph: Plain-Tab 类只有当实际失败详情严格匹配已接受路径时才能归：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: ENVIRONMENT_PROFILE_BLOCKED
+  - paragraph: 例如：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "First Tab does not focus skip link Target not keyboard reachable: <accepted target>"
+  - paragraph: 其它未知 detail会直接：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: BLOCKED
+  - paragraph: 而 table-local-scroll 又有独立严格条件：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: wrapper active scrollBefore = 0 scrollAfter = 0 key = ArrowRight overflow = auto|scroll wrapperScroll > wrapperClient tableWidth > wrapperClient documentScroll <= documentClient + 1
+  - paragraph: 不符合就不进入 policy。
+  - paragraph: 这符合 iteration14 的原则。
+  - separator
+  - heading "4. 新出现的 390px WebKit table failure：归类接受" [level=2]
+  - paragraph: 这是本轮需要重点判断的新事实。
+  - paragraph: 最终 fresh run仍是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47 executed 37 PASS 10 FAIL 0 NOT_RUN
+  - paragraph: case status与 iteration16没有变化，但多了一个 failed assertion：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: baseline:webkit:content-detail:390x844 → table-local-scroll
+  - paragraph: 实际 evidence：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: wrapperClient = 360 wrapperScroll = 780 tableWidth = 780 documentClient = 390 documentScroll = 390 wrapper active = true key = ArrowRight scrollBefore = 0 scrollAfter = 0
+  - paragraph: 因此：
+  - list:
+    - listitem: 局部 overflow geometry正常；
+    - listitem: document没有被撑宽；
+    - listitem: focus在正确 scroll region；
+    - listitem: ArrowRight实际到达；
+    - listitem: native scroll没有发生。
+  - paragraph: 这与已接受的 iteration14 ArrowRight政策机制是同一类型。
+  - paragraph: 尤其 iteration14 的 pure-native control本来就是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 390×844 10 fresh WebKit processes 10 valid 0/10 native ArrowRight scroll
+  - paragraph: 所以新增的 390px row可以合法归：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: PRODUCT_EVIDENCE_UNRESOLVED
+  - paragraph: 而不能归：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: PASS CORE BUG PROVEN ENVIRONMENT PASS
+  - paragraph: 现在 verifier正是这么做。
+  - paragraph:
+    - text: 因此我
+    - strong: 不要求为了这个新增 assertion再开一轮诊断
+    - text: 。
+  - separator
+  - heading "5. 它没有利用 iteration16 的偶然成功隐藏不稳定性" [level=1]
+  - paragraph: iteration16 的 390 content-detail当时没有 ArrowRight failure，而 iteration17出现。
+  - paragraph: 这反而再次支持此前的结论：
+  - blockquote:
+    - paragraph: 当前 host/Playwright-WebKit 下，单次 native ArrowRight结果不是可靠的 deterministic product oracle。
+  - paragraph: iteration17没有删除 iteration16证据，也没有改历史。
+  - paragraph: 当前 comparison明确记录：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: changedStatuses = [] nonWebkitRegressions = [] newFailureAssertions = baseline:webkit:content-detail:390x844 / table-local-scroll
+  - paragraph: 处理是透明的。
+  - separator
+  - heading "6. Native probe绑定也是 fail-closed" [level=1]
+  - paragraph: Policy path要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WebKit 26.6 revision 2359 darwin arm64
+  - paragraph: 并且 bound probe必须：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: plainTabReachesLink = false rawEvidenceSha256 = 当前 raw report SHA engine identity = 当前 WebKit identity host identity一致
+  - paragraph: probe sequence如果实际出现：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Tab → A
+  - paragraph: 就会拒绝 environment-profile attribution。
+  - paragraph: 也就是说不能拿一个“其实能Tab到链接”的环境继续套旧政策。
+  - separator
+  - heading "7. Source/build identity修补是必要且验证过的" [level=1]
+  - paragraph: 这里 iteration17 中途发现的 source-binding问题值得肯定，而不是忽略。
+  - paragraph: 最终要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: manual fixture source SHA == raw qualification fixture source SHA
+  - paragraph: 但 manual final dist可以是同源重新构建后的独立 dist，并单独绑定其实际 SHA。
+  - paragraph: 最终实际：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: raw fixture source = f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac manual fixture source = same
+  - paragraph: dist不同：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: raw dist = 4a8a314... manual dist = 5af57170...
+  - paragraph: 这是可以接受的：
+  - blockquote:
+    - paragraph: 同一 exact source，两个独立 final build，各自有真实 identity。
+  - paragraph: 没有伪造“必须字节完全同 dist”这种不必要约束。
+  - paragraph: 而且这项 guard真的经历了：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: RED → GREEN
+  - paragraph: 不是纸面测试。
+  - separator
+  - heading "8. 自动测试和回归通过" [level=1]
+  - paragraph: 最终 targeted：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 87 / 87 PASS
+  - paragraph: root：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 46 files 757 tests PASS 0 errors 0 warnings 0 hints
+  - paragraph: WS02 adoption gates继续：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "unadopted: validate/build → expected PP-02 rejection adopted: validate/check/build → PASS"
+  - paragraph: git diff --check 也为 0。
+  - paragraph: 因此 policy实现没有破坏现有 Starter生命周期。
+  - separator
+  - heading "9. “没有 Safari proof时必须失败”已经真实证明" [level=1]
+  - paragraph: 实际 bound closure运行：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: npm run verify:browser-closure
+  - paragraph: 结果：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: exit 1 decision = BLOCKED
+  - paragraph: 而不是 synthetic test。
+  - paragraph: 实际唯一 blocker：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: missing/invalid real Safari keyboard evidence
+  - paragraph: 同时 verifier成功生成当前真实需要的：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 10 failed WebKit cases 40 failed assertions
+  - paragraph: 其中：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 37 → ENVIRONMENT_PROFILE_BLOCKED 3 → PRODUCT_EVIDENCE_UNRESOLVED
+  - paragraph: 这正是本轮实施最需要证明的负例。
+  - separator
+  - heading "10. 关于 supplemental evidence schema 的一个审查说明" [level=1]
+  - paragraph: 我特别检查了 target-size。
+  - paragraph: 当前 checklist明确要求：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 目标可达 焦点可见 可激活 记录目标实际尺寸
+  - paragraph: 但 JSON schema没有把：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: width / height >= 44
+  - paragraph: 设计成机器必填的结构化数值字段。
+  - paragraph: 单看 validator，这是一个比其它 machine-check更弱的地方。
+  - paragraph:
+    - text: 不过我这轮
+    - strong: 不因此判 REVISE
+    - text: ，因为当前 closure command只输出：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: ELIGIBLE_FOR_INDEPENDENT_REVIEW
+  - paragraph: 而不是自动：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS06A PASS
+  - paragraph: 同时实施文档明确规定：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: independent reviewer must inspect actual records/artifacts
+  - paragraph: 所以后续如果真实 Safari evidence中的 target-size 没有实际尺寸证据，我会在最终 closure review直接拒绝。
+  - paragraph: 也就是说：
+  - blockquote:
+    - paragraph: 机器 schema保证“不能缺 assertion”，最终 reviewer负责核验其中不能完全结构化的人工观察质量。
+  - paragraph: 这个边界当前是可接受的，但实际取证时必须严格遵守 checklist。
+  - separator
+  - heading "11. Triad同步没有把 closure机制说成能力PASS" [level=1]
+  - paragraph: Starter/SOP/Master Prompt同步后的措辞都保留了关键限制：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: raw FAIL preserved policy disposition != PASS closure verifier only means eligible for review human visual focus/contrast still deferred assembled AX03 still required WS06B still required WS07 still required REF still required release still required
+  - paragraph: 没有篡改 canonical Contract，也没有写入 Registry verifiedOutcome。
+  - paragraph: 这一点通过。
+  - separator
+  - heading "iteration17 implementation verdict" [level=2]
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "ITERATION17_POLICY_IMPLEMENTATION: verdict: ACCEPT strict_raw_gate: preserved: true matrix: changed: false runner: changed: false contract: changed: false product_core: reopened: false raw_qualification: executed: 47 pass: 37 fail: 10 not_run: 0 new_webkit_assertion: case: baseline:webkit:content-detail:390x844 assertion: table-local-scroll attribution: PRODUCT_EVIDENCE_UNRESOLVED attribution_review: ACCEPT closure_without_safari: decision: BLOCKED exit_nonzero: true ws06a_closed: false capability_promotion: none"
+  - paragraph: 正式结论：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "[C2C] STATE: REVIEW TASK_ID: c2c_a765 ITERATION: 17 WORKSTREAM: WebKit verification policy implementation candidate VERDICT: ACCEPT POLICY_IMPLEMENTATION: ACCEPTED REAL_SAFARI_EVIDENCE: MISSING WS06A: BLOCKED RAW QUALIFICATION: 37 PASS / 10 FAIL CAPABILITY_PROMOTION: NONE"
+  - paragraph: 现在工程机制已经足够，不需要再做 diagnosis-only iteration。
+  - paragraph:
+    - strong: 剩下唯一实质性 Gate 是真实 Safari 键盘补证。
+    - text: 当前已有受控 same-source preview、10-case/40-assertion checklist和 pending specimen，但 PASS=0；在拿到真实 Safari evidence前，我不会关闭 WS-06A。
+  - button "复制":
+  - button "评价回复":
+  - button "分享":
+  - button "朗读":
+  - button "重新生成回复":
+  - button "更多操作":
+  - generic: ChatGPT 可能会出错。请核查重要信息。
+  - button "滚动到底部":
+  - heading "最新一条回复" [level=4]
+  - status
+  - button "添加文件等内容":
+  - textbox "询问 ChatGPT" [active]:
+    - paragraph: 询问 ChatGPT
+  - button "选择 ChatGPT 模型":
+    - generic: 高
+  - button "听写":
+  - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+```

@@ -1,0 +1,141 @@
+{
+  "kind": "WS03A_SYNTHETIC_TECHNICAL_PROFILE",
+  "profile": {
+    "font": "interface",
+    "density": "compact",
+    "shape": "soft",
+    "state": "quiet"
+  },
+  "rows": [
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "unexpected-error",
+          "passed": false,
+          "detail": "Error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:115)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        }
+      ],
+      "overall": "FAIL"
+    },
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "unexpected-error",
+          "passed": false,
+          "detail": "Error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:115)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        }
+      ],
+      "overall": "FAIL"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "unexpected-error",
+          "passed": false,
+          "detail": "Error: page.evaluate: __name is not defined\n@debugger eval code line 311 > eval:1:115\nevaluate@debugger eval code:313:16\n@debugger eval code:1:44\n@debugger eval code:1:62\n"
+        }
+      ],
+      "overall": "FAIL"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "unexpected-error",
+          "passed": false,
+          "detail": "Error: page.evaluate: __name is not defined\n@debugger eval code line 311 > eval:1:115\nevaluate@debugger eval code:313:16\n@debugger eval code:1:44\n@debugger eval code:1:62\n"
+        }
+      ],
+      "overall": "FAIL"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "unexpected-error",
+          "passed": false,
+          "detail": "Error: page.evaluate: ReferenceError: Can't find variable: __name"
+        }
+      ],
+      "overall": "FAIL"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "unexpected-error",
+          "passed": false,
+          "detail": "Error: page.evaluate: ReferenceError: Can't find variable: __name"
+        }
+      ],
+      "overall": "FAIL"
+    }
+  ],
+  "overall": "FAIL",
+  "errors": [],
+  "safariProof": 0,
+  "axPromotion": false
+}

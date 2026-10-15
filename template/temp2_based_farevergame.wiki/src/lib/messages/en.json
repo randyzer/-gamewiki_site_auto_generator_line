@@ -1,0 +1,346 @@
+{
+  "tagline": "THE STARBOUND REALM · ATLAS",
+  "library": "Guide Library",
+  "walkthroughs": "Walkthroughs",
+  "listTitle": "Aurelia Walkthroughs",
+  "listDescription": "Starting advice, combat notes, quest outlines, travel, mounts and companions.",
+  "category": "WALKTHROUGHS & QUESTS",
+  "read": "READ",
+  "preview": "PREVIEW",
+  "related": "Related",
+  "browse": "Browse the complete",
+  "hub": "walkthrough library",
+  "or": "or return to the",
+  "homeLink": "Aurelia atlas home",
+  "footerGroups": "GUIDES|RESOURCES|TOOLS|FIELD GUIDES",
+  "disclaimer": "Original sample setting and editorial content for this guide template. Aurelia is a fictional world; these are not claims about a released game.",
+  "languagesLabel": "LANGUAGES · SPRACHEN · IDIOMAS · 语言",
+  "copyright": "© 2026 AURELIA ATLAS · ORIGINAL DEMO WORLD & CONTENT.",
+  "allGuides": "ALL GUIDES →",
+  "heroEyebrow": "FOR NEW ADVENTURERS · AN ORIGINAL FANTASY WORLD",
+  "heroTitle": "Write Your Legend",
+  "heroAccent": "in Aurelia",
+  "heroDescription": "An original co-op adventure setting among the scattered lands of the Starbound Realm. Discover hidden trails, explore ancient ruins and find a play style that feels your own.",
+  "beginner": "First Steps Guide",
+  "scroll": "SCROLL",
+  "viewAll": "View All Guides",
+  "fullFaq": "See all answers",
+  "ctaEyebrow": "READY TO BEGIN?",
+  "ctaTitle": "Your next adventure awaits.",
+  "ctaLink": "Begin with First Steps",
+  "bestStart": "Best Start",
+  "articleDescription": "A calm beginning helps you learn the world. Use these first-session notes to explore, practise combat and decide what to carry.",
+  "sections": [
+    {
+      "eyebrow": "THE STARBOUND REALM",
+      "title": "What is Aurelia?"
+    },
+    {
+      "eyebrow": "CHOOSE YOUR PATH",
+      "title": "Four Ways to Adventure"
+    },
+    {
+      "eyebrow": "THE WORLD OF AURELIA",
+      "title": "Explore Two Regions"
+    },
+    {
+      "eyebrow": "ADVENTURER’S ATLAS",
+      "title": "Start Your Journey"
+    },
+    {
+      "eyebrow": "DATA & RANKINGS",
+      "title": "Tools & Tier Lists"
+    },
+    {
+      "eyebrow": "DEEP DIVE",
+      "title": "Featured Guides"
+    },
+    {
+      "eyebrow": "HERALDS OF AURELIA",
+      "title": "Latest Notes"
+    },
+    {
+      "eyebrow": "QUICK ANSWERS",
+      "title": "Aurelia FAQ"
+    }
+  ],
+  "previews": [
+    {
+      "slug": "preview-0",
+      "title": "Aurelia Beginner Guide",
+      "description": "A planned introduction to exploration, equipment and learning combat at your own pace in the opening hours."
+    },
+    {
+      "slug": "preview-2",
+      "title": "Your First Ruin Expedition",
+      "description": "Preparing for a first expedition: a sensible packing list, route planning and reading unfamiliar encounters."
+    },
+    {
+      "slug": "preview-3",
+      "title": "Aurelia Boss Encounters",
+      "description": "A field-note preview covering warning signs, attack patterns and regrouping after a difficult encounter."
+    },
+    {
+      "slug": "preview-4",
+      "title": "Finding Your Waypoints",
+      "description": "Mark safe landmarks, read the map and plan a convenient return route before heading into unfamiliar terrain."
+    },
+    {
+      "slug": "preview-5",
+      "title": "Aurelia Mounts Handbook",
+      "description": "A planned handbook on travelling with a mount, caring for your supplies and choosing comfortable routes."
+    },
+    {
+      "slug": "preview-6",
+      "title": "Travelling with Companions",
+      "description": "A preview of companion roles, travelling together and making room for a new friend in your adventure."
+    },
+    {
+      "slug": "preview-7",
+      "title": "A Friend Along the Trail",
+      "description": "Follow a small trail-side story, observe the surroundings and prepare before approaching a new creature."
+    },
+    {
+      "slug": "preview-8",
+      "title": "Tracking a Rare Creature",
+      "description": "A planned tracking notebook with habitat observations, quiet approaches and a respectful capture routine."
+    },
+    {
+      "slug": "preview-9",
+      "title": "The Keeper’s Request",
+      "description": "Explore the outline of a keeper’s request, its landmarks and the clues that connect each stage of the journey."
+    },
+    {
+      "slug": "preview-10",
+      "title": "Gathering Small Creatures",
+      "description": "A preview of gathering routes, useful field supplies and observing the tiny inhabitants of the woodland."
+    },
+    {
+      "slug": "preview-11",
+      "title": "A Hidden Woodland Visitor",
+      "description": "Notes for a woodland mystery, with landmarks to observe and small details to look for along the path."
+    },
+    {
+      "slug": "preview-12",
+      "title": "The Guardian of the Shore",
+      "description": "A planned shoreline encounter guide focused on reading the arena, practising dodges and staying together."
+    },
+    {
+      "slug": "preview-13",
+      "title": "Fragments of Starlight",
+      "description": "An exploration notebook for recognising fragments, recording landmarks and following their imagined story."
+    },
+    {
+      "slug": "preview-14",
+      "title": "Aurelia Companion Handbook",
+      "description": "A planned companion reference for expedition preparation, creature notes and sharing the journey together."
+    },
+    {
+      "slug": "preview-15",
+      "title": "Smoother Adventure Settings",
+      "description": "A practical settings outline: check your display, adjust one option at a time and record what changes."
+    },
+    {
+      "slug": "preview-16",
+      "title": "Sorting and Salvaging Gear",
+      "description": "A planned inventory guide for separating useful equipment, spare items and materials before a long trip."
+    },
+    {
+      "slug": "preview-17",
+      "title": "Understanding Progression",
+      "description": "A progression notebook about setting achievable goals and revisiting earlier routes with fresh experience."
+    },
+    {
+      "slug": "preview-18",
+      "title": "Aurelia Crafting Handbook",
+      "description": "A crafting preview about organising materials, reading recipes and choosing a manageable first project."
+    },
+    {
+      "slug": "preview-19",
+      "title": "Planning a Co-op Adventure",
+      "description": "A planned group guide covering shared goals, clear roles and taking time to help each other learn."
+    },
+    {
+      "slug": "preview-20",
+      "title": "The Stones That Remember",
+      "description": "Follow a story outline through weathered stone markers, curious symbols and a quiet woodland clearing."
+    }
+  ],
+  "articleTitle": "Aurelia Best Start",
+  "about": [
+    "Aurelia is an original fantasy setting created for this template. The Starbound Realm imagines scattered islands, woodland settlements and forgotten ruins, connected by the journeys of small adventuring parties. Its stories are sample editorial content, ready to be replaced by verified information for your own game.",
+    "This atlas demonstrates a complete guide-site layout without pretending that its preview topics are published articles. The first-session guide is available in five languages. The other entries preserve the reference layout and show where future, properly researched content can appear. No release date, price or online service is claimed for this fictional world."
+  ],
+  "factsTitle": "QUICK FACTS",
+  "facts": [
+    [
+      "SETTING",
+      "Original demo world"
+    ],
+    [
+      "GENRE",
+      "Co-op adventure concept"
+    ],
+    [
+      "PLATFORM",
+      "Not announced"
+    ],
+    [
+      "PLAYERS",
+      "Sample party setting"
+    ],
+    [
+      "PRICE",
+      "Not announced"
+    ],
+    [
+      "STATUS",
+      "Template demonstration"
+    ],
+    [
+      "CONTENT",
+      "Original editorial samples"
+    ]
+  ],
+  "classes": [
+    {
+      "tag": "FRONTLINE · DEFENDER",
+      "title": "Sentinel",
+      "description": "A patient shield-bearing explorer. Practise steady positioning, measured attacks and keeping a safe route open for friends."
+    },
+    {
+      "tag": "RANGED · EXPLORER",
+      "title": "Wayfinder",
+      "description": "A light-footed trail reader. Learn to keep your distance, observe landmarks and choose a clear path through unfamiliar terrain."
+    },
+    {
+      "tag": "ELEMENTAL · CASTER",
+      "title": "Spellweaver",
+      "description": "An imagined elemental scholar. Experiment with timing and distance while leaving enough space to react to a changing encounter."
+    },
+    {
+      "tag": "SUPPORT · COMPANION",
+      "title": "Starwarden",
+      "description": "A thoughtful party companion. Coordinate with friends, watch the group’s positioning and make time for a careful recovery."
+    }
+  ],
+  "regions": [
+    {
+      "tag": "STARTER REGION",
+      "level": "TRAIL I",
+      "title": "Starfall Isles",
+      "description": "Wind-swept islands linked by old bridges and unfamiliar trails. An original setting for small ruins and a first expedition."
+    },
+    {
+      "tag": "DISTANT FRONTIER",
+      "level": "TRAIL II",
+      "title": "Valley of the Amber Leaves",
+      "description": "An imagined autumn valley with quiet woodland settlements and overgrown ruins. Observe the ground and take each path slowly."
+    }
+  ],
+  "topics": [
+    "World Overview",
+    "First Steps",
+    "Classes & Roles",
+    "Weapons & Skills",
+    "Ruins & Encounters",
+    "Co-op Planning",
+    "Travel Tips",
+    "Content Roadmap",
+    "Questions",
+    "Server Status",
+    "Player Charts",
+    "Class Rankings",
+    "Equipment Choices",
+    "Encounter Notes",
+    "Reward Codes",
+    "Handheld Settings",
+    "Best Party Roles",
+    "Learning at Your Pace",
+    "Choosing an Adventure",
+    "Starfall Isles Field Guide",
+    "The Amber Valley Handbook",
+    "Solo & Shared Journeys"
+  ],
+  "news": [
+    [
+      "WORLD NOTES",
+      "Sketching the Starbound Realm: scattered islands, forgotten paths and the beginnings of a shared adventure."
+    ],
+    [
+      "EDITOR’S DESK",
+      "The first-session article is now available as original sample content in five independently stored language versions."
+    ],
+    [
+      "CONTENT PLAN",
+      "Preview topics outline possible future guides. They remain unpublished until real, verified material is ready."
+    ]
+  ],
+  "faq": [
+    [
+      "What is Aurelia?",
+      "Aurelia is an original fictional world made for this template. Its adventure notes demonstrate how a guide site can present its content."
+    ],
+    [
+      "Is this a released game?",
+      "No release is claimed. Names, regions and character roles on this template are original demonstration content."
+    ],
+    [
+      "Are the preview guides available?",
+      "Only complete MDX articles open as guides. A Preview label identifies a topic that has no published article yet."
+    ],
+    [
+      "Can I read the first-session guide?",
+      "Yes. Open the walkthrough library and choose Aurelia Best Start to read the complete original sample article."
+    ],
+    [
+      "Does the atlas show live server data?",
+      "No. Tool cards are labelled previews. This template does not connect to a server-status or player-count service."
+    ],
+    [
+      "Which languages can I read?",
+      "English, German, Brazilian Portuguese, Spanish and Simplified Chinese share the same layout and independent content."
+    ],
+    [
+      "Where should I begin?",
+      "Start with the first-session article, then browse the library. Other topics illustrate the layout for future researched guides."
+    ]
+  ],
+  "stats": [
+    [
+      "SETTING",
+      "Original demo world"
+    ],
+    [
+      "PLATFORM",
+      "Not announced"
+    ],
+    [
+      "PRICE",
+      "Not announced"
+    ],
+    [
+      "STATUS",
+      "Template demonstration"
+    ]
+  ],
+  "primaryNav": [
+    "Classes",
+    "Weapons",
+    "Bosses",
+    "Multiplayer",
+    "Walkthroughs",
+    "Guides"
+  ],
+  "secondaryNav": [
+    "Server Status",
+    "Player Charts",
+    "Tier List",
+    "Best Weapons",
+    "Codes",
+    "Handheld",
+    "Charts",
+    "Overview",
+    "FAQ"
+  ]
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "enabled": true,
+    "fixtureRoot": "/tmp/c2c31a.72Os3n/starter-adoption-verification-EcfCJv",
+    "starterSourceSha256": "a220a4929538f22aee1dd8ee3b90b86ac967ad251490acb0ea2684ab114c20fb",
+    "copiedFixtureSourceSha256": "68f6039c471ed85467da41b5dcaf054c9c2f3f8ebad99e7d58d37311fdf6930e",
+    "fixtureSourceSha256": "68f6039c471ed85467da41b5dcaf054c9c2f3f8ebad99e7d58d37311fdf6930e",
+    "distSha256": "64cd10acd236d6c376c85507841b0c75f78f5935d3047b8f814c9e0f4fbe8c40",
+    "routeExists": true,
+    "canonicalConfigModified": false,
+    "syntheticOnly": true
+  },
+  {
+    "enabled": false,
+    "fixtureRoot": "/tmp/c2c31a.72Os3n/starter-adoption-verification-dFL9zq",
+    "starterSourceSha256": "a220a4929538f22aee1dd8ee3b90b86ac967ad251490acb0ea2684ab114c20fb",
+    "copiedFixtureSourceSha256": "68f6039c471ed85467da41b5dcaf054c9c2f3f8ebad99e7d58d37311fdf6930e",
+    "fixtureSourceSha256": "eb8a2edd7769751bf62f7c8bbd898bf0e30a0859ed42f68078d9c4abf3902fb2",
+    "distSha256": "40423d4ec8b3512cb7b002e5a8b0f02eef36d3d9a9646be130e1419d63fc332c",
+    "routeExists": false,
+    "canonicalConfigModified": false,
+    "syntheticOnly": true
+  }
+]

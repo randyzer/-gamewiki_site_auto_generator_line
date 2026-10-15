@@ -1,0 +1,417 @@
+{
+  "brand": "FRONTIER OPS",
+  "tagline": "FELDKODEX",
+  "signal": "SIGNAL · DEMO",
+  "topContext": "STAATSAUFBAU · SANDBOX",
+  "build": "KONZEPTVERSION",
+  "unofficial": "ORIGINELLER DEMO-KODEX",
+  "preview": "Vorschau",
+  "openMenu": "Menü öffnen",
+  "closeMenu": "Menü schließen",
+  "navigation": "Hauptnavigation",
+  "search": "Suchen",
+  "allGuides": "Alle Leitfäden",
+  "backGuides": "Zurück zu den Leitfäden",
+  "readGuide": "Leitfaden lesen",
+  "viewAll": "Alle anzeigen",
+  "minutes": "Min.",
+  "read": "Lesezeit",
+  "author": "Frontier Codex Redaktion",
+  "nav": [
+    "Gebäude",
+    "Strategie",
+    "Systeme",
+    "Rangliste",
+    "Leitfäden",
+    "Codes",
+    "Neuigkeiten",
+    "Updates",
+    "Häufige Fragen"
+  ],
+  "footer": {
+    "description": "Eine originelle Strategiereferenz für Frontier Ops, ein fiktives Sandbox-Konzept zum Staatsaufbau. Entdecke Gebäude, Wirtschaftsstrategien und Feldberichte, die aus einem verletzlichen Außenposten eine beständige Grenzregion machen.",
+    "notice": "ORIGINELLE BEISPIELINHALTE · KEIN VERÖFFENTLICHTES SPIEL UND KEIN OFFIZIELLER SPIELLEITFADEN.",
+    "codex": "Kodex",
+    "players": "Spieler",
+    "copyright": "© 2026 FRONTIER CODEX · ORIGINELLE DEMO",
+    "built": "MIT NEXT.JS ERSTELLT · BEREIT FÜR DIE NÄCHSTE GRENZREGION"
+  },
+  "hero": {
+    "eyebrow": "FELDVERSION · OKTOBER 2026",
+    "context": "SANDBOX · FRONTIER OPS",
+    "first": "BAUE EIN LAND AUF.",
+    "second": "SICHERE",
+    "third": "DEINE",
+    "fourth": "GRENZREGION",
+    "description": "Ein origineller Feldkodex für Frontier Ops: ein Sandbox-Konzept zum Staatsaufbau, in dem eine solide Versorgung das Tempo bestimmt. Baureihenfolgen, Gebäudeprioritäten und Entscheidungen, die deinen Außenposten erhalten.",
+    "strategy": "Strategie wählen",
+    "buildings": "Gebäude entdecken",
+    "meta": "META · S-RANG · KONZEPTVERSION",
+    "fullTier": "Vollständige Rangliste",
+    "stats": [
+      "Gebäude",
+      "Strategien",
+      "Systeme",
+      "Leitfäden"
+    ]
+  },
+  "about": {
+    "eyebrow": "Über diesen Kodex",
+    "title": "Was ist Frontier Ops?",
+    "paragraphs": [
+      "Frontier Ops ist ein originelles Strategie-Sandbox-Konzept für diese Vorlage. Beginne mit einer kleinen Siedlung, sichere die Versorgung, stelle Arbeitskräfte ein und entscheide, wann du deine Grenze erweiterst. Das Beispielszenario macht jede Runde zu einer Planungsaufgabe: Wäge Wachstum, Schutz und die Kosten neuer Gebiete ab, bevor du deine Reserven einsetzt.",
+      "Dieser Frontier Codex zeigt den Aufbau einer vollständigen Leitfaden-Website, ohne eine vollständige Spieldatenbank vorzutäuschen. Die sichtbaren Gebäude-, Strategie- und Nachrichtenbeiträge sind redaktionelle Vorschauen. Der Einstiegsleitfaden bietet den vollständigen Leseweg; alle Vorschauen bleiben klar gekennzeichnet, bis ihre Inhalte fertig sind."
+    ],
+    "start": "Zum ersten Mal hier? Beginne mit",
+    "links": [
+      [
+        "Einstiegsbriefing",
+        "Deine ersten zehn Minuten, Entscheidung für Entscheidung."
+      ],
+      [
+        "Stetiges Wachstum",
+        "Ein durchdachter Weg zu einer widerstandsfähigen Siedlung."
+      ],
+      [
+        "Prioritätenrangliste",
+        "Welche Verbesserungen die ersten Ressourcen verdienen."
+      ]
+    ]
+  },
+  "doctrine": {
+    "eyebrow": "Feldhandbuch",
+    "title": "Wähle deine Doktrin",
+    "items": [
+      [
+        "Gebäude",
+        "21 Gebäudekonzepte, eingeordnet und erklärt"
+      ],
+      [
+        "Strategien",
+        "7 mögliche Wege durch die Startphase"
+      ],
+      [
+        "Systeme",
+        "7 Mechaniken: Versorgung, Handel, Verteidigung…"
+      ],
+      [
+        "Rangliste",
+        "Gebäude nach praktischem Nutzen eingeordnet"
+      ],
+      [
+        "Leitfäden",
+        "Ausführliche Pläne für jede Spielphase"
+      ],
+      [
+        "Codes",
+        "Nicht verfügbar — reine Konzeptvorschau"
+      ],
+      [
+        "Änderungsprotokoll",
+        "Konzeptversion und redaktionelle Aktualisierungen"
+      ],
+      [
+        "Häufige Fragen",
+        "Kurze Antworten auf häufige Fragen aus dem Feld"
+      ]
+    ]
+  },
+  "dashboard": {
+    "eyebrows": [
+      "Doktrin",
+      "Neueste Aktualisierung",
+      "An der Spitze der Meta"
+    ],
+    "titles": [
+      "Top-Strategien",
+      "Briefing zu Industrieabläufen und Verteidigung",
+      "Unverzichtbare Gebäude"
+    ],
+    "date": "12. OKT. 2026 · KONZEPTVERSION",
+    "changes": [
+      "Das Versorgungslager-Konzept verbindet Sammelstellen mit Produktionsgruppen.",
+      "Die Vorschau zur Gießereikette skizziert den Weg vom Holz zum fertigen Stahl.",
+      "Die Wachposten-Vorschau zeigt einen überschaubaren Verteidigungsring.",
+      "Die Arbeitsverteilung verdeutlicht den Nutzen freier Kapazitäten.",
+      "Hinweise zur Bauarbeiterverteilung erklären die Kosten zu schneller Expansion."
+    ]
+  },
+  "buildingSection": {
+    "eyebrow": "Unverzichtbare Auswahl",
+    "title": "Gebäude, um die sich Planung lohnt",
+    "all": "Alle Gebäude"
+  },
+  "buildings": [
+    {
+      "title": "Bauhütte",
+      "code": "INF-01 · EARLY",
+      "category": "Produktion",
+      "description": "Die Bauhütte steht im Demo-Szenario für Baukapazität. Sorge zuerst für ein verlässliches Bauteam, bevor du jedes Grundstück mit wenig ertragreichen Gebäuden füllst. Zusätzliche Kapazität hilft der gesamten Siedlung, auf eine Änderung des Plans zu reagieren.",
+      "tags": [
+        "Produktion",
+        "Tempo",
+        "Baugeschwindigkeit"
+      ],
+      "cost": "GERINGE KOSTEN · STARTPRIORITÄT"
+    },
+    {
+      "title": "Versorgungslager",
+      "code": "INF-02 · EARLY",
+      "category": "Produktion",
+      "description": "Eine gemeinsame Sammelstelle hält das Industrieviertel geordnet. Platziere sie nahe der Produktionsgruppe, um kurze Versorgungswege zu erhalten, und erweitere dann dieses Zentrum. Die Vorschau zeigt, wie unterstützende Infrastruktur jedes andere Grundstück nützlicher macht.",
+      "tags": [
+        "Produktion",
+        "Sammlung",
+        "Versorgungsfluss"
+      ],
+      "cost": "MITTLERE KOSTEN · KERNINFRASTRUKTUR"
+    },
+    {
+      "title": "Luftaußenposten",
+      "code": "MIL-05 · MID",
+      "category": "Militär",
+      "description": "Der Luftaußenposten ist ein Reaktionskonzept für die mittlere Spielphase. Er erweitert die Reichweite, sobald die Wirtschaft Ersatzkosten tragen kann. Baue vor einem Angriff verlässliche Reserven auf. Eine mobile Streitmacht hilft nur, wenn die Siedlung dahinter stabil bleibt.",
+      "tags": [
+        "Militär",
+        "Reaktion",
+        "Expansion"
+      ],
+      "cost": "HOHE KOSTEN · OPTION FÜR DIE MITTLERE SPIELPHASE"
+    }
+  ],
+  "metaNames": [
+    "Bauhütte",
+    "Versorgungslager",
+    "Kraftwerk",
+    "Forschungszentrum"
+  ],
+  "strategySection": {
+    "eyebrow": "Einsatzpläne",
+    "title": "Ausgewählte Strategien",
+    "all": "Alle Strategien"
+  },
+  "strategies": [
+    {
+      "title": "Stetiges Wachstum",
+      "category": "Wirtschaft zuerst",
+      "description": "Gib dem Versorgungsnetz Vorrang vor einer frühen Armee. Sichere verlässliche Einnahmen und kleine Reserven. Wechsle erst zur mobilen Verteidigung, wenn die Siedlung Verluste ersetzen kann. Der Demo-Plan setzt auf stetigen Fortschritt und lässt Raum für Reaktionen auf die Karte.",
+      "tags": [
+        "Einsteiger",
+        "Neue Siedler",
+        "Lange Runden"
+      ],
+      "steps": "15 Schritte"
+    },
+    {
+      "title": "Luftpatrouille · Schnelle Reaktion",
+      "category": "Frühe Offensive",
+      "description": "Verzichte auf etwas langfristiges Wachstum, um früher reagieren zu können. Halte die Startphase kompakt, erkenne einen offenen Zugang und bereite eine mobile Patrouille vor, bevor es an der Grenze eng wird. Der richtige Zeitpunkt ist wichtiger als jede verfügbare Einheit aufzustellen.",
+      "tags": [
+        "Fortgeschrittene",
+        "Aktive Grenzregionen",
+        "Offene Zugänge"
+      ],
+      "steps": "13 Schritte"
+    },
+    {
+      "title": "Befestigte Grenzregion",
+      "category": "Defensives Abwarten",
+      "description": "Halte das Arbeitsviertel hinter einem kompakten Verteidigungsring, schütze die Wohnzone und sammle Reserven. Ein langsamerer Start kann sich lohnen, wenn die Siedlung Druck übersteht, ohne Arbeitskräfte ersetzen zu müssen. Der Plan macht sichere Produktion zur späteren Chance.",
+      "tags": [
+        "Fortgeschrittene",
+        "Feindliche Grenzen",
+        "Enge Zugänge"
+      ],
+      "steps": "13 Schritte"
+    }
+  ],
+  "newsSection": {
+    "eyebrow": "Signal · Feldmeldungen",
+    "title": "Neueste Meldungen aus der Grenzregion",
+    "all": "Alle Neuigkeiten"
+  },
+  "news": [
+    {
+      "category": "Update",
+      "title": "Konzeptbriefing zur Grenzregion — Versorgungswege und eine stärkere industrielle Basis",
+      "description": "Diese redaktionelle Vorschau behandelt ein gemeinsames Lager, ein verbundenes Gießereiviertel und die Verteidigungsplanung. Sie zeigt, wie ein Update-Rückblick Änderungen in die nächsten Entscheidungen eines Spielers übersetzen könnte.",
+      "publishedAt": "2026-10-12"
+    },
+    {
+      "category": "Codes",
+      "title": "Frontier Ops Belohnungen — Konzeptstatus und tatsächlich verfügbare Inhalte",
+      "description": "In diesem fiktiven Szenario gibt es keine einlösbaren Belohnungen oder aktiven Codes. Die Vorschau hält diese Grenze klar fest und zeigt, wie eine spätere Belohnungsseite Verfügbarkeit und Überprüfung getrennt darstellen könnte.",
+      "publishedAt": "2026-10-10"
+    },
+    {
+      "category": "Meta",
+      "title": "Briefing zur mobilen Reaktion — wann ein Luftaußenposten in den Startplan passt",
+      "description": "Ein belastbares Versorgungsnetz geht kostspieliger Mobilität voraus. Die Vorschau skizziert die Fragen vor dem Aufbau einer schnellen Eingreiftruppe und die Reserven, die eine solche Entscheidung tragfähig machen.",
+      "publishedAt": "2026-10-08"
+    }
+  ],
+  "guideSection": {
+    "eyebrow": "Feldberichte",
+    "title": "Neueste Leitfäden"
+  },
+  "purpose": {
+    "eyebrow": "Warum es diesen Kodex gibt",
+    "title": "Ein Feldhandbuch für klare Entscheidungen an der Grenze",
+    "paragraphs": [
+      "Ein nützlicher Leitfaden erklärt die Entscheidung hinter einer Baureihenfolge, statt nur Käufe aufzulisten. Diese originelle Demo folgt diesem Gedanken: Sie trennt Startprioritäten von späteren Optionen, erklärt schützende Reserven und unterscheidet Entwürfe sichtbar von fertigen Leitfäden.",
+      "Nutze die Website als Leseweg und künftiges Nachschlagewerk. Beginne mit dem vollständigen Einstiegsbriefing und erkunde dann die Vorschaukarten der geplanten Themen. Ihr Aufbau zeigt die Tiefe eines vollständigen Kodex; ihr Status verdeutlicht, welche Inhalte bereits verfügbar sind."
+    ]
+  },
+  "faq": {
+    "eyebrow": "Häufige Fragen",
+    "title": "Frontier Ops auf einen Blick",
+    "all": "Alle häufigen Fragen",
+    "items": [
+      [
+        "Was für ein Spiel ist Frontier Ops?",
+        "Ein originelles Sandbox-Konzept zum Staatsaufbau, das diese Vorlage veranschaulicht. Wirtschaft, Gebäude und Verteidigungspläne dienen als Beispiele und sind keine überprüften Mechaniken eines veröffentlichten Spiels."
+      ],
+      [
+        "Gibt es funktionierende Belohnungscodes?",
+        "Nein. Dieses fiktive Konzept hat weder ein laufendes Spiel noch ein Einlösesystem oder Belohnungen. Der Codes-Beitrag ist eine redaktionelle Vorschau und verspricht keine abholbaren Belohnungen."
+      ],
+      [
+        "Wo sollten neue Leser beginnen?",
+        "Das Einstiegsbriefing ist der vollständige Leitfaden dieser Demo. Es führt durch den Planungsablauf, einen Start in zehn Schritten und Gewohnheiten, mit denen eine wachsende Siedlung überschaubar bleibt."
+      ]
+    ]
+  },
+  "cta": {
+    "eyebrow": "Rekrut · Schritt 01",
+    "title": "Neu an der Grenze?",
+    "description": "Beginne mit dem vollständigen Einstiegsbriefing: ruhige erste zehn Minuten, eine zuverlässige Versorgungslinie und eine klare nächste Entscheidung, bevor die Karte eine Reaktion verlangt."
+  },
+  "guides": {
+    "eyebrow": "Feldhandbuch · Abschnitt 08",
+    "title": "Frontier Ops Leitfäden",
+    "description": "Ausführliche Feldberichte für ein Sandbox-Konzept zum Staatsaufbau. Baureihenfolgen, Versorgungsplanung und kleine Entscheidungen, die aus einem verletzlichen Außenposten eine verlässliche Siedlung machen.",
+    "about": "Über die Frontier Ops Leitfäden",
+    "paragraphs": [
+      "Jeder vollständige Leitfaden in diesem Kodex bietet einen praktischen Leseweg statt einer schnellen Tippsammlung. Das Einstiegsbriefing begleitet eine Siedlung vom ersten Produktionsgrundstück bis zu einer stabilen Verteidigungsposition, mit klaren Entscheidungspunkten und einem Blick auf Reserven. Beginne dort bei deinem ersten Besuch; alle weiteren Themen sind deutlich gekennzeichnete Vorschauen der geplanten Bibliothek.",
+      "Die Vorschauen stellen künftige Gebäudereferenzen und strategische Entscheidungen vor, ohne bestehende Seiten vorzutäuschen. Der vollständige Einstiegsleitfaden ist das fertige Beispiel. Die weiteren Doktrinkarten zeigen, wie ein größerer Kodex Gebäude, Systeme und ausführliche Feldberichte verbinden würde."
+    ],
+    "reading": "Leseweg nach Erfahrungsstand",
+    "readingItems": [
+      "Erster Besuch → Einstiegsbriefing. Plane ruhige, wiederholbare erste zehn Minuten.",
+      "Nächste Runde → Vorschau Stetiges Wachstum. Plane ein dauerhaft funktionierendes Versorgungsnetz.",
+      "Aktive Grenzen → Vorschau Luftpatrouille. Prüfe das Timing vor dem Ressourceneinsatz."
+    ],
+    "topics": "Behandelte Themen",
+    "topicItems": [
+      "Baureihenfolgen — ein praktischer Ablauf für die ersten zehn Minuten.",
+      "Karte lesen — den Plan anpassen, wenn sich die Lage an der Grenze verändert.",
+      "Spätere Ziele — Reserven schützen und Produktion in stetige Expansion verwandeln."
+    ],
+    "jump": "Zum Leitfaden springen",
+    "extra": [
+      "Strategiezentrale",
+      "Gebäuderangliste",
+      "Häufige Fragen"
+    ],
+    "pair": "Ergänze die Frontier Ops Leitfäden mit",
+    "pairItems": [
+      [
+        "Gebäude",
+        "Ordne jedes im Bericht erwähnte Gebäude ein."
+      ],
+      [
+        "Rangliste",
+        "Verstehe, warum der Plan eine Verbesserung priorisiert."
+      ],
+      [
+        "Spielsysteme",
+        "Verfolge die Mechaniken hinter jeder Entscheidung."
+      ]
+    ]
+  },
+  "article": {
+    "eyebrow": "Feldbericht",
+    "seeAlso": "Siehe auch",
+    "apply": "Setze diesen Frontier Ops Leitfaden um mit",
+    "applyDescription": "Mache aus einem Leseplan einen wiederholbaren Start. Diese Vorschauen zeigen, wo Gebäudeprioritäten, strategische Entscheidungen und unterstützende Systeme mit dem Leitfaden verbunden werden.",
+    "pairItems": [
+      [
+        "Rangliste",
+        "Prüfe, welche Gebäude in einer künftigen Rangliste die ersten Ressourcen verdienen."
+      ],
+      [
+        "Strategien",
+        "Erkenne, wie die Startphase in einen längeren Siedlungsplan passt."
+      ],
+      [
+        "Gebäude",
+        "Entdecke geplante Gebäudereferenzen und ihre Rolle in der Startphase."
+      ]
+    ],
+    "continue": "Weiterlesen",
+    "more": "Weitere Frontier Ops Leitfäden"
+  },
+  "notFound": {
+    "title": "Signal nicht gefunden",
+    "description": "Dieser Feldbericht liegt außerhalb des verfügbaren Kodex. Kehre zu den Leitfäden zurück, um einen vollständigen Leseweg zu finden.",
+    "home": "Zurück zur Basis"
+  },
+  "previews": [
+    {
+      "slug": "steady-growth-build-order",
+      "category": "Wirtschaft",
+      "title": "Stetiges Wachstum — vom ersten Feld zur Industrie",
+      "description": "Eine Vorschau des gesamten wirtschaftlichen Wegs: Ersetze einen engen Start durch ein verbundenes Versorgungsnetz, plane Ersatzkosten ein und entwickle schrittweise ein Industrieviertel.",
+      "minutes": 9,
+      "publishedAt": "2026-09-28"
+    },
+    {
+      "slug": "sky-patrol-playbook",
+      "category": "Militär",
+      "title": "Luftpatrouille — Außenposten und Versorgungswege",
+      "description": "Eine Vorschau des Reaktionsfensters in der mittleren Spielphase. Wann Ressourcen für Mobilität zurückgelegt werden sollten, wie offene Zugänge zu lesen sind und warum Produktionsschutz Vorrang behält.",
+      "minutes": 8,
+      "publishedAt": "2026-09-25"
+    },
+    {
+      "slug": "fortified-frontier-guide",
+      "category": "Strategie",
+      "title": "Befestigte Grenzregion — eine aktive Grenze in Frontier Ops halten",
+      "description": "Vorschau eines defensiven Lesewegs: Druck früh erkennen, einen kompakten Verteidigungsring bauen, Arbeitskräfte schützen und ruhige Reserven in eine spätere Chance verwandeln.",
+      "minutes": 9,
+      "publishedAt": "2026-09-22"
+    },
+    {
+      "slug": "expansion-planning-guide",
+      "category": "Strategie",
+      "title": "Frontier Ops Expansion — Gebiete verbinden und den Kern erhalten",
+      "description": "Ein neues Grundstück ist nur der Anfang. Diese Vorschau betrachtet Versorgungsentfernungen, nötige Reserven und den sicheren Rückweg, bevor die Siedlung eine Expansion beginnt.",
+      "minutes": 9,
+      "publishedAt": "2026-09-19"
+    },
+    {
+      "slug": "industrial-scaling-guide",
+      "category": "Wirtschaft",
+      "title": "Frontier Ops Wachstum — Kraftwerke, Forschung und Reserven",
+      "description": "Eine Vorschau des späteren Wirtschaftsgerüsts. Vergleiche Verbesserungskosten, verbinde das nächste Produktionsviertel und halte Reserven bereit, bevor du alles in ein Projekt investierst.",
+      "minutes": 10,
+      "publishedAt": "2026-09-16"
+    },
+    {
+      "slug": "aerial-outpost-guide",
+      "category": "Militär",
+      "title": "Frontier Ops Luftaußenposten — wann eine mobile Streitmacht passt",
+      "description": "Ein näherer Blick auf das Luftreaktionskonzept: Patrouillenreichweite, unterstützende Infrastruktur, Ersatzkosten und Verteidigungsfragen vor dem ersten Einsatz.",
+      "minutes": 9,
+      "publishedAt": "2026-09-13"
+    },
+    {
+      "slug": "economy-planning-mistakes",
+      "category": "Wirtschaft",
+      "title": "Frontier Ops Wirtschaftsfehler — zehn Gewohnheiten, die Wachstum schwächen",
+      "description": "Weniger auffällige Versorgungslücken einer Konzeptrunde: überfüllte Grundstücke, übergroße Verteidigung, verstreute Wohngebiete und Käufe, bevor die Reserven sie tragen können.",
+      "minutes": 8,
+      "publishedAt": "2026-09-10"
+    }
+  ]
+}

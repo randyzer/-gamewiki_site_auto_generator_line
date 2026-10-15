@@ -1,0 +1,19 @@
+{
+  "repository": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+  "branch": "phase-a/core-safety",
+  "acceptedA2Head": "aad6464b6be1584297866518e2ac036fbd0bd1a4",
+  "A2Parent": "a3c1bd31d87321ae40c44933fad8f8649e7f017d",
+  "A2Tree": "82b86eb5bb3ca9a65e22bbbf95f7a39d99ade5fa",
+  "nameStatus": "M\tsrc/components/navigation/MobileNav.astro\nM\ttests/navigation.test.ts\n",
+  "untrackedFiles": [
+    "tests/navigation-behavior.test.ts"
+  ],
+  "patchSha256": "4009f4e979aa69be58e35b483a2c8abd014816f97907292b487c091a99b127eb",
+  "A3CommitCreated": true,
+  "closure": {
+    "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+    "parent": "aad6464b6be1584297866518e2ac036fbd0bd1a4",
+    "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1",
+    "status": ""
+  }
+}

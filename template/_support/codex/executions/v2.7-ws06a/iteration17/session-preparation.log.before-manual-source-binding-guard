@@ -1,0 +1,66 @@
+
+> game-site-starter@0.1.0 build
+> tsx scripts/build-site.ts final
+
+Site validation passed: 6 enabled pages, 1 content entries.
+10:50:11 [content] Syncing content
+10:50:11 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/meta"
+10:50:11 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/news"
+10:50:11 [content] Synced content
+10:50:11 [types] Generated 277ms
+10:50:11 [build] output: "static"
+10:50:11 [build] mode: "static"
+10:50:11 [build] directory: /private/var/folders/sx/0vw4jt396yj64d3ydl1qls9h0000gn/T/starter-adoption-verification-1ksZ2D/dist/
+10:50:11 [build] Collecting build info...
+10:50:11 [build] ✓ Completed in 300ms.
+10:50:11 [build] Building static entrypoints...
+10:50:11 [vite] ✓ built in 222ms
+10:50:11 [vite] ✓ built in 44ms
+10:50:11 [build] Rearranging server assets...
+
+ generating static routes 
+10:50:11   ├─ /404.html (+7ms) 
+10:50:11   ├─ /about/index.html (+2ms) 
+10:50:11   ├─ /guides/index.html (+1ms) 
+10:50:11   ├─ /guides/getting-started/index.html (+3ms) 
+10:50:11   ├─ /robots.txt (+1ms) 
+10:50:11   ├─ /search/index.html (+5ms) 
+10:50:11   ├─ /index.html (+2ms) 
+10:50:11 ✓ Completed in 50ms.
+
+10:50:11 [build] ✓ Completed in 331ms.
+10:50:11 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+10:50:11 [build] 6 page(s) built in 635ms
+10:50:11 [build] Complete!
+Static output reconciliation passed: 6 inventory routes matched.
+
+Running Pagefind v1.5.2 (Extended)
+Running from: "/private/var/folders/sx/0vw4jt396yj64d3ydl1qls9h0000gn/T/starter-adoption-verification-1ksZ2D"
+Source:       "dist"
+Output:       "dist/pagefind"
+
+[Walking source directory]
+Found 6 files matching **/*.{html}
+
+[Parsing files]
+Found a data-pagefind-body element on the site.
+↳ Ignoring pages without this tag.
+
+[Reading languages]
+Discovered 1 language: en
+
+[Building search indexes]
+Total: 
+  Indexed 1 language
+  Indexed 4 pages
+  Indexed 165 words
+  Indexed 0 filters
+  Indexed 0 sorts
+
+Finished in 0.014 seconds
+Pagefind normalization passed: raw_total=650170 B; removed_optional_ui=418109 B; normalized_required=232061 B; loader=45555 B; worker=41255 B; entry=171 B; metadata=124 B; WASM=140939 B; indexes=2039 B; filters=0 B; fragments=1978 B; locale_count=1; locales=[en=76881 B(meta=124,wasm=72740,index=2039,filters=0,fragments=1978)].
+Removed optional Pagefind UI: pagefind-ui.js, pagefind-ui.css, pagefind-component-ui.js, pagefind-component-ui.css, pagefind-modular-ui.js, pagefind-modular-ui.css, pagefind-highlight.js.
+Generated build audit passed for 6 pages. Largest HTML: 18458 B. Largest page CSS reference: 54149 B. Largest page JS reference: 189143 B. Unique referenced CSS: 54149 B. Unique referenced JS: 189143 B. Pagefind normalized payload: raw_total=232061 B; removed_optional_ui=0 B; normalized_required=232061 B; loader=45555 B; worker=41255 B; entry=171 B; metadata=124 B; WASM=140939 B; indexes=2039 B; filters=0 B; fragments=1978 B; locale_count=1; locales=[en=76881 B(meta=124,wasm=72740,index=2039,filters=0,fragments=1978)].
+
+
+Prepared independent identity and exact manual build; no preview/Safari interaction yet.

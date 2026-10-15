@@ -1,0 +1,261 @@
+{
+  "diagnosticOnly": true,
+  "qualificationAttempts": 0,
+  "retries": 0,
+  "rows": [
+    {
+      "engine": "chromium",
+      "version": "153.0.8010.12",
+      "checks": {
+        "returnKeysExact": true,
+        "metadataExact": true,
+        "articleAndGraphExact": true,
+        "noParseErrors": true,
+        "bodyTextAndHtml": true,
+        "malformedRecorded": true
+      },
+      "positive": {
+        "rows": [
+          {
+            "label": "Published",
+            "text": "2026-08-10",
+            "times": [
+              {
+                "datetime": "2026-08-10",
+                "text": "2026-08-10"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Last updated",
+            "text": "2026-09-20",
+            "times": [
+              {
+                "datetime": "2026-09-20",
+                "text": "2026-09-20"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Sources checked",
+            "text": "2026-09-21",
+            "times": [
+              {
+                "datetime": "2026-09-21",
+                "text": "2026-09-21"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Live status",
+            "text": "Observed live 2026-09-22 Status source",
+            "times": [
+              {
+                "datetime": "2026-09-22",
+                "text": "2026-09-22"
+              }
+            ],
+            "links": [
+              {
+                "href": "https://example.com/qa-live-status",
+                "text": "Status source"
+              }
+            ]
+          }
+        ],
+        "articles": [
+          {
+            "@type": "Article",
+            "headline": "Direct",
+            "datePublished": "2026-08-10"
+          },
+          {
+            "@type": "Article",
+            "headline": "Graph",
+            "dateModified": "2026-09-20"
+          }
+        ],
+        "parseErrors": [],
+        "bodyText": "Published\n2026-08-10\nLast updated\n2026-09-20\nSources checked\n2026-09-21\nLive status\nObserved live 2026-09-22 Status source",
+        "html": "<html><head></head><body><article><dl class=\"article__meta\"><div><dt>Published</dt><dd><time datetime=\"2026-08-10\">2026-08-10</time></dd></div><div><dt>Last updated</dt><dd><time datetime=\"2026-09-20\">2026-09-20</time></dd></div><div><dt>Sources checked</dt><dd><time datetime=\"2026-09-21\">2026-09-21</time></dd></div><div><dt>Live status</dt><dd>Observed live <time datetime=\"2026-09-22\">2026-09-22</time> <a href=\"https://example.com/qa-live-status\">Status source</a></dd></div></dl></article><script type=\"application/ld+json\">{\"@type\":\"Article\",\"headline\":\"Direct\",\"datePublished\":\"2026-08-10\"}</script><script type=\"application/ld+json\">{\"@graph\":[null,7,[{\"@type\":\"Article\",\"headline\":\"Graph\",\"dateModified\":\"2026-09-20\"}]]}</script></body></html>"
+      },
+      "negativeParseErrors": [
+        "SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
+      ],
+      "passed": true
+    },
+    {
+      "engine": "firefox",
+      "version": "155.0",
+      "checks": {
+        "returnKeysExact": true,
+        "metadataExact": true,
+        "articleAndGraphExact": true,
+        "noParseErrors": true,
+        "bodyTextAndHtml": true,
+        "malformedRecorded": true
+      },
+      "positive": {
+        "rows": [
+          {
+            "label": "Published",
+            "text": "2026-08-10",
+            "times": [
+              {
+                "datetime": "2026-08-10",
+                "text": "2026-08-10"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Last updated",
+            "text": "2026-09-20",
+            "times": [
+              {
+                "datetime": "2026-09-20",
+                "text": "2026-09-20"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Sources checked",
+            "text": "2026-09-21",
+            "times": [
+              {
+                "datetime": "2026-09-21",
+                "text": "2026-09-21"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Live status",
+            "text": "Observed live 2026-09-22 Status source",
+            "times": [
+              {
+                "datetime": "2026-09-22",
+                "text": "2026-09-22"
+              }
+            ],
+            "links": [
+              {
+                "href": "https://example.com/qa-live-status",
+                "text": "Status source"
+              }
+            ]
+          }
+        ],
+        "articles": [
+          {
+            "@type": "Article",
+            "headline": "Direct",
+            "datePublished": "2026-08-10"
+          },
+          {
+            "@type": "Article",
+            "headline": "Graph",
+            "dateModified": "2026-09-20"
+          }
+        ],
+        "parseErrors": [],
+        "bodyText": "Published\n2026-08-10\nLast updated\n2026-09-20\nSources checked\n2026-09-21\nLive status\nObserved live 2026-09-22 Status source",
+        "html": "<html><head></head><body><article><dl class=\"article__meta\"><div><dt>Published</dt><dd><time datetime=\"2026-08-10\">2026-08-10</time></dd></div><div><dt>Last updated</dt><dd><time datetime=\"2026-09-20\">2026-09-20</time></dd></div><div><dt>Sources checked</dt><dd><time datetime=\"2026-09-21\">2026-09-21</time></dd></div><div><dt>Live status</dt><dd>Observed live <time datetime=\"2026-09-22\">2026-09-22</time> <a href=\"https://example.com/qa-live-status\">Status source</a></dd></div></dl></article><script type=\"application/ld+json\">{\"@type\":\"Article\",\"headline\":\"Direct\",\"datePublished\":\"2026-08-10\"}</script><script type=\"application/ld+json\">{\"@graph\":[null,7,[{\"@type\":\"Article\",\"headline\":\"Graph\",\"dateModified\":\"2026-09-20\"}]]}</script></body></html>"
+      },
+      "negativeParseErrors": [
+        "SyntaxError: JSON.parse: expected property name or '}' at line 1 column 3 of the JSON data"
+      ],
+      "passed": true
+    },
+    {
+      "engine": "webkit",
+      "version": "26.6",
+      "checks": {
+        "returnKeysExact": true,
+        "metadataExact": true,
+        "articleAndGraphExact": true,
+        "noParseErrors": true,
+        "bodyTextAndHtml": true,
+        "malformedRecorded": true
+      },
+      "positive": {
+        "rows": [
+          {
+            "label": "Published",
+            "text": "2026-08-10",
+            "times": [
+              {
+                "datetime": "2026-08-10",
+                "text": "2026-08-10"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Last updated",
+            "text": "2026-09-20",
+            "times": [
+              {
+                "datetime": "2026-09-20",
+                "text": "2026-09-20"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Sources checked",
+            "text": "2026-09-21",
+            "times": [
+              {
+                "datetime": "2026-09-21",
+                "text": "2026-09-21"
+              }
+            ],
+            "links": []
+          },
+          {
+            "label": "Live status",
+            "text": "Observed live 2026-09-22 Status source",
+            "times": [
+              {
+                "datetime": "2026-09-22",
+                "text": "2026-09-22"
+              }
+            ],
+            "links": [
+              {
+                "href": "https://example.com/qa-live-status",
+                "text": "Status source"
+              }
+            ]
+          }
+        ],
+        "articles": [
+          {
+            "@type": "Article",
+            "headline": "Direct",
+            "datePublished": "2026-08-10"
+          },
+          {
+            "@type": "Article",
+            "headline": "Graph",
+            "dateModified": "2026-09-20"
+          }
+        ],
+        "parseErrors": [],
+        "bodyText": "Published\n2026-08-10\nLast updated\n2026-09-20\nSources checked\n2026-09-21\nLive status\nObserved live 2026-09-22 Status source",
+        "html": "<html><head></head><body><article><dl class=\"article__meta\"><div><dt>Published</dt><dd><time datetime=\"2026-08-10\">2026-08-10</time></dd></div><div><dt>Last updated</dt><dd><time datetime=\"2026-09-20\">2026-09-20</time></dd></div><div><dt>Sources checked</dt><dd><time datetime=\"2026-09-21\">2026-09-21</time></dd></div><div><dt>Live status</dt><dd>Observed live <time datetime=\"2026-09-22\">2026-09-22</time> <a href=\"https://example.com/qa-live-status\">Status source</a></dd></div></dl></article><script type=\"application/ld+json\">{\"@type\":\"Article\",\"headline\":\"Direct\",\"datePublished\":\"2026-08-10\"}</script><script type=\"application/ld+json\">{\"@graph\":[null,7,[{\"@type\":\"Article\",\"headline\":\"Graph\",\"dateModified\":\"2026-09-20\"}]]}</script></body></html>"
+      },
+      "negativeParseErrors": [
+        "SyntaxError: JSON Parse error: Expected '}'"
+      ],
+      "passed": true
+    }
+  ],
+  "overall": "PASS",
+  "allBrowsersClosedNormally": true
+}

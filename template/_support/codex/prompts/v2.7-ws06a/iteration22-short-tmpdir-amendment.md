@@ -1,0 +1,271 @@
+# Actual PLAN22 Amendment
+
+2026-10-07T15:31:33.690Z
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph: 已核对。你这次澄清是正确的：
+    - list:
+      - text: iteration21 最终冻结的 integrity-check.json
+      - strong: 确实已经 PASS：5843 protected / 41 IDs / productDelta=0 / governanceDelta=0
+      - text: 。
+      - text: 早先错误的 45 IDs 已被保留在 initial-integrity-check.json，result.md 也明确记录了 premature PASS correction。
+      - strong: PLAN22 不需要再“修 integrity helper”作为任务内容，只需沿用正确的 Section H 计数方法。
+      - listitem: owned-tmp 中确实存在大量正常的 Node/tsx cache regular files，包括 node-compile-cache/.../<hash> 和 tsx-501/<pid>-<sha>。因此我上一版 PLAN22 对 TMPDIR 收尾“基本要求空目录”的约束过严，正常成功运行也可能被误判 BLOCK。
+    - paragraph:
+      - text: 我选择
+      - strong: 安全清理已知 cache
+      - text: ，不采用禁用 Node/tsx cache 的方案。这样对运行环境的干预最小，也不会引入新的环境变量行为差异。
+    - paragraph:
+      - text: 下面是 PLAN22 的窄幅 amendment；
+      - strong: 除此之外 PLAN22 全部保持不变。
+    - button "添加到资料库":
+      - generic: PLAN22 — Narrow TMPDIR Cleanup Amendment
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN_AMENDMENT"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 22"
+        - text: "WORKSTREAM: Short-TMPDIR harness repair / Development Readiness re-audit"
+        - text: "AMENDMENT_SCOPE: TMPDIR OWNERSHIP + POST-RUN CACHE CLEANUP ONLY"
+        - text: "QUALIFICATION_ATTEMPTS_USED: 0"
+        - text: "ORIGINAL_PLAN22: OTHERWISE UNCHANGED"
+      - heading "A. Iteration21 integrity correction" [level=2]
+      - paragraph:
+        - text: PLAN22执行时必须以 iteration21
+        - strong: 最终冻结状态
+        - text: 为历史事实：
+      - code: iteration21/initial-integrity-check.json → retained historical FAIL → incorrect 45-ID whole-document-style count iteration21/integrity-check.json → final PASS → protectedFilesUnchanged = 5843 → contractRegistryIds = 41 → productDelta = 0 → governanceDelta = 0
+      - paragraph: 不得：
+      - list:
+        - paragraph: 修改 iteration21 任一 artifact；
+        - paragraph: 把 initial FAIL 删除；
+        - paragraph: 把 iteration21 描述成 integrity 最终失败；
+        - paragraph: 再将“修复 iteration21 integrity helper”列为 PLAN22 工作项。
+      - paragraph: PLAN22 当前 integrity 仍按 canonical Section H / unique capability rows 独立重算。
+      - separator
+      - heading "B. macOS TMPDIR identity 规则修订" [level=2]
+      - paragraph: 创建：
+      - code: mktemp -d /tmp/c2c22.XXXXXX
+      - paragraph: 后必须同时记录：
+      - code: logicalPath realPath
+      - paragraph: 在 macOS 上允许：
+      - code: logicalPath = /tmp/c2c22.xxxxxx realPath = /private/tmp/c2c22.xxxxxx
+      - paragraph: 因此 ownership validation 不得要求：
+      - code: realPath startsWith "/tmp/"
+      - paragraph: 而应要求：
+      - code: "logicalPath matches: ^/tmp/c2c22\\.[A-Za-z0-9]+$ AND realPath matches: ^/private/tmp/c2c22\\.[A-Za-z0-9]+$ OR ^/tmp/c2c22\\.[A-Za-z0-9]+$"
+      - paragraph: 并要求：
+      - code: lstat(logical root).isDirectory() root is not symlink realpath resolves to exactly the recorded owned root root existed only after this observer created it
+      - paragraph: 如果 realpath逃离：
+      - code: /tmp/c2c22.* 或 /private/tmp/c2c22.*
+      - paragraph: 立即：
+      - code: BLOCK DO NOT DELETE
+      - separator
+      - heading "C. 不再要求 successful TMPDIR 自然为空" [level=2]
+      - paragraph: 原 PLAN22 中：
+      - blockquote:
+        - paragraph: “runner结束后 TMPDIR 若有未知内容，不删除；只允许空 IPC/socket cleanup”
+      - paragraph: 修改为：
+      - blockquote:
+        - paragraph: Node/tsx 在 observer-owned TMPDIR 中产生其正常 compile / transform cache 属于预期 harness residue。Runner和其 child process全部结束、preview PID已确认 gone 后，可以在严格 allowlist + 完整 inventory 条件下删除这些已知 cache，再删除 owned TMP root。
+      - paragraph: 这不是产品 evidence，也不属于 fixture/build identity。
+      - separator
+      - heading "D. Cleanup 前必须完整 inventory" [level=2]
+      - paragraph: 在执行任何删除前创建：
+      - code: owned-tmp-inventory-before-cleanup.json
+      - paragraph: 对 TMPDIR 全树记录：
+      - code: relativePath realPath type mode size symlink
+      - paragraph: type至少区分：
+      - code: directory regular-file socket fifo other
+      - paragraph: 必须先完成 inventory，再做 allowlist判定。
+      - paragraph: 禁止：
+      - code: rm -rf <root>
+      - paragraph: 先删后看。
+      - separator
+      - heading "E. 顶层 allowlist" [level=2]
+      - paragraph: observer-owned TMP root 下只接受以下顶层 entry：
+      - code: tsx-<uid>/ node-compile-cache/
+      - paragraph: 以及在确实由 tsx IPC遗留时：
+      - code: tsx-<uid>/<digits>.pipe
+      - paragraph: 不得接受其它顶层目录或文件。
+      - paragraph: 例如以下任一出现：
+      - code: random/ project/ home/ .env package.json unknown-file
+      - paragraph: 均：
+      - code: BLOCK DO NOT RECURSIVELY DELETE TMP ROOT
+      - separator
+      - heading "F. tsx-<uid> allowlist" [level=2]:
+        - text: F.
+        - code: tsx-<uid>
+        - text: allowlist
+      - paragraph: 顶层目录必须匹配：
+      - code: ^tsx-[0-9]+$
+      - paragraph: 目录本身：
+      - code: must be a real directory must not be symlink realpath must stay inside owned TMP root
+      - paragraph: 其中只允许两类 entry。
+      - heading "F1. tsx transform cache regular file" [level=3]
+      - paragraph: 允许文件名：
+      - code: "^[0-9]+-[0-9a-f]{40}$"
+      - paragraph: 并必须：
+      - code: regular file not symlink realpath inside owned TMP root
+      - paragraph: iteration21 的实际：
+      - code: tsx-501/17913-<40-char-sha>
+      - paragraph: 属于此类。
+      - heading "F2. stale tsx IPC socket" [level=3]
+      - paragraph: 允许名称：
+      - code: ^[0-9]+\.pipe$
+      - paragraph: 但只有：
+      - code: runner child process exited all spawned child processes confirmed gone preview PID confirmed gone / never started entry is actual Unix socket not symlink
+      - paragraph: 时才允许 unlink。
+      - paragraph:
+        - text: 如果
+        - code: .pipe
+        - text: 是：
+      - code: regular file directory symlink fifo
+      - paragraph: 均：
+      - code: BLOCK
+      - paragraph: 不得按名字猜测它是 socket。
+      - separator
+      - heading "G. node-compile-cache allowlist" [level=2]:
+        - text: G.
+        - code: node-compile-cache
+        - text: allowlist
+      - paragraph: 只允许：
+      - code: node-compile-cache/ <version-directory>/ <cache-files>
+      - paragraph: 第一层必须是：
+      - code: node-compile-cache
+      - paragraph: 真实目录，非 symlink。
+      - paragraph: 版本目录只允许与本次实际 Node identity一致的 Node compile-cache命名。
+      - paragraph: 允许模式应从当前实际创建目录验证，而不是写死 iteration21 完整字符串。
+      - paragraph: 最低要求：
+      - code: "name begins with: v${process.version_without_leading_v}-${process.arch}- and the remaining suffix contains only: [A-Za-z0-9._-]"
+      - paragraph: 例如当前观察：
+      - code: v22.22.0-arm64-2b4477fa-501
+      - paragraph: 合法。
+      - paragraph: 版本目录内只允许：
+      - code: ^[0-9a-f]+$
+      - paragraph:
+        - text: 的
+        - strong: regular files
+        - text: 。
+      - paragraph: 并要求：
+      - code: not symlink realpath inside owned TMP root
+      - paragraph: 不对文件内容作 qualification inference。
+      - separator
+      - heading "H. Symlink / path escape 是绝对 STOP" [level=2]
+      - paragraph: 在 owned TMP root 任意层级发现：
+      - code: symbolic link
+      - paragraph: 直接：
+      - code: BLOCK NO AUTOMATIC CACHE CLEANUP
+      - paragraph:
+        - text: 即便 symlink目标仍位于
+        - code: /private/tmp
+        - text: 内也不允许。
+      - paragraph: 任何 entry：
+      - code: realpath does not start with ownedRootRealPath + "/"
+      - paragraph: 同样：
+      - code: BLOCK
+      - paragraph: 防止 traversal / alias deletion。
+      - separator
+      - heading "I. Unknown entry 绝不自动学习" [level=2]
+      - paragraph: cleanup helper不能采用：
+      - code: “看起来像cache” “Node生成的应该安全” “tsx新版本多生成一个目录”
+      - paragraph: 之类启发式规则。
+      - paragraph: 只有本 amendment 明确允许的：
+      - code: tsx transform regular files tsx stale IPC socket Node compile-cache regular files their exact parent directories
+      - paragraph: 才能删除。
+      - paragraph: 其它全部：
+      - code: UNKNOWN → BLOCK → retain filesystem evidence
+      - paragraph: 若未来 Node/tsx版本改变目录结构，则由新的 finite plan处理。
+      - separator
+      - heading "J. Cleanup 时序" [level=2]
+      - paragraph: 必须严格：
+      - code: fresh qualification child exited ↓ observer confirms child process exited ↓ runner's preview cleanup artifact exists ↓ preview PID absent ↓ runner-owned disposable fixture absent ↓ inventory TMPDIR ↓ validate every entry against allowlist ↓ delete individual allowed files/socket ↓ remove now-empty allowed cache directories bottom-up ↓ remove owned TMP root ↓ confirm root absent
+      - paragraph: 不得在 qualification child仍运行时清理 Node/tsx cache。
+      - separator
+      - heading "K. Cleanup record" [level=2]
+      - paragraph: 新增：
+      - code: owned-tmp-cleanup.json
+      - paragraph: 至少记录：
+      - code: logicalRoot realRoot runnerExited previewPidGone fixtureGone inventoryCount tsxTransformFiles tsxSockets nodeCompileCacheFiles symlinksFound unknownEntries pathEscapes deletedEntries[] rootRemoved fallbackSignalUsed status
+      - paragraph: 成功要求：
+      - code: symlinksFound = 0 unknownEntries = 0 pathEscapes = 0 runnerExited = true previewPidGone = true fixtureGone = true rootRemoved = true fallbackSignalUsed = false status = PASS
+      - separator
+      - heading "L. Node/tsx cache cleanup不属于 retry" [level=2]
+      - paragraph: 删除正常 cache residue：
+      - code: ≠ qualification retry
+      - paragraph: 但严格保持：
+      - code: fresh check:browser qualification attempt = exactly 1
+      - paragraph: 不能：
+      - code: run → cleanup cache → run again
+      - paragraph: 来获得绿色结果。
+      - paragraph: 若唯一 fresh qualification attempt仍发生：
+      - code: EADDRINUSE 或其它 infrastructure failure
+      - paragraph: 则 iteration22：
+      - code: BLOCKED
+      - paragraph: 不做第二次 run。
+      - separator
+      - heading "M. 不采用“禁用 cache”路线" [level=2]
+      - paragraph:
+        - text: PLAN22 本轮
+        - strong: 不设置
+        - text: 任何为了规避 cache而新增的：
+      - code: NODE_COMPILE_CACHE NODE_DISABLE_COMPILE_CACHE TSX_DISABLE_CACHE 自定义 tsx cache env
+      - paragraph: 也不修改 npm/Node启动参数。
+      - paragraph: 理由：
+      - blockquote:
+        - paragraph: 清理一个明确归属于 observer-owned TMPDIR 的运行后 cache，比改变 Node/tsx运行行为更小、更可审计。
+      - paragraph: 因此 qualification环境仍尽量接近原 runner正常执行环境。
+      - separator
+      - heading "N. Fresh-run真实性仍保持原 PLAN22" [level=2]
+      - paragraph: 本 amendment不改变以下要求：
+      - code: original npm run check:browser unchanged 47 matrix unchanged runner unchanged assertions unchanged engines unchanged Playwright unchanged policy unchanged closure verifier no retry no filtering no timeout inflation no browser flags no synthetic keys/focus/scroll
+      - separator
+      - heading "O. PLAN22 cleanup Exit Gate 修订" [level=2]
+      - paragraph: 原 cleanup gate替换为：
+      - code: "owned_tmp: logical_root_matches_owned_pattern: true real_root_under_tmp_or_private_tmp: true root_not_symlink: true inventory_completed_before_delete: true allowed_top_level_only: - tsx-UID - node-compile-cache tsx: transform_cache_regular_files_only: true stale_pipe_actual_socket_only: true node_compile_cache: matching_current_node_version_arch: true regular_cache_files_only: true symlinks: 0 path_escapes: 0 unknown_entries: 0 runner_exited: true preview_pid_gone: true fixture_gone: true allowed_residue_deleted: true owned_root_removed: true fallback_signal_used: false"
+      - paragraph: 若任一项不成立：
+      - code: TMP CLEANUP = BLOCKED DEVELOPMENT READINESS = BLOCKED
+      - separator
+      - heading "P. Everything else unchanged" [level=2]
+      - paragraph:
+        - text: PLAN22 的以下部分
+        - strong: 完全不变
+        - text: ：
+      - code: fresh preflight current 41-ID integrity calculation fresh product-health rerun one and only one check:browser attempt independent fixture/dist capture 47/47 execution requirement non-WebKit zero failures residual exact-subset rule fresh Chromium/Firefox counterpart audit native probe/current policy/control validation closure negative recheck Safari proof = 0 WS06A FULL = BLOCKED independent readiness review next slice = WS03A only 7-day / mutation freshness no capability promotion no formal DAG unlock
+      - heading "Amendment verdict" [level=2]
+      - code: "PLAN22 AMENDMENT: ACCEPTED FOR EXECUTION QUALIFICATION ATTEMPTS USED: 0 NEXT: execute amended PLAN22 once"
+    - paragraph:
+      - text: 这个修订只解决两个事实性问题：
+      - strong: iteration21 最终 integrity 本来就是 PASS/41；以及 Node/tsx 在 owned TMPDIR 留下 compile/transform cache 是正常现象，不能因此让一个成功的 fresh47 在 cleanup 阶段被误判失败。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

@@ -1,0 +1,345 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 33"
+      - text: "WORKSTREAM: WS03D-FRESHNESS"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03D-FRESHNESS IMPLEMENTATION FOR CONTINUATION
+    - paragraph: 我独立重算了核心证据，iteration33 可以签 continuation ACCEPT。
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "Observer diagnosis: iteration32 actual tsx serialization contains __name = YES iteration33 repaired serialization __name references = 0 real-browser diagnostic = Chromium / Firefox / WebKit 3/3 PASS helper injection = NONE Harness: normalized whole harness byte-identical = YES fixture/dates/source URLs/marker unchanged = YES assertion set unchanged = YES Targeted: 6 / 6 rows PASS 78 / 78 assertions PASS 0 unexpected errors 1 attempt / 0 retry Fresh47: 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN 0 non-WebKit failures raw FAIL / exit1 retained Residual assertions: 40 current 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED outside frozen40 = 0 Fresh counterparts: Chromium 40 / 40 PASS Firefox 40 / 40 PASS Integrity: product delta = 0 governance delta = 0 6666 protected files unchanged Contract SHA exact 41 unique capability IDs verification infrastructure delta = 0 Closure: BLOCKED sole error = missing/invalid real Safari keyboard evidence"
+    - paragraph: Iteration32 的失败也被正确永久保留为 6 FAIL / 0 of 78 intended assertions / fresh47 NOT_STARTED，没有被 iteration33 倒写成 PASS。
+    - paragraph: 因此现在五个 WS03 候选切片的状态都是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 03A IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION 03B IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION 03C IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION 03D-search IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION 03D-freshness IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION
+    - paragraph:
+      - text: 但这
+      - strong: 仍不等于 WS03 formal ACCEPT
+      - text: 。路线 §3.1 明确规定：Safari0 / WS06A FULL 未接受期间，bounded-development continuation 不能自动解锁正式 WS03、04A Gate、WS05、06B 或 release。
+    - paragraph:
+      - text: 现在继续做什么，关键要区分“Gate 阻塞”和“所有工作都停止”。当前 hold 阻止的是
+      - strong: 正式退出与下游产品实施
+      - text: ；路线仍允许设计、研究、以及针对已经存在候选接口的 WS04 绑定准备。继续重复 fresh47 已没有新增价值，所以 iteration34 应该转向
+      - strong: 接口整合产物
+      - text: ，而不是再跑一轮浏览器证据。
+    - button "添加到资料库":
+      - generic: PLAN34 — WS03 Candidate Interface Baseline and WS04A Binding Readiness
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 34"
+        - text: "WORKSTREAM: CROSS-WS03 / WS04A PREPARATION"
+        - text: "TYPE: DESIGN + INTERFACE BINDING PREPARATION ONLY"
+      - paragraph:
+        - text: "PRODUCT_DELTA: 0"
+        - text: "TRIAD_DELTA: 0"
+        - text: "BROWSER_RERUN: NOT AUTHORIZED"
+        - text: "WS04A_IMPLEMENTATION: NOT AUTHORIZED"
+        - text: "WS05_IMPLEMENTATION: NOT AUTHORIZED"
+      - heading "1. Purpose" [level=2]
+      - paragraph: Convert the five independently continuation-accepted WS03 candidate slices into one accurate, source-bound interface baseline for future WS04A binding.
+      - paragraph: "This iteration answers:"
+      - blockquote:
+        - paragraph: “What interfaces actually exist now, exactly where are they, what authority do they own, and how must the accepted iteration18 Game Adaptation method bind to them later?”
+      - paragraph: "It does not answer:"
+      - blockquote:
+        - paragraph: “Has WS03 formally passed?”
+      - separator
+      - heading "2. Why PLAN34 is allowed despite the hold" [level=2]
+      - paragraph: "Current formal holds remain:"
+      - code: Safari proof = 0 WS06A FULL = BLOCKED WS03 formal Gate = NOT_ACCEPTED WS04A Gate = OPEN WS05 = NOT AUTHORIZED release hold = ACTIVE
+      - paragraph: "The accepted roadmap nevertheless explicitly allows:"
+      - code: design / research preparation + WS04 preparation against available/frozen interface information
+      - paragraph: provided that it does not bypass the formal dependency DAG.
+      - paragraph: "PLAN34 stays entirely on that permitted side:"
+      - code: actual-source inspection → interface baseline → method-to-interface binding map → future implementation readiness
+      - paragraph: It performs no 04A product/schema implementation.
+      - separator
+      - heading "3. No more evidence-only repetition" [level=2]
+      - paragraph: "PLAN34 must NOT rerun:"
+      - code: fresh47 WS03 targeted browser suites closure Safari substitutes root 859 tests adopted build
+      - paragraph: unless a source mutation is unexpectedly discovered.
+      - paragraph: Iteration23–33 evidence already answers the bounded-development question.
+      - paragraph: Repeating it without source change adds no V2.7 product value.
+      - separator
+      - heading "4. Freeze all WS03 implementation history" [level=2]
+      - paragraph: "Preserve byte-for-byte:"
+      - code: iterations23–33/**
+      - paragraph: "Especially preserve all original failures:"
+      - code: 23 harness FAIL 24 serialization preflight FAIL 25 geometry assertion FAIL 26 INCONCLUSIVE 28 WebKit lazy-load FAIL 32 observer serialization FAIL
+      - paragraph: and their later bounded resolutions.
+      - paragraph: Do not rewrite history into one clean success narrative.
+      - separator
+      - heading "5. Current candidate source identity" [level=2]
+      - paragraph: "Bind PLAN34 to the current post-iteration32/33 triad identity:"
+      - code: Starter workingTreeSha256 bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1 SOP workingTreeSha256 cf2a82a592c3acee5a244a1422d649b76d2eb6ed9f0e48bca722105ec83408ab Prompt workingTreeSha256 ceae58a4fbbcb0994e0f392074e961e1b3773070307fa485a2ea53af2c0560f1 Contract SHA 1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c
+      - paragraph: "If source identity changes before execution:"
+      - code: STOP REBASE PLAN34 TO CURRENT SOURCE
+      - separator
+      - heading "6. Main new artifact" [level=2]
+      - paragraph: "Create:"
+      - code: template/design/ws04a/ WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md
+      - paragraph: "Status must be exactly equivalent to:"
+      - code: CANDIDATE INTERFACE BASELINE FOR WS04A BINDING PREPARATION ONLY NOT FORMAL WS03 ACCEPT NOT WS04A CONTRACT ACCEPT
+      - separator
+      - heading "7. Baseline structure" [level=2]
+      - paragraph: "For every WS03 slice record:"
+      - code: capability relation actual source path actual exported symbol / schema field consumer/render path default/omission behavior validation/fail-closed behavior migration rule authority owner what Game Adaptation may select/reference what it must not duplicate accepted continuation evidence formal blocker
+      - paragraph: No invented API names.
+      - separator
+      - heading "8. 03A exact binding" [level=2]
+      - paragraph: "Record actual interfaces:"
+      - code: "game config: visualRoles schema roles: font density shape state adapter: resolveVisualRoles() default: DEFAULT_VISUAL_ROLES site binding: BaseLayout data-theme-font data-theme-density data-theme-shape data-theme-state"
+      - paragraph: "Game Adaptation may record:"
+      - code: game evidence → selected semantic role value → rationale
+      - paragraph: "It must not create a second:"
+      - code: font system density config shape config state config
+      - separator
+      - heading "9. 03A formal limitation" [level=2]
+      - paragraph: "Record explicitly:"
+      - code: Continuation implementation accepted ≠ VF-01 PASS ≠ VF-02 PASS ≠ GI-02 human recognition PASS
+      - paragraph: Actual game-specific recognition remains WS07/human acceptance work.
+      - separator
+      - heading "10. 03B exact binding" [level=2]
+      - paragraph: "Record current media authority:"
+      - code: src/data/media/media.json src/data/schemas/media.ts src/data/media/catalog.ts
+      - paragraph: "and:"
+      - code: dimensions rightsRef credit accessibleEquivalent resolveMediaPresentation()
+      - paragraph: "plus actual render consumers:"
+      - code: GameMedia VideoEmbed ScreenshotGallery
+      - separator
+      - heading "11. 03B authority boundary" [level=2]
+      - paragraph: "04A may reference:"
+      - code: asset ID media need decision rights evidence reference public credit choice video use/exclusion rationale accessible-equivalent requirement
+      - paragraph: "04A must not recreate:"
+      - code: asset dimensions media URLs rights lifecycle table approval states renderer fallback logic
+      - paragraph:
+        - code: rightsRef
+        - text: remains evidence pointer, not approval.
+      - separator
+      - heading "12. 03C exact binding" [level=2]
+      - paragraph: "Record:"
+      - code: "page.share manifest.defaultShare mediaCatalog.getShareMedia(pageId) priority: page.share → informative hero → defaultShare → undefined resolveShareMetadata()"
+      - paragraph: "and actual consumer:"
+      - code: BaseLayout
+      - paragraph: 04A must select/reference the same Media Manifest authority.
+      - paragraph: "Do not invent:"
+      - code: ogImage twitterImage socialImage database
+      - separator
+      - heading "13. 03D-search exact binding" [level=2]
+      - paragraph: "Record:"
+      - code: features.search
+      - paragraph: as the sole technical activation truth.
+      - paragraph: "Record current Core seam:"
+      - code: SearchProvider SearchOutcome runSearchProvider() createPagefindSearchProvider() loadPagefindSearchProvider()
+      - paragraph: "and explicit states:"
+      - code: results empty error idle/loading UI lifecycle
+      - separator
+      - heading "14. Search adaptation binding" [level=2]
+      - paragraph: "04A later owns the rationale:"
+      - code: why players need search corpus/content-model basis ENABLED / DISABLED project decision decision owner/evidence
+      - paragraph: But it does not create a second enable flag.
+      - paragraph: "Binding must be:"
+      - code: project decision → existing features.search
+      - paragraph: "not:"
+      - code: project decision database → independent runtime authority
+      - separator
+      - heading "15. 03D-freshness exact binding" [level=2]
+      - paragraph: "Record separate authorities:"
+      - code: "Page Inventory: publishedAt updatedAt liveStatus Provenance: accessedAt Fact / Tool: patch/version Core: resolvePageFreshness() latestSourceAccessedAt()"
+      - paragraph: "and current live schema:"
+      - code: not-live observed-live
+      - separator
+      - heading "16. Freshness adaptation binding" [level=2]
+      - paragraph: "04A may record:"
+      - code: publication/update evidence basis patch/version basis dynamic-label provenance live observation basis review owner
+      - paragraph: "It must not collapse:"
+      - code: published updated source checked patch/version live observed
+      - paragraph: into one “freshness” date.
+      - separator
+      - heading "17. Reconcile the iteration18 dependency ledger" [level=2]
+      - paragraph: "Update only:"
+      - code: template/design/ws04a/ WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md
+      - paragraph: Do not delete its historical design meaning.
+      - paragraph: "Replace obsolete states such as:"
+      - code: WAITING_WS03A WAITING_WS03B WAITING_WS03C WAITING_WS03D
+      - paragraph: "with a state equivalent to:"
+      - code: CANDIDATE_INTERFACE_AVAILABLE FORMAL_WS03_GATE_PENDING
+      - paragraph: "Define explicitly that this state means:"
+      - code: actual interface exists + bounded continuation review accepted + may be used for design/binding preparation
+      - paragraph: "but not:"
+      - code: formal dependency satisfied for 04A Gate
+      - separator
+      - heading "18. Do not mark these rows ACCEPTED_INTERFACE" [level=2]:
+        - text: 18. Do not mark these rows
+        - code: ACCEPTED_INTERFACE
+      - paragraph: That phrase would be ambiguous with the roadmap's formal dependency.
+      - paragraph: "Use wording that preserves the distinction:"
+      - code: candidate implementation continuation-accepted formal WS03 interface acceptance pending
+      - separator
+      - heading "19. Reconcile iteration18 assumptions" [level=2]
+      - paragraph: "For every ledger row compare:"
+      - code: iteration18 expected need vs actual current interface
+      - paragraph: "Classify:"
+      - code: MATCH PARTIAL OBSOLETE_ASSUMPTION NO_INTERFACE_REQUIRED
+      - paragraph:
+        - text: Any
+        - code: PARTIAL
+        - text: must explain the missing piece.
+      - paragraph: Do not modify product code to make the interface fit the old method design.
+      - separator
+      - heading "20. Produce future 04A binding readiness artifact" [level=2]
+      - paragraph: "Create:"
+      - code: template/design/ws04a/ WS04A_BINDING_READINESS_V1.md
+      - paragraph: This is not an implementation plan yet.
+      - paragraph:
+        - text: It must state the smallest future 04A contract/schema work that would be necessary
+        - strong: after formal authority exists
+        - text: .
+      - paragraph: "For every proposed adaptation record identify whether it:"
+      - code: references existing authority or owns a genuine adaptation decision
+      - paragraph: Any field duplicating Core/Inventory/media authority must be rejected at design time.
+      - separator
+      - heading "21. Explicit future ownership categories" [level=2]
+      - paragraph: "Future 04A-owned information may include:"
+      - code: player task / promised answer rationale game terminology evidence reference visual-role selection rationale media need/use decision reference search activation rationale related-page rationale freshness/dynamic-label evidence rationale human/reviewer ownership
+      - paragraph: "It must not own:"
+      - code: route publication status indexability asset URL asset dimensions rights state OG URL search provider publishedAt updatedAt patch value live observation value
+      - paragraph: Those remain referenced authorities.
+      - separator
+      - heading "22. Pattern boundary remains future" [level=2]
+      - paragraph: "Keep:"
+      - code: desiredPatternIntent
+      - paragraph: from iteration18 as a decision/rationale only.
+      - paragraph: "Do not create:"
+      - code: patternId enum pattern schema pattern runtime hub/wiki implementation task-guide implementation media-rich implementation
+      - paragraph: Those remain WS05.
+      - separator
+      - heading "23. No new adaptation schema in PLAN34" [level=2]
+      - paragraph: PLAN34 may describe candidate future fields.
+      - paragraph: "It must NOT create:"
+      - code: src/data/adaptation/* game-adaptation.schema.ts adaptation.json new game.config fields
+      - paragraph: Schema implementation would be a separate authorized WS04A action only after the proper Gate condition is resolved.
+      - separator
+      - heading "24. Update stale project indexes" [level=2]
+      - paragraph: "The following two files are currently materially stale and may be updated:"
+      - code: template/roadmap/V2.7_TASK_LEDGER.md template/PROJECT_STATE.md
+      - paragraph: Update only factual progress/index information.
+      - paragraph: "They must now say:"
+      - code: WS03A/B/C/D-search/D-freshness candidate implementation continuation-accepted WS03 formal Gate OPEN / NOT_ACCEPTED WS06A FULL BLOCKED Safari proof 0 WS04A METHODS_DESIGN_ACCEPTED binding preparation updated formal Gate OPEN schema NOT FROZEN WS05 NOT STARTED / NOT AUTHORIZED
+      - paragraph: Do not change the roadmap DAG itself.
+      - separator
+      - heading "25. Main-task count" [level=2]
+      - paragraph: Do not manufacture a new closed-main-task count.
+      - paragraph: WS03 is not closed.
+      - paragraph: "Therefore:"
+      - code: formal closed workstreams = 2 / 8
+      - paragraph: remains correct.
+      - paragraph: WS06 remains partial/blocked.
+      - paragraph: WS04 remains methods-design/preparation only.
+      - separator
+      - heading "26. Exact PLAN34 design scope" [level=2]
+      - paragraph: "Allowed non-execution-document mutations:"
+      - code: 1. template/design/ws04a/ WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md NEW 2. template/design/ws04a/ WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md UPDATE 3. template/design/ws04a/ WS04A_BINDING_READINESS_V1.md NEW 4. template/roadmap/V2.7_TASK_LEDGER.md STATUS UPDATE 5. template/PROJECT_STATE.md STATUS UPDATE
+      - paragraph: "Execution/prompt/result artifacts may be created under:"
+      - code: template/codex/prompts/v2.7-ws04a/ template/codex/executions/v2.7-ws04a/iteration34/
+      - paragraph: No other source mutation.
+      - separator
+      - heading "27. Protected scope" [level=2]
+      - paragraph: "Explicitly protect all:"
+      - code: Repo_hotgameweb/**
+      - paragraph: "including:"
+      - code: Starter SOP Master Prompt Contract Registry
+      - paragraph: "Also protect:"
+      - code: accepted iteration18 method documents except WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md
+      - paragraph: "In particular do not modify:"
+      - code: GAME_ADAPTATION_METHOD_V1.md GAME_ADAPTATION_DECISION_WORKSHEET_V1.md WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md WS04A_DESIGN_REVIEW_CHECKLIST_V1.md
+      - paragraph: Their accepted historical bytes remain useful provenance.
+      - separator
+      - heading "28. Verification method" [level=2]
+      - paragraph: PLAN34 needs no product test rerun.
+      - paragraph: "Perform only:"
+      - code: current source-symbol existence checks field/schema existence checks source identity capture all documented paths resolve all referenced symbols exist Contract SHA exact 41 capability IDs exact protected file digest comparison scope exact local document links valid
+      - paragraph: "Product tests:"
+      - code: NOT_RUN
+      - paragraph: "and this is correct because:"
+      - code: product/runtime delta = 0
+      - separator
+      - heading "29. No capability claims" [level=2]
+      - paragraph: "The binding baseline may say:"
+      - code: implemented candidate seam observed continuation review accepted
+      - paragraph: "It may not say:"
+      - code: VF-01 PASS MC-03 PASS SEO-02 PASS IA-03 PASS FR-01 PASS FR-02 PASS
+      - paragraph: Capability outcomes remain null/unpromoted until their actual acceptance process.
+      - separator
+      - heading "30. What PLAN34 deliberately does NOT solve" [level=2]
+      - paragraph: "It does not solve:"
+      - code: real Safari keyboard evidence WS06A FULL formal WS03 acceptance real-game visual recognition media rights approval actual project search decision actual game live/freshness truth Pattern Library reference fixtures real adoption release
+      - paragraph: Those remain visible blockers/future obligations.
+      - separator
+      - heading "31. Candidate result boundary" [level=2]
+      - paragraph: "Codex may finish PLAN34 only as:"
+      - code: "WS03 CANDIDATE INTERFACE BASELINE: READY_FOR_INDEPENDENT_REVIEW WS04A BINDING PREPARATION: READY_FOR_INDEPENDENT_REVIEW"
+      - paragraph: "Not:"
+      - code: WS03 ACCEPT WS04A ACCEPT WS04A schema authorized WS05 authorized
+      - separator
+      - heading "32. What a later independent ACCEPT would mean" [level=2]
+      - paragraph: "Independent acceptance of PLAN34 would mean only:"
+      - blockquote:
+        - paragraph: The project now has an accurate field/symbol-level map from the actual WS03 candidate implementation into the already accepted WS04A adaptation method, so future formal WS04A implementation can start from real interfaces rather than stale assumptions.
+      - paragraph: It does not satisfy the formal WS03 prerequisite.
+      - separator
+      - heading "33. Why this advances V2.7" [level=2]
+      - paragraph: Until now the system has five separate WS03 implementation histories.
+      - paragraph: "PLAN34 converts them into one durable architectural input:"
+      - code: actual Core interface + authority boundary + Game Adaptation binding rule + formal blocker
+      - paragraph: That work will be directly consumed when the formal Gate becomes available.
+      - paragraph: It is therefore new integration value, not another repetition of browser evidence.
+      - separator
+      - heading "PLAN34 terminal status" [level=2]
+      - code: "Allowed: candidate interface consolidation WS04A binding preparation status/index correction Still blocked: formal WS03 exit formal WS04A implementation/Gate WS05 WS06B WS07 WS08 assembly/release"
+    - paragraph:
+      - text: 这一步完成后，我们就不应该继续围绕 37/10 再做第 N 次“证明还是 37/10”。真正值得继续推动的，是把已经做出来的 Core 接口整理成
+      - strong: 04A 可以直接消费的准确输入
+      - text: ；等真实 Safari/完整06A条件解决时，就不需要再重新反推03A–03D到底实现了什么。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

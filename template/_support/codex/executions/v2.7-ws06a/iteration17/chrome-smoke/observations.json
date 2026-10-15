@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-06",
+  "browserFamily": "chrome",
+  "channel": "official-browser-extension-AX",
+  "scope": "supplemental smoke only; not Safari alternate evidence; not complete 47-row qualification",
+  "viewportRequested": {
+    "width": 390,
+    "height": 844
+  },
+  "viewportNote": "document client width375 excludes visible scrollbar; actual dimensions preserved in observations; temporary override reset",
+  "events": [
+    {
+      "check": "desktop-first-Tab",
+      "observed": {
+        "focusHref": "#main-content",
+        "focusTag": "A",
+        "focusVisible": true,
+        "target": {
+          "bottom": 54,
+          "height": 42,
+          "left": 12,
+          "right": 152.375,
+          "top": 12,
+          "width": 140.375,
+          "x": 12,
+          "y": 12
+        }
+      }
+    },
+    {
+      "check": "skip-Enter",
+      "observed": {
+        "focusId": "top",
+        "focusTag": "BODY"
+      }
+    },
+    {
+      "check": "mobile-Tab-to-menu",
+      "observed": {
+        "expanded": null,
+        "focusTag": "SUMMARY",
+        "focusText": "Menu +",
+        "height": 844,
+        "rect": {
+          "bottom": 59,
+          "height": 44,
+          "left": 267,
+          "right": 361,
+          "top": 15,
+          "width": 94,
+          "x": 267,
+          "y": 15
+        },
+        "scrollWidth": 375,
+        "width": 375
+      }
+    },
+    {
+      "check": "mobile-menu-Enter",
+      "observed": {
+        "focusTag": "SUMMARY",
+        "outerOpen": true
+      }
+    },
+    {
+      "check": "mobile-nested-Enter",
+      "observed": {
+        "focusTag": "SUMMARY",
+        "focusText": "Guides",
+        "openDetails": [
+          "Menu +",
+          "Guides"
+        ]
+      }
+    },
+    {
+      "check": "mobile-Escape-cleanup",
+      "observed": {
+        "focusTag": "SUMMARY",
+        "focusText": "Guides",
+        "openDetails": 1
+      }
+    },
+    {
+      "check": "mobile-second-Escape",
+      "observed": {
+        "focusTag": "SUMMARY",
+        "focusText": "Menu +",
+        "openDetails": 0
+      }
+    },
+    {
+      "check": "mobile-native-ArrowRight",
+      "tabSequence": [
+        {
+          "label": null,
+          "role": null,
+          "tag": "A",
+          "text": "Skip to content"
+        },
+        {
+          "label": "Field Notes home",
+          "role": null,
+          "tag": "A",
+          "text": "FieldClear answers for every session."
+        },
+        {
+          "label": null,
+          "role": null,
+          "tag": "SUMMARY",
+          "text": "Menu +"
+        },
+        {
+          "label": null,
+          "role": null,
+          "tag": "A",
+          "text": "Field Notes"
+        },
+        {
+          "label": null,
+          "role": null,
+          "tag": "A",
+          "text": "Game Guides & Field Notes | Field Notes"
+        },
+        {
+          "label": "Reference comparison",
+          "role": "region",
+          "tag": "DIV",
+          "text": "Reference comparisonRouteEvidenceRecoveryDecisionFirst routeDocumented"
+        }
+      ],
+      "before": {
+        "clientWidth": 345,
+        "documentClient": 375,
+        "documentScroll": 375,
+        "focused": true,
+        "scrollLeft": 0,
+        "scrollWidth": 780
+      },
+      "after": {
+        "clientWidth": 345,
+        "documentClient": 375,
+        "documentScroll": 375,
+        "focused": true,
+        "scrollLeft": 40,
+        "scrollWidth": 780
+      }
+    },
+    {
+      "check": "404-skip-next-Tab",
+      "observed": {
+        "focusHref": "/",
+        "focusTag": "A",
+        "focusText": "Back to home",
+        "heading": "Page Not Found | Field Notes"
+      }
+    },
+    {
+      "check": "404-recovery-Enter",
+      "observed": {
+        "url": "http://127.0.0.1:60522/",
+        "heading": "Field Notes"
+      }
+    }
+  ],
+  "productCodeChanged": false,
+  "realSafariEvidenceCaptured": false,
+  "ws06aClosed": false
+}

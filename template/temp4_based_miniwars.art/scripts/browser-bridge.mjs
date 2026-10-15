@@ -1,0 +1,10 @@
+import http from 'node:http';
+import fs from 'node:fs/promises';
+const chromePort = process.env.CHROME_DEBUG_PORT;
+if (!chromePort || !/^\d+$/.test(chromePort)) throw new Error('Set CHROME_DEBUG_PORT to the current Chrome remote debugging port.');
+const socket=new WebSocket(`ws://127.0.0.1:${chromePort}${process.env.CHROME_DEBUG_WS_PATH ?? '/devtools/browser'}`);
+await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Chrome debugging connection did not open. Check the Chrome Allow remote debugging prompt.')),60000);socket.onopen=()=>{clearTimeout(timer);resolve()};socket.onerror=error=>{clearTimeout(timer);reject(error)}});
+let id=0;const pending=new Map(),sessions=new Map();
+socket.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);if(p){pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result)}}};
+const send=(method,params={},sessionId)=>new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>{pending.delete(n);reject(new Error('CDP timeout: '+method))},30000);pending.set(n,{resolve,reject,timer});socket.send(JSON.stringify({id:n,method,params,sessionId}))});
+http.createServer(async(req,res)=>{try{let body='';for await(const chunk of req)body+=chunk;const a=JSON.parse(body);let sessionId;if(a.target){if(!sessions.has(a.target))sessions.set(a.target,(await send('Target.attachToTarget',{targetId:a.target,flatten:true})).sessionId);sessionId=sessions.get(a.target)}const result=await send(a.method,a.params,sessionId);if(a.file){await fs.writeFile(a.file,Buffer.from(result.data,'base64'));delete result.data;result.file=a.file}res.setHeader('Content-Type','application/json');res.end(JSON.stringify({result}));}catch(e){res.statusCode=500;res.end(JSON.stringify({error:e.message}))}}).listen(Number(process.env.CDP_BRIDGE_PORT ?? 3467),'127.0.0.1',()=>console.log('Browser bridge ready; only use this local process for verification.'));

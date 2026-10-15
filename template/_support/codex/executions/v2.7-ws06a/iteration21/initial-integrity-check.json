@@ -1,0 +1,10 @@
+{
+  "status": "FAIL",
+  "protectedFilesUnchanged": 5843,
+  "contractRegistryIds": 45,
+  "errors": [
+    "Registry IDs drift"
+  ],
+  "productDelta": "UNKNOWN",
+  "governanceDelta": "UNKNOWN"
+}

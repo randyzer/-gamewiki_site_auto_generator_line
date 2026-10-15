@@ -1,0 +1,223 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: 核对后，
+      - strong: PLAN30 的 scope amendment 应接受
+      - text: 。原因很明确，而且不代表 WS03C 产品边界扩大：
+    - list:
+      - text: "tests/media-build.test.ts 的 no-share negative 目前把整个 manifest 写成 { assets: [], pages: [] }，因此先触发了 PP-02 对 helper 已复制到 public/media/ 的 qa-overview.svg / qa-detail.svg 的未注册资源检查，根本还没走到 SEO-02 的“indexable page 缺 share image”目标错误。修复它只需要"
+      - strong: 保留已注册 assets，清空 pages + defaultShare
+      - text: ，这仍在原批准文件里，不扩 scope。
+      - text: "tests/core-safety-sentinels.test.ts 的正向 quotation case 使用 createCoreBuildFixture()，而这个 helper 在 WS03C 中现在会自动写入 qa-default-share.svg 并注册进 fixture manifest。测试却仍手工传 mediaAssets: [{ src: \"/media/quote.svg\" }]，于是 PP-02 正确地把 qa-default-share.svg 识别为“磁盘上存在但未登记的 copied public text”。这不是 PP-02 bug，而是"
+      - strong: 旧测试 fixture projection 没跟上 helper 的新合法资产
+      - text: 。
+    - paragraph:
+      - text: 因此只需要把这个现有测试文件纳入 scope，
+      - strong: 17 → 18
+      - text: 。原 PLAN30 保持 immutable。
+    - button "添加到资料库":
+      - generic: PLAN30 Amendment — Share-Fixture Compatibility Scope Expansion
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN_AMENDMENT"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 30"
+        - text: "WORKSTREAM: WS03C"
+        - text: "AMENDMENT_TYPE: PREFLIGHT_SCOPE_REPLAN"
+        - text: "ORIGINAL_PLAN30: IMMUTABLE"
+        - text: "ORIGINAL_SCOPE: 17 FILES"
+        - text: "AMENDED_SCOPE: 18 FILES"
+        - text: "QUALIFICATION_ATTEMPTS_USED: 0"
+      - heading "1. Amendment verdict" [level=2]
+      - code: ACCEPT — SCOPE EXPANSION 17 → 18 ONLY
+      - paragraph: 新增唯一文件：
+      - code: 18. tests/core-safety-sentinels.test.ts
+      - paragraph: 用途严格限定为：
+      - blockquote:
+        - paragraph: 让既有 PP-02 quotation 正向测试读取并传入当前 fixture manifest 已注册的全部 media assets，而不是继续手工构造过期的单资产列表。
+      - paragraph: 这不是新的产品行为。
+      - separator
+      - heading "2. core-safety-sentinels.test.ts 允许的唯一变化" [level=2]:
+        - text: "2."
+        - code: core-safety-sentinels.test.ts
+        - text: 允许的唯一变化
+      - paragraph: 当前测试：
+      - code: "collectCopiedTextResidueSignals({ ... mediaAssets: [{ src: \"/media/quote.svg\" }], })"
+      - paragraph: 已经不再完整，因为：
+      - code: createCoreBuildFixture()
+      - paragraph: 现在合法创建并注册：
+      - code: /media/qa-default-share.svg
+      - paragraph: 因此允许：
+      - list:
+        - paragraph: 从 fixture 的实际：
+      - code: src/data/media/media.json
+      - paragraph: 读取当前 registered assets；
+      - list:
+        - paragraph: 将测试自己创建的：
+      - code: /media/quote.svg
+      - paragraph:
+        - text: 追加到该测试的
+        - code: mediaAssets
+        - text: 输入；
+      - list:
+        - paragraph: 保持原 assertion：
+      - code: expect(result.errors).toEqual([]);
+      - separator
+      - heading "3. 推荐实现形态" [level=2]
+      - paragraph: 允许新增：
+      - code: readFileSync
+      - paragraph: import。
+      - paragraph: 测试内部采用类似：
+      - code: "const manifest = JSON.parse( readFileSync( join(root, \"src/data/media/media.json\"), \"utf8\", ), ); const result = collectCopiedTextResidueSignals({ publicDirectory: join(root, \"public\"), readDirectory: join(root, \"public\"), config: adoptFixtureConfig(gameConfig), mediaAssets: [ ...manifest.assets, { src: \"/media/quote.svg\" }, ], purpose: \"final\", });"
+      - paragraph:
+        - text: 只需要
+        - code: src
+        - text: 的消费者可以继续接收完整 asset objects；不要复制/重建新的 share asset。
+      - paragraph: 关键原则：
+      - code: fixture manifest = registered media authority test local quote = this test's extra registered synthetic asset
+      - separator
+      - heading "4. 不允许的改法" [level=2]
+      - paragraph: 不得：
+      - code: 忽略 qa-default-share.svg filter 掉 defaultShare asset 关闭 unregistered copied-text 检查 修改 collectCopiedTextResidueSignals policy 修改 CORE_SENTINELS 增加 allowlist 把 qa-default-share.svg 特判为例外 弱化 expect(errors).toEqual([])
+      - paragraph: PP-02 fail-closed 行为必须保持。
+      - separator
+      - heading "5. Existing negative cases全部保护" [level=2]
+      - paragraph:
+        - code: tests/core-safety-sentinels.test.ts
+        - text: 中所有原 negative tests：
+      - code: reserved host detection fixed sentinel detection coverage failures evidence/final severity distinction HTML/entity/JSON-LD residue Pagefind residue encoded host cases
+      - paragraph: 必须保持原语义和 assertions。
+      - paragraph: 本 amendment 不授权任何 unrelated cleanup/refactor。
+      - separator
+      - heading "6. 原 PLAN30 media-build.test.ts 的 in-scope修正" [level=2]:
+        - text: 6. 原 PLAN30
+        - code: media-build.test.ts
+        - text: 的 in-scope修正
+      - paragraph: 这不增加第19个文件，因为：
+      - code: tests/media-build.test.ts
+      - paragraph: 已在原17-file scope。
+      - paragraph: 当前错误做法：
+      - code: "writeFileSync( path, JSON.stringify({ assets: [], pages: [], }), );"
+      - paragraph: 会先触发：
+      - code: PP-02 unregistered copied public text
+      - paragraph: 因此无法验证目标：
+      - code: SEO-02 missing share image
+      - separator
+      - heading "7. No-share negative正确构造" [level=2]
+      - paragraph: 该 test 应：
+      - code: 保留 registered assets
+      - paragraph: 但清除所有 share resolution paths：
+      - code: pages = [] defaultShare = undefined
+      - paragraph: 例如：
+      - code: "const manifest = JSON.parse(original); writeFileSync( path, JSON.stringify({ ...manifest, pages: [], defaultShare: undefined, }), );"
+      - paragraph: 若 JSON stringify 需要显式删除：
+      - code: "const { defaultShare: _defaultShare, ...withoutDefault } = manifest; writeFileSync( path, JSON.stringify({ ...withoutDefault, pages: [], }), );"
+      - paragraph: 目的必须是：
+      - code: assets stay registered local public files remain legitimate share resolution becomes impossible
+      - separator
+      - heading "8. 该 negative 必须仍验证同一目标" [level=2]
+      - paragraph: 期望仍是：
+      - code: indexable final build + no explicit share + no informative hero fallback + no defaultShare → SEO-02 missing share image FAIL
+      - paragraph: 测试必须最终匹配：
+      - code: /share image.*required/i
+      - paragraph: 不能改成：
+      - code: PP-02 error accepted any build failure accepted
+      - separator
+      - heading "9. RED历史保持" [level=2]
+      - paragraph: Original PLAN30 已经产生：
+      - code: "RED: 18 FAIL / 217 PASS"
+      - paragraph: 保留为真实 RED evidence。
+      - paragraph: 此次 amendment 不重新定义 RED。
+      - paragraph: 当前 GREEN：
+      - code: 234 PASS / 1 FAIL
+      - paragraph: 也保留。
+      - paragraph: 它准确证明 no-share negative fixture 目前没有抵达预期 SEO-02 gate。
+      - separator
+      - heading "10. Amendment 后 GREEN顺序" [level=2]
+      - paragraph: scope amendment接受后：
+      - list:
+        - paragraph:
+          - text: 修改
+          - code: tests/media-build.test.ts
+          - text: 的 no-share fixture；
+        - paragraph:
+          - text: 修改
+          - code: tests/core-safety-sentinels.test.ts
+          - text: 的 registered media input；
+        - paragraph: 不改其它产品文件；
+        - paragraph: 重跑原 PLAN30 targeted GREEN set；
+        - paragraph:
+          - text: 单独确认
+          - code: core-safety-sentinels.test.ts
+          - text: 全部 PASS；
+        - paragraph: 再执行 root/adoption/diff gates。
+      - paragraph: 不能在同一过程中扩新功能。
+      - separator
+      - heading "11. Revised exact scope" [level=2]
+      - paragraph: 原17文件保持不变，再加：
+      - code: 18. Repo_hotgameweb/ GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/ tests/core-safety-sentinels.test.ts
+      - paragraph: 因此：
+      - code: exact approved product/test/governance scope = 18
+      - paragraph: Execution artifacts不计入。
+      - paragraph: 如果需要第19个：
+      - code: STOP PREFLIGHT_SCOPE_REPLAN
+      - separator
+      - heading "12. Source/policy invariants" [level=2]
+      - paragraph: 仍禁止修改：
+      - code: PP-02 policy core-safety-sentinels implementation residue-artifacts policy Contract / Registry media rights semantics 03B adapter search freshness browser matrix browser runner closure WebKit policy/control package / lock / CI
+      - separator
+      - heading "13. Qualification状态" [level=2]
+      - paragraph: 当前：
+      - code: targeted browser qualification attempts = 0 fresh47 = NOT_STARTED
+      - paragraph: 保持。
+      - paragraph: 只有 amended GREEN + root/adoption/diff 全部通过后，才恢复原 PLAN30 的：
+      - code: targeted browser → fresh47 → residual/counterpart → closure → independent continuation review
+      - separator
+      - heading "14. 所有后续 PLAN30 gates unchanged" [level=2]
+      - paragraph: 以下全部保持原样：
+      - code: "same media authority share → hero → defaultShare resolution indexable page share requirement OG/Twitter output generated metadata audit no share placement rendering no fake placeholder targeted browser: 1 attempt 0 retry fresh47: 1 attempt 0 retry frozen40 subset fresh Chromium/Firefox counterparts Safari proof = 0 WS06A FULL = BLOCKED no capability promotion no formal WS03 acceptance no release"
+      - separator
+      - heading "15. Amendment STOP" [level=2]
+      - paragraph: 立即停止，如果修复这两个测试需要：
+      - code: 修改 PP-02 implementation 修改 share resolver behavior 修改 production media.json 新增特殊-case allowlist 弱化 negative assertion 允许 unregistered public media
+      - paragraph: 那说明不是 fixture migration，应重新计划。
+      - separator
+      - heading "16. Authorized next action" [level=2]
+      - code: "PLAN30 AMENDMENT: ACCEPTED SCOPE: 17 → 18 NEW FILE: tests/core-safety-sentinels.test.ts OUTSIDE-SCOPE MUTATIONS SO FAR: 0 QUALIFICATION ATTEMPTS: 0 NEXT: apply the two bounded test-fixture fixes, then resume original PLAN30 GREEN gates."
+    - paragraph:
+      - text: 这次 scope 扩展的本质不是“为了让测试绿而加文件”，而是
+      - strong: WS03C 已经让 createCoreBuildFixture() 合法多出一个 registered default-share asset，所以所有依赖这个 helper 的正向 PP-02 测试都必须把这个新资产视为已登记资产
+      - text: 。PP-02 本身不需要、也不应该放宽。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

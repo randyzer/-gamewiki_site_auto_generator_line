@@ -1,0 +1,236 @@
+# 第16轮实际ChatGPT独立审查
+
+原页签 https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c；2026-10-06；以下完整实际渲染DOM摘录，非Codex代写结论。
+
+```text
+- heading "ChatGPT 说：" [level=4]
+  - paragraph:
+    - text: "[C2C]"
+    - text: "STATE: REVIEW"
+    - text: "TASK_ID: c2c_a765"
+    - text: "ITERATION: 16"
+    - text: "WORKSTREAM: Live-Resize repair"
+    - text: "VERDICT:"
+    - strong: ACCEPT
+  - paragraph: 我已独立复核 iteration16 的 execution outputs 44–52、result.md、真实 product.diff、integrity-check.json、focused-browser-evidence.json、qualification-comparison.json、两套 cleanup audit，以及实际修改后的 MobileNav.astro。
+  - paragraph:
+    - text: 这次
+    - strong: Live-Resize 有限修复可以 ACCEPT
+    - text: 。
+  - heading "1. 严格符合 PLAN15 的两文件范围" [level=3]
+  - paragraph: 实际 product delta 只有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: src/components/navigation/MobileNav.astro tests/navigation-behavior.test.ts
+  - paragraph: 没有修改：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Contract matrix runner validator CSS DesktopNav/Header package / lockfile CI SOP / QA / Prompt WebKit policy
+  - paragraph: 完整性审计：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: changedProductFiles = 2 candidateFilesVerified = 235 protectedFilesVerified = 743 errors = []
+  - paragraph: 冻结 triad、roadmap、历史 iteration13/14 evidence均保持不变。
+  - separator
+  - heading "2. RED → GREEN 是真实的" [level=3]
+  - paragraph: 旧 controller 配新 regression tests：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 21 tests 8 FAIL exit 1
+  - paragraph: 这些失败确实包含 PLAN15要求的：
+  - list:
+    - listitem: BODY loss before MQL；
+    - listitem: reverse race；
+    - listitem: missing target fallback；
+    - listitem: Escape identity；
+    - listitem: native ancestor close；
+    - listitem: same-mode behavior；
+    - listitem: pointer intent；
+    - listitem: stale microtask。
+  - paragraph: 应用 controller repair 后，同一 targeted command：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 29 / 29 PASS exit 0
+  - paragraph: 不是先改代码再补一个永远绿的测试。
+  - separator
+  - heading "3. 实际实现仍然符合已审查的 repair model" [level=3]
+  - paragraph: 真实 MobileNav.astro 使用的是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "semantic identity: mode + pageId + kind"
+  - paragraph: 没有缓存 destination DOM element。
+  - paragraph: 关键安全机制都实际存在：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: focusin → record valid nav identity outside focus → revoke outside pointerdown → revoke focusout → microtask same-mode BODY loss → revoke cross-mode hidden source → preserve stale microtask → identity guard MQL crossing → fresh DOM lookup missing destination → bounded brand fallback
+  - paragraph: 没有加入：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: generic resize listener timeout hack browser-specific hack BODY tabindex patch
+  - separator
+  - heading "4. Focused real-browser evidence通过，而且关键病例不是“假绿”" [level=3]
+  - paragraph: 有效 focused run：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "Chromium R1–R10: PASS Firefox R1–R3: PASS Chromium N1: PASS Firefox N2: PASS 15 / 15 PASS"
+  - paragraph: 我重点抽查了三个高风险 case。
+  - paragraph:
+    - strong: R6 pointer no-focus-theft：
+    - text: 真正用 Playwright mouse 点击 <main> 的非 focusable blank point，不调用内部 revoke；随后 breakpoint crossing 后 active element保持在 navigation 外，没有被 desktop nav抢回。并且 disclosures正常关闭。
+  - paragraph:
+    - strong: R9 stale destination：
+    - text: 测试页面实际删除了对应 desktop destination；迁移后焦点落到可见 brand，没有异常，也没有随机找其它导航链接。
+  - paragraph:
+    - strong: R10 Escape identity：
+    - text: child → 两次 Escape 后真实焦点回到 Menu summary；随后切到 desktop得到 brand，而不是复活旧 guide.getting-started child identity。
+  - paragraph: 因此 PLAN15要求的“修 race 但不能产生 focus theft”已有真实浏览器证据。
+  - separator
+  - heading "5. 首次 focused-browser infrastructure failure处理正确" [level=3]
+  - paragraph: 第一次不是产品断言失败，而是 observer拼接导致：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: window.__captureDiagnostic is not a function
+  - paragraph: 该次：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: cases = [] status = FAIL
+  - paragraph: 并被原样保留为：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "*.initial-infrastructure-failure"
+  - paragraph: 自己的 preview PID 56082：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: astroStopExit = 0 pidAliveAfterStop = false fallbackSignalUsed = false fixtureRemoved = true
+  - paragraph: 之后只修治理 harness语法，再跑完整15例。
+  - paragraph: 这不属于“retry-until-product-pass”。
+  - separator
+  - heading "6. 全量 regression 无回归" [level=3]
+  - paragraph: Root：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "45 files 711 tests PASS Astro: 0 errors 0 warnings 0 hints"
+  - paragraph: Unadopted：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: validate → expected PP-02 reject build → expected PP-02 reject meta verifier exit 0
+  - paragraph: Adopted：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: validate 0 check 0 build 0 711 tests
+  - paragraph: git diff --check 也是 0。
+  - separator
+  - heading "7. Fresh 47-row qualification准确证明这次修复只修了目标问题" [level=1]
+  - paragraph: 新的 source identity：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 6708a8a3d069b586ef4381d4151ae6772c6dfbebc051edcf60d3985e6afbc72f
+  - paragraph: 所以没有复用旧 source的 36/11 evidence。
+  - paragraph: Fresh unchanged matrix：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 47 executed 37 PASS 10 FAIL 0 NOT_RUN
+  - paragraph: 与旧证据比较：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 唯一 case status变化： live-resize:chromium:shell-nav:899x800 FAIL → PASS
+  - paragraph: 同时：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: nonWebkitRegressions = [] newFailureAssertions = [] sameCaseIds = true
+  - paragraph: 这正是一个有限修复最理想的证据形态：
+  - blockquote:
+    - paragraph:
+      - strong: 目标 failure消失，其它已有成功项完全不回归。
+  - separator
+  - heading "8. 两次有效 preview cleanup均正常" [level=1]
+  - paragraph: Focused repair run：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: PID 57087 stop exit 0 PID gone fixture removed fallback = false
+  - paragraph: Fresh 47-row：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: PID 62717 stop exit 0 PID gone fixture removed fallback = false
+  - paragraph: 没有重新出现早期 daemon leakage。
+  - separator
+  - heading "iteration16 最终状态" [level=2]
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "ITERATION16_LIVE_RESIZE_REPAIR: verdict: ACCEPT product_scope: changed_files: 2 scope_violation: false verification: red: CONFIRMED green: CONFIRMED focused_browser: 15_PASS root: PASS adoption: PASS fresh_qualification: pass: 37 fail: 10 target_change: chromium_live_resize: old: FAIL new: PASS regressions: non_webkit: 0 new_failure_assertions: 0 capability_promotion: NONE"
+  - heading "WS-06A 仍然没有完成" [level=2]
+  - paragraph: 这一点不能和 repair ACCEPT 混淆：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS-06A = BLOCKED
+  - paragraph:
+    - text: 剩余正好
+    - strong: 10 个 WebKit rows FAIL
+    - text: ：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 9 × WebKit baseline 1 × WebKit no-JS mobile
+  - paragraph: 仍然包含此前已经诊断出的两类问题：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: plain-Tab / ordinary-link keyboard profile native ArrowRight table scroll
+  - paragraph: 而 iteration14 的 WebKit verification policy目前只是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: PROPOSAL_ACCEPTED_NOT_IMPLEMENTED
+  - paragraph: 所以现行 47/47 gate仍然有效，不能把 37/10解释成 WS-06A PASS，也不能提升 AX-01 / AX-02 / AX-03 / PA-01。
+  - paragraph: 正式结论：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "[C2C] STATE: REVIEW TASK_ID: c2c_a765 ITERATION: 16 WORKSTREAM: Live-Resize repair VERDICT: ACCEPT LIVE_RESIZE_REPAIR: CLOSED WS06A: BLOCKED QUALIFICATION: 37 PASS / 10 FAIL REMAINING_FAILURES: WebKit-only CAPABILITY_PROMOTION: NONE"
+  - paragraph: 这次 repair 到这里可以关闭；下一步若继续，应仍然围绕已经独立接受的 WebKit verification-policy proposal处理剩余 10 FAIL，而不是重新打开 Live-Resize。
+  - button "复制":
+  - button "评价回复":
+  - button "分享":
+  - button "朗读":
+  - button "重新生成回复":
+  - button "更多操作":
+  - generic: ChatGPT 可能会出错。请核查重要信息。
+  - button "滚动到底部":
+  - heading "最新一条回复" [level=4]
+  - status
+  - button "添加文件等内容":
+  - textbox "询问 ChatGPT" [active]:
+    - paragraph: 询问 ChatGPT
+  - button "选择 ChatGPT 模型":
+    - generic: 高
+  - button "听写":
+  - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+```

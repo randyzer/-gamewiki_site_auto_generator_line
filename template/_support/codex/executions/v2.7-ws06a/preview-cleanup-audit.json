@@ -1,0 +1,9 @@
+{
+  "runnerClaimedStopped": true,
+  "actualOwnPreviewAlive": true,
+  "pid": 62582,
+  "commandBefore": "62582     1 /Users/randyz/.nvm/versions/node/v22.22.0/bin/node /Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/node_modules/astro/bin/astro.mjs preview --port 49520 --host 127.0.0.1 --json",
+  "manualCleanup": "SIGTERM own task-created preview",
+  "observedStoppedAfter": true,
+  "originalEvidenceRetained": true
+}

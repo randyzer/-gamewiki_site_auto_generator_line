@@ -1,0 +1,62 @@
+{
+  "fixtureRoot": "/tmp/c2c29a.d6gHYK/starter-adoption-verification-DZ8bUl",
+  "starterSourceSha256": "c18acee640330fb7f1fa57de6af0db9f4aa804d8d5bae32173ab012bf1b9dbe4",
+  "prePatchFixtureSourceSha256": "27c050e3af7ddfa68cff447f39a17900e5de0be19c602884442ed5ac12bd05b0",
+  "postPatchFixtureSourceSha256": "287f9272d2a36fa76212b145eb4f8195d280ff81aba70a825674d2dff4856541",
+  "distSha256": "fbb5cb689fe99ed1e77ff8d8b0f420a41ff39fa0a59675e28139b7602bb7280e",
+  "assets": [
+    {
+      "id": "qa.image",
+      "type": "image",
+      "src": "/media/qa-contract.svg",
+      "alt": "Synthetic blue rectangle with a pale center",
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      },
+      "rightsRef": "private/qa-image",
+      "credit": {
+        "text": "Synthetic QA author",
+        "url": "https://example.com/qa-author"
+      },
+      "sourceUrl": "https://example.com/qa-image",
+      "caption": "Synthetic QA illustration, without game association."
+    },
+    {
+      "id": "qa.local",
+      "type": "video",
+      "src": "/media/qa-contract.mp4",
+      "alt": "Synthetic solid blue test clip",
+      "dimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "rightsRef": "private/qa-local",
+      "sourceUrl": "https://example.com/qa-local",
+      "accessibleEquivalent": {
+        "kind": "text",
+        "text": "This synthetic clip displays a solid blue field."
+      }
+    },
+    {
+      "id": "qa.youtube",
+      "type": "video",
+      "src": "aqz-KE-bpKQ",
+      "alt": "Public animation video used for technical QA",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080
+      },
+      "rightsRef": "private/qa-youtube",
+      "sourceUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+      "accessibleEquivalent": {
+        "kind": "link",
+        "label": "Technical QA equivalent: no game association",
+        "href": "/about/"
+      }
+    }
+  ],
+  "canonicalManifestModified": false,
+  "syntheticOnly": true,
+  "observedAt": "2026-10-08T00:09:20.916Z"
+}

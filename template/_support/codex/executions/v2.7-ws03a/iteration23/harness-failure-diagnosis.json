@@ -1,0 +1,10 @@
+{
+  "cause": "tsx-generated __name reference in locally assigned nested callback function; browser context lacks transpiler helper",
+  "observation": "All six page.evaluate calls raise ReferenceError across three launched engines; responses200 and finalbuild succeeded",
+  "productBugEstablished": false,
+  "targetedEvidence": "FAIL",
+  "fresh47Started": false,
+  "fallbackTransportUsed": false,
+  "candidateSourceRepairPerformed": false,
+  "observedAt": "2026-10-07T16:16:50.327508+00:00"
+}

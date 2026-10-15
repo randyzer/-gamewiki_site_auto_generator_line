@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "executable": "/Users/randyz/.local/bin/bsk",
+  "version": "0.3.3",
+  "sha256": "900c85d168a4a23f19767aa918b4de4c2ae0097cd298fca3691b89843935bb58",
+  "browserInstance": "8cf1a2f8",
+  "atomicFileTransferSupported": false,
+  "allowedStages": [
+    "game-homepage-icon-research",
+    "game-innerpage-keyword-information-research",
+    "game-site-ui-ux-audit-optimizer",
+    "game-site-prelaunch-gate"
+  ],
+  "allowedPages": [
+    {
+      "host": "favicon.io",
+      "pathPrefix": "/favicon-converter/",
+      "pathPattern": "^/favicon-converter/$"
+    }
+  ]
+}

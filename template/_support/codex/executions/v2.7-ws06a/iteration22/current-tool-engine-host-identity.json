@@ -1,0 +1,28 @@
+{
+  "capturedAt": "2026-10-07T15:31:21.570Z",
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.22.0"
+  },
+  "playwright": {
+    "packageVersion": "1.63.0"
+  },
+  "engines": {
+    "chromium": {
+      "browserName": "chromium",
+      "version": "153.0.8010.12",
+      "revision": "1243"
+    },
+    "firefox": {
+      "browserName": "firefox",
+      "version": "155.0",
+      "revision": "1543"
+    },
+    "webkit": {
+      "browserName": "webkit",
+      "version": "26.6",
+      "revision": "2359"
+    }
+  }
+}

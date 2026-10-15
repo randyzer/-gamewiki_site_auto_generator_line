@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-01",
+  "task_id": "c2c_a765",
+  "iterations": [
+    5,
+    6,
+    7
+  ],
+  "status": "DESIGN_ACCEPTED_IMPLEMENTATION_NOT_STARTED",
+  "blueprint_reviewed_sha256": "c122663ec3814cf01e28638744362c242f700a13f3bcbbe40988a62568a72b8e",
+  "roadmap_reviewed_sha256": "2b700624d385bfd3394ce9e928570aa247a4942e413700fcaad1c897bfaae791",
+  "post_review_changes": "Acceptance status annotations and current-state/result/review records only; no architecture or workstream requirements changed.",
+  "artifacts": [
+    {
+      "path": "template/PROJECT_STATE.md",
+      "sha256": "cdb761d260340aaff2ef4f689c762b970571180d97cd885b58898ac76c5e98bf"
+    },
+    {
+      "path": "template/README.md",
+      "sha256": "89259d35c1deecfe5fed6033cad8b72b9893cf208271b8483251b9307211a2df"
+    },
+    {
+      "path": "template/architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md",
+      "sha256": "fcc72e78f5572236829ea81fc93d8d220df3a52bc96c43a656d1b86d4f1cd96b"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/blueprint-check.log",
+      "sha256": "53fc874a363cec1cb14a88a08c3e066ce650a4713761c1583f992208ce80b177"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/blueprint-provenance.json",
+      "sha256": "2fae705ec3b3aace5382413237df84293f028fb7fbe64f780c0c457947294b98"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/blueprint-revision-1-check.log",
+      "sha256": "53fc874a363cec1cb14a88a08c3e066ce650a4713761c1583f992208ce80b177"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/blueprint-revision-1-provenance.json",
+      "sha256": "7cf2fd22195c3126e444d1d2b9e6263837a1829e4ec1f8d7f20f134f6c198cdf"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/result.md",
+      "sha256": "87ede7b4fb3b065736d076407b76955277195bb9789aaa7041d1573dadcd8372"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/roadmap-check-initial-failure.log",
+      "sha256": "27d16366d26d73e446f83b8edce063427d2ca3676f0b05485f9ddfec178abf07"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/roadmap-check.log",
+      "sha256": "1c76bcd84cabe9f864b64e4c6ad3500f4ccbe25a87d24f53f195e71e728b5501"
+    },
+    {
+      "path": "template/codex/executions/v2.7-design/roadmap-provenance.json",
+      "sha256": "e7b6b43ed177e4960b3e4388fbcedc9620cd79ae1470e3d9d7ccf30b5aecff6e"
+    },
+    {
+      "path": "template/codex/prompts/v2.7-design/plan.md",
+      "sha256": "39edbeab6b95d8df4bbda6fe129597ac563b1a79d3f3b2e9f2a0c4a7f749e52a"
+    },
+    {
+      "path": "template/codex/verifications/v2.7-design/blueprint-acceptance-and-roadmap-plan.md",
+      "sha256": "b59fb462e061213a05478cb8e8e68847e7614f16bf72e8b0b7e43cd5cd2d001e"
+    },
+    {
+      "path": "template/codex/verifications/v2.7-design/blueprint-review-1.md",
+      "sha256": "6321414c056acaf3d7a41804f755df09fb133cf82cab756b323798e66816130c"
+    },
+    {
+      "path": "template/codex/verifications/v2.7-design/roadmap-acceptance.md",
+      "sha256": "085cade8348a7241b67d6a83a61cba2365a2d4a4d9b24bea30b56625110adc5b"
+    },
+    {
+      "path": "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "sha256": "bf66dec4f5fe26b11b919f5a1e200594116144e980c95c0dbfa52eadc9def115"
+    }
+  ],
+  "self_excluded": "closure.json",
+  "repositories": [
+    {
+      "path": "Repo_hotgameweb/GAME_SOP_V2.6.5",
+      "head": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.6.5",
+      "head": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+      "head": "29b25559cf2af859bca359c7f7fda686a4803c95",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "clean": true
+    }
+  ],
+  "capability_ids": 41,
+  "workstreams": 8,
+  "dag_acyclic": true,
+  "source_hashes_preserved": 233,
+  "implementation_started": false,
+  "a4_resumed": false,
+  "product_test_build_run": false,
+  "next_step": "WS-01 finite implementation planning; execution needs concrete user authorization"
+}

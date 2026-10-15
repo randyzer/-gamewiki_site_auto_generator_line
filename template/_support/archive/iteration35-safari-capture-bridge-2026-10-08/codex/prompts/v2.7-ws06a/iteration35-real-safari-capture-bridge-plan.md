@@ -1,0 +1,359 @@
+generic: PLAN35 — Current-Source Real Safari Evidence Capture Bridge
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 35"
+        - text: "WORKSTREAM: WS06A"
+        - text: "SLICE: REAL SAFARI EVIDENCE CAPTURE BRIDGE"
+        - text: "TYPE: EVIDENCE TOOLING / CURRENT-SOURCE SESSION PREPARATION"
+      - paragraph:
+        - text: "PRODUCT_DELTA: 0"
+        - text: "TRIAD_DELTA: 0"
+        - text: "CORE_BROWSER_RERUN: NOT AUTHORIZED"
+        - text: "CLOSURE_SEMANTICS_CHANGE: PROHIBITED"
+        - text: "FAKE_KEYBOARD_INPUT: PROHIBITED"
+      - heading "1. Goal" [level=2]
+      - paragraph: "Build a current-source, closure-compatible bridge between:"
+      - paragraph:
+        - text: current accepted bounded source
+        - text: +
+        - text: iteration33 fresh47 raw evidence
+        - text: +
+        - text: current frozen WebKit residual requirements
+      - paragraph: "and:"
+      - paragraph: real physical Safari keyboard observations.
+      - paragraph: The output must make the remaining human Safari step mechanical and hard to falsify.
+      - paragraph: This iteration must not manufacture Safari proof.
+      - separator
+      - heading "2. Why this is the next critical-path slice" [level=2]
+      - paragraph: "Do not repeat:"
+      - code: fresh47 = 37 PASS / 10 WebKit FAIL
+      - paragraph: again while source is unchanged.
+      - paragraph: That question is already answered.
+      - paragraph: "The missing question is:"
+      - blockquote:
+        - paragraph: What does real Safari on the exact current build do for those 40 residual assertions?
+      - paragraph: PLAN35 targets precisely that missing input.
+      - separator
+      - heading "3. Source reuse rule" [level=2]
+      - paragraph: Before preparing anything, bind current product/triad identity.
+      - paragraph: "Require exact current product source to still match iteration33:"
+      - code: "Starter: bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1 SOP: cf2a82a592c3acee5a244a1422d649b76d2eb6ed9f0e48bca722105ec83408ab Prompt: ceae58a4fbbcb0994e0f392074e961e1b3773070307fa485a2ea53af2c0560f1"
+      - paragraph: Iteration34 changed template/design documents only.
+      - paragraph: "If any Repo_hotgameweb source identity differs:"
+      - code: STOP current raw evidence is stale
+      - paragraph: Only then would a new fresh47 become justified.
+      - separator
+      - heading "4. Authoritative raw input" [level=2]
+      - paragraph: "Reuse the current-source iteration33 raw evidence:"
+      - code: template/codex/executions/v2.7-ws03d/iteration33/ fresh47/core-browser-evidence.json
+      - paragraph: "SHA:"
+      - code: 3cc6fc7dcc41e3a909c427c1918cc9db67bf8d859413b5b76c2495b4fc353351
+      - paragraph: Do not rerun the matrix merely to obtain another identical 37/10.
+      - separator
+      - heading "5. Other bound inputs" [level=2]
+      - paragraph: "Use actual current:"
+      - code: fresh47-expected-identity.json bound-native-keyboard-probe.json accepted policy proposal accepted ArrowRight control verify-ws06a-browser-closure.ts
+      - paragraph: The existing closure verifier remains the sole machine decision authority.
+      - paragraph: PLAN35 does not duplicate its classification rules.
+      - separator
+      - heading "6. New execution area" [level=2]
+      - paragraph: "Create only:"
+      - code: template/codex/prompts/v2.7-ws06a/ iteration35-real-safari-capture-bridge-plan.md template/codex/executions/v2.7-ws06a/iteration35/**
+      - paragraph: No product source changes.
+      - separator
+      - heading "7. Requirement extraction must use the real verifier" [level=2]
+      - paragraph: "Create:"
+      - code: prepare-safari-capture-session.mjs
+      - paragraph: "It must import/call the existing:"
+      - code: verifyBrowserClosure()
+      - paragraph: "with:"
+      - code: current raw current expected identity current native probe no realKeyboardEvidence
+      - paragraph: "The expected decision at this stage:"
+      - code: BLOCKED
+      - paragraph: with sole missing external proof.
+      - paragraph: "Use the returned:"
+      - code: requirements[]
+      - paragraph: as the authority for capture rows.
+      - paragraph: Do NOT hand-maintain another 10-case/40-assertion table.
+      - separator
+      - heading "8. Current requirement expectation" [level=2]
+      - paragraph: "The generated requirement set is expected to contain:"
+      - code: 10 WebKit failed cases 40 failed assertions 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED
+      - paragraph: But these counts must be derived at runtime.
+      - paragraph: "If they differ from current frozen/current iteration33 evidence:"
+      - code: STOP diagnose identity or policy drift
+      - separator
+      - heading "9. Build a new current manual fixture" [level=2]
+      - paragraph: Create one new synthetic adopted fixture from the current Starter using the existing official fixture helper.
+      - paragraph: No custom product patches.
+      - paragraph: "Require:"
+      - code: sourceManifest(manualFixture) == current expectedIdentity.fixture.sourceSha256
+      - paragraph: "If not exact:"
+      - code: STOP
+      - paragraph: This prevents manual Safari capture against a subtly different project.
+      - separator
+      - heading "10. Build identity" [level=2]
+      - paragraph: Run the normal final build for that fixture.
+      - paragraph: "Save:"
+      - code: current-manual-build-identity.json
+      - paragraph: "with the exact closure-compatible shape:"
+      - code: "fixtureIdentity: \"Field Notes synthetic adoption\" fixtureSourceSha256 distSha256"
+      - paragraph:
+        - text: These values become the only allowed
+        - code: manualBuild
+        - text: values in eventual real evidence.
+      - separator
+      - heading "11. Do not modify the target build for capture" [level=2]
+      - paragraph: The manual target must remain the actual adopted build.
+      - paragraph: "Forbidden:"
+      - code: injecting JS recorders into target pages adding keyboard event listeners adding debug focus styles adding test-only DOM changing tabindex changing overflow behavior changing navigation behavior
+      - paragraph: Human Safari must interact with the unmodified candidate output.
+      - separator
+      - heading "12. Generate a capture workbook" [level=2]
+      - paragraph: "Create:"
+      - code: real-safari-capture-workbook.json
+      - paragraph:
+        - text: from the verifier's actual
+        - code: requirements
+        - text: .
+      - paragraph: "Each row pre-populates only immutable facts:"
+      - code: caseId route viewport javascript assertion name disposition
+      - paragraph: "Human-observation fields remain incomplete:"
+      - code: "result: null keys: [] before: \"\" after: \"\" focusVisible: null artifact: \"\""
+      - paragraph: "For table-local-scroll also:"
+      - code: "scrollBefore: null scrollAfter: null trustedKeyReceived: null"
+      - paragraph: The workbook itself is intentionally NOT valid closure evidence.
+      - separator
+      - heading "13. Do not pre-populate PASS" [level=2]
+      - paragraph: "Never generate:"
+      - code: "result: \"PASS\" focusVisible: true trustedKeyReceived: true"
+      - paragraph: before the operator actually observes them.
+      - paragraph: This avoids turning a checklist into fabricated evidence.
+      - separator
+      - heading "14. Generate current-source human runbook" [level=2]
+      - paragraph: "Create:"
+      - code: CURRENT_REAL_SAFARI_CAPTURE_RUNBOOK.md
+      - paragraph: generated from the current requirements.
+      - paragraph: "For every case show:"
+      - code: exact route exact CSS viewport JavaScript state exact required assertions allowed physical keys required observation fields expected artifact filename
+      - paragraph: Do not reuse the stale iteration17 port/session.
+      - separator
+      - heading "15. Session launcher" [level=2]
+      - paragraph: "Create:"
+      - code: start-real-safari-session.mjs
+      - paragraph: "It must:"
+      - list:
+        - paragraph: verify source identity again;
+        - paragraph: verify manual fixture source/dist SHA;
+        - paragraph: select an owned local port;
+        - paragraph: start normal Astro preview;
+        - paragraph: record PID;
+        - paragraph: "write:"
+      - code: safari-session.json
+      - paragraph: "containing:"
+      - code: fixtureRoot baseUrl PID manualBuild identity raw evidence SHA expected identity SHA/reference startedAt
+      - paragraph: No browser automation.
+      - separator
+      - heading "16. Session must not claim evidence" [level=2]
+      - paragraph: "Starting a preview may only yield:"
+      - code: READY_FOR_REAL_SAFARI_CAPTURE
+      - paragraph: "Never:"
+      - code: Safari PASS Safari evidence obtained
+      - paragraph: until physical observation exists.
+      - separator
+      - heading "17. Physical-input rules remain unchanged" [level=2]
+      - paragraph: "Valid evidence must use:"
+      - code: HUMAN_PHYSICAL_KEYBOARD
+      - paragraph: or an already authorized trusted-system keyboard channel supported by the accepted policy.
+      - paragraph: "Normal keys only:"
+      - code: Tab Shift+Tab Enter Space Escape ArrowRight
+      - paragraph: "Forbidden:"
+      - code: Option/Alt workaround focus() scrollLeft mutation synthetic KeyboardEvent Playwright keyboard JS event injection
+      - separator
+      - heading "18. Browser settings" [level=2]
+      - paragraph: "The operator must record actual:"
+      - code: Safari product/version darwin/arm64 host CSS viewport JavaScript state keyboard-navigation setting unchangedForTest operator observedAt notes
+      - paragraph: Do not change macOS/Safari keyboard-navigation preferences merely to produce PASS.
+      - paragraph: "If ordinary Tab cannot reach the target:"
+      - code: record actual FAIL
+      - paragraph: Do not work around it.
+      - separator
+      - heading "19. Artifact convention" [level=2]
+      - paragraph: "Create:"
+      - code: artifacts/
+      - paragraph: "and deterministic suggested names, for example:"
+      - code: 390-shell-skip.webm 390-shell-navigation.webm 390-detail-table-scroll.webm ...
+      - paragraph: "Allowed final artifacts remain exactly those accepted by the verifier:"
+      - code: png jpg/jpeg webm mp4 json
+      - paragraph: No symlinks.
+      - separator
+      - heading "20. Human failure is first-class" [level=2]
+      - paragraph: "The workbook must support:"
+      - code: PASS FAIL
+      - paragraph: during collection.
+      - paragraph: "If any required assertion is observed FAIL:"
+      - code: do not generate closure-ready evidence
+      - paragraph: "Instead generate:"
+      - code: real-safari-failure-report.json
+      - paragraph: showing the exact failed case/assertion/observation.
+      - paragraph: "That result means:"
+      - code: PRODUCT REPAIR / REASSESSMENT REQUIRED
+      - paragraph: not policy bypass.
+      - separator
+      - heading "21. Evidence materializer" [level=2]
+      - paragraph: "Create:"
+      - code: materialize-real-keyboard-evidence.mjs
+      - paragraph: It reads the completed workbook.
+      - paragraph:
+        - text: Only if
+        - strong: every required observation is an actual PASS
+        - text: "may it create:"
+      - code: real-keyboard-evidence.json
+      - paragraph:
+        - text: in the exact existing
+        - code: alternateSchema
+        - text: shape.
+      - paragraph: No extra interpretation.
+      - separator
+      - heading "22. Materializer safeguards" [level=2]
+      - paragraph: "Require before output:"
+      - code: all 10 current rows present all 40 current assertions present no duplicate rows no duplicate assertions case identity exact route exact viewport exact javascript exact disposition exact keys non-empty focusVisible = true artifact path non-empty artifact exists artifact non-empty artifact non-symlink
+      - paragraph: "For all normal keyboard assertions:"
+      - code: keys includes Tab
+      - paragraph:
+        - text: For
+        - code: table-local-scroll
+        - text: ":"
+      - code: keys includes ArrowRight trustedKeyReceived = true scrollBefore present scrollAfter present scrollAfter > scrollBefore
+      - paragraph: "Reject any key containing:"
+      - code: Alt Option Modifier
+      - separator
+      - heading "23. Use actual identity fields" [level=2]
+      - paragraph: "The materializer must fill:"
+      - code: rawEvidenceSha256 policy IDs/SHAs starter branch/head/workingTreeSha256 manualBuild host
+      - paragraph: from bound machine artifacts.
+      - paragraph: Human should not manually copy these.
+      - paragraph: Human supplies only genuine observation metadata.
+      - separator
+      - heading "24. Pre-closure validator" [level=2]
+      - paragraph: "Create:"
+      - code: validate-real-safari-evidence.mjs
+      - paragraph: It must use the existing closure verifier, not a parallel schema.
+      - paragraph: "Run:"
+      - code: verifyBrowserClosure(...)
+      - paragraph: "against:"
+      - code: iteration33 raw current expected identity current native probe current manual build generated real-keyboard-evidence.json
+      - separator
+      - heading "25. Valid completion state" [level=2]
+      - paragraph: "If real Safari evidence is complete and matches the accepted policy, the only machine terminal state allowed is:"
+      - code: WS06A_CLOSURE_ELIGIBLE_FOR_INDEPENDENT_REVIEW
+      - paragraph: "Not:"
+      - code: WS06A ACCEPT AX PASS release ready
+      - paragraph: Independent REVIEW is still required.
+      - separator
+      - heading "26. Failure completion state" [level=2]
+      - paragraph: "If actual Safari behavior fails one or more required assertions:"
+      - code: REAL_SAFARI_FAILURE_OBSERVED
+      - paragraph: with exact cases.
+      - paragraph: Do not continue to WS03 formal closure.
+      - paragraph: The next work would be a bounded product repair based on real Safari evidence.
+      - separator
+      - heading "27. No-Safari-available completion state" [level=2]
+      - paragraph: "If the current tool environment still cannot provide physical Safari interaction, PLAN35 must stop cleanly after building and self-testing the bridge as:"
+      - code: "REAL_SAFARI_CAPTURE_BRIDGE: READY CURRENT MANUAL BUILD: BOUND WORKBOOK: READY PHYSICAL SAFARI EVIDENCE: NOT_YET_CAPTURED"
+      - paragraph: This is a successful PLAN35 tooling result, but does not change WS06A status.
+      - paragraph: No routine approval question is required at that point.
+      - paragraph: The remaining action is a genuine external physical-browser input requirement, not a planning authorization.
+      - separator
+      - heading "28. Self-tests before human use" [level=2]
+      - paragraph: "Before declaring the bridge ready, automatically prove:"
+      - code: current requirement extraction = 10 rows / 40 assertions current dispositions = 37 / 3 source/manual build identity exact empty workbook cannot materialize proof missing row rejected missing assertion rejected wrong disposition rejected wrong viewport rejected modifier workaround rejected missing artifact rejected symlink artifact rejected table scroll without trusted key rejected table scroll without positive delta rejected
+      - paragraph: These tests use synthetic invalid workbooks only.
+      - paragraph: They must never generate an accepted Safari proof.
+      - separator
+      - heading "29. Closure dry run" [level=2]
+      - paragraph: With no real evidence supplied, run the authoritative closure once.
+      - paragraph: "Expected:"
+      - code: "BLOCKED sole evidence issue: missing/invalid real Safari keyboard evidence"
+      - paragraph: This is a tooling integrity check, not another browser qualification.
+      - separator
+      - heading "30. Cleanup behavior" [level=2]
+      - paragraph: "If PLAN35 only builds/tests the bridge:"
+      - code: all temporary fixture/self-test resources cleaned
+      - paragraph: "If a real Safari capture session is deliberately started for immediate human use:"
+      - code: session PID/fixture explicitly recorded
+      - paragraph: "and after capture:"
+      - code: npm run preview -- stop PID gone fixture cleaned cleanup audit saved
+      - paragraph: No signal fallback unless separately reviewed as failure.
+      - separator
+      - heading "31. Exact source scope" [level=2]
+      - paragraph: "PLAN35 may add only evidence/preparation artifacts under:"
+      - code: template/codex/prompts/v2.7-ws06a/ template/codex/executions/v2.7-ws06a/iteration35/
+      - paragraph: "No modifications to:"
+      - code: Repo_hotgameweb/** template/design/ws04a/** roadmap DAG Contract Registry browser runner matrix closure verifier policy Arrow control
+      - separator
+      - heading "32. Why no fresh47" [level=2]
+      - paragraph: No product/triad/browser-infrastructure source has changed since iteration33.
+      - paragraph: Therefore iteration33's bound raw remains the current qualification input after identity verification.
+      - paragraph: A new fresh47 would only produce another timestamped copy of already-known evidence.
+      - paragraph: "If identity comparison fails, then and only then:"
+      - code: STOP new qualification becomes justified
+      - separator
+      - heading "33. Formal holds during PLAN35" [level=2]
+      - paragraph: "Until real Safari evidence is captured and independently accepted:"
+      - code: WS06A FULL = BLOCKED WS03 FORMAL = NOT_ACCEPTED WS04A FORMAL GATE = OPEN WS04A SCHEMA = NOT_FROZEN WS05 = NOT_AUTHORIZED 06B/07/08 = BLOCKED Capability promotion = NONE Release hold = ACTIVE
+      - separator
+      - heading "34. Why this creates tangible value" [level=2]
+      - paragraph: Iteration17 already had a human checklist.
+      - paragraph:
+        - text: What it lacked for the
+        - strong: current source
+        - text: "was a safe bridge that:"
+      - code: derives requirements from the actual closure verifier binds the current raw evidence binds the current adopted build prevents pre-filled PASS records real FAIL honestly materializes only complete closure-compatible proof validates artifacts and identities feeds the unchanged closure verifier directly
+      - paragraph: PLAN35 turns the remaining Safari requirement from a loosely manual documentation task into a reproducible evidence-acquisition workflow.
+      - separator
+      - heading "Terminal outcomes" [level=2]
+      - paragraph: "PLAN35 has exactly three legitimate outcomes:"
+      - code: A. READY_FOR_REAL_SAFARI_CAPTURE (no physical Safari input available yet) B. REAL_SAFARI_FAILURE_OBSERVED (real behavior fails one or more required assertions) C. WS06A_CLOSURE_ELIGIBLE_FOR_INDEPENDENT_REVIEW (all required real Safari observations pass and verifier accepts them)
+      - paragraph: None of the three automatically closes WS06A or promotes release.
+    - paragraph:
+      - text: 这一步比继续做 WS04A 设计准备更接近当前关键路径：
+      - strong: 我们已经知道 04A 将来怎么绑定了，现在缺的是让正式 Gate 能重新流动起来的真实 Safari 输入。
+    - paragraph:
+      - text: 而且 PLAN35 不再创建“另一份 checklist”；它把
+      - strong: 当前 raw → 当前要求 → 当前 build → 真人观察 → closure verifier
+      - text: 串成一条机器可校验的链。真正需要用户/外部环境介入的只剩下物理 Safari 键盘操作本身，这不是常规审批问题，而是目前工具无法替代的真实证据来源。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "添加文件等内容":
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

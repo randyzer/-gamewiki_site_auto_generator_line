@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "nameHelperReferences": 0,
+  "serializedSha256": "6587a78149806093df38df4b07faf5cc1a4dedcf3cf05368347671b64e76a608",
+  "sourceSha256": "0cc9b2340633659873fae717af79db66bf329fe407a6d2486eed181826dc80b7",
+  "runtime": "node_modules/.bin/tsx",
+  "standaloneNoInjectedHelpers": true,
+  "qualificationAttempts": 0
+}

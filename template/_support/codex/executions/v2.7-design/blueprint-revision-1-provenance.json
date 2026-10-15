@@ -1,0 +1,39 @@
+{
+  "stage": "blueprint_revision_1_review",
+  "capabilities": 41,
+  "coverage": "PASS",
+  "local_links": "PASS",
+  "whitespace": "PASS",
+  "repositories": [
+    {
+      "path": "Repo_hotgameweb/GAME_SOP_V2.6.5",
+      "head": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.6.5",
+      "head": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+      "head": "29b25559cf2af859bca359c7f7fda686a4803c95",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "clean": true
+    }
+  ],
+  "implementation_started": false,
+  "a4_resumed": false,
+  "blueprint_sha256": "c122663ec3814cf01e28638744362c242f700a13f3bcbbe40988a62568a72b8e",
+  "changed_design_files": [
+    "template/architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md",
+    "template/codex/verifications/v2.7-design/blueprint-review-1.md",
+    "template/codex/executions/v2.7-design/blueprint-revision-1-provenance.json",
+    "template/codex/executions/v2.7-design/blueprint-revision-1-check.log"
+  ],
+  "scope_note": "This revision changes only blueprint governance text and its review/evidence records; README/PROJECT_STATE/initial PLAN changes belong to iteration5, not iteration6."
+}

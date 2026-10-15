@@ -1,0 +1,395 @@
+# 第19轮实际 ChatGPT PLAN
+
+日期：2026-10-07，Asia/Taipei。原会话：https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+任务c2c_a765，iteration19。以下为已完成回复的实际渲染DOM，不是Codex改写的计划。
+
+```text
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: 收到。基于当前 Roadmap、iteration14/17 policy、raw 47、closure verifier 和 iteration18 的已接受方法设计，我认为替代路线应该
+      - strong: 明确拆开“允许继续开发”与“完整浏览器/发布验收”
+      - text: ，而不是重新解释 WebKit 失败。
+    - button "添加到资料库":
+      - generic: PLAN19 — WS06A Development Readiness Alternative Design
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 19"
+        - text: "WORKSTREAM: WS06A development-readiness alternative — DESIGN ONLY"
+        - text: "PLAN_STATUS: READY FOR BOUNDED DESIGN EXECUTION"
+        - text: "ACTIVE_DAG_CHANGE: NO"
+        - text: "PRODUCT / SCHEMA / CONTRACT DELTA: 0"
+        - text: "CURRENT_RAW_QUALIFICATION: 37 PASS / 10 FAIL"
+        - text: "REAL_SAFARI_EVIDENCE: 0"
+        - text: "WS06A: BLOCKED"
+      - heading "1. 先确定问题本质" [level=2]
+      - paragraph: 当前 Roadmap 的硬依赖是：
+      - code: WS02 ↓ WS06A ACCEPT ↓ WS03 implementation / Gate ↓ 04A / 05 / 04B ↓ 06B ↓ 07 ↓ 08
+      - paragraph: 而当前事实是：
+      - code: 47 planned / 47 executed 37 PASS 10 FAIL 0 NOT_RUN 10 FAIL 全部 WebKit 40 failed assertions Safari alternate keyboard evidence = 0
+      - paragraph: iteration14/17 已经证明：
+      - list:
+        - paragraph: 这些 WebKit failure 中 plain-Tab 部分存在当前 engine/host input-profile问题；
+        - paragraph: ArrowRight 部分不能用当前 Playwright WebKit native result作为稳定产品 oracle；
+        - paragraph:
+          - text: 这些诊断都
+          - strong: 不能自动变成 PASS
+          - text: ；
+        - paragraph:
+          - text: current closure verifier没有 Safari proof时正确
+          - code: BLOCKED
+          - text: 。
+      - paragraph: 因此问题不是“怎样把 10 FAIL 消掉”，而是：
+      - blockquote:
+        - paragraph: 在不伪造 Safari PASS、不降低 release Gate 的前提下，能否允许 V2.7 的工程开发继续进行？
+      - paragraph:
+        - text: 答案：可以设计一条
+        - strong: Development Readiness Lane
+        - text: ，但它必须和正式 Acceptance 严格隔离。
+      - separator
+      - heading "2. 三条路线比较" [level=1]
+      - table:
+        - rowgroup:
+          - row "路线 做法 优点 风险/问题 决策":
+            - columnheader "路线"
+            - columnheader "做法"
+            - columnheader "优点"
+            - columnheader "风险/问题"
+            - columnheader "决策"
+          - row "A. 完全等待 Safari 保持现有 DAG，Safari proof拿到前不进入 WS03 实现 最保守，无治理修改 Safari短期不可用，V2.7技术工作持续停摆 安全但当前不采用":
+            - cell "A. 完全等待 Safari"
+            - cell "保持现有 DAG，Safari proof拿到前不进入 WS03 实现"
+            - cell "最保守，无治理修改"
+            - cell "Safari短期不可用，V2.7技术工作持续停摆"
+            - cell "安全但当前不采用"
+          - row "B. Chromium+Firefox 替代 Safari 因40个 WebKit失败 assertion在 Chromium、Firefox 都 PASS，直接视作产品 PASS 快 这是跨引擎推断；不能证明 Safari/WebKit；实质上弱化 P1 Gate 拒绝，不安全":
+            - cell "B. Chromium+Firefox 替代 Safari"
+            - cell "因40个 WebKit失败 assertion在 Chromium、Firefox 都 PASS，直接视作产品 PASS"
+            - cell "快"
+            - cell "这是跨引擎推断；不能证明 Safari/WebKit；实质上弱化 P1 Gate"
+            - cell "拒绝，不安全":
+              - strong: 拒绝，不安全
+          - row "C. Development Readiness / Full Acceptance 分离 保留 raw 37/10、Safari proof0 和 WS06A BLOCKED；新增非能力的开发准备状态，只允许有限开发继续 保留证据真相，同时恢复工程推进 需明确 freshness、切片回归、release hold 和最终 reconciliation 推荐":
+            - cell "C. Development Readiness / Full Acceptance 分离":
+              - text: C.
+              - strong: Development Readiness / Full Acceptance 分离
+            - cell "保留 raw 37/10、Safari proof0 和 WS06A BLOCKED；新增非能力的开发准备状态，只允许有限开发继续"
+            - cell "保留证据真相，同时恢复工程推进"
+            - cell "需明确 freshness、切片回归、release hold 和最终 reconciliation"
+            - cell "推荐":
+              - strong: 推荐
+      - paragraph: 方案 C 不修改 Contract outcome，也不创造 P1 exception。
+      - separator
+      - heading "3. 新状态只用于工程流程" [level=1]
+      - paragraph:
+        - text: 拟议新增一个
+        - strong: 治理状态
+        - text: ：
+      - code: WS06A_DEVELOPMENT_READINESS
+      - paragraph: 允许值只用于流程，例如：
+      - code: NOT_EVALUATED BLOCKED ACCEPTED_FOR_BOUNDED_DEVELOPMENT STALE
+      - paragraph: 它不是：
+      - code: Contract capability ID §W outcome verifiedOutcome EXCEPTION WS06A ACCEPT AX-01/02/03 PASS PA-01 PASS release approval
+      - paragraph: 必须始终满足：
+      - code: WS06A_DEVELOPMENT_READINESS = ACCEPTED 可以同时存在于： WS06A = BLOCKED raw = 37 PASS / 10 FAIL Safari proof = 0
+      - paragraph: 这是整个方案的核心。
+      - separator
+      - heading "4. Development Readiness 能解锁什么" [level=1]
+      - paragraph: PLAN19建议第一阶段只解锁：
+      - code: WS03 bounded implementation slices
+      - paragraph: 即：
+      - code: 03A 03B 03C 03D-search 03D-freshness
+      - paragraph:
+        - text: 但它
+        - strong: 不自动关闭 WS03 Gate
+        - text: ，也不自动解锁整个后续 DAG。
+      - paragraph: 具体语义：
+      - code: Development Readiness ACCEPT → 可以规划/实施/测试 WS03 slice candidate 不等于 → WS03 workstream ACCEPT
+      - paragraph: 每个 WS03 slice可以产生：
+      - code: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION
+      - paragraph: 这种开发态结果，但仍不是 capability / release outcome。
+      - paragraph: 这样先恢复最直接的技术工作，同时避免一次性把所有后续 Gate 都改成 provisional。
+      - separator
+      - heading "5. 当前 40 个 WebKit assertion 的双引擎证据怎样使用" [level=1]
+      - paragraph: 已提供的本地只读审计结论是：
+      - code: 40 WebKit failed assertions 每一项都有： same role same route same viewport same JS state same assertion name Chromium PASS + Firefox PASS 合计 80 matched PASS counterparts
+      - paragraph:
+        - text: PLAN19执行时必须
+        - strong: 独立重算并保存
+        - text: 这张映射。
+      - paragraph: 它的语义只能是：
+      - blockquote:
+        - paragraph: 在另外两个独立 engine 中，没有观察到对应 Core 功能的跨引擎失败。
+      - paragraph: 它不能写成：
+      - code: Safari PASS WebKit equivalent PASS majority browsers PASS 2/3 engines sufficient
+      - paragraph:
+        - text: 这 80 个 counterpart 是
+        - strong: development confidence evidence
+        - text: ，不是替代 browser acceptance。
+      - separator
+      - heading "6. Initial Development Readiness 的硬条件" [level=1]
+      - paragraph: 当前 source snapshot要进入开发准备状态，必须同时满足：
+      - code: "raw_matrix: planned: 47 executed: 47 not_run: 0 skipped: 0 non_webkit: failed_rows: 0 webkit: failed_rows: 10 failed_assertions: 40 unknown_failure_classes: 0 policy: proposal_identity_exact: true arrow_control_identity_exact: true closure_verifier_classifies_every_failure: true dual_engine_counterpart: chromium_matches: 40/40 firefox_matches: 40/40 total: 80/80 product_known_defects: live_resize: repaired_and_closed release: safari_proof: 0 ws06a: BLOCKED"
+      - paragraph: 任何一项不成立：
+      - code: DEVELOPMENT_READINESS = BLOCKED
+      - separator
+      - heading "7. Exact residual allowlist 必须冻结" [level=1]
+      - paragraph: 最重要的安全措施之一：
+      - paragraph: 当前 40 failed assertions形成一个准确的：
+      - code: KNOWN_WEBKIT_RESIDUAL_SET_V1
+      - paragraph: 按：
+      - code: caseId route viewport javascript assertion name policy disposition
+      - paragraph: 逐项冻结。
+      - paragraph: 后续开发完成一次 source change 后：
+      - code: 新的 WebKit failures 必须是当前 known residual set 的子集
+      - paragraph: 允许：
+      - code: 40 → 39 → 35
+      - paragraph: 不允许：
+      - code: 40 → 41
+      - paragraph: 即使第 41 个看起来也是：
+      - code: Target not keyboard reachable
+      - paragraph: 也不能自动扩张 allowlist。
+      - paragraph: 必须 STOP / 独立诊断。
+      - paragraph: 这样可避免随着开发进行，所有新 WebKit failure 都被“环境问题”吞掉。
+      - separator
+      - heading "8. Source freshness：Readiness 绝不能永久有效" [level=1]
+      - paragraph: 当前 readiness必须绑定：
+      - code: Starter branch/head Starter working-tree manifest Contract SHA matrix SHA runner SHA closure verifier SHA policy proposal SHA Arrow control SHA raw evidence SHA fixture source SHA dist SHA Chromium version/revision Firefox version/revision WebKit version/revision host/platform
+      - paragraph: 当前 raw evidence已绑定：
+      - code: Contract = 1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c Playwright = 1.63.0 Chromium = 153.0.8010.12 / rev1243 Firefox = 155.0 / rev1543 WebKit = 26.6 / rev2359
+      - paragraph: 只要 Starter product source发生变化：
+      - code: DEVELOPMENT_READINESS → STALE
+      - paragraph: 不能拿旧 37/10继续开发下一 slice。
+      - separator
+      - heading "9. 每个 WS03 slice 后必须重新建立 Slice Continuation" [level=1]
+      - paragraph: 定义：
+      - code: WS03_SLICE_CONTINUATION
+      - paragraph: 每个 slice完成后都需要新 source上的证据。
+      - paragraph: 最小 sequence：
+      - code: slice implementation ↓ slice targeted tests ↓ root check ↓ unadopted / adopted verification ↓ fresh unchanged 47-row run ↓ known-residual comparison ↓ Chromium/Firefox counterpart comparison ↓ independent slice review
+      - paragraph: 满足后才可：
+      - code: current slice = IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION
+      - paragraph: 然后才进入下一个 slice。
+      - separator
+      - heading "10. 每个 slice 的通用 browser Gate" [level=1]
+      - paragraph: 新 source的 fresh 47必须：
+      - code: "47 executed 0 NOT_RUN 0 skip Chromium: 0 regression Firefox: 0 regression WebKit: failed assertion set ⊆ KNOWN_WEBKIT_RESIDUAL_SET_V1 unknown WebKit failure: 0 new infrastructure failure: 0"
+      - paragraph: 并且每个仍然失败的 WebKit assertion都必须继续拥有：
+      - code: matching Chromium PASS matching Firefox PASS
+      - paragraph: 同：
+      - code: route viewport javascript role/category assertion
+      - paragraph: 否则：
+      - code: SLICE CONTINUATION = BLOCKED
+      - separator
+      - heading "11. 这不是 P0/P1 waiver" [level=1]
+      - paragraph: 必须在提案正文中反复区分：
+      - code: P1 requirement unresolved for release
+      - paragraph: 和：
+      - code: engineering work may continue under bounded uncertainty
+      - paragraph: 两者不同。
+      - paragraph: 所以 Development Readiness不能生成：
+      - code: EXCEPTION NOT_APPLICABLE NOT_SELECTED PASS WAIVED
+      - paragraph: 也不得进入 Capability Registry。
+      - paragraph: 特别禁止：
+      - code: AX-01 = PASS because Chrome+Firefox AX-03 = PASS because known WebKit issue
+      - paragraph: 全部保持未满足/未裁定的原状态。
+      - separator
+      - heading "12. Release Hold 必须永久伴随这条开发路线" [level=1]
+      - paragraph: 只要：
+      - code: Safari proof = 0
+      - paragraph: 以下状态全部保持锁定：
+      - code: WS06A FULL ACCEPTANCE WS06B acceptance Gate WS07 real-adoption Gate WS08 release / assembly Gate AX/PA capability promotion release candidate tag/push/release
+      - paragraph: 尤其 Roadmap 当前：
+      - code: WS07 requires WS06B + 03/04/05 gates WS08 requires WS01–07 gates
+      - paragraph: 这些不能被 Development Readiness改变。
+      - separator
+      - heading "13. WS06B 的边界" [level=1]
+      - paragraph: PLAN19不建议现在解锁 WS06B implementation。
+      - paragraph: 理由：
+      - paragraph: 06B 是：
+      - code: assembled-site acceptance infrastructure REF-A / REF-B / REF-C
+      - paragraph: 它本身已经靠近正式 Acceptance。
+      - paragraph: 第一阶段先只恢复：
+      - code: WS03 engineering
+      - paragraph: 更安全。
+      - paragraph: 等至少一个 WS03 slice通过这种 provisional development流程后，再决定是否需要扩展 development lane。
+      - paragraph: 不能在 PLAN19 中一次性把：
+      - code: 03 → 04A → 05 → 04B → 06B
+      - paragraph: 全部改成 provisional。
+      - separator
+      - heading "14. Safari closure 没有被取消，只被推迟到 reconciliation Gate" [level=1]
+      - paragraph: 真正的最终路径仍然是：
+      - code: bounded development ↓ source stabilizes ↓ fresh full 47 ↓ real Safari keyboard evidence ↓ verify:browser-closure ↓ independent WS06A closure review
+      - paragraph:
+        - text: 而且 Safari proof必须绑定
+        - strong: 当时最终 source/build
+        - text: 。
+      - paragraph: 不能以后拿：
+      - code: iteration17 old Safari proof
+      - paragraph: 去验：
+      - code: 经过03A/03B/...修改后的 Starter
+      - paragraph: 因此延后取证反而减少重复人工工作：只对更稳定的候选取一次有效证据。
+      - separator
+      - heading "15. Safari proof取得后必须做 Reconciliation" [level=1]
+      - paragraph: 在任何正式 Gate恢复前必须：
+      - code: 1. 冻结当前 source identity 2. fresh 47-row qualification 3. 当前 engine/host policy重新核实 4. 获取真实 Safari keyboard evidence 5. closure verifier → ELIGIBLE_FOR_INDEPENDENT_REVIEW 6. independent WS06A review 7. 检查所有 provisional WS03 slices 是否仍绑定当前 source / interface 8. 对 stale slice evidence重新执行必要 regression
+      - paragraph: 只有这之后，才能把开发态结果重新解释为正常 DAG 输入。
+      - separator
+      - heading "16. 如果 Safari 最终真实 FAIL 怎么办" [level=1]
+      - paragraph: 这条方案不能假定 Safari未来一定 PASS。
+      - paragraph: 真实 Safari若证明：
+      - code: keyboard path FAIL 或 ArrowRight FAIL
+      - paragraph: 则：
+      - code: WS06A remains BLOCKED
+      - paragraph: 之后必须：
+      - code: product repair → impacted WS03 slices stale → rerun slice regressions → fresh 47 → Safari reproof
+      - paragraph: Development Readiness不会保护已经写好的代码免于返工。
+      - paragraph: 这属于明确接受的工程风险，而不是发布风险豁免。
+      - separator
+      - heading "17. PLAN19 五个设计工件" [level=1]
+      - paragraph: 本轮 DESIGN ONLY建议新增：
+      - code: template/design/ws06a/ ├── WS06A_DEVELOPMENT_READINESS_AMENDMENT_PROPOSAL_V1.md ├── WS06A_DEVELOPMENT_READINESS_EVIDENCE_PROFILE_V1.md ├── WS03_SLICE_CONTINUATION_RULES_V1.md ├── SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md └── ROADMAP_AMENDMENT_IMPACT_MAP_V1.md
+      - paragraph: 另保存实际 PLAN：
+      - code: template/codex/prompts/v2.7-ws06a/ └── iteration19-development-readiness-alternative-plan.md
+      - paragraph: 允许 execution metadata：
+      - code: template/codex/executions/v2.7-ws06a/iteration19/ ├── preflight.json ├── dual-engine-counterpart-audit.json ├── residual-set-v1.json ├── design-checks.json ├── design-checks.log └── result.md
+      - paragraph: 这些 metadata不得成为新的 normative authority。
+      - separator
+      - heading "18. 文档1：Amendment Proposal" [level=1]
+      - paragraph: 必须包含：
+      - code: current problem three route comparison recommended split model non-capability status definition what it unlocks what remains blocked risk model STOP conditions future amendment scope
+      - paragraph: 明确标：
+      - code: PROPOSAL ONLY ACTIVE ROADMAP UNCHANGED
+      - separator
+      - heading "19. 文档2：Evidence Profile" [level=1]
+      - paragraph: 必须正式定义：
+      - code: raw 47 identity known 40 residual assertions 37 ENVIRONMENT_PROFILE_BLOCKED / 3 PRODUCT_EVIDENCE_UNRESOLVED dual-engine counterpart rule freshness rules source/build identity unknown failure fail-closed
+      - paragraph: 注意：
+      - code: 80 counterpart PASS
+      - paragraph: 只能叫：
+      - code: cross-engine corroboration
+      - paragraph: 绝不能叫：
+      - code: WebKit equivalence evidence Safari substitution
+      - separator
+      - heading "20. 文档3：WS03 Slice Continuation Rules" [level=1]
+      - paragraph: 每个 slice记录：
+      - code: slice ID exact changed files capabilities touched targeted tests browser surfaces affected pre-source identity post-source identity fresh47 result non-WebKit regression count residual-set comparison dual-engine counterpart result independent review verdict
+      - paragraph: 并规定：
+      - code: one slice at a time
+      - paragraph: 不能：
+      - code: 03A + 03B + 03D一起改完再测
+      - paragraph: 否则失去 regression attribution。
+      - separator
+      - heading "21. 文档4：Safari Release Hold / Reconciliation" [level=1]
+      - paragraph: 明确：
+      - code: Safari proof missing → development may continue → release acceptance may NOT continue
+      - paragraph: 列出永久 hold：
+      - code: WS06A full accept 06B Gate 07 Gate 08 Gate capability promotion release
+      - paragraph: 并定义最终 reconciliation步骤。
+      - separator
+      - heading "22. 文档5：Roadmap Impact Map" [level=1]
+      - paragraph: 这一份只描述“如果 proposal将来被接受，哪里需要改”。
+      - paragraph:
+        - strong: 当前 iteration19不修改 Roadmap。
+      - paragraph: 未来 amendment implementation的准确候选范围建议为：
+      - code: template/roadmap/ GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ NEW_GAME_SITE_SOP_v2.7.md QA_CHECKLIST.md EXECUTION_PROMPT.md Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph: 不需要修改：
+      - code: Canonical Contract Capability Registry Starter runtime browser matrix browser runner closure verifier schemas
+      - paragraph: 如果真正实施 amendment 时发现必须修改这些：
+      - code: STOP
+      - paragraph: 重新审查。
+      - separator
+      - heading "23. Proposed DAG amendment 的精确形态" [level=1]
+      - paragraph: 当前 active DAG继续保持原样。
+      - paragraph: 提案只描述未来可能增加一个非 Gate 节点：
+      - code: WS02 ↓ WS06A raw foundation ↓ WS06A Development Readiness ↓ WS03 bounded implementation lane
+      - paragraph: 与此同时：
+      - code: WS06A FULL ACCEPT ────────────────→ 正式 downstream Gate / release chain
+      - paragraph: 最关键的是：
+      - code: Development Readiness edge ≠ replacement of WS06A acceptance edge
+      - paragraph: 它只是新增一个开发入口。
+      - separator
+      - heading "24. PLAN19 的只读检查" [level=1]
+      - paragraph: 本轮不建 product checker。
+      - paragraph: 执行时只做治理检查：
+      - heading "Scope" [level=3]
+      - paragraph: 只允许：
+      - code: 5 design docs 1 saved PLAN execution metadata
+      - paragraph: 以下 hash必须保持：
+      - code: Starter product SOP/Prompt candidate Contract Registry Roadmap matrix runner closure verifier iteration14/17 evidence iteration18 accepted docs
+      - heading "Raw evidence audit" [level=3]
+      - paragraph: 重新计算：
+      - code: failed WebKit rows = 10 failed assertions = 40 Chrome counterpart = 40/40 PASS Firefox counterpart = 40/40 PASS total matches = 80/80
+      - paragraph: 任何不是 80/80：
+      - code: STOP
+      - heading "Residual audit" [level=3]
+      - paragraph: 必须证明：
+      - code: 40/40 → closure verifier current accepted classes 37 × ENVIRONMENT_PROFILE_BLOCKED 3 × PRODUCT_EVIDENCE_UNRESOLVED
+      - paragraph: 未知 class：
+      - code: STOP
+      - heading "Forbidden semantic scan" [level=3]
+      - paragraph: 设计文档不得出现把以下作为事实：
+      - code: WebKit PASS Safari PASS WebKit N/A P1 exception AX PASS WS06A ACCEPT release eligible
+      - paragraph: 除非出现在“禁止/不是”的语境中。
+      - separator
+      - heading "25. PLAN19 Exit Gate" [level=1]
+      - paragraph: Iteration19 DESIGN只能在以下条件下 ACCEPT：
+      - code: "scope: product_delta: 0 schema_delta: 0 contract_delta: 0 registry_delta: 0 roadmap_delta: 0 evidence: raw47_preserved: true raw_result: 37_PASS_10_FAIL safari_proof: 0 failed_assertions: 40 chromium_counterparts: 40 firefox_counterparts: 40 unknown_policy_failures: 0 proposal: dev_readiness_is_non_capability_state: true dev_readiness_is_not_ws06a_accept: true no_p0_p1_waiver: true exact_residual_allowlist: true source_freshness_required: true per_slice_fresh47_required: true new_failures_fail_closed: true release_hold: ws06a_full: BLOCKED ws06b_gate: BLOCKED ws07_gate: BLOCKED ws08_gate: BLOCKED capability_promotion: NONE active_dag: changed: false independent_review: required: true"
+      - separator
+      - heading "26. Unsafe routes明确拒绝" [level=1]
+      - paragraph: 以下方案在本设计中必须标为禁止：
+      - code: Chromium + Firefox = Safari equivalence 删除 WebKit 降低 47-row matrix 把 WebKit标 NOT_APPLICABLE 把 environment blocked标 PASS 利用普通 P2 exception处理 P1 keyboard要求 改变 Contract applicability/severity 更改 runner让它少测 assertion 用 Chrome smoke替代 Safari 以旧 source的 Safari evidence验证新 source
+      - separator
+      - heading "27. 如果 PLAN19 被独立 ACCEPT，有限实施路径" [level=1]
+      - paragraph: 下一步不是 WS03代码。
+      - paragraph: 先实施 governance amendment：
+      - code: Iteration20 → Roadmap + SOP + QA + Execution Prompt + Master Prompt → 只实施 Development Readiness 流程语义 → Contract / Starter / runner 不动 → 独立 review
+      - paragraph: 只有这个 amendment真正 ACCEPT 后：
+      - code: Iteration21 → 对当前 source执行 Development Readiness audit → 80/80 + 40 residual + identity/freshness → 独立 ACCEPT_FOR_BOUNDED_DEVELOPMENT
+      - paragraph: 然后才开始：
+      - code: WS03A
+      - paragraph: 并按一 slice 一次 fresh regression推进。
+      - separator
+      - heading "28. 当前需要的人类动作" [level=1]
+      - paragraph:
+        - strong: PLAN19 与后续 governance amendment不需要人工 Safari操作。
+      - paragraph: 当前没有新的系统权限或工具通道授权要求。
+      - paragraph: 真正仍不可消失的人工/可信工具要求只有：
+      - code: 在 WS06A full closure 之前 取得当前最终 source/build 上的 real Safari keyboard evidence
+      - paragraph: 如果未来官方工具能提供：
+      - code: 真实 Safari application trusted OS keyboard input 准确 Safari version 非 Playwright WebKit 非 programmatic focus
+      - paragraph: 可以使用。
+      - paragraph: 否则仍需人工键盘取证。
+      - paragraph: 但这项工作在本方案中被推迟到更稳定的 source 阶段，不再阻止眼下有限工程开发。
+    - paragraph:
+      - text: 我建议采用这个方向。它的关键不是“绕过 Safari”，而是把
+      - strong: Safari 从“开发能否继续”的阻塞项，重新放回它真正应该决定的“完整浏览器/发布验收”位置
+      - text: ；与此同时，40 个已知 WebKit residual 被严格冻结，每次源码变化都要用 fresh 47 + Chromium/Firefox 双引擎回归重新证明没有扩大风险。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+```

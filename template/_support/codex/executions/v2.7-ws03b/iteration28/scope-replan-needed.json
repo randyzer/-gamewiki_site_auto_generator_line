@@ -1,0 +1,17 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 28,
+  "status": "PREFLIGHT_SCOPE_REPLAN_REQUIRED",
+  "productMutations": 0,
+  "testMutations": 0,
+  "extraRequiredFiles": [
+    "tests/media-audit.test.ts",
+    "tests/homepage.test.ts"
+  ],
+  "reason": "media-audit passes old image/video fixtures to MediaAsset[]-typed validation and positive generated HTML audit; homepage passes old ImageAsset to typed model and actual GameHero/GameMedia rendering. New required dimensions/rightsRef/video equivalent require synthetic fixture and positive HTML contract migration. No weakening existing assertions.",
+  "requestedScope": "original16 +2 existing test fixture migrations only",
+  "continuationAcceptedSlice": "WS03A",
+  "nextAuthorizedSlice": "WS03B",
+  "safariProof": 0,
+  "ws06a": "BLOCKED"
+}

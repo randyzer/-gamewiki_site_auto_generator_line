@@ -1,0 +1,317 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 28"
+      - text: "WORKSTREAM: WS03B"
+      - text: "VERDICT:"
+      - strong: BLOCKED — TARGETED MEDIA QUALIFICATION
+    - paragraph:
+      - text: 独立复核支持本轮 STOP。03B 当前
+      - strong: 不能接受 continuation
+      - text: ，但也
+      - strong: 没有证据支持修改媒体产品实现来修 WebKit
+      - text: 。
+    - paragraph: 我确认的关键事实：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: scope = exact 18 files RED = 9 FAIL / 189 PASS GREEN = 243 PASS root = 807 PASS / Astro 0 adoption/diff = PASS targeted attempts = 1 retry = 0 rows = 6/6 executed Chromium = 2/2 PASS Firefox = 2/2 PASS WebKit = 0/2 PASS fresh47 = NOT_STARTED
+    - paragraph:
+      - text: WebKit 每个 viewport 都只有
+      - strong: 1 条 assertion FAIL
+      - text: 。更关键的是，同一页面存在两个相同 qa.image：manifest 同时将它映射为 hero 和 gallery。WebKit 中第一个 qa.image：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: naturalWidth = 1200 naturalHeight = 675 complete = true
+    - paragraph: 而后出现的第二个 qa.image：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: width = "1200" height = "675" naturalWidth = 0 naturalHeight = 0 complete = false
+    - paragraph:
+      - text: 结合实际 harness，我认为下一轮优先级已经很明确：page.goto(... networkidle) 后只等待了
+      - strong: local video metadata
+      - text: ，没有等待 lazy images；GameMedia 的 gallery image 使用 loading="lazy"。因此“
+      - strong: WebKit没有在 off-screen gallery image 被观察前启动/完成 lazy load
+      - text: ”已经是一个强诊断假设，但还不能直接算 PASS，也不能直接用 scroll 修 harness后重跑。
+    - paragraph:
+      - text: 另外，静态 audit whitespace 假设确实有代码依据：schema 的 .trim() 只处理首尾空白，内部连续空格/换行仍合法；而 media-validation.ts 的 tagText() 会把可见空白折叠成一个空格，再与未折叠的 authored credit.text / equivalent exact compare。这是一个值得用 RED 正式确认的
+      - strong: 独立 audit defect candidate
+      - text: 。
+    - paragraph: 正式状态：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03B: BLOCKED iteration28 targeted FAIL: PRESERVED PRODUCT MEDIA RENDERING DEFECT: NOT ESTABLISHED TARGETED HARNESS LAZY-LOAD DEFECT: STRONGLY SUSPECTED, NOT YET PROVEN fresh47: NOT_STARTED WS03C: NOT STARTED Safari proof: 0 WS06A FULL: BLOCKED Capability promotion: NONE"
+    - paragraph: 下一轮可以把 diagnosis、有限修复和剩余 continuation evidence 放在一个有硬 STOP 的有限序列里。
+    - generic: PLAN29 — WS03B Lazy-Image Diagnosis, Bounded Audit Fix and Continuation
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 29"
+        - text: "WORKSTREAM: WS03B"
+        - text: "PREDECESSOR: REVIEW28 BLOCKED"
+        - text: "SCOPE: DIAGNOSIS FIRST; HARNESS FIX ONLY IF PROVEN"
+        - text: "PRODUCT_DELTA_MAX: 2 EXISTING FILES, ONLY IF WHITESPACE RED CONFIRMS"
+        - text: "TARGETED_QUALIFICATION_ATTEMPTS: MAX 1"
+        - text: "FRESH47_ATTEMPTS: MAX 1"
+      - heading "1. Freeze iteration28" [level=2]
+      - paragraph: "Never modify:"
+      - code: template/codex/executions/v2.7-ws03b/iteration28/**
+      - paragraph: "Especially retain permanently:"
+      - code: WebKit 1280 FAIL WebKit 390 FAIL naturalWidth = 0 complete = false
+      - paragraph: No rewriting iteration28 as PASS.
+      - paragraph: Current 18 WS03B files are the source baseline.
+      - separator
+      - heading "2. Phase A — lazy-image diagnosis only" [level=2]
+      - paragraph: "Before any product mutation or new qualification, create an execution-only diagnostic using the same:"
+      - code: synthetic assets page mapping build engines viewports
+      - paragraph: No assertion changes.
+      - paragraph: "This phase is:"
+      - code: diagnosticSessions = 1 qualificationAttempts = 0
+      - separator
+      - heading "3. Identify the two image instances explicitly" [level=2]
+      - paragraph:
+        - text: For every
+        - code: qa.image
+        - text: "record capture:"
+      - code: DOM index closest data-media-placement loading attribute currentSrc complete naturalWidth naturalHeight bounding rect top/bottom viewport height currently in viewport resource request seen response status performance resource entry
+      - paragraph: "The evidence must distinguish:"
+      - code: hero qa.image gallery qa.image
+      - paragraph: instead of recording both only as the same asset ID.
+      - separator
+      - heading "4. Pre-scroll observation" [level=2]
+      - paragraph: "After exactly the same current navigation sequence:"
+      - code: goto(networkidle) wait local video metadata
+      - paragraph:
+        - text: capture the state
+        - strong: before any scrolling
+        - text: .
+      - paragraph: "Expected hypothesis:"
+      - code: "hero: loaded gallery: loading=\"lazy\" off-screen no request or unfinished request naturalWidth=0 complete=false"
+      - paragraph: But do not assume this result.
+      - separator
+      - heading "5. Natural lazy-load activation diagnostic" [level=2]
+      - paragraph: "For the gallery image only:"
+      - code: locator.scrollIntoViewIfNeeded()
+      - paragraph: once.
+      - paragraph: This is permitted solely to diagnose/native-trigger lazy image loading.
+      - paragraph:
+        - text: It is
+        - strong: not AX/keyboard/scroll evidence
+        - text: .
+      - paragraph: "Then wait a finite time for:"
+      - code: complete === true naturalWidth === 1200 naturalHeight === 675
+      - paragraph: "while independently recording request/response for:"
+      - code: /media/qa-contract.svg
+      - paragraph: No reload and no second browser session.
+      - separator
+      - heading "6. Phase A classifications" [level=2]
+      - heading "HARNESS_LAZY_LOAD_CONFIRMED" [level=3]
+      - paragraph: "Requires the failing WebKit instances to show:"
+      - code: "before: gallery is lazy/off-screen naturalWidth=0 complete=false after natural scroll: request/response succeeds complete=true naturalWidth=1200 naturalHeight=675"
+      - paragraph: with the hero instance already valid.
+      - heading "PRODUCT_OR_ASSET_FAILURE" [level=3]
+      - paragraph: "Examples:"
+      - code: resource request already completed before observation but natural dimensions remain 0 non-200 response decode/load error after natural viewport exposure same behavior remains after legitimate lazy activation
+      - paragraph: Then STOP.
+      - paragraph: No CSS/schema/component repair in PLAN29.
+      - heading "INCONCLUSIVE" [level=3]
+      - paragraph: "Anything else:"
+      - code: STOP
+      - paragraph: No targeted qualification.
+      - separator
+      - heading "7. Phase B — whitespace audit RED" [level=2]
+      - paragraph: Only after Phase A confirms a harness timing problem, test the separate static-audit hypothesis.
+      - paragraph: "Allowed initial mutation:"
+      - code: tests/media-audit.test.ts
+      - paragraph: "Add valid media cases containing internal whitespace such as:"
+      - code: "credit.text: \"Synthetic QA\\n author\" accessibleEquivalent text/label: \"Technical QA\\n equivalent\""
+      - paragraph: These remain valid schema values.
+      - paragraph: "The test must exercise:"
+      - code: collectMediaHtmlErrors()
+      - paragraph: against semantically matching visible HTML.
+      - paragraph: "Expected current result:"
+      - code: RED
+      - paragraph: because HTML visible whitespace is normalized but authored expected text is not.
+      - paragraph:
+        - text: If this does
+        - strong: not
+        - text: "reproduce:"
+      - code: record hypothesis rejected do not modify media-validation.ts continue with source unchanged
+      - separator
+      - heading "8. Conditional whitespace fix" [level=2]
+      - paragraph: "Only if RED reproduces, permit one product verification change:"
+      - code: scripts/media-validation.ts
+      - paragraph: "and the RED test file:"
+      - code: tests/media-audit.test.ts
+      - paragraph: No other product file.
+      - paragraph: "Implement one shared internal normalization equivalent to:"
+      - code: collapse HTML-visible whitespace + trim
+      - paragraph:
+        - text: "on"
+        - strong: both compared sides
+        - text: .
+      - paragraph: "Use it only for public visible-text comparisons:"
+      - code: credit text video accessible-equivalent text/label
+      - paragraph: "Do not normalize:"
+      - code: URLs asset IDs src dimensions rightsRef placement IDs
+      - separator
+      - heading "9. Whitespace fix must not weaken audit" [level=2]
+      - paragraph: GREEN must additionally prove substantive mismatches still FAIL.
+      - paragraph: "For example:"
+      - code: "authored: \"Synthetic QA author\" rendered: \"Different author\""
+      - paragraph: must remain rejected.
+      - paragraph: Likewise a different accessible-equivalent sentence must remain rejected.
+      - paragraph: So this is HTML whitespace semantics, not fuzzy matching.
+      - separator
+      - heading "10. Health Gate" [level=2]
+      - paragraph: "After Phase B:"
+      - code: npm run check npm run verify:unadopted-final npm run verify:adopted-final git diff --check
+      - paragraph: All PASS.
+      - paragraph: If whitespace fix was applied, test total may increase beyond 807.
+      - paragraph: If it was not applied, current iteration28 product source must remain byte-identical.
+      - separator
+      - heading "11. Phase C — targeted harness repair" [level=2]
+      - paragraph:
+        - text: Only after
+        - code: HARNESS_LAZY_LOAD_CONFIRMED
+        - text: .
+      - paragraph: Create iteration29 copy of the targeted harness.
+      - paragraph:
+        - text: The
+        - strong: only semantic timing change
+        - text: before
+        - code: observeMedia()
+        - text: ":"
+      - list:
+        - paragraph: keep existing navigation;
+        - paragraph: keep existing local-video metadata wait;
+        - paragraph: enumerate actual page images;
+        - paragraph:
+          - text: for each lazy image not yet loaded, naturally expose it using
+          - code: scrollIntoViewIfNeeded()
+          - text: ;
+        - paragraph:
+          - text: wait for its native
+          - code: complete && naturalWidth > 0
+          - text: ;
+        - paragraph: then execute the unchanged observations/assertions.
+      - paragraph: "Do not alter:"
+      - code: image-intrinsic-dimensions-natural-file 1200/675 expectations engines viewports profile media assets ratio assertions rights assertions fallback assertions overflow assertions
+      - paragraph: No epsilon, no mocked naturalWidth, no property injection.
+      - separator
+      - heading "12. Harness readiness evidence" [level=2]
+      - paragraph: "Before qualification, save:"
+      - code: lazy-load-readiness.json
+      - paragraph: "showing each tested image:"
+      - code: placement loading request status complete naturalWidth naturalHeight
+      - paragraph: after the legitimate native load-precondition.
+      - paragraph: This does not itself make the targeted test PASS.
+      - separator
+      - heading "13. Targeted qualification" [level=2]
+      - paragraph: "Use a new owned TMP root:"
+      - code: /tmp/c2c29a.XXXXXX
+      - paragraph: Run the complete original six-row targeted suite once.
+      - code: attempts = 1 retry = 0
+      - paragraph: "Required:"
+      - code: Chromium 1280 PASS Chromium 390 PASS Firefox 1280 PASS Firefox 390 PASS WebKit 1280 PASS WebKit 390 PASS all original assertions PASS
+      - paragraph: "Any actual assertion failure:"
+      - code: STOP fresh47 NOT_STARTED
+      - paragraph: No second iteration29 attempt.
+      - separator
+      - heading "14. Phase D — fresh47 only after targeted PASS" [level=2]
+      - paragraph: "Only then run the original unchanged:"
+      - code: npm run check:browser
+      - paragraph: "with a separate:"
+      - code: /tmp/c2c29b.XXXXXX
+      - paragraph: One attempt, zero retries.
+      - paragraph: "Required:"
+      - code: 47 planned 47 executed 0 NOT_RUN 0 non-WebKit failures
+      - separator
+      - heading "15. WebKit continuation rules unchanged" [level=2]
+      - paragraph: "Current WebKit residual set must remain:"
+      - code: subset of iteration19 frozen40
+      - paragraph: No new residual key/assertion.
+      - paragraph: "For current N residuals, independently require:"
+      - code: Chromium N/N PASS Firefox N/N PASS
+      - paragraph: from iteration29 fresh evidence.
+      - paragraph: "Also compare against iteration27 post03A residual40 and disclose:"
+      - code: persisted disappeared reappeared newOutsideFrozen40
+      - separator
+      - heading "16. Identity / policy / closure" [level=2]
+      - paragraph: "Rebind current post03B:"
+      - code: Starter/SOP/Prompt identity Contract SHA fixture source dist Playwright three engines host matrix runner closure policy Arrow control native probe
+      - paragraph: Then run the unchanged closure verifier.
+      - paragraph: "With residuals present and Safari evidence absent, expected:"
+      - code: "exit 1 BLOCKED sole error: missing/invalid real Safari keyboard evidence"
+      - paragraph: No other error permitted.
+      - separator
+      - heading "17. Cleanup" [level=2]
+      - paragraph: "Both diagnostic/targeted and fresh47 owned roots require:"
+      - code: normal Astro stop PID gone fixture gone 0 signal fallback 0 symlink 0 path escape 0 unknown entry known Node/tsx caches only owned root removed
+      - separator
+      - heading "18. Exact source scope" [level=2]
+      - paragraph: "PLAN29 normally changes:"
+      - code: execution artifacts only
+      - paragraph: "Conditional product/test delta is at most:"
+      - code: scripts/media-validation.ts tests/media-audit.test.ts
+      - paragraph: and only after demonstrated whitespace RED.
+      - paragraph: "No modification to:"
+      - code: media schema media adapter GameMedia VideoEmbed catalog CSS SOP Prompt media-readiness production media.json package/lock browser core runner/matrix/closure/policy
+      - paragraph: "If lazy diagnosis requires any of those:"
+      - code: STOP REPLAN
+      - separator
+      - heading "19. Final candidate" [level=2]
+      - paragraph: "Only if all sequential Gates pass:"
+      - code: "WS03B: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: Codex cannot self-sign acceptance.
+      - paragraph: "If successful, independent REVIEW29 may grant:"
+      - code: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION
+      - paragraph: "and only then may the next finite slice be:"
+      - code: WS03C
+      - separator
+      - heading "System holds" [level=2]
+      - paragraph: "Throughout PLAN29:"
+      - code: iteration28 FAIL = preserved Safari proof = 0 WS06A FULL = BLOCKED WS03 formal Gate = NOT_ACCEPTED capability promotion = NONE release hold = ACTIVE 03C = NOT_STARTED
+    - paragraph:
+      - text: 这轮的关键不是“等久一点让 WebKit 通过”，而是先证明：
+      - strong: 失败的确是第二个、off-screen、lazy gallery image 尚未进入 native loading 生命周期。
+      - text: 只有这一点被实际 request/visibility/load 证据确认后，才允许把“等待真实 lazy resource 加载完成”作为 targeted harness 的合法前置条件。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

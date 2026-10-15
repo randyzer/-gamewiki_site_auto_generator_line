@@ -1,0 +1,417 @@
+{
+  "brand": "FRONTIER OPS",
+  "tagline": "CÓDEX DE CAMPO",
+  "signal": "SEÑAL · DEMO",
+  "topContext": "CONSTRUCCIÓN NACIONAL · SANDBOX",
+  "build": "VERSIÓN CONCEPTUAL",
+  "unofficial": "CÓDEX DEMO ORIGINAL",
+  "preview": "Vista previa",
+  "openMenu": "Abrir menú",
+  "closeMenu": "Cerrar menú",
+  "navigation": "Navegación principal",
+  "search": "Buscar",
+  "allGuides": "Todas las guías",
+  "backGuides": "Volver a las guías",
+  "readGuide": "Leer guía",
+  "viewAll": "Ver todo",
+  "minutes": "min",
+  "read": "de lectura",
+  "author": "Equipo de Frontier Codex",
+  "nav": [
+    "Edificios",
+    "Estrategia",
+    "Sistemas",
+    "Clasificación",
+    "Guías",
+    "Códigos",
+    "Noticias",
+    "Actualizaciones",
+    "Preguntas frecuentes"
+  ],
+  "footer": {
+    "description": "Una referencia estratégica original de Frontier Ops, un concepto ficticio de sandbox de construcción nacional. Explora estructuras, planes económicos e informes de campo para transformar un puesto vulnerable en una frontera duradera.",
+    "notice": "CONTENIDO DE EJEMPLO ORIGINAL · NO ES UN JUEGO PUBLICADO NI UNA GUÍA OFICIAL.",
+    "codex": "Códex",
+    "players": "Jugadores",
+    "copyright": "© 2026 FRONTIER CODEX · DEMO ORIGINAL",
+    "built": "CREADO CON NEXT.JS · LISTO PARA LA PRÓXIMA FRONTERA"
+  },
+  "hero": {
+    "eyebrow": "VERSIÓN DE CAMPO · OCTUBRE DE 2026",
+    "context": "SANDBOX · FRONTIER OPS",
+    "first": "CONSTRUYE UN PAÍS.",
+    "second": "CONQUISTA",
+    "third": "TU",
+    "fourth": "FRONTERA",
+    "description": "Un códex de campo original para Frontier Ops, un concepto de sandbox de construcción nacional donde una buena línea de suministro marca el ritmo. Órdenes de apertura, prioridades de construcción y decisiones que mantienen en pie un puesto avanzado.",
+    "strategy": "Elige una estrategia",
+    "buildings": "Explora los edificios",
+    "meta": "META · RANGO S · VERSIÓN CONCEPTUAL",
+    "fullTier": "Clasificación completa",
+    "stats": [
+      "Edificios",
+      "Estrategias",
+      "Sistemas",
+      "Guías"
+    ]
+  },
+  "about": {
+    "eyebrow": "Sobre este códex",
+    "title": "¿Qué es Frontier Ops?",
+    "paragraphs": [
+      "Frontier Ops es un concepto original de sandbox estratégico creado para esta plantilla. Empieza con un pequeño asentamiento, asegura los suministros, reúne trabajadores y decide cuándo ampliar la frontera. El escenario de ejemplo convierte cada ronda en un ejercicio de planificación: equilibra el crecimiento, la protección y el coste de mantener nuevos territorios antes de comprometer tus reservas.",
+      "Este Frontier Codex muestra la estructura de un sitio completo de guías sin fingir que existe una base de datos completa del juego. Las fichas visibles de edificios, doctrinas y noticias son adelantos editoriales. La guía de apertura ofrece el recorrido de lectura completo; cada adelanto sigue claramente marcado hasta que su contenido esté listo."
+    ],
+    "start": "¿Es tu primera visita? Empieza por",
+    "links": [
+      [
+        "Informe de apertura",
+        "Tus primeros diez minutos, decisión a decisión."
+      ],
+      [
+        "Crecimiento constante",
+        "Una ruta prudente hacia un asentamiento resistente."
+      ],
+      [
+        "Orden de prioridades",
+        "Qué mejoras merecen los primeros recursos."
+      ]
+    ]
+  },
+  "doctrine": {
+    "eyebrow": "Manual de campo",
+    "title": "Elige tu doctrina",
+    "items": [
+      [
+        "Edificios",
+        "21 conceptos de estructuras, clasificados y explicados"
+      ],
+      [
+        "Estrategias",
+        "7 posibles rutas para la apertura"
+      ],
+      [
+        "Sistemas",
+        "7 mecánicas: suministro, comercio, defensa…"
+      ],
+      [
+        "Clasificación",
+        "Estructuras ordenadas por su utilidad práctica"
+      ],
+      [
+        "Guías",
+        "Planes detallados para cada fase de la partida"
+      ],
+      [
+        "Códigos",
+        "No disponibles — solo un adelanto conceptual"
+      ],
+      [
+        "Notas de actualización",
+        "Registro de la versión conceptual y los cambios editoriales"
+      ],
+      [
+        "Preguntas frecuentes",
+        "Respuestas breves a las dudas habituales de campo"
+      ]
+    ]
+  },
+  "dashboard": {
+    "eyebrows": [
+      "Doctrina",
+      "Última actualización",
+      "Lo mejor del meta"
+    ],
+    "titles": [
+      "Mejores estrategias",
+      "Informe de flujo industrial y defensa",
+      "Construcciones esenciales"
+    ],
+    "date": "12 OCT 2026 · VERSIÓN CONCEPTUAL",
+    "changes": [
+      "El concepto de depósito de suministros conecta las zonas de recogida con los núcleos de producción.",
+      "El adelanto de la cadena de fundición traza una ruta de la madera al acero terminado.",
+      "El adelanto del puesto de vigilancia presenta un perímetro defensivo moderado.",
+      "La asignación de trabajadores muestra por qué importa disponer de capacidad libre.",
+      "Las notas sobre equipos de construcción explican el coste de expandirse demasiado rápido."
+    ]
+  },
+  "buildingSection": {
+    "eyebrow": "Opciones imprescindibles",
+    "title": "Estructuras que merecen guiar tu planificación",
+    "all": "Todos los edificios"
+  },
+  "buildings": [
+    {
+      "title": "Casa de constructores",
+      "code": "INF-01 · EARLY",
+      "category": "Producción",
+      "description": "La casa de constructores representa la capacidad de construcción en este escenario demo. Prioriza un equipo fiable antes de llenar cada parcela de estructuras poco rentables. La capacidad adicional ayuda a todo el asentamiento a reaccionar cuando una nueva decisión cambia el plan.",
+      "tags": [
+        "Producción",
+        "Ritmo",
+        "Velocidad de construcción"
+      ],
+      "cost": "COSTE BAJO · PRIORIDAD INICIAL"
+    },
+    {
+      "title": "Depósito de suministros",
+      "code": "INF-02 · EARLY",
+      "category": "Producción",
+      "description": "Un punto de recogida común mantiene organizado el distrito industrial. Sitúalo cerca del núcleo de trabajo para acortar la ruta de suministro y luego expándete alrededor de ese centro. Este adelanto muestra cómo la infraestructura de apoyo mejora la utilidad de las demás parcelas.",
+      "tags": [
+        "Producción",
+        "Recogida",
+        "Flujo de suministros"
+      ],
+      "cost": "COSTE MEDIO · INFRAESTRUCTURA CENTRAL"
+    },
+    {
+      "title": "Puesto aéreo",
+      "code": "MIL-05 · MID",
+      "category": "Militar",
+      "description": "El puesto aéreo es un concepto de respuesta de mitad de partida que amplía el alcance cuando la economía puede asumir los costes de reposición. Crea una reserva fiable antes de planear un ataque. Una fuerza móvil solo ayuda si el asentamiento que la respalda sigue estable.",
+      "tags": [
+        "Militar",
+        "Respuesta",
+        "Expansión"
+      ],
+      "cost": "COSTE ALTO · OPCIÓN DE MITAD DE PARTIDA"
+    }
+  ],
+  "metaNames": [
+    "Casa de constructores",
+    "Depósito de suministros",
+    "Central eléctrica",
+    "Centro de investigación"
+  ],
+  "strategySection": {
+    "eyebrow": "Planes de batalla",
+    "title": "Estrategias destacadas",
+    "all": "Todas las estrategias"
+  },
+  "strategies": [
+    {
+      "title": "Crecimiento constante",
+      "category": "Economía primero",
+      "description": "Prioriza la red de suministro frente a un ejército temprano. Asegura ingresos fiables, conserva una pequeña reserva y pasa a la defensa móvil solo cuando puedas reponer las pérdidas. El plan demo favorece un progreso constante y deja margen para responder al mapa.",
+      "tags": [
+        "Principiante",
+        "Nuevos colonos",
+        "Rondas largas"
+      ],
+      "steps": "15 pasos"
+    },
+    {
+      "title": "Patrulla aérea · Respuesta rápida",
+      "category": "Ofensiva temprana",
+      "description": "Sacrifica parte del crecimiento a largo plazo para poder responder antes. Mantén una apertura compacta, identifica un acceso expuesto y prepara una patrulla móvil antes de que la frontera se llene. Acertar con el momento importa más que ocupar todos los espacios de unidades.",
+      "tags": [
+        "Intermedio",
+        "Fronteras activas",
+        "Accesos abiertos"
+      ],
+      "steps": "13 pasos"
+    },
+    {
+      "title": "Frontera fortificada",
+      "category": "Defensa cerrada",
+      "description": "Mantén el distrito de trabajo dentro de un perímetro compacto, protege las viviendas y acumula reservas. Una apertura más lenta puede compensar si el asentamiento resiste la presión sin tener que reponer trabajadores. El plan convierte la producción segura en una oportunidad posterior.",
+      "tags": [
+        "Intermedio",
+        "Fronteras hostiles",
+        "Accesos estrechos"
+      ],
+      "steps": "13 pasos"
+    }
+  ],
+  "newsSection": {
+    "eyebrow": "Señal · boletín de campo",
+    "title": "Últimos despachos de la frontera",
+    "all": "Todas las noticias"
+  },
+  "news": [
+    {
+      "category": "Actualización",
+      "title": "Informe del concepto de frontera — rutas de suministro y una base industrial más sólida",
+      "description": "Este adelanto editorial explora un depósito compartido, un distrito de fundición conectado y la planificación defensiva. Ilustra cómo un resumen de actualización traduciría los cambios en las siguientes decisiones del jugador.",
+      "publishedAt": "2026-10-12"
+    },
+    {
+      "category": "Códigos",
+      "title": "Recompensas de Frontier Ops — estado del concepto y qué está realmente disponible",
+      "description": "Este escenario ficticio no tiene recompensas canjeables ni códigos activos. El adelanto deja claro ese límite y muestra cómo una futura página de recompensas podría distinguir la disponibilidad de la verificación.",
+      "publishedAt": "2026-10-10"
+    },
+    {
+      "category": "Meta",
+      "title": "Informe de respuesta móvil — cuándo encaja un puesto aéreo en el plan inicial",
+      "description": "Una red de suministro resistente va antes que una movilidad costosa. Este adelanto plantea las preguntas necesarias antes de apostar por una fuerza de respuesta rápida y la reserva que hace sostenible esa decisión.",
+      "publishedAt": "2026-10-08"
+    }
+  ],
+  "guideSection": {
+    "eyebrow": "Informes de campo",
+    "title": "Últimas guías"
+  },
+  "purpose": {
+    "eyebrow": "Por qué existe este códex",
+    "title": "Un manual de frontera centrado en decisiones claras",
+    "paragraphs": [
+      "Una guía útil debe explicar las decisiones que hay detrás de un orden de construcción, además de enumerar compras. Esta demo original sigue esa idea: distingue las prioridades iniciales de las opciones posteriores, explica las reservas que protegen el plan y separa visualmente los borradores de las guías completas.",
+      "Usa el sitio como recorrido de lectura y futura referencia. Comienza por el informe de apertura completo y explora después las tarjetas de adelanto para conocer los temas previstos. Su diseño conserva la profundidad de un códex completo y su estado aclara qué material está ya disponible."
+    ]
+  },
+  "faq": {
+    "eyebrow": "Preguntas habituales",
+    "title": "Frontier Ops de un vistazo",
+    "all": "Todas las preguntas frecuentes",
+    "items": [
+      [
+        "¿Qué tipo de juego es Frontier Ops?",
+        "Un concepto original de sandbox de construcción nacional que sirve para mostrar esta plantilla. Su economía, estructuras y planes defensivos son ilustrativos, no mecánicas verificadas de un título publicado."
+      ],
+      [
+        "¿Hay códigos de recompensa que funcionen?",
+        "No. Este concepto ficticio no tiene un juego activo, sistema de canje ni recompensas. La entrada de códigos es un adelanto editorial y no afirma que se puedan obtener premios."
+      ],
+      [
+        "¿Por dónde debe empezar un nuevo lector?",
+        "El informe de apertura es la guía completa de esta demo. Presenta el ciclo de planificación, una apertura en diez pasos y los hábitos que permiten mantener controlado un asentamiento en expansión."
+      ]
+    ]
+  },
+  "cta": {
+    "eyebrow": "Recluta · paso 01",
+    "title": "¿Nuevo en la frontera?",
+    "description": "Empieza por el informe de apertura completo. Unos primeros diez minutos tranquilos, una línea de suministro fiable y una próxima decisión clara antes de que el mapa exija reaccionar."
+  },
+  "guides": {
+    "eyebrow": "Manual de campo · sección 08",
+    "title": "Guías de Frontier Ops",
+    "description": "Informes de campo extensos para un concepto de sandbox de construcción nacional. Órdenes iniciales, planificación del suministro y pequeñas decisiones que transforman un puesto vulnerable en un asentamiento fiable.",
+    "about": "Sobre las guías de Frontier Ops",
+    "paragraphs": [
+      "Cada guía completa de este códex ofrece un recorrido de lectura práctico, más allá de una simple colección de consejos. El informe de apertura sigue un asentamiento desde su primera parcela productiva hasta una posición defensiva estable, con puntos de decisión claros y atención a las reservas. Empieza ahí si es tu primera visita; los demás temas están claramente marcados como adelantos de la biblioteca prevista.",
+      "Las fichas de adelanto presentan futuras referencias de estructuras y decisiones estratégicas sin afirmar que esas páginas ya existan. Consulta la guía de apertura completa para ver el ejemplo terminado. Las tarjetas de doctrina muestran cómo un códex más amplio conectaría edificios, sistemas e informes de campo extensos."
+    ],
+    "reading": "Recorrido de lectura según tu experiencia",
+    "readingItems": [
+      "Primera visita → Informe de apertura. Crea unos primeros diez minutos tranquilos y repetibles.",
+      "Siguiente ronda → Adelanto de crecimiento constante. Planifica una red de suministro duradera.",
+      "Fronteras activas → Adelanto de patrulla aérea. Valora el momento antes de invertir recursos."
+    ],
+    "topics": "Temas incluidos",
+    "topicItems": [
+      "Órdenes iniciales — una secuencia práctica para los primeros diez minutos.",
+      "Lectura del mapa — cuándo cambiar el plan porque la frontera ha cambiado.",
+      "Objetivos posteriores — proteger reservas mientras la producción permite expandirse con estabilidad."
+    ],
+    "jump": "Ir a la guía",
+    "extra": [
+      "Centro de estrategias",
+      "Clasificación de edificios",
+      "Preguntas frecuentes"
+    ],
+    "pair": "Complementa las guías de Frontier Ops con",
+    "pairItems": [
+      [
+        "Edificios",
+        "Identifica cada estructura mencionada en un informe."
+      ],
+      [
+        "Clasificación",
+        "Entiende por qué el plan prioriza una mejora."
+      ],
+      [
+        "Sistemas del juego",
+        "Sigue las mecánicas detrás de cada decisión."
+      ]
+    ]
+  },
+  "article": {
+    "eyebrow": "Informe de campo",
+    "seeAlso": "Consulta también",
+    "apply": "Aplica esta guía de Frontier Ops con",
+    "applyDescription": "Convierte un plan de lectura en una apertura repetible. Estas referencias en adelanto muestran cómo se conectarán las prioridades de construcción, las decisiones estratégicas y los sistemas de apoyo con la guía.",
+    "pairItems": [
+      [
+        "Clasificación",
+        "Revisa qué estructuras merecerán los primeros recursos en una futura clasificación."
+      ],
+      [
+        "Estrategias",
+        "Descubre cómo encaja la apertura en un plan de asentamiento más largo."
+      ],
+      [
+        "Edificios",
+        "Explora las referencias de estructuras previstas y su función en la apertura."
+      ]
+    ],
+    "continue": "Sigue leyendo",
+    "more": "Más guías de Frontier Ops"
+  },
+  "notFound": {
+    "title": "Señal no encontrada",
+    "description": "Este informe de campo está fuera del códex disponible. Vuelve a las guías para encontrar un recorrido de lectura completo.",
+    "home": "Volver a la base"
+  },
+  "previews": [
+    {
+      "slug": "steady-growth-build-order",
+      "category": "Economía",
+      "title": "Crecimiento constante: del primer campo a la industria",
+      "description": "Un adelanto de todo el recorrido económico: sustituye una apertura apretada por una red de suministro conectada, prepara los costes de reposición y planifica el avance hacia un distrito industrial.",
+      "minutes": 9,
+      "publishedAt": "2026-09-28"
+    },
+    {
+      "slug": "sky-patrol-playbook",
+      "category": "Militar",
+      "title": "Patrulla aérea: puestos avanzados y líneas de suministro",
+      "description": "La ventana de respuesta de mitad de partida, en formato de adelanto. Cuándo reservar recursos para movilidad, cómo interpretar un acceso expuesto y por qué la producción sigue teniendo prioridad.",
+      "minutes": 8,
+      "publishedAt": "2026-09-25"
+    },
+    {
+      "slug": "fortified-frontier-guide",
+      "category": "Estrategia",
+      "title": "Frontera fortificada: mantener una frontera activa en Frontier Ops",
+      "description": "Adelanto de un recorrido defensivo: detecta pronto la presión, crea un perímetro compacto, protege a los trabajadores y convierte una reserva tranquila en una oportunidad posterior.",
+      "minutes": 9,
+      "publishedAt": "2026-09-22"
+    },
+    {
+      "slug": "expansion-planning-guide",
+      "category": "Estrategia",
+      "title": "Expansión en Frontier Ops: conectar territorios y proteger el núcleo",
+      "description": "Tomar una parcela nueva es solo el principio. Este adelanto valora las distancias de suministro, las reservas necesarias y el camino de regreso a una zona segura antes de expandirse.",
+      "minutes": 9,
+      "publishedAt": "2026-09-19"
+    },
+    {
+      "slug": "industrial-scaling-guide",
+      "category": "Economía",
+      "title": "Crecimiento en Frontier Ops: energía, investigación y reservas",
+      "description": "Un adelanto de la estructura económica posterior. Compara costes de mejora, conecta el siguiente distrito productivo y conserva reservas antes de invertirlo todo en un proyecto.",
+      "minutes": 10,
+      "publishedAt": "2026-09-16"
+    },
+    {
+      "slug": "aerial-outpost-guide",
+      "category": "Militar",
+      "title": "Puesto aéreo de Frontier Ops: cuándo apostar por una fuerza móvil",
+      "description": "Una mirada detallada al concepto de respuesta aérea: alcance de patrulla, infraestructura de apoyo, costes de reposición y preguntas defensivas que resolver antes del primer despliegue.",
+      "minutes": 9,
+      "publishedAt": "2026-09-13"
+    },
+    {
+      "slug": "economy-planning-mistakes",
+      "category": "Economía",
+      "title": "Economía de Frontier Ops: diez hábitos que debilitan el crecimiento",
+      "description": "Fugas de suministro menos evidentes de una ronda conceptual: parcelas saturadas, defensas excesivas, viviendas dispersas y compras que aún no pueden sostener las reservas.",
+      "minutes": 8,
+      "publishedAt": "2026-09-10"
+    }
+  ]
+}

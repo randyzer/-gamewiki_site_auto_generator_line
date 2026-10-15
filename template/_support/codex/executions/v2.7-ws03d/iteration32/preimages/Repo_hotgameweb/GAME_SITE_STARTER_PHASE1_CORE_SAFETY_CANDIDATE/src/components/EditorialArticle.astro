@@ -1,0 +1,90 @@
+---
+import RelatedPages from "./wiki/RelatedPages.astro";
+import Sources from "./wiki/Sources.astro";
+import { enabledPageCatalog, getRelatedPages, siteConfig } from "../core/site-data";
+import {
+  buildArticleSchema,
+  buildBreadcrumbSchema,
+  buildBreadcrumbTrail,
+  buildCanonicalUrl,
+  resolveStructuredIdentity,
+} from "../core/seo";
+import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  page: PageInventoryEntry;
+  sectionLabel: string;
+}
+
+const { page, sectionLabel } = Astro.props;
+const relatedPages = getRelatedPages(page);
+const lastVerified = [...page.sources]
+  .sort((left, right) => right.accessedAt.localeCompare(left.accessedAt))
+  .at(0)?.accessedAt;
+const canonical = buildCanonicalUrl(siteConfig, page.route);
+const breadcrumbTrail = buildBreadcrumbTrail(
+  siteConfig,
+  page,
+  enabledPageCatalog,
+);
+const structuredData = [
+  buildBreadcrumbSchema(canonical, breadcrumbTrail),
+  buildArticleSchema(siteConfig, page),
+];
+const authorAttribution = resolveStructuredIdentity(siteConfig, page).authorAttribution;
+---
+
+<BaseLayout page={page} structuredData={structuredData}>
+  <main id="main-content">
+    <article
+      class="article editorial shell"
+      data-pagefind-body={page.indexability === "index" ? true : undefined}
+    >
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          {breadcrumbTrail.map((item, index) => (
+            <li aria-current={index === breadcrumbTrail.length - 1 ? "page" : undefined}>
+              {index === breadcrumbTrail.length - 1 ? item.name : <a href={item.url}>{item.name}</a>}
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <header class="article__header editorial__header reveal reveal--1">
+        <p class="eyebrow">{sectionLabel}</p>
+        <h1 data-pagefind-meta="title">{page.title}</h1>
+        <p class="article__dek" data-pagefind-meta="description">{page.description}</p>
+        <dl class="article__meta">
+          <div>
+            <dt>Published</dt>
+            <dd><time datetime={page.publishedAt}>{page.publishedAt}</time></dd>
+          </div>
+          <div>
+            <dt>Last updated</dt>
+            <dd><time datetime={page.updatedAt}>{page.updatedAt}</time></dd>
+          </div>
+          {lastVerified && (
+            <div>
+              <dt>Last verified</dt>
+              <dd><time datetime={lastVerified}>{lastVerified}</time></dd>
+            </div>
+          )}
+          {authorAttribution && (
+            <div>
+              <dt>Author</dt>
+              <dd data-structured-author-id={authorAttribution.id}>{authorAttribution.name}</dd>
+            </div>
+          )}
+        </dl>
+      </header>
+
+      <div class="article__layout wiki-article__layout--single">
+        <div class="prose"><slot /></div>
+      </div>
+
+      <RelatedPages pages={relatedPages} />
+      <Sources sources={page.sources} />
+    </article>
+  </main>
+</BaseLayout>

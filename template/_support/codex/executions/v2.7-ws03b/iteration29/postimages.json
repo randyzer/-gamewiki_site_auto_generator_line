@@ -1,0 +1,12 @@
+{
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts": {
+    "sha256": "c906d5e9c5f6b8848ff77e87bcb3da76d29c52afc6d9e67f32af89d27cbc5e2b",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts": {
+    "sha256": "e625e8bd0d4b291a8e7fd8241c0dc22b6b0d22cead1c0b8b5751c401651ddd34",
+    "mode": 420,
+    "symlink": false
+  }
+}

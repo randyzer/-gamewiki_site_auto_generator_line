@@ -1,0 +1,43 @@
+{
+  "files": [
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/navigation/MobileNav.astro",
+      "preimage": "template/codex/executions/v2.7-ws06a/iteration16/preimages/src/components/navigation/MobileNav.astro",
+      "preimageFingerprint": {
+        "sha256": "05b304de672444c48d22f52fac30caf55d31addbb8dbc94cd87e98edc029813c",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "091d57dc7ec15ccf4d4792348de5782a9bb769cbf87563879d2abc15561a8302",
+        "mode": 420,
+        "symlink": false
+      },
+      "guard": "Current fingerprint must equal recorded postimage; otherwise STOP",
+      "action": "Restore exact preimage bytes and mode only"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/navigation-behavior.test.ts",
+      "preimage": "template/codex/executions/v2.7-ws06a/iteration16/preimages/tests/navigation-behavior.test.ts",
+      "preimageFingerprint": {
+        "sha256": "dafbd7258566db89621d5d33b6610a85ea141106061b4766acb8bb3156a75f44",
+        "mode": 420,
+        "symlink": false
+      },
+      "postimageFingerprint": {
+        "sha256": "24916612d4a25b21b5f7f237a4ff7ebc070ef618c35983a528535b665a53efa2",
+        "mode": 420,
+        "symlink": false
+      },
+      "guard": "Current fingerprint must equal recorded postimage; otherwise STOP",
+      "action": "Restore exact preimage bytes and mode only"
+    }
+  ],
+  "forbidden": [
+    "reset --hard",
+    "checkout .",
+    "git clean",
+    "delete branch",
+    "delete shared browser cache"
+  ]
+}

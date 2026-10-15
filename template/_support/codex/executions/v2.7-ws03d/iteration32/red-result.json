@@ -1,0 +1,9 @@
+{
+  "exitCode": 1,
+  "failed": 10,
+  "passed": 44,
+  "tests": 54,
+  "files": 5,
+  "implementationWrittenBeforeRed": false,
+  "evidence": "red-targeted.log"
+}

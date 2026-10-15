@@ -1,0 +1,429 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 30"
+      - text: "WORKSTREAM: WS03C"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03C IMPLEMENTATION FOR CONTINUATION
+    - paragraph: 我完成了对 actual PLAN30 + scope amendment 17→18、当前源码、execution output、身份、cleanup、fresh47 和 closure 的独立复核。当前 connector 对三个嵌套候选目录的 git_status/git_diff 仍返回 isRepo:false，所以我没有把它当 Git 证据；Git/source identity 采用 iteration30 实际捕获的 branch/HEAD/tree/working-tree SHA、pre/post images、approved-scope patch 和当前源码交叉核验。
+    - paragraph: 本轮证据链成立：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "Actual scope: 17 original + tests/core-safety-sentinels.test.ts = exact 18 RED: 18 FAIL / 217 PASS 真实失败保留 GREEN: 235 / 235 PASS compatibility sentinel suite 43 / 43 PASS root: 46 files 832 tests PASS Astro 0 errors / 0 warnings unadopted: expected PP-02 rejection preserved adopted: validate/check/build PASS 03C targeted: 6 / 6 rows PASS 66 / 66 assertions PASS Chromium / Firefox / WebKit 1 attempt / 0 retry fresh47: 47 / 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN raw overall FAIL exit 1 preserved residual: 40 current 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED outside frozen40 = 0 vs iteration29: 40 persisted 0 disappeared 0 reappeared 0 new counterparts: Chromium 40 / 40 PASS Firefox 40 / 40 PASS closure: BLOCKED sole error = missing/invalid real Safari keyboard evidence"
+    - paragraph: 03C 的实际实现也符合原设计边界：page.share → informative hero → defaultShare → undefined 全部只引用同一个 Media Manifest 中的 ImageAsset；resolveShareMetadata() 只格式化 URL/dimensions/alt，不泄露 rightsRef、credit 或 approval；BaseLayout 生成 OG/Twitter image metadata，而 share 没有变成新的 body placement。Canonical media.json 仍为空，没有塞 synthetic 游戏资产。
+    - paragraph:
+      - text: amendment 的 PP-02 修复也可以接受。core-safety-sentinels.test.ts 现在读取 helper fixture 的实际 registered assets，再追加该测试自己的 quote SVG；没有 allowlist、没有修改 residue policy、没有弱化原 negative cases。createCoreBuildFixture() 的 nested-fixture 处理也只允许
+      - strong: 完全相同的 synthetic asset metadata + byte-identical SVG
+      - text: 复用，ID/content/path 冲突仍 fail closed。
+    - paragraph: Integrity：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 6388 protected files unchanged exact18 approved modifications Contract SHA unchanged 41 unique capability IDs 0 duplicate IDs verification infrastructure delta = 0 branch / HEAD / tree unchanged
+    - paragraph: 因此正式状态更新为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03A: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03B: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03C: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03 FORMAL GATE: NOT ACCEPTED WS06A FULL: BLOCKED Safari proof: 0 SEO-02 / MC-* formal capability promotion: NONE Release hold: ACTIVE"
+    - paragraph:
+      - text: 现在 standing authorization 只允许进入
+      - strong: WS03D-search
+      - text: 。Freshness 继续单独留到后面的切片。
+    - button "添加到资料库":
+      - generic: PLAN31 — WS03D Search Provider Seam and Query/Result State Boundaries
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 31"
+        - text: "WORKSTREAM: WS03D-SEARCH"
+        - text: "SLICE: SEARCH ONLY"
+        - text: "PREDECESSOR: REVIEW30 WS03C CONTINUATION ACCEPT"
+        - text: "FRESHNESS: OUT_OF_SCOPE"
+        - text: "CAPABILITY_FOCUS: IA-03"
+        - text: "WS06A_FULL: BLOCKED"
+        - text: "SAFARI_PROOF: 0"
+      - heading "1. Current implementation truth" [level=2]
+      - paragraph: "The Starter already has substantial search capability:"
+      - code: features.search → enabled catalog → optional /search/ route → SearchIsland → Pagefind 1.5.2
+      - paragraph: "Existing Core also already owns:"
+      - code: query URL normalization safe local result URLs title/excerpt normalization 120-character query bound 20-result runtime bound Pagefind artifact/version validation 800,000-byte normalized payload budget optional Pagefind UI removal disabled search route = zero static path
+      - paragraph: Therefore PLAN31 must not build another search system.
+      - separator
+      - heading "2. Real remaining gaps" [level=2]
+      - paragraph:
+        - text: Current
+        - code: SearchIsland.tsx
+        - text: "directly owns Pagefind-specific module types and calls:"
+      - code: /pagefind/pagefind.js
+      - paragraph: itself.
+      - paragraph: So the technical seam is not yet clearly provider-neutral.
+      - paragraph: "The UI also infers multiple states from:"
+      - code: status + submittedQuery + results.length
+      - paragraph: rather than having explicit query/result outcomes.
+      - paragraph: "Finally:"
+      - code: "\"Local index online\""
+      - paragraph: is rendered before successful Pagefind initialization, so the copy can be temporarily or permanently untruthful when provider loading fails.
+      - paragraph: PLAN31 fixes exactly these boundaries.
+      - separator
+      - heading "3. Do not add a second search activation truth" [level=2]
+      - paragraph: "Existing:"
+      - code: "features.search: boolean"
+      - paragraph: remains the sole technical activation flag.
+      - paragraph: "Do NOT add:"
+      - code: search.enabled searchMode providerName searchBackend
+      - paragraph: to config.
+      - paragraph: That would create two activation authorities.
+      - separator
+      - heading "4. Project decision evidence stays outside Core config" [level=2]
+      - paragraph:
+        - text: Contract IA-03 additionally requires the project to record
+        - emphasis: why
+        - text: search is enabled or disabled based on corpus/content model.
+      - paragraph: PLAN31 does not invent a second boolean/schema for that.
+      - paragraph: "SOP/Prompt must instead distinguish:"
+      - code: features.search = technical activation truth project search decision record = evidence/rationale owned by Game Adaptation / Acceptance
+      - paragraph:
+        - text: A boolean being
+        - code: "true"
+        - text: is not evidence that enabling search was a good product decision.
+      - separator
+      - heading "5. Provider-neutral Core interface" [level=2]
+      - paragraph: "Extend:"
+      - code: src/core/search-state.ts
+      - paragraph: "with a minimal interface:"
+      - code: "export interface SearchProvider { search(query: string): Promise<SearchResult[]>; }"
+      - paragraph: No Pagefind types may appear in this interface.
+      - paragraph: No provider identity.
+      - paragraph: No network/service config.
+      - separator
+      - heading "6. Explicit completed-state model" [level=2]
+      - paragraph: "Define bounded completed outcomes:"
+      - code: "type SearchOutcome = | { status: \"results\"; query: string; results: SearchResult[]; } | { status: \"empty\"; query: string; results: []; } | { status: \"error\"; query: string; results: []; };"
+      - paragraph:
+        - code: idle
+        - text: and
+        - code: loading
+        - text: remain UI/request lifecycle states.
+      - paragraph: "Do not merge:"
+      - code: empty error idle
+      - paragraph: into one state.
+      - separator
+      - heading "7. Pure provider-neutral execution helper" [level=2]
+      - paragraph:
+        - text: Add to
+        - code: search-state.ts
+        - text: "something equivalent to:"
+      - code: runSearchProvider(provider, rawQuery)
+      - paragraph: "Responsibilities:"
+      - code: normalize/bound query call provider only for non-empty query return results / empty / error
+      - paragraph: "It must not:"
+      - code: import Pagefind touch window/history render UI know Pagefind module paths
+      - paragraph: Error output must not expose provider/internal exception strings publicly.
+      - separator
+      - heading "8. Pagefind adapter" [level=2]
+      - paragraph: "Add one new file:"
+      - code: src/core/pagefind-search-adapter.ts
+      - paragraph: It is the provider edge.
+      - paragraph: "Responsibilities:"
+      - code: dynamic import /pagefind/pagefind.js Pagefind init Pagefind query max 20 hits hit.data() normalizeSearchResult() drop unsafe results return SearchResult[]
+      - paragraph: "API should be narrowly shaped, e.g.:"
+      - code: createPagefindSearchProvider(module) loadPagefindSearchProvider()
+      - paragraph:
+        - code: create...
+        - text: enables pure synthetic unit tests.
+      - paragraph:
+        - code: load...
+        - text: owns the actual dynamic import.
+      - separator
+      - heading "9. Adapter restrictions" [level=2]
+      - paragraph: "Do not support:"
+      - code: Algolia Typesense Meilisearch remote endpoint config provider registry runtime provider switching analytics query logging search suggestions ranking controls
+      - paragraph: 03D-search is a seam, not a search platform.
+      - separator
+      - heading "10. SearchIsland responsibility after refactor" [level=2]
+      - paragraph:
+        - code: SearchIsland.tsx
+        - text: "should only own:"
+      - code: form/input browser history request race cancellation loading UI rendering outcomes
+      - paragraph: "It should consume:"
+      - code: SearchProvider SearchOutcome loadPagefindSearchProvider()
+      - paragraph: rather than knowing Pagefind result internals.
+      - separator
+      - heading "11. Idle behavior" [level=2]
+      - paragraph: "For:"
+      - code: /search/
+      - paragraph: "with no query:"
+      - code: status = idle results = none
+      - paragraph: Do not label the index "online".
+      - paragraph: "Use truthful neutral copy such as:"
+      - code: Local site search
+      - paragraph: The provider does not need to be loaded merely to display the idle form.
+      - separator
+      - heading "12. URL query behavior" [level=2]
+      - paragraph: "For:"
+      - code: /search/?q=...
+      - paragraph: the bounded normalized query remains authoritative.
+      - paragraph: "Existing behavior preserved:"
+      - code: trim max 120 characters stable URL encoding
+      - paragraph: Do not introduce a second query parser.
+      - separator
+      - heading "13. Explicit result states" [level=2]
+      - paragraph: "Required UI semantics:"
+      - code: "idle: prompt to enter query loading: Searching the local index… results: N results for “query” empty: No matching results + broader-query guidance error: Local search index unavailable + retry/refresh guidance"
+      - paragraph: No state may claim online/available when provider initialization has failed.
+      - separator
+      - heading "14. Race protection remains" [level=2]
+      - paragraph: "Current:"
+      - code: requestRef
+      - paragraph: or an equivalent monotonically increasing request identity must remain.
+      - paragraph: Older slower query results must never overwrite a newer submission.
+      - paragraph: Do not replace this with arbitrary timers.
+      - separator
+      - heading "15. Safe result contract remains" [level=2]
+      - paragraph: "Preserve existing rejection of:"
+      - code: https://external.example/ //example.com/ path traversal malformed URL
+      - paragraph: "Retain:"
+      - code: local URL only HTML stripped from excerpts bounded excerpt metadata fallback
+      - paragraph: 03D-search must not regress these.
+      - separator
+      - heading "16. Disabled search behavior" [level=2]
+      - paragraph: "Existing behavior is already correct:"
+      - code: features.search = false → Search Inventory page excluded → /search/ static path absent
+      - paragraph: PLAN31 preserves this.
+      - paragraph: For a disabled synthetic fixture also remove/adjust navigation references that point to the disabled Search page, so validation reaches the intended state honestly.
+      - paragraph: "Important scope:"
+      - code: search disabled = no search route/UI
+      - paragraph:
+        - text: PLAN31 does
+        - strong: not
+        - text: require Pagefind build artifacts to become zero-output.
+      - paragraph: Conditional Pagefind generation is a separate optimization and is not needed for IA-03.
+      - separator
+      - heading "17. Pagefind artifact contract stays fixed" [level=2]
+      - paragraph: "Do not change:"
+      - code: Pagefind version = 1.5.2 800000-byte budget manifest structure CBOR parser required artifact list normalization semantics optional UI list
+      - paragraph: No dependency/package changes.
+      - separator
+      - heading "18. Optional-UI reference safety must follow the new adapter" [level=2]
+      - paragraph:
+        - text: Current
+        - code: normalize-pagefind-output.ts
+        - text: "proves optional Pagefind UI files are unreferenced by checking generated output plus:"
+      - code: SearchIsland.tsx
+      - paragraph: "After moving the Pagefind runtime import into:"
+      - code: pagefind-search-adapter.ts
+      - paragraph: that proof would become incomplete unless updated.
+      - paragraph: "Therefore modify the existing safety checker to inspect both finite runtime source files:"
+      - code: SearchIsland.tsx pagefind-search-adapter.ts
+      - paragraph: No recursive arbitrary source scan.
+      - separator
+      - heading "19. Reference-safety negatives remain fail closed" [level=2]
+      - paragraph:
+        - code: tests/pagefind-artifacts.test.ts
+        - text: "must prove an optional UI reference in either:"
+      - code: SearchIsland.tsx or pagefind-search-adapter.ts
+      - paragraph: blocks normalization.
+      - paragraph: Do not remove the existing SearchIsland negative.
+      - paragraph: Add the adapter-path negative.
+      - separator
+      - heading "20. Exact RED scope" [level=2]
+      - paragraph: "First mutation only in tests:"
+      - code: tests/search-state.test.ts tests/pagefind-search-adapter.test.ts NEW tests/pagefind-artifacts.test.ts
+      - paragraph: Run those tests before implementation.
+      - paragraph: RED must be real non-zero.
+      - paragraph: Preserve evidence.
+      - separator
+      - heading "21. RED requirements" [level=2]
+      - heading "Provider-neutral state tests" [level=3]
+      - paragraph: "Prove:"
+      - code: successful provider results zero results → empty provider throw/reject → error unsafe provider results dropped by adapter query remains bounded
+      - heading "Pagefind adapter tests" [level=3]
+      - paragraph: "Using a fake Pagefind module:"
+      - code: init called query passed correctly only first 20 hits consumed hit data normalized unsafe URLs discarded
+      - paragraph: No browser required for these unit tests.
+      - heading "Artifact reference safety" [level=3]
+      - paragraph: Prove adapter references to optional Pagefind UI are rejected.
+      - separator
+      - heading "22. Exact product/test/docs scope" [level=2]
+      - paragraph: "Allowed Starter files:"
+      - code: 1. src/core/search-state.ts 2. src/core/pagefind-search-adapter.ts NEW 3. src/components/islands/SearchIsland.tsx 4. scripts/normalize-pagefind-output.ts 5. tests/search-state.test.ts 6. tests/pagefind-search-adapter.test.ts NEW 7. tests/pagefind-artifacts.test.ts 8. README.md 9. docs/QA_CHECKLIST.md
+      - paragraph: "Triad synchronization:"
+      - code: 10. GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md 11. GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md 12. GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md 13. GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph: "Exact limit:"
+      - code: 13 changed product/test/governance files
+      - paragraph: Execution artifacts are excluded.
+      - paragraph: "Need a 14th file:"
+      - code: STOP PREFLIGHT_SCOPE_REPLAN
+      - separator
+      - heading "23. Explicitly protected" [level=2]
+      - paragraph: "Do not modify:"
+      - code: game.config.ts config schema page inventory schema/data optional-routes.ts search route Astro file build-site.ts audit-build.ts pagefind-artifacts.ts package.json package-lock.json media/share implementation date/freshness fields ads browser matrix core browser runner closure WebKit policy/control Contract/Registry
+      - separator
+      - heading "24. Why optional-routes.ts stays untouched" [level=2]:
+        - text: 24. Why
+        - code: optional-routes.ts
+        - text: stays untouched
+      - paragraph: "Its existing tests already prove:"
+      - code: search disabled → zero static search path search enabled → /search/ guides and search remain independently gated
+      - paragraph: PLAN31 uses this as regression evidence.
+      - paragraph: It does not rewrite a working route seam.
+      - separator
+      - heading "25. GREEN and root regression" [level=2]
+      - paragraph: "After implementation:"
+      - code: targeted search tests PASS
+      - paragraph: "then:"
+      - code: npm run check npm run verify:unadopted-final npm run verify:adopted-final git diff --check
+      - paragraph: "Current baseline:"
+      - code: 832 root tests
+      - paragraph: New total may increase.
+      - paragraph: PP-02/final behavior remains unchanged.
+      - separator
+      - heading "26. Targeted browser evidence — enabled search" [level=2]
+      - paragraph: Use one disposable adopted fixture with search enabled.
+      - paragraph: "Across:"
+      - code: Chromium Firefox WebKit
+      - paragraph: representative desktop + mobile viewport.
+      - paragraph: Prove the following distinct states.
+      - heading "A. Idle" [level=3]
+      - paragraph: "Visit:"
+      - code: /search/
+      - paragraph: "Verify:"
+      - code: search form present idle guidance present no false "online" claim no result list
+      - heading "B. Results" [level=3]
+      - paragraph: Submit a deterministic query known to match the synthetic adopted corpus.
+      - paragraph: "Verify:"
+      - code: URL q state updated loading resolves at least one result local safe result URL title/excerpt visible
+      - heading "C. Empty" [level=3]
+      - paragraph: Submit a deterministic nonsense query.
+      - paragraph: "Verify:"
+      - code: explicit empty state no fake result no error state
+      - heading "D. Error" [level=3]
+      - paragraph: "Block/fail only:"
+      - code: /pagefind/pagefind.js
+      - paragraph: inside the disposable browser evidence environment.
+      - paragraph: Submit a non-empty query.
+      - paragraph: "Verify:"
+      - code: explicit error state no false "online" claim no stale prior result
+      - paragraph: This network failure is evidence simulation only; no production runtime mutation.
+      - separator
+      - heading "27. Disabled browser/build state" [level=2]
+      - paragraph: "Build a separate disposable adopted config:"
+      - code: features.search = false
+      - paragraph: and remove navigation references to the disabled search page.
+      - paragraph: "Verify:"
+      - code: build succeeds /search/ route is absent/404 Search nav target absent
+      - paragraph: Do not claim that Pagefind artifacts must be absent.
+      - separator
+      - heading "28. Browser evidence boundaries" [level=2]
+      - paragraph: "Do not use browser tests to claim:"
+      - code: ranking quality corpus usefulness real-player demand search decision appropriateness
+      - paragraph: Those remain project/adaptation/human evidence.
+      - paragraph: "Browser evidence proves only:"
+      - code: mechanism + states + safe output
+      - separator
+      - heading "29. SOP responsibility" [level=2]
+      - paragraph: "SOP must explicitly define the project search decision record:"
+      - code: ENABLED or DISABLED rationale corpus/task basis decision owner evidence reference
+      - paragraph: But the record is not a new Starter config authority.
+      - paragraph: "Also define:"
+      - code: field exists ≠ good search decision Pagefind works ≠ search should be enabled
+      - separator
+      - heading "30. Master Prompt responsibility" [level=2]
+      - paragraph: "Prompt must enforce:"
+      - code: no undocumented enabling no fake corpus-size claims no provider substitution no external query logging/provider introduction no "search online" claim before actual availability
+      - paragraph: "When project decision says disabled:"
+      - code: features.search must be false
+      - paragraph: "When enabled:"
+      - code: browser result/empty/error evidence required
+      - paragraph: Actual project binding remains later Adaptation/Acceptance work.
+      - separator
+      - heading "31. Cleanup" [level=2]
+      - paragraph: "Use short owned TMP roots:"
+      - code: /tmp/c2c31a.* targeted search /tmp/c2c31b.* fresh47
+      - paragraph: "Both require:"
+      - code: normal Astro stop PID gone fixture gone known Node/tsx caches only 0 fallback signal 0 symlink 0 path escape 0 unknown root removed
+      - separator
+      - heading "32. Fresh unchanged47" [level=2]
+      - paragraph: "Only after all WS03D-search targeted evidence passes:"
+      - code: npm run check:browser
+      - paragraph: exact unchanged Core runner.
+      - paragraph: "Requirements:"
+      - code: 47 planned 47 executed 0 NOT_RUN 1 attempt 0 retry non-WebKit failures = 0
+      - separator
+      - heading "33. Frozen residual discipline" [level=2]
+      - paragraph: "Current post-search WebKit residual must remain:"
+      - code: subset of iteration19 frozen40
+      - paragraph: No new key/assertion allowed.
+      - paragraph: "Compare against iteration30:"
+      - code: persisted disappeared reappeared newOutsideFrozen40
+      - paragraph: "For every current residual:"
+      - code: current Chromium counterpart PASS current Firefox counterpart PASS
+      - paragraph: Do not reuse iteration30 40/40 as post-change proof.
+      - separator
+      - heading "34. Identity / closure" [level=2]
+      - paragraph: "Rebind post-search:"
+      - code: Starter/SOP/Prompt working source Contract SHA fixture source/dist Playwright Chromium/Firefox/WebKit host matrix/runner/closure policy/control/native probe
+      - paragraph: Run unchanged closure.
+      - paragraph: "If known WebKit residuals remain and Safari evidence is still absent:"
+      - code: "raw FAIL retained closure BLOCKED sole error: missing/invalid real Safari keyboard evidence"
+      - separator
+      - heading "35. STOP conditions" [level=2]
+      - paragraph: "STOP immediately if implementation needs:"
+      - code: new search service/provider remote API analytics/query logging new package Pagefind upgrade ranking feature suggestions/autocomplete new route authority config activation duplicate date/freshness changes build pipeline conditionalization Pagefind artifact contract change browser runner/policy change
+      - paragraph: "Also STOP for:"
+      - code: new targeted browser failure non-WebKit fresh47 regression new WebKit residual outside frozen40 cleanup failure Contract/Registry delta scope > 13 files
+      - separator
+      - heading "36. Candidate result boundary" [level=2]
+      - paragraph: "Even with all evidence green, Codex may only report:"
+      - code: "WS03D-SEARCH: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: "It may not claim:"
+      - code: IA-03 formal PASS WS03 formal Gate ACCEPT WS06A ACCEPT release readiness
+      - paragraph: "Only independent REVIEW31 may grant:"
+      - code: "WS03D-SEARCH: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION"
+      - paragraph: "After that, standing authorization moves only to:"
+      - code: PLAN32 — WS03D-FRESHNESS
+      - paragraph: and nothing beyond it.
+      - heading "PLAN31 design sentence" [level=2]
+      - code: Keep Pagefind as the current implementation detail, put a provider-neutral contract and explicit query/result states in front of it, preserve features.search as the only technical activation truth, and keep the project's "should search exist?" rationale as Adaptation/Acceptance evidence rather than a second config boolean.
+    - paragraph:
+      - text: 因此 iteration30 可以关闭为
+      - strong: WS03C continuation ACCEPT
+      - text: 。下一步严格是 PLAN31 的 Search 单切片；publishedAt / updatedAt / patch / verified / Popular / Live 等 freshness 语义这轮完全不碰。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

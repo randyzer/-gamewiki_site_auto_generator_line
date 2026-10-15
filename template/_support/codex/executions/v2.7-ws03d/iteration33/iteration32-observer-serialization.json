@@ -1,0 +1,8 @@
+{
+  "status": "DIAGNOSIS_CONFIRMED",
+  "containsNameHelper": true,
+  "serializedSha256": "d26171dfe475856b02e1b6ccd61b6649fc581bfc3fcdddfc9a60e2812765eb9e",
+  "sourceSha256": "2e47a8a93aae0f6aa965f5bd15d4eb94c5e497fb35532c7e843aad78696f9d5a",
+  "actualRuntime": "node_modules/.bin/tsx",
+  "qualificationAttempts": 0
+}

@@ -1,0 +1,64 @@
+--- accepted-preimage/package.json
++++ ws06a/package.json
+@@ -12,6 +12,7 @@
+     "verify:unadopted-final": "tsx scripts/verify-adoption.ts unadopted",
+     "verify:adopted-final": "tsx scripts/verify-adoption.ts adopted",
+     "check": "astro check && vitest run",
++    "check:browser": "tsx scripts/run-core-browser-evidence.ts",
+     "build": "tsx scripts/build-site.ts final",
+     "build:evidence": "tsx scripts/build-site.ts evidence",
+     "deploy:dry-run": "npm run build && wrangler deploy --dry-run",
+@@ -35,6 +36,7 @@
+     "@types/react": "19.2.18",
+     "@types/react-dom": "19.2.5",
+     "pagefind": "1.5.2",
++    "playwright": "1.63.0",
+     "tailwindcss": "4.3.3",
+     "tsx": "4.23.13",
+     "typescript": "6.0.3",
+--- accepted-preimage/package-lock.json
++++ ws06a/package-lock.json
+@@ -22,6 +22,7 @@
+         "@types/react": "19.2.18",
+         "@types/react-dom": "19.2.5",
+         "pagefind": "1.5.2",
++        "playwright": "1.63.0",
+         "tailwindcss": "4.3.3",
+         "tsx": "4.23.13",
+         "typescript": "6.0.3",
+@@ -5780,6 +5781,35 @@
+       },
+       "funding": {
+         "url": "https://github.com/sponsors/jonschlinkert"
++      }
++    },
++    "node_modules/playwright": {
++      "version": "1.63.0",
++      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.63.0.tgz",
++      "integrity": "sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==",
++      "dev": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "playwright-core": "1.63.0"
++      },
++      "bin": {
++        "playwright": "cli.js"
++      },
++      "engines": {
++        "node": ">=20"
++      }
++    },
++    "node_modules/playwright-core": {
++      "version": "1.63.0",
++      "resolved": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.63.0.tgz",
++      "integrity": "sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==",
++      "dev": true,
++      "license": "Apache-2.0",
++      "bin": {
++        "playwright-core": "cli.js"
++      },
++      "engines": {
++        "node": ">=20"
+       }
+     },
+     "node_modules/postcss": {

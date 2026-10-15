@@ -1,0 +1,1491 @@
+diff --git a/README.md b/README.md
+index 8d4f6ce..378d6f4 100644
+--- a/README.md
++++ b/README.md
+@@ -56,6 +56,13 @@ while preserving the Starter 2.0 architecture baseline recorded in
+ 
+ ## Requirements and first build
+ 
++This Phase A candidate adds PP-02 production residue safety. The unadopted
++example intentionally fails `validate` and `build`: replace the example brand,
++domain, enabled inventory copy/sources, About copy, setup article and SVG logo
++before producing final output. `build:evidence` can warn on ordinary sample
++branding/domain only; setup instructions and legal template text still fail.
++See [the PP-02 adoption contract](docs/PP02_PRODUCTION_RESIDUE.md).
++
+ - Node.js `22.22.0` from `.nvmrc`
+ - npm with lockfile support
+ 
+@@ -199,7 +206,7 @@ Build audit may emit a non-blocking advisory for unusually large local video
+ files. The advisory is an implementation-local heuristic, not a universal byte
+ limit; project budgets and observed delivery behavior remain authoritative.
+ 
+-See [`public/media/README.md`](public/media/README.md) for the exact contract.
++See [`docs/media/README.md`](docs/media/README.md) for the exact contract.
+ 
+ ### Page-family accents
+ 
+diff --git a/docs/CONTENT_AND_DATA_GUIDE.md b/docs/CONTENT_AND_DATA_GUIDE.md
+index 089c93c..ee4a122 100644
+--- a/docs/CONTENT_AND_DATA_GUIDE.md
++++ b/docs/CONTENT_AND_DATA_GUIDE.md
+@@ -253,7 +253,7 @@ implementation-local heuristic, not a universal size limit. `sourceUrl` records
+ provenance only; it is not proof of copyright or reuse permission. Human/SOP
+ review owns rights, privacy, appropriateness, and visual quality.
+ 
+-See `public/media/README.md` for path, alt, caption, YouTube, and validation
++See `docs/media/README.md` for path, alt, caption, YouTube, and validation
+ details.
+ 
+ ## Theme and page-family identity
+diff --git a/public/media/README.md b/public/media/README.md
+deleted file mode 100644
+index c627b1d..0000000
+--- a/public/media/README.md
++++ /dev/null
+@@ -1,112 +0,0 @@
+-# Local media — Starter v2.6.5 Documentation-Correction Patch Line
+-
+-The Starter deliberately ships with an empty `src/data/media/media.json`.
+-No media is valid: pages keep their normal text/fact layout without placeholders.
+-A broken reference is invalid and fails validation, including references on unpublished pages.
+-The V2.6.5 documentation-correction patch line carries forward the released
+-and frozen V2.6.3 Phase C D1-D3 media-readiness projection here as deterministic
+-validation support for the `GAME_SOP v2.6.5` media lifecycle contract. The historical
+-`GAME_SOP v2.6.2` lifecycle and V2.6.2 Phase 1C behavior are baseline provenance
+-only.
+-
+-## Add an asset
+-
+-1. Obtain human approval for the asset's accuracy, suitability, and usage rights.
+-2. Store the reviewed image below `public/media/` and use `/media/...` as its `src`.
+-3. Add it once to the manifest's `assets`, then reference its ID from `pages`.
+-4. Run `npm run validate`, `npm run check`, and `npm run build`.
+-
+-The only placements are `hero` (image ID), `gallery` (image IDs), and `trailer`
+-(video ID). WikiArticle and EntityDetail consume these mappings by their existing
+-Inventory `pageId`. Guide and entity/database hubs consume hero media only.
+-`StaticWikiPage.astro` is available for explicit static wiki page inputs and
+-fixed placements, but it does not create routes. A mapping cannot create or
+-publish a route, enable a feature, or change visibility/indexability.
+-
+-```json
+-{
+-  "assets": [
+-    {
+-      "id": "overview",
+-      "type": "image",
+-      "src": "/media/overview.webp",
+-      "alt": "Describe what this image helps the player understand",
+-      "caption": "Optional visible context",
+-      "sourceUrl": "https://example.com/replace-with-original-source"
+-    }
+-  ],
+-  "pages": [{ "pageId": "guide.getting-started", "hero": "overview" }]
+-}
+-```
+-
+-This is a syntax example, not a supplied asset or approved source. Replace the
+-file, description, and source URL with reviewed project material.
+-
+-## Image contract
+-
+-- Images must be local files under `public/media/`; remote image URLs, traversal,
+-  encoded paths, query strings, fragments, and missing files are rejected.
+-- Use a supported image extension: `.png`, `.jpg`, `.jpeg`, `.webp`, `.avif`, `.gif`, `.svg`.
+-- `alt` is required. Informative images need descriptive text, not a filename or
+-  a generic label such as "image" or "screenshot". Precisely `alt: ""` marks a
+-  deliberately decorative image; human review must justify that choice.
+-- `sourceUrl` is required HTTPS provenance: the original source of the local file.
+-  A valid URL is **not proof of legal usage rights**. Rights records/approval remain
+-  in project SOP/research artifacts and human review.
+-- Hero images load eagerly; gallery/inline images load lazily. Images scale in
+-  their natural aspect ratio without crop variants or manifest dimensions.
+-- Optimize file size manually before adoption. The released V2.6.3 baseline
+-  still does not process, upload, or transcode media; this limitation
+-  is inherited from Starter v2.6.2.
+-
+-## YouTube contract
+-
+-Video `src` is an 11-character YouTube ID, not a URL. `alt` supplies the non-empty
+-iframe title; `caption` is optional and `sourceUrl` records the source/watch URL.
+-The component uses only `https://www.youtube-nocookie.com/embed/<id>`, lazy loading,
+-a 16:9 responsive frame, limited permissions and fullscreen support. A visible
+-source link remains available when the player is blocked or unavailable.
+-
+-There is no autoplay, SDK, upload support, arbitrary iframe URL, or build-time
+-network/availability probe. YouTube remains a runtime third-party dependency;
+-project owners must review privacy, consent, rights, and availability requirements.
+-
+-## Local video contract
+-
+-Local video `src` may use `.mp4` or `.webm` under `public/media/`, referenced as
+-`/media/...`. The optional `poster` must be a supported local image path under
+-the same safe `/media/...` boundary.
+-
+-```json
+-{
+-  "id": "gameplay-trailer",
+-  "type": "video",
+-  "src": "/media/gameplay-trailer.mp4",
+-  "poster": "/media/gameplay-trailer-poster.webp",
+-  "alt": "Gameplay trailer showing the first route and boss arena",
+-  "caption": "Optional visible context",
+-  "sourceUrl": "https://example.com/replace-with-original-source"
+-}
+-```
+-
+-Native video renders in the standard 16:9 wrapper with controls, `playsinline`,
+-and `preload="metadata"`. It does not autoplay and the Starter does not
+-transcode, upload, create CDN variants, or define a universal byte limit.
+-
+-The build audit may print a non-blocking advisory for unusually large local
+-video files. Treat it as an implementation-local heuristic only; project media
+-budgets and observed delivery behavior remain authoritative.
+-
+-## Inline content and QA
+-
+-MDX may import `GameMedia` and pass `mediaCatalog.getAsset("overview")` for inline
+-media. Keep page-level placement in the manifest, not Page Inventory/frontmatter.
+-Captions render as text, never injected HTML. No media title is added to the
+-WikiArticle TOC; the TOC still consumes only the body renderer's H2/H3 headings.
+-
+-`tests/fixtures/media/` contains clearly synthetic QA illustrations and a test
+-manifest. These are not default game content and must not be shipped as game
+-screenshots. The generic production manifest remains empty after QA.
+-
+-Automated checks verify deterministic structure, references and accessible
+-markup. They do not judge visual quality, factual appropriateness or copyright.
+diff --git a/scripts/audit-build.ts b/scripts/audit-build.ts
+index a96a907..14d91d6 100644
+--- a/scripts/audit-build.ts
++++ b/scripts/audit-build.ts
+@@ -5,7 +5,9 @@ import {
+ } from "node:fs";
+ import { join, resolve } from "node:path";
+ 
+-import { collectBuildHtmlAuditErrors, collectReferencedAssetPaths } from "../src/core/html-audit";
++import { collectBuildHtmlAuditErrors, collectReferencedAssetPaths, decodeHtml } from "../src/core/html-audit";
++import { projectHtmlResidueSurfaces, scanResidueSurfaces, type ResidueSurface } from "./core-safety-sentinels";
++import { collectCopiedTextResidueSignals, collectPagefindResidueSignals } from "./residue-artifacts";
+ import { routeToOutputFile } from "../src/core/output-reconciliation";
+ import {
+   collectPagefindBudgetErrors,
+@@ -33,6 +35,10 @@ import {
+ import { EVIDENCE_MARKER_FILE } from "./build-site";
+ 
+ const outputDirectory = resolve(process.cwd(), "dist");
++const purposeArgs = process.argv.slice(2);
++const purpose = purposeArgs.length === 0 || JSON.stringify(purposeArgs) === JSON.stringify(["--purpose", "final"])
++  ? "final" : JSON.stringify(purposeArgs) === JSON.stringify(["--purpose", "evidence"]) ? "evidence" : undefined;
++if (!purpose) throw new Error("Usage: tsx scripts/audit-build.ts [--purpose final|evidence]");
+ const htmlByRoute = new Map(
+   enabledPageCatalog.map((page) => [
+     page.route,
+@@ -48,6 +54,17 @@ if (existsSync(resolve(process.cwd(), EVIDENCE_MARKER_FILE))) {
+   errors.push(`Canonical final output must not contain ${EVIDENCE_MARKER_FILE}.`);
+ }
+ const warnings: string[] = [];
++const residueSurfaces: ResidueSurface[] = [];
++const expectedRoutes = enabledPageCatalog.map(({ route }) => `route:${route}`);
++const checkedRoutes: ResidueSurface[] = [];
++for (const page of enabledPageCatalog) {
++  try {
++    residueSurfaces.push(...projectHtmlResidueSurfaces(page.route, htmlByRoute.get(page.route)!));
++    checkedRoutes.push({ id: `route:${page.route}`, scope: "public-text", text: "" });
++  } catch (error) { errors.push(`PP-02 required HTML projection unreadable: ${page.route}: ${String(error)}.`); }
++}
++const routeCoverage = scanResidueSurfaces(checkedRoutes, expectedRoutes, purpose);
++errors.push(...routeCoverage.errors);
+ 
+ function assetSize(assetPath: string): number {
+   const path = join(outputDirectory, assetPath.replace(/^\//, ""));
+@@ -145,6 +162,22 @@ for (const file of requiredFiles) {
+   }
+ }
+ 
++const expectedDocuments = ["robots.txt", "sitemap-index.xml", "sitemap-0.xml"].flatMap((path) =>
++  ["public-text", "url"].map((scope) => `document:${path}:${scope}`));
++const documentSurfaces: ResidueSurface[] = [];
++for (const path of ["robots.txt", "sitemap-index.xml", "sitemap-0.xml"]) {
++  try {
++    const text = decodeHtml(new TextDecoder("utf-8", { fatal: true }).decode(readFileSync(join(outputDirectory, path))));
++    for (const scope of ["public-text", "url"] as const) documentSurfaces.push({ id: `document:${path}:${scope}`, scope, text });
++  } catch (error) { errors.push(`PP-02 required document unreadable: ${path}: ${String(error)}.`); }
++}
++const documents = scanResidueSurfaces(documentSurfaces, expectedDocuments, purpose, siteConfig.residueSentinels);
++const htmlResidue = scanResidueSurfaces(residueSurfaces, residueSurfaces.map(({ id }) => id), purpose, siteConfig.residueSentinels);
++const copiedText = collectCopiedTextResidueSignals({ publicDirectory: resolve(process.cwd(), "public"),
++  readDirectory: outputDirectory, config: siteConfig, mediaAssets: mediaCatalog.assets, purpose });
++errors.push(...documents.errors, ...htmlResidue.errors, ...copiedText.errors);
++warnings.push(...documents.warnings, ...htmlResidue.warnings, ...copiedText.warnings);
++
+ const robotsPath = join(outputDirectory, "robots.txt");
+ if (
+   existsSync(robotsPath) &&
+@@ -175,6 +208,9 @@ try {
+     installedVersion: readInstalledPagefindVersion(process.cwd()),
+   });
+   errors.push(...pagefindReport.errors, ...collectPagefindBudgetErrors(pagefindReport));
++  const pagefindResidue = collectPagefindResidueSignals({ directory: pagefindDirectory, report: pagefindReport, config: siteConfig, purpose });
++  errors.push(...pagefindResidue.errors);
++  warnings.push(...pagefindResidue.warnings);
+   pagefindDiagnostics = formatPagefindDiagnostics(pagefindReport, pagefindReport.rawTotalBytes, 0);
+ } catch (error) {
+   errors.push(`Pagefind artifact audit could not run: ${error instanceof Error ? error.message : String(error)}`);
+@@ -190,6 +226,7 @@ const referencedCssBytes = [...referencedAssets]
+ if (errors.length > 0) {
+   console.error("Generated build audit failed:");
+   for (const error of errors) console.error(`- ${error}`);
++  for (const warning of warnings) console.warn(warning);
+   process.exitCode = 1;
+ } else {
+   console.log(
+diff --git a/scripts/build-site.ts b/scripts/build-site.ts
+index c620ee0..f1d8c62 100644
+--- a/scripts/build-site.ts
++++ b/scripts/build-site.ts
+@@ -93,7 +93,8 @@ export function runBuild({
+   }
+ 
+   const runner = runCommand ?? ((command: BuildCommand) => defaultCommandRunner(projectRoot, command));
+-  const commands = [preflightFor(purpose), ...TECHNICAL_BUILD_STAGES];
++  const commands = [preflightFor(purpose), ...TECHNICAL_BUILD_STAGES.map((command) =>
++    command.name === "Generated output audit" ? { ...command, args: [...command.args, "--purpose", purpose] } : command)];
+   for (const command of commands) {
+     const status = runner(command);
+     if (status !== 0) return status;
+diff --git a/scripts/validate-site.ts b/scripts/validate-site.ts
+index 45004a2..3cae241 100644
+--- a/scripts/validate-site.ts
++++ b/scripts/validate-site.ts
+@@ -1,4 +1,6 @@
+ import { existsSync, readFileSync } from "node:fs";
++import { collectSourceResidueSignals } from "./core-safety-sentinels";
++import { collectCopiedTextResidueSignals } from "./residue-artifacts";
+ import { resolve } from "node:path";
+ import { fileURLToPath } from "node:url";
+ 
+@@ -157,7 +159,14 @@ const validationErrors = collectSiteValidationErrors({
+     "planner",
+   ],
+ });
+-const errors = [...readErrors, ...validationErrors];
++const enabledPages = buildEnabledPageCatalog(gameConfig, inventory, legalContent);
++const residueSignals = collectSourceResidueSignals({ config: gameConfig, pages: enabledPages,
++  contentEntries, legalContent, purpose });
++warnings.push(...residueSignals.warnings);
++const copiedText = collectCopiedTextResidueSignals({ publicDirectory: resolve(projectRoot, "public"),
++  readDirectory: resolve(projectRoot, "public"), config: gameConfig, mediaAssets: mediaManifest.assets, purpose });
++warnings.push(...copiedText.warnings);
++const errors = [...readErrors, ...validationErrors, ...residueSignals.errors, ...copiedText.errors];
+ 
+ if (errors.length > 0) {
+   console.error("Site validation failed:");
+@@ -168,7 +177,6 @@ if (errors.length > 0) {
+   for (const item of info) console.info(`Info: ${item}`);
+   return 1;
+ } else {
+-  const enabledPages = buildEnabledPageCatalog(gameConfig, inventory, legalContent);
+   console.log(
+     `Site validation passed: ${enabledPages.length} enabled pages, ${contentEntries.length} content entries.`,
+   );
+diff --git a/src/config/schema.ts b/src/config/schema.ts
+index b69bd2a..9f5bd17 100644
+--- a/src/config/schema.ts
++++ b/src/config/schema.ts
+@@ -157,6 +157,12 @@ export const gameConfigSchema = z
+       })
+       .strict(),
+     identity: identityConfigSchema.optional(),
++    residueSentinels: z.array(z.object({
++      id: z.string().trim().min(1).refine((id) => !id.startsWith("core."), "Core sentinel IDs are reserved."),
++      literal: z.string().trim().min(1),
++      surface: z.enum(["branding", "url", "public-text"]),
++    }).strict()).refine((entries) => new Set(entries.map((entry) => entry.id)).size === entries.length,
++      "Sentinel IDs must be unique.").optional(),
+     navigation: navigationSchema,
+     homepage: z
+       .object({
+diff --git a/src/core/content-files.ts b/src/core/content-files.ts
+index 23d5d91..23c3ca0 100644
+--- a/src/core/content-files.ts
++++ b/src/core/content-files.ts
+@@ -42,12 +42,14 @@ export function readContentEntriesFromDirectory(
+       .split(sep)
+       .join("/")
+       .slice(0, -extension.length);
+-    const pageId = extractPageId(readFileSync(filePath, "utf8"), filePath);
++    const source = readFileSync(filePath, "utf8");
++    const pageId = extractPageId(source, filePath);
+ 
+     return {
+       collection,
+       id,
+       data: { pageId },
++      body: source.replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/, ""),
+     };
+   });
+ }
+diff --git a/src/core/html-audit.ts b/src/core/html-audit.ts
+index 934d187..817d25d 100644
+--- a/src/core/html-audit.ts
++++ b/src/core/html-audit.ts
+@@ -20,7 +20,7 @@ interface HtmlPageAnalysis {
+   internalRoutes: string[];
+ }
+ 
+-function decodeHtml(value: string): string {
++export function decodeHtml(value: string): string {
+   const entities: Record<string, string> = {
+     "&amp;": "&",
+     "&lt;": "<",
+@@ -28,14 +28,23 @@ function decodeHtml(value: string): string {
+     "&quot;": '"',
+     "&#39;": "'",
+     "&#x27;": "'",
++    "&nbsp;": " ",
++    "&apos;": "'",
+   };
+   return value.replace(
+-    /&(amp|lt|gt|quot|#39|#x27);/gi,
+-    (entity) => entities[entity.toLocaleLowerCase("en")] ?? entity,
++    /&(amp|lt|gt|quot|nbsp|apos|#\d+|#x[0-9a-f]+);/gi,
++    (entity: string) => {
++      const known = entities[entity.toLocaleLowerCase("en")];
++      if (known !== undefined) return known;
++      const numeric = entity.slice(2, -1);
++      const code = numeric[0]?.toLowerCase() === "x" ? Number.parseInt(numeric.slice(1), 16) : Number(numeric);
++      return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff)
++        ? String.fromCodePoint(code) : "\uFFFD";
++    },
+   );
+ }
+ 
+-function attributesFromTag(tag: string): Map<string, string> {
++export function attributesFromTag(tag: string): Map<string, string> {
+   const attributes = new Map<string, string>();
+   const pattern = /([:\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+   for (const match of tag.matchAll(pattern)) {
+diff --git a/src/core/pagefind-artifacts.ts b/src/core/pagefind-artifacts.ts
+index a3866fb..7d61eca 100644
+--- a/src/core/pagefind-artifacts.ts
++++ b/src/core/pagefind-artifacts.ts
+@@ -148,6 +148,16 @@ interface PagefindMetadataReferences {
+   filters: string[];
+ }
+ 
++export function readPagefindCbor(source: Uint8Array): CborValue {
++  const compressed = Buffer.from(source);
++  const decoded = compressed[0] === 0x1f && compressed[1] === 0x8b ? gunzipSync(compressed) : compressed;
++  if (decoded.subarray(0, 12).toString("utf8") !== "pagefind_dcd") throw new Error("missing pagefind_dcd signature");
++  const reader = new CborReader(decoded.subarray(12));
++  const value = reader.readValue();
++  if (!reader.complete) throw new Error("unexpected trailing CBOR data");
++  return value;
++}
++
+ function parseMetadataReferences(
+   source: Uint8Array | undefined,
+   locale: string,
+diff --git a/tests/content-files.test.ts b/tests/content-files.test.ts
+index ece8402..ed5ef28 100644
+--- a/tests/content-files.test.ts
++++ b/tests/content-files.test.ts
+@@ -11,7 +11,9 @@ describe("readContentEntriesFromDirectory", () => {
+       new URL("../src/content/guides", import.meta.url),
+     );
+ 
+-    expect(readContentEntriesFromDirectory(guideDirectory, "guides")).toEqual(
++    const entries = readContentEntriesFromDirectory(guideDirectory, "guides");
++    expect(entries.every((entry) => typeof entry.body === "string" && !entry.body.startsWith("---"))).toBe(true);
++    expect(entries.map(({ body, ...entry }) => entry)).toEqual(
+       pageInventory
+         .flatMap((page) =>
+           page.contentRef?.collection === "guides"
+diff --git a/tests/core-safety-build.test.ts b/tests/core-safety-build.test.ts
+index f7832f3..9fbf14f 100644
+--- a/tests/core-safety-build.test.ts
++++ b/tests/core-safety-build.test.ts
+@@ -7,6 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
+ import { defineGameConfig } from "../src/config/schema";
+ import { pageInventory, siteConfig } from "../src/core/site-data";
+ import {
++  adoptFixtureConfig,
+   cleanupCoreBuildFixture,
+   createCoreBuildFixture,
+   runFixtureNpm,
+@@ -17,7 +18,7 @@ import {
+ let fixtureRoot: string;
+ const guide = pageInventory.find((page) => page.pageId === "guide.getting-started")!;
+ const identityConfig = defineGameConfig({
+-  ...siteConfig,
++  ...adoptFixtureConfig(siteConfig),
+   identity: {
+     sitePublisher: {
+       identity: { kind: "Organization", name: "Site Publisher", projectConfirmed: true, evidenceRef: "entity:site-publisher" },
+diff --git a/tests/evidence-build.test.ts b/tests/evidence-build.test.ts
+index 0ee8a29..95ae99b 100644
+--- a/tests/evidence-build.test.ts
++++ b/tests/evidence-build.test.ts
+@@ -1,17 +1,14 @@
++import { createCoreBuildFixture } from "./helpers/core-build-fixture";
+ import { spawnSync } from "node:child_process";
+ import {
+-  cpSync,
+   existsSync,
+   mkdirSync,
+-  mkdtempSync,
+   readFileSync,
+   readdirSync,
+   rmSync,
+-  symlinkSync,
+   writeFileSync,
+ } from "node:fs";
+-import { tmpdir } from "node:os";
+-import { join, resolve } from "node:path";
++import { join } from "node:path";
+ 
+ import { afterAll, beforeAll, describe, expect, it } from "vitest";
+ 
+@@ -34,7 +31,6 @@ const blockRow = approvedRow.replace("| APPROVED |", "| BLOCK |");
+ const unsupportedRow = approvedRow.replace("| INTEGRATED |", "| NOT INTEGRATED |");
+ 
+ let fixtureRoot: string;
+-const projectRoot = process.cwd();
+ 
+ function table(row: string): string {
+   return `${canonicalHeader}\n${separator}\n${row}\n`;
+@@ -64,28 +60,8 @@ function collectFiles(directory: string): string[] {
+ }
+ 
+ beforeAll(() => {
+-  fixtureRoot = mkdtempSync(join(tmpdir(), "starter-evidence-build-"));
+-  for (const file of [
+-    "src",
+-    "public",
+-    "scripts",
+-    "game.config.ts",
+-    "astro.config.ts",
+-    "tsconfig.json",
+-    "package.json",
+-    "package-lock.json",
+-  ]) {
+-    cpSync(resolve(projectRoot, file), join(fixtureRoot, file), { recursive: true });
+-  }
+-  symlinkSync(resolve(projectRoot, "node_modules"), join(fixtureRoot, "node_modules"), "dir");
+-  const astroConfigPath = join(fixtureRoot, "astro.config.ts");
+-  writeFileSync(
+-    astroConfigPath,
+-    readFileSync(astroConfigPath, "utf8").replace(
+-      'output: "static",',
+-      'cacheDir: "./.astro-cache",\n  output: "static",',
+-    ),
+-  );
++  fixtureRoot = createCoreBuildFixture();
++
+ });
+ 
+ afterAll(() => {
+@@ -115,8 +91,10 @@ describe("shared final/evidence build contract", () => {
+       log: () => undefined,
+     })).toBe(0);
+ 
+-    expect(finalCalls.slice(1)).toEqual(TECHNICAL_BUILD_STAGES);
+-    expect(evidenceCalls.slice(1)).toEqual(TECHNICAL_BUILD_STAGES);
++    expect(finalCalls.slice(1, -1)).toEqual(TECHNICAL_BUILD_STAGES.slice(0, -1));
++    expect(evidenceCalls.slice(1, -1)).toEqual(TECHNICAL_BUILD_STAGES.slice(0, -1));
++    expect(finalCalls.at(-1)?.args).toEqual(["scripts/audit-build.ts", "--purpose", "final"]);
++    expect(evidenceCalls.at(-1)?.args).toEqual(["scripts/audit-build.ts", "--purpose", "evidence"]);
+ 
+     const stopped: string[] = [];
+     const failure = runBuild({
+diff --git a/tests/helpers/core-build-fixture.ts b/tests/helpers/core-build-fixture.ts
+index dfd74ad..b2275c8 100644
+--- a/tests/helpers/core-build-fixture.ts
++++ b/tests/helpers/core-build-fixture.ts
+@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
+ import { join, resolve } from "node:path";
+ 
+ import type { GameConfig } from "../../src/config/schema";
++import gameConfig from "../../game.config";
+ 
+ const copiedEntries = [
+   "src",
+@@ -38,13 +39,22 @@ export function createCoreBuildFixture(prefix = "starter-core-safety-"): string
+       'cacheDir: "./.astro-cache",\n  output: "static",',
+     ),
+   );
++  const isolatedConfig = readFileSync(astroConfigPath, "utf8").replace('vite: {', 'vite: {\n    cacheDir: "./.vite-cache",');
++  writeFileSync(astroConfigPath, isolatedConfig);
++  writeFixtureGameConfig(fixtureRoot, adoptFixtureConfig(gameConfig));
++  adoptFixtureInventory(fixtureRoot);
++  writeFileSync(join(fixtureRoot, "src/content/guides/getting-started.mdx"), "---\npageId: guide.getting-started\n---\n\nChoose a route and compare the available options before your next session.\n\n## First route\n\nReview the tested choices and use the source notes to check what changed.\n");
++  const aboutPath = join(fixtureRoot, "src/core/static-page-copy.ts");
++  writeFileSync(aboutPath, readFileSync(aboutPath, "utf8").replace("Game Atlas is a reusable editorial system for answering game questions with less noise and clearer evidence.", "Field Notes publishes independent reference articles with documented sources and corrections."));
++  const logoPath = join(fixtureRoot, "public/logo.svg");
++  writeFileSync(logoPath, readFileSync(logoPath, "utf8").replace("Game Atlas logo", "Field Notes logo"));
+   return fixtureRoot;
+ }
+ 
+ export function writeFixtureGameConfig(fixtureRoot: string, config: GameConfig): void {
+   writeFileSync(
+     join(fixtureRoot, "game.config.ts"),
+-    `import { defineGameConfig } from "./src/config/schema";\n\nexport default defineGameConfig(${JSON.stringify(config, null, 2)});\n`,
++    `import { defineGameConfig } from "./src/config/schema";\n\nexport default defineGameConfig(${JSON.stringify(adoptFixtureConfig(config), null, 2)});\n`,
+   );
+ }
+ 
+@@ -70,3 +80,24 @@ export function runFixtureNpm(
+ export function cleanupCoreBuildFixture(fixtureRoot: string): void {
+   rmSync(fixtureRoot, { recursive: true, force: true });
+ }
++
++// Synthetic editorial identity for build tests; never evidence of a real game's approval.
++export function adoptFixtureConfig(config: GameConfig): GameConfig {
++  return { ...config,
++    brand: { ...config.brand, name: "Field Notes", shortName: "Field", mark: "FN" },
++    site: { ...config.site, url: "https://field-notes.example" },
++    seo: { ...config.seo, defaultTitle: "Field Notes — Guides and Reference", titleTemplate: "%s | Field Notes" },
++    social: { ...config.social, xHandle: "@fieldnotes" },
++  };
++}
++
++export function adoptFixtureInventory(fixtureRoot: string): void {
++  const path = join(fixtureRoot, "src/data/page-inventory.json");
++  const inventory = JSON.parse(readFileSync(path, "utf8"));
++  for (const page of inventory) {
++    page.title = page.pageId === "guide.getting-started" ? "Getting Started with Field Notes" : page.title.replaceAll("Game Atlas", "Field Notes");
++    page.description = page.description.replaceAll("Game Atlas", "Field Notes");
++    for (const source of page.sources) source.sourceUrl = source.sourceUrl.replace("gameatlas.example", "field-notes.example");
++  }
++  writeFileSync(path, JSON.stringify(inventory, null, 2));
++}
+diff --git a/tests/legal-safety.test.ts b/tests/legal-safety.test.ts
+index c51dfa4..2745947 100644
+--- a/tests/legal-safety.test.ts
++++ b/tests/legal-safety.test.ts
+@@ -1,8 +1,8 @@
++import { createCoreBuildFixture } from "./helpers/core-build-fixture";
+ import { createHash } from "node:crypto";
+ import { spawnSync } from "node:child_process";
+-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+-import { tmpdir } from "node:os";
+-import { join, resolve } from "node:path";
++import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
++import { join } from "node:path";
+ 
+ import { describe, expect, it } from "vitest";
+ 
+@@ -24,10 +24,11 @@ const content: LegalContentPayload = {
+   notice: "Synthetic fixture notice.",
+ };
+ 
+-function activePage(pageType: "privacy" | "terms" = "privacy"): PageInventoryEntry {
++function activePage(pageType: "privacy" | "terms" = "privacy", title?: string): PageInventoryEntry {
+   const page = parsePageInventory(inventoryData).find((entry) => entry.pageType === pageType)!;
+   return {
+     ...page,
++    title: title ?? page.title,
+     visibility: "public",
+     publicationStatus: "published",
+     publishedAt: "2026-09-01",
+@@ -35,7 +36,7 @@ function activePage(pageType: "privacy" | "terms" = "privacy"): PageInventoryEnt
+     developmentStatus: "ready",
+     needsReview: false,
+     needsUpdate: false,
+-    legalActivation: { state: "active", approvedContentSha256: computeLegalContentSha256(page.title, content) },
++    legalActivation: { state: "active", approvedContentSha256: computeLegalContentSha256(title ?? page.title, content) },
+   };
+ }
+ 
+@@ -248,17 +249,11 @@ describe("TL-01 actual static route output", () => {
+     { active: ["terms"], index: ["terms"] },
+     { active: ["privacy", "terms"], index: ["privacy"] },
+   ])("renders approved payload and projects only eligible routes: %j", ({ active, index }) => {
+-    const root = mkdtempSync(join(tmpdir(), "starter-tl01-build-"));
++    const root = createCoreBuildFixture("starter-tl01-build-");
+     try {
+-      for (const path of ["src", "public", "scripts", "game.config.ts", "astro.config.ts", "tsconfig.json", "package.json", "package-lock.json"]) {
+-        cpSync(resolve(path), join(root, path), { recursive: true });
+-      }
+-      symlinkSync(resolve("node_modules"), join(root, "node_modules"), "dir");
+-      const configPath = join(root, "astro.config.ts");
+-      writeFileSync(configPath, readFileSync(configPath, "utf8").replace('output: "static",', 'cacheDir: "./.astro-cache",\n  output: "static",'));
+       const payloads = Object.fromEntries(active.map((pageType) => [pageType, content]));
+-      const inventory = parsePageInventory(inventoryData).map((page) => active.includes(page.pageType)
+-        ? { ...activePage(page.pageType as "privacy" | "terms"), indexability: index.includes(page.pageType) ? "index" as const : "noindex" as const }
++      const inventory = parsePageInventory(JSON.parse(readFileSync(join(root, "src/data/page-inventory.json"), "utf8"))).map((page) => active.includes(page.pageType)
++        ? { ...activePage(page.pageType as "privacy" | "terms", page.title), sources: page.sources, indexability: index.includes(page.pageType) ? "index" as const : "noindex" as const }
+         : page);
+       writeFileSync(join(root, "src/data/page-inventory.json"), JSON.stringify(inventory));
+       writeFileSync(join(root, "src/data/legal-content.ts"), `export const legalContent = ${JSON.stringify(payloads)};\n`);
+diff --git a/tests/media-build.test.ts b/tests/media-build.test.ts
+index 96ef98b..b7daa81 100644
+--- a/tests/media-build.test.ts
++++ b/tests/media-build.test.ts
+@@ -1,6 +1,6 @@
++import { createCoreBuildFixture, adoptFixtureConfig } from "./helpers/core-build-fixture";
+ import { execFileSync } from "node:child_process";
+-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+-import { tmpdir } from "node:os";
++import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+ import { join, resolve } from "node:path";
+ import { afterAll, beforeAll, describe, expect, it } from "vitest";
+ 
+@@ -56,22 +56,10 @@ const mediaBuildNavigation = resolveNavigationGroups(
+ );
+ 
+ beforeAll(() => {
+-  fixtureRoot = mkdtempSync(join(tmpdir(), "starter-media-build-"));
+-  for (const file of ["src", "public", "scripts", "game.config.ts", "astro.config.ts", "tsconfig.json", "package.json", "package-lock.json"]) {
+-    cpSync(resolve(projectRoot, file), join(fixtureRoot, file), { recursive: true });
+-  }
+-  symlinkSync(resolve(projectRoot, "node_modules"), join(fixtureRoot, "node_modules"), "dir");
+-  const astroConfigPath = join(fixtureRoot, "astro.config.ts");
+-  writeFileSync(
+-    astroConfigPath,
+-    readFileSync(astroConfigPath, "utf8").replace(
+-      'output: "static",',
+-      'cacheDir: "./.astro-cache",\n  output: "static",',
+-    ),
+-  );
++  fixtureRoot = createCoreBuildFixture();
+   writeFileSync(
+     join(fixtureRoot, "game.config.ts"),
+-    `import { defineGameConfig } from "./src/config/schema";\n\nexport default defineGameConfig(${JSON.stringify(mediaBuildConfig, null, 2)});\n`,
++    `import { defineGameConfig } from "./src/config/schema";\n\nexport default defineGameConfig(${JSON.stringify(adoptFixtureConfig(mediaBuildConfig), null, 2)});\n`,
+   );
+   writeFileSync(join(fixtureRoot, "src/data/media/media.json"), JSON.stringify(mediaFixture));
+   for (const file of ["qa-overview.svg", "qa-detail.svg"]) {
+diff --git a/tests/release-identity.test.ts b/tests/release-identity.test.ts
+index 0e99dc2..9b00b2d 100644
+--- a/tests/release-identity.test.ts
++++ b/tests/release-identity.test.ts
+@@ -5,12 +5,12 @@ const currentPatchFiles = [
+   "../README.md",
+   "../docs/QA_CHECKLIST.md",
+   "../docs/CONTENT_AND_DATA_GUIDE.md",
+-  "../public/media/README.md",
++  "../docs/media/README.md",
+ ] as const;
+ 
+ const carriedForwardBaselineDocs = [
+   "../docs/CONTENT_AND_DATA_GUIDE.md",
+-  "../public/media/README.md",
++  "../docs/media/README.md",
+ ] as const;
+ 
+ function read(path: string): string {
+diff --git a/tests/runtime-contract.test.ts b/tests/runtime-contract.test.ts
+index 43392aa..c50d852 100644
+--- a/tests/runtime-contract.test.ts
++++ b/tests/runtime-contract.test.ts
+@@ -7,7 +7,7 @@ const activeDocs = [
+   "../docs/CONTENT_AND_DATA_GUIDE.md",
+   "../docs/QA_CHECKLIST.md",
+   "../docs/DEPLOYMENT.md",
+-  "../public/media/README.md",
++  "../docs/media/README.md",
+ ] as const;
+ 
+ function read(path: string): string {
+diff --git a/docs/PP02_PRODUCTION_RESIDUE.md b/docs/PP02_PRODUCTION_RESIDUE.md
+new file mode 100644
+index 0000000..9bad406
+--- /dev/null
++++ b/docs/PP02_PRODUCTION_RESIDUE.md
+@@ -0,0 +1,78 @@
++# PP-02 production residue safety — candidate catalog revision 1
++
++This is an additive Phase A candidate on the frozen v2.6.5 baseline, not a
++release declaration. The shipped example is deliberately unadopted and cannot
++pass final validation or build. A passing synthetic test fixture is not approval
++of a real game, business identity, content facts, media rights or legal policy.
++
++## Adopt the example
++
++1. Replace branding, site URL, SEO and social fields in `game.config.ts`.
++2. Adapt enabled page titles, descriptions and public sources in Page Inventory.
++3. Replace the public setup guide and About copy with reviewed project content.
++4. Replace the accessible name and content of the shipped logo. Remove unused
++   public assets when changing its path; copied text must have a known registration.
++5. Keep legal pages unavailable until their project payload is explicitly approved
++   by the existing TL-01 digest contract. TL-02 identity confirmation still applies.
++6. Run `npm run validate`, `npm run check`, then `npm run build`.
++
++The fixed tooling catalog retains reserved example host, authoritative branding
++and complete supplied instruction/legal signatures after projects edit their
++source. It never bans general words such as Add, Replace, TODO or Atlas in
++ordinary game prose. Branding fields are separate from quoted article text.
++Whitespace is collapsed; hostname and branding matching are case-insensitive.
++Inline tag boundaries preserve adjacent characters; block boundaries supply
++word separation. HTTP(S) and protocol-relative URL hostnames are parsed before
++plain-text host tokens, so encoded dots are recognized without treating paths,
++credentials or unrelated longer hostnames as the reserved host. Ordinary media
++text is not a site-branding field; logo/favicon branding is checked separately.
++Known full instruction signatures remain case-sensitive. Both source and
++rendered forms of the shipped code-formatted brand instruction are registered.
++
++Optional `residueSentinels` entries contain only `id`, a non-empty `literal`, and
++`surface: branding | url | public-text`. IDs must be unique and cannot use `core.`.
++They add checks; no regex, executable code, allowlist or disable switch is accepted.
++
++## Required coverage
++
++Source preflight checks active branding/config copy, enabled inventory metadata,
++public source projections, resolved narrative bodies, About/legal payloads and
++registered copied text. Private provenance evidence notes, documentation, tests
++and content not selected by the enabled catalog are excluded. The source reader
++keeps body text while reading the existing content reference; it does not add an
++MDX/YAML parser. FAQ and dynamic fact/tool rendering are covered by their emitted
++HTML/JSON-LD and search output, rather than reparsing source frontmatter or code.
++
++Generated output checks every enabled HTML route, including 404, noindex and
++unlisted emitted pages. It checks decoded visible text and accessible names,
++known branding projections, URL attributes, title/share/meta values, JSON-LD
++strings, robots, sitemap index and sitemap URLs. Existing route reconciliation,
++SEO, legal, identity, media and asset-budget audits continue independently.
++
++Copied textual assets are enumerated only under `public/`. The closed registry
++contains favicon, the configured logo and local media manifest text/SVG files.
++Missing, invalid UTF-8 or unregistered copied text blocks validation/audit. The
++media integration README lives in `docs/media/README.md`, outside public output;
++its historical instruction signature remains registered for regression checks.
++Ordinary dependency bundles, binary media, search binary indexes and WASM are not
++scanned as text.
++
++Pagefind's existing exact 1.5.2 manifest/metadata contract enumerates required
++files. The readable adapter checks declared metadata text, filter options and
++fragment URL/content/title/description/filter/anchor text. Its gzip signature,
++CBOR structures and fragment fields were verified using local real 1.5.2 output.
++Unknown format/version, corrupt bytes, missing declared files or incomplete
++route/document/asset/search coverage fails closed. Upgrading Pagefind requires
++review of this adapter as well as the existing artifact contract.
++
++## Evidence mode
++
++The build orchestrator explicitly passes `--purpose final|evidence` to the same
++last audit stage. Standalone audit defaults to final. Evidence mode downgrades
++only known ordinary brand/domain residue to warnings; instruction/legal residue,
++unsupported identity and coverage failures remain errors. Existing evidence
++marker rules remain in force: marked output cannot pass standalone final audit.
++
++The checker identifies only fixed known signatures and configured literals.
++Partial rewrites, misleading numbers, false popularity claims, unknown contacts,
++game inaccuracies and visual quality still need project acceptance.
+diff --git a/docs/media/README.md b/docs/media/README.md
+new file mode 100644
+index 0000000..c627b1d
+--- /dev/null
++++ b/docs/media/README.md
+@@ -0,0 +1,112 @@
++# Local media — Starter v2.6.5 Documentation-Correction Patch Line
++
++The Starter deliberately ships with an empty `src/data/media/media.json`.
++No media is valid: pages keep their normal text/fact layout without placeholders.
++A broken reference is invalid and fails validation, including references on unpublished pages.
++The V2.6.5 documentation-correction patch line carries forward the released
++and frozen V2.6.3 Phase C D1-D3 media-readiness projection here as deterministic
++validation support for the `GAME_SOP v2.6.5` media lifecycle contract. The historical
++`GAME_SOP v2.6.2` lifecycle and V2.6.2 Phase 1C behavior are baseline provenance
++only.
++
++## Add an asset
++
++1. Obtain human approval for the asset's accuracy, suitability, and usage rights.
++2. Store the reviewed image below `public/media/` and use `/media/...` as its `src`.
++3. Add it once to the manifest's `assets`, then reference its ID from `pages`.
++4. Run `npm run validate`, `npm run check`, and `npm run build`.
++
++The only placements are `hero` (image ID), `gallery` (image IDs), and `trailer`
++(video ID). WikiArticle and EntityDetail consume these mappings by their existing
++Inventory `pageId`. Guide and entity/database hubs consume hero media only.
++`StaticWikiPage.astro` is available for explicit static wiki page inputs and
++fixed placements, but it does not create routes. A mapping cannot create or
++publish a route, enable a feature, or change visibility/indexability.
++
++```json
++{
++  "assets": [
++    {
++      "id": "overview",
++      "type": "image",
++      "src": "/media/overview.webp",
++      "alt": "Describe what this image helps the player understand",
++      "caption": "Optional visible context",
++      "sourceUrl": "https://example.com/replace-with-original-source"
++    }
++  ],
++  "pages": [{ "pageId": "guide.getting-started", "hero": "overview" }]
++}
++```
++
++This is a syntax example, not a supplied asset or approved source. Replace the
++file, description, and source URL with reviewed project material.
++
++## Image contract
++
++- Images must be local files under `public/media/`; remote image URLs, traversal,
++  encoded paths, query strings, fragments, and missing files are rejected.
++- Use a supported image extension: `.png`, `.jpg`, `.jpeg`, `.webp`, `.avif`, `.gif`, `.svg`.
++- `alt` is required. Informative images need descriptive text, not a filename or
++  a generic label such as "image" or "screenshot". Precisely `alt: ""` marks a
++  deliberately decorative image; human review must justify that choice.
++- `sourceUrl` is required HTTPS provenance: the original source of the local file.
++  A valid URL is **not proof of legal usage rights**. Rights records/approval remain
++  in project SOP/research artifacts and human review.
++- Hero images load eagerly; gallery/inline images load lazily. Images scale in
++  their natural aspect ratio without crop variants or manifest dimensions.
++- Optimize file size manually before adoption. The released V2.6.3 baseline
++  still does not process, upload, or transcode media; this limitation
++  is inherited from Starter v2.6.2.
++
++## YouTube contract
++
++Video `src` is an 11-character YouTube ID, not a URL. `alt` supplies the non-empty
++iframe title; `caption` is optional and `sourceUrl` records the source/watch URL.
++The component uses only `https://www.youtube-nocookie.com/embed/<id>`, lazy loading,
++a 16:9 responsive frame, limited permissions and fullscreen support. A visible
++source link remains available when the player is blocked or unavailable.
++
++There is no autoplay, SDK, upload support, arbitrary iframe URL, or build-time
++network/availability probe. YouTube remains a runtime third-party dependency;
++project owners must review privacy, consent, rights, and availability requirements.
++
++## Local video contract
++
++Local video `src` may use `.mp4` or `.webm` under `public/media/`, referenced as
++`/media/...`. The optional `poster` must be a supported local image path under
++the same safe `/media/...` boundary.
++
++```json
++{
++  "id": "gameplay-trailer",
++  "type": "video",
++  "src": "/media/gameplay-trailer.mp4",
++  "poster": "/media/gameplay-trailer-poster.webp",
++  "alt": "Gameplay trailer showing the first route and boss arena",
++  "caption": "Optional visible context",
++  "sourceUrl": "https://example.com/replace-with-original-source"
++}
++```
++
++Native video renders in the standard 16:9 wrapper with controls, `playsinline`,
++and `preload="metadata"`. It does not autoplay and the Starter does not
++transcode, upload, create CDN variants, or define a universal byte limit.
++
++The build audit may print a non-blocking advisory for unusually large local
++video files. Treat it as an implementation-local heuristic only; project media
++budgets and observed delivery behavior remain authoritative.
++
++## Inline content and QA
++
++MDX may import `GameMedia` and pass `mediaCatalog.getAsset("overview")` for inline
++media. Keep page-level placement in the manifest, not Page Inventory/frontmatter.
++Captions render as text, never injected HTML. No media title is added to the
++WikiArticle TOC; the TOC still consumes only the body renderer's H2/H3 headings.
++
++`tests/fixtures/media/` contains clearly synthetic QA illustrations and a test
++manifest. These are not default game content and must not be shipped as game
++screenshots. The generic production manifest remains empty after QA.
++
++Automated checks verify deterministic structure, references and accessible
++markup. They do not judge visual quality, factual appropriateness or copyright.
+diff --git a/scripts/core-safety-sentinels.ts b/scripts/core-safety-sentinels.ts
+new file mode 100644
+index 0000000..18df8e9
+--- /dev/null
++++ b/scripts/core-safety-sentinels.ts
+@@ -0,0 +1,191 @@
++import type { GameConfig } from "../src/config/schema";
++import { attributesFromTag, decodeHtml } from "../src/core/html-audit";
++import type { ContentEntryReference } from "../src/core/page-resolution";
++import { getStaticPageCopy } from "../src/core/static-page-copy";
++import { projectPublicSources } from "../src/core/public-sources";
++import type { PageInventoryEntry } from "../src/data/schemas/page-inventory";
++
++export type ResidueScope = "branding" | "url" | "public-text";
++export interface ResidueSurface { id: string; scope: ResidueScope; text: string }
++export interface ResidueSignals { errors: string[]; warnings: string[]; checked: string[] }
++interface CoreSentinel {
++  id: string;
++  literal: string;
++  surface: ResidueScope;
++  ordinary?: boolean;
++  exact?: boolean;
++}
++
++// Fixed shipped signatures remain detectable after projects replace their source copy.
++export const CORE_SENTINELS = Object.freeze([
++  { id: "core.domain", literal: "gameatlas.example", surface: "url", ordinary: true },
++  { id: "core.brand", literal: "Game Atlas", surface: "branding", ordinary: true },
++  { id: "core.short-name", literal: "Atlas", surface: "branding", ordinary: true, exact: true },
++  { id: "core.social", literal: "@gameatlas", surface: "branding", ordinary: true },
++  { id: "core.setup-title", literal: "How to Configure This Game Site Starter", surface: "public-text" },
++  { id: "core.setup-intro", literal: "This starter keeps publishing decisions separate from prose. Configure those decisions first, then write against a stable page contract.", surface: "public-text" },
++  { id: "core.setup-brand", literal: "Edit `game.config.ts`. Replace the starter name, canonical HTTPS URL, default SEO copy, and social handle. Keep the locale on an English tag such as `en`, `en-US`, or `en-GB` for the global English-market build.", surface: "public-text" },
++  { id: "core.setup-brand-rendered", literal: "Edit game.config.ts. Replace the starter name, canonical HTTPS URL, default SEO copy, and social handle. Keep the locale on an English tag such as en, en-US, or en-GB for the global English-market build.", surface: "public-text" },
++  { id: "core.about-intro", literal: "Game Atlas is a reusable editorial system for answering game questions with less noise and clearer evidence.", surface: "public-text" },
++  { id: "core.legal-notice", literal: "This is starter text, not legal advice. Replace it after qualified legal review for your business, jurisdiction, hosting, analytics, advertising, and data practices.", surface: "public-text" },
++  { id: "core.privacy-intro", literal: "This starter is static by default and does not include accounts, contact forms, behavioral analytics, advertising pixels, or a customer database.", surface: "public-text" },
++  { id: "core.privacy-handling", literal: "The shipped interface does not ask visitors to submit personal information. If you add forms, analytics, advertising, embedded media, or account features, document those systems here before launch.", surface: "public-text" },
++  { id: "core.privacy-hosting", literal: "Your hosting and security providers may process IP addresses, request headers, and diagnostic logs to deliver and protect the site. Identify your actual providers, retention periods, and legal basis.", surface: "public-text" },
++  { id: "core.privacy-links", literal: "Evidence links lead to third-party sites with their own policies. Visiting those services is governed by the destination provider, not this starter.", surface: "public-text" },
++  { id: "core.terms-intro", literal: "These starter terms describe an informational game guide site. They must be adapted to the operator, content rights, monetization, audience, and governing law.", surface: "public-text" },
++  { id: "core.terms-use", literal: "Guides, rankings, and tools are provided for general informational purposes. Game balance, availability, and platform behavior can change after publication.", surface: "public-text" },
++  { id: "core.terms-rights", literal: "Game names and marks belong to their respective owners. Replace this paragraph with the attribution, license, fair-use position, and takedown process appropriate to the real project.", surface: "public-text" },
++  { id: "core.terms-changes", literal: "The operator may correct, update, or remove content as facts change. Add the warranty, liability, dispute, and governing-law provisions required for the production business.", surface: "public-text" },
++  { id: "core.media-readme", literal: "This is a syntax example, not a supplied asset or approved source. Replace the file, description, and source URL with reviewed project material.", surface: "public-text" },
++  { id: "core.logo-name", literal: "Game Atlas logo", surface: "branding", ordinary: true },
++] satisfies CoreSentinel[]);
++
++const normalized = (value: string) => value.replace(/\s+/gu, " ").trim();
++
++function hasExampleDomain(text: string): boolean {
++  let found = false;
++  // URL parsing distinguishes encoded hosts from paths, credentials and suffix lookalikes.
++  const remaining = text.replace(/https?:\/\/[^\s<>"'`]+|(?<![:\w])\/\/[^\s<>"'`]+/gi, (token) => {
++    try {
++      const candidate = token.replace(/[),.;]+$/, "");
++      const hostname = new URL(candidate.startsWith("//") ? `https:${candidate}` : candidate)
++        .hostname.toLowerCase().replace(/\.$/, "");
++      if (hostname === "gameatlas.example" || hostname.endsWith(".gameatlas.example")) found = true;
++      return " ";
++    } catch { return token; }
++  });
++  return found || /(?<![a-z0-9_.-])(?:[a-z0-9-]+\.)*gameatlas\.example(?![a-z0-9_.-])/i.test(remaining);
++}
++
++export function scanResidueSurfaces(
++  surfaces: ResidueSurface[],
++  expectedIds: string[],
++  purpose: "final" | "evidence" = "final",
++  additions: NonNullable<GameConfig["residueSentinels"]> = [],
++): ResidueSignals {
++  const signals: ResidueSignals = { errors: [], warnings: [], checked: [] };
++  if (CORE_SENTINELS.length === 0 || new Set(CORE_SENTINELS.map((entry) => entry.id)).size !== CORE_SENTINELS.length) {
++    signals.errors.push("PP-02 Core sentinel catalog is missing or invalid.");
++  }
++  if (expectedIds.length === 0 || new Set(expectedIds).size !== expectedIds.length || new Set(surfaces.map((surface) => surface.id)).size !== surfaces.length ||
++    JSON.stringify([...expectedIds].sort()) !== JSON.stringify(surfaces.map((surface) => surface.id).sort())) {
++    signals.errors.push("PP-02 required surface coverage is incomplete, duplicated or unregistered.");
++  }
++  for (const surface of surfaces) {
++    if (typeof surface.text !== "string") {
++      signals.errors.push(`PP-02 unreadable required surface: ${surface.id}.`);
++      continue;
++    }
++    const text = normalized(surface.text);
++    for (const entry of [...CORE_SENTINELS, ...additions]) {
++      if (entry.surface !== surface.scope) continue;
++      const literal = normalized(entry.literal);
++      const match = entry.id === "core.domain" ? hasExampleDomain(text)
++        : "exact" in entry && entry.exact ? text.toLowerCase() === literal.toLowerCase()
++        : entry.surface === "branding" ? text.toLowerCase().includes(literal.toLowerCase()) : text.includes(literal);
++      if (!match) continue;
++      const message = `PP-02 ${entry.id} residue on ${surface.id}.`;
++      if (purpose === "evidence" && "ordinary" in entry && entry.ordinary) signals.warnings.push(message);
++      else signals.errors.push(message);
++    }
++    signals.checked.push(surface.id);
++  }
++  return signals;
++}
++
++function strings(value: unknown): string[] {
++  if (typeof value === "string") return [value];
++  if (Array.isArray(value)) return value.flatMap(strings);
++  if (value && typeof value === "object") return Object.values(value).flatMap(strings);
++  return [];
++}
++
++export function projectHtmlResidueSurfaces(id: string, html: string): ResidueSurface[] {
++  const surfaces: ResidueSurface[] = [];
++  const add = (suffix: string, scope: ResidueScope, text: string) => surfaces.push({ id: `${id}:${suffix}`, scope, text });
++  const text = (source: string) => decodeHtml(source
++    .replace(/<\/?(?:address|article|aside|blockquote|br|caption|dd|div|dl|dt|figcaption|figure|footer|h[1-6]|header|hr|li|main|nav|ol|p|pre|section|table|tbody|td|th|thead|tr|ul)\b[^>]*>/gi, " ")
++    .replace(/<[^>]*>/g, ""));
++  const readable = html.replace(/<!--[^]*?-->/g, " ").replace(/<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, " ");
++  add("text", "public-text", text(readable));
++  add("text-urls", "url", text(readable));
++  for (const [index, match] of [...html.matchAll(/<(title|header|footer)\b[^>]*>([^]*?)<\/\1>/gi)].entries()) {
++    add(`brand-${index}`, "branding", text(match[2]));
++    if (["header", "footer"].includes(match[1].toLowerCase())) {
++      for (const [childIndex, child] of [...match[2].matchAll(/<(strong|span)\b([^>]*)>([^]*?)<\/\1>/gi)].entries()) {
++        if (child[1].toLowerCase() === "strong" || attributesFromTag(child[2]).get("class")?.split(/\s+/).includes("eyebrow")) {
++          add(`short-name-${index}-${childIndex}`, "branding", text(child[3]));
++        }
++      }
++    }
++  }
++  for (const [index, match] of [...readable.matchAll(/<[a-z][^>]*>/gi)].entries()) {
++    const attributes = attributesFromTag(match[0]);
++    for (const name of ["href", "src", "action", "poster"]) {
++      if (attributes.has(name)) add(`attr-${index}-${name}`, "url", attributes.get(name)!);
++    }
++    for (const name of ["aria-label", "alt", "title"]) {
++      if (!attributes.has(name)) continue;
++      add(`name-${index}-${name}`, "public-text", attributes.get(name)!);
++      add(`name-url-${index}-${name}`, "url", attributes.get(name)!);
++    }
++    if (match[0].match(/^<meta\b/i)) {
++      const content = attributes.get("content") ?? "";
++      add(`meta-${index}`, "public-text", content);
++      add(`meta-url-${index}`, "url", content);
++      if (["og:site_name", "og:title", "twitter:title", "twitter:site"].includes(attributes.get("property") ?? attributes.get("name") ?? "")) {
++        add(`meta-brand-${index}`, "branding", content);
++      }
++    }
++  }
++  for (const [index, match] of [...html.matchAll(/<script\b([^>]*)>([^]*?)<\/script>/gi)].entries()) {
++    if (attributesFromTag(match[1]).get("type") !== "application/ld+json") continue;
++    const parsed: unknown = JSON.parse(match[2]);
++    for (const [field, value] of strings(parsed).entries()) {
++      add(`json-${index}-${field}`, "public-text", value);
++      add(`json-url-${index}-${field}`, "url", value);
++    }
++    const graph = parsed && typeof parsed === "object" && "@graph" in parsed ? parsed["@graph"] : undefined;
++    if (graph !== undefined && !Array.isArray(graph)) throw new Error("PP-02 unreadable JSON-LD graph.");
++    const nodes = Array.isArray(parsed) ? parsed : graph ?? [parsed];
++    for (const [nodeIndex, node] of nodes.entries()) {
++      if (node && typeof node === "object" && "@type" in node && node["@type"] === "WebSite" && "name" in node && typeof node.name === "string") {
++        add(`json-brand-${index}-${nodeIndex}`, "branding", node.name);
++      }
++    }
++  }
++  return surfaces;
++}
++
++export function collectSourceResidueSignals(input: {
++  config: GameConfig;
++  pages: PageInventoryEntry[];
++  contentEntries: ContentEntryReference[];
++  legalContent: unknown;
++  purpose: "final" | "evidence";
++}): ResidueSignals {
++  const { config, pages, contentEntries, legalContent, purpose } = input;
++  const surfaces: ResidueSurface[] = [];
++  const add = (id: string, scope: ResidueScope, text: string) => surfaces.push({ id, scope, text });
++  for (const [id, value] of Object.entries({ name: config.brand.name, shortName: config.brand.shortName,
++    social: config.social.xHandle ?? "", title: config.seo.defaultTitle, template: config.seo.titleTemplate })) add(`config:${id}`, "branding", value);
++  add("config:site", "url", config.site.url);
++  add("config:copy", "public-text", [config.brand.tagline, config.seo.defaultDescription,
++    ...config.navigation.groups.map((group) => "label" in group ? group.label : "")].join("\n"));
++  add("config:copy-urls", "url", [config.brand.tagline, config.seo.defaultDescription,
++    ...config.navigation.groups.map((group) => "label" in group ? group.label : "")].join("\n"));
++  for (const page of pages) {
++    const copy = [page.title, page.description];
++    if (page.pageType === "about") copy.push(...strings(getStaticPageCopy("about")));
++    if (["privacy", "terms"].includes(page.pageType) && legalContent && typeof legalContent === "object") {
++      copy.push(...strings((legalContent as Record<string, unknown>)[page.pageType]));
++    }
++    const content = contentEntries.find((entry) => entry.data.pageId === page.pageId);
++    if (content?.body !== undefined) copy.push(String(content.body));
++    copy.push(...strings(projectPublicSources(page.sources)));
++    add(`page:${page.pageId}:copy`, "public-text", copy.join("\n"));
++    add(`page:${page.pageId}:urls`, "url", copy.join("\n"));
++    add(`page:${page.pageId}:title`, "branding", page.title);
++  }
++  return scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id), purpose, config.residueSentinels);
++}
+diff --git a/scripts/residue-artifacts.ts b/scripts/residue-artifacts.ts
+new file mode 100644
+index 0000000..cf51f6c
+--- /dev/null
++++ b/scripts/residue-artifacts.ts
+@@ -0,0 +1,133 @@
++import { readFileSync, readdirSync } from "node:fs";
++import { extname, join, relative } from "node:path";
++import { gunzipSync } from "node:zlib";
++
++import type { GameConfig } from "../src/config/schema";
++import { PAGEFIND_VERSION, readPagefindCbor, type PagefindArtifactReport } from "../src/core/pagefind-artifacts";
++import { projectHtmlResidueSurfaces, scanResidueSurfaces, type ResidueSignals, type ResidueSurface } from "./core-safety-sentinels";
++
++const utf8 = new TextDecoder("utf-8", { fatal: true });
++const textExtensions = new Set([".svg", ".txt", ".md", ".json", ".xml", ".html", ".csv"]);
++
++export function collectCopiedTextResidueSignals(input: {
++  publicDirectory: string;
++  readDirectory: string;
++  config: GameConfig;
++  mediaAssets: Array<{ src: string; poster?: string }>;
++  purpose: "final" | "evidence";
++}): ResidueSignals {
++  const registry = new Set(["favicon.svg", input.config.brand.logoPath?.replace(/^\//, ""),
++    ...input.mediaAssets.flatMap(({ src, poster }) => [src, poster]).filter((path): path is string => Boolean(path?.startsWith("/")))
++      .map((path) => path.slice(1))].filter((path): path is string => Boolean(path) && textExtensions.has(extname(path!))));
++  const errors: string[] = [];
++  const surfaces: ResidueSurface[] = [];
++  const expected: string[] = [];
++  // Inventory only copied public text, never dependency code or arbitrary dist bundles.
++  const walk = (directory: string) => {
++    for (const entry of readdirSync(directory, { withFileTypes: true })) {
++      const path = join(directory, entry.name);
++      if (entry.isDirectory()) walk(path);
++      else if (textExtensions.has(extname(entry.name))) {
++        const name = relative(input.publicDirectory, path).split("\\").join("/");
++        if (!entry.isFile() || !registry.has(name)) errors.push(`PP-02 unregistered copied public text: ${name}.`);
++      }
++    }
++  };
++  try { walk(input.publicDirectory); }
++  catch (error) { errors.push(`PP-02 public text inventory unreadable: ${String(error)}.`); }
++  for (const path of registry) {
++    const isBrandAsset = path === "favicon.svg" || path === input.config.brand.logoPath?.slice(1);
++    for (const scope of ["public-text", "url", "branding"] as const) expected.push(`asset:${path}:${scope}`);
++    try {
++      const source = utf8.decode(readFileSync(join(input.readDirectory, path)));
++      if (path.endsWith(".svg")) {
++        const projected = projectHtmlResidueSurfaces(`asset:${path}`, source);
++        const readable = projected.filter(({ scope }) => scope === "public-text").map(({ text }) => text).join("\n");
++        const urls = projected.filter(({ scope }) => scope === "url").map(({ text }) => text).join("\n");
++        for (const scope of ["public-text", "url", "branding"] as const) surfaces.push({
++          id: `asset:${path}:${scope}`, scope, text: scope === "url" ? urls : scope === "branding" && !isBrandAsset ? "" : readable,
++        });
++      } else {
++        for (const scope of ["public-text", "url", "branding"] as const) surfaces.push({ id: `asset:${path}:${scope}`, scope, text: scope === "branding" && !isBrandAsset ? "" : source });
++      }
++    } catch (error) { errors.push(`PP-02 required copied text unreadable: ${path}: ${String(error)}.`); }
++  }
++  const result = scanResidueSurfaces(surfaces, expected, input.purpose, input.config.residueSentinels);
++  result.errors.unshift(...errors);
++  return result;
++}
++
++export function projectPagefindResidueSurfaces(path: string, source: Uint8Array): ResidueSurface[] {
++  const values: Array<{ scope: ResidueSurface["scope"]; text: string }> = [];
++  const add = (scope: ResidueSurface["scope"], text: string) => values.push({ scope, text });
++  if (path.endsWith(".pf_fragment")) {
++    const decoded = gunzipSync(source);
++    if (utf8.decode(decoded.subarray(0, 12)) !== "pagefind_dcd") throw new Error("Pagefind fragment signature missing");
++    const data: unknown = JSON.parse(utf8.decode(decoded.subarray(12)));
++    if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("Pagefind fragment is not an object");
++    const record = data as Record<string, unknown>;
++    if (Object.keys(record).sort().join() !== "anchors,content,filters,meta,url,word_count" ||
++      typeof record.url !== "string" || typeof record.content !== "string" || !Number.isInteger(record.word_count) ||
++      !Array.isArray(record.anchors)) throw new Error("Pagefind 1.5.2 fragment fields changed");
++    add("url", record.url);
++    add("public-text", record.content);
++    add("url", record.content);
++    for (const field of ["meta", "filters"] as const) {
++      const fields = record[field];
++      if (!fields || typeof fields !== "object" || Array.isArray(fields)) throw new Error(`Pagefind ${field} invalid`);
++      for (const [key, value] of Object.entries(fields)) {
++        const texts = field === "filters" && Array.isArray(value) ? value : [value];
++        if (texts.some((text) => typeof text !== "string")) throw new Error(`Pagefind ${field} text invalid`);
++        for (const text of texts as string[]) { add("public-text", text); add("url", text); if (key === "title") add("branding", text); }
++      }
++    }
++    for (const anchor of record.anchors) {
++      if (!anchor || typeof anchor !== "object" || Object.keys(anchor).sort().join() !== "element,id,location,text" ||
++        typeof anchor.text !== "string" || typeof anchor.id !== "string" || typeof anchor.element !== "string" ||
++        !Number.isInteger(anchor.location)) throw new Error("Pagefind anchor fields changed");
++      add("public-text", anchor.text); add("url", anchor.text);
++    }
++  } else if (path.endsWith(".pf_meta")) {
++    const metadata = readPagefindCbor(source);
++    if (!Array.isArray(metadata) || metadata.length !== 6 || metadata[0] !== PAGEFIND_VERSION) throw new Error("Pagefind metadata contract changed");
++    const filters = metadata[3]; const sorts = metadata[4]; const fields = metadata[5];
++    if (!Array.isArray(filters) || !Array.isArray(sorts) || !Array.isArray(fields)) throw new Error("Pagefind metadata collections invalid");
++    for (const declaration of [...filters, ...sorts]) {
++      if (!Array.isArray(declaration) || typeof declaration[0] !== "string") throw new Error("Pagefind declaration invalid");
++      add("public-text", declaration[0]); add("url", declaration[0]);
++    }
++    for (const field of fields) { if (typeof field !== "string") throw new Error("Pagefind meta field invalid"); add("public-text", field); add("url", field); }
++  } else if (path.endsWith(".pf_filter")) {
++    const filter = readPagefindCbor(source);
++    if (!Array.isArray(filter) || filter.length !== 2 || typeof filter[0] !== "string" || !Array.isArray(filter[1])) throw new Error("Pagefind filter contract changed");
++    add("public-text", filter[0]); add("url", filter[0]);
++    for (const option of filter[1]) {
++      if (!Array.isArray(option) || option.length !== 2 || typeof option[0] !== "string" || !Array.isArray(option[1]) ||
++        option[1].some((page) => !Number.isInteger(page) || Number(page) < 0)) throw new Error("Pagefind filter option invalid");
++      add("public-text", option[0]); add("url", option[0]);
++    }
++  } else throw new Error("Unregistered Pagefind text artifact");
++  // A row is required even when the supported artifact has no optional metadata values.
++  if (values.length === 0) add("public-text", "");
++  return values.map((value, index) => ({ ...value, id: `pagefind:${path}:${index}` }));
++}
++
++export function collectPagefindResidueSignals(input: {
++  directory: string; report: PagefindArtifactReport; config: GameConfig; purpose: "final" | "evidence";
++}): ResidueSignals {
++  const errors: string[] = [...input.report.errors];
++  const checked: string[] = [];
++  const surfaces: ResidueSurface[] = [];
++  const expected = input.report.requiredFiles.filter((path) => /\.pf_(?:meta|fragment|filter)$/.test(path));
++  if (input.report.version !== PAGEFIND_VERSION || expected.length === 0) errors.push("PP-02 Pagefind readable coverage unavailable.");
++  for (const path of expected) {
++    try {
++      surfaces.push(...projectPagefindResidueSurfaces(path, readFileSync(join(input.directory, path))));
++      checked.push(path);
++    } catch (error) { errors.push(`PP-02 Pagefind required text unreadable: ${path}: ${String(error)}.`); }
++  }
++  const result = scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id), input.purpose, input.config.residueSentinels);
++  if (JSON.stringify(checked.sort()) !== JSON.stringify(expected.sort())) errors.push("PP-02 Pagefind required text coverage incomplete.");
++  result.errors.unshift(...errors);
++  return result;
++}
+diff --git a/tests/core-safety-sentinels.test.ts b/tests/core-safety-sentinels.test.ts
+new file mode 100644
+index 0000000..8414859
+--- /dev/null
++++ b/tests/core-safety-sentinels.test.ts
+@@ -0,0 +1,130 @@
++import { spawnSync } from "node:child_process";
++import { gzipSync } from "node:zlib";
++import { writeFileSync } from "node:fs";
++import { join } from "node:path";
++import { describe, expect, it } from "vitest";
++
++import gameConfig from "../game.config";
++import { gameConfigSchema } from "../src/config/schema";
++import { CORE_SENTINELS, projectHtmlResidueSurfaces, scanResidueSurfaces } from "../scripts/core-safety-sentinels";
++import { collectCopiedTextResidueSignals, projectPagefindResidueSurfaces } from "../scripts/residue-artifacts";
++import { adoptFixtureConfig, createCoreBuildFixture, cleanupCoreBuildFixture } from "./helpers/core-build-fixture";
++
++describe("PP-02 adoption boundary", () => {
++  it("rejects the unadopted shipped example in final validation", () => {
++    const result = spawnSync("npm", ["run", "validate"], {
++      encoding: "utf8",
++      env: { ...process.env, NODE_ENV: "production" },
++      timeout: 30_000,
++    });
++    expect(result.error).toBeUndefined();
++    expect(result.status, `${result.stdout}\n${result.stderr}`).not.toBe(0);
++    expect(`${result.stdout}\n${result.stderr}`).toMatch(/PP-02/);
++  });
++
++  it("accepts only additive literals in predefined scopes", () => {
++    expect(gameConfigSchema.safeParse({
++      ...gameConfig,
++      residueSentinels: [{ id: "project.old-domain", literal: "old-game.example", surface: "url" }],
++    }).success).toBe(true);
++    for (const entry of [
++      { id: "core.brand", literal: "old-game", surface: "branding" },
++      { id: "project.old", literal: "", surface: "public-text" },
++      { id: "project.old", literal: " \n\t ", surface: "public-text" },
++      { id: "project.old", literal: "old-game", surface: "bundle" },
++      { id: "project.old", literal: "old-game", surface: "url", disable: true },
++    ]) {
++      expect(gameConfigSchema.safeParse({ ...gameConfig, residueSentinels: [entry] }).success).toBe(false);
++    }
++  });
++});
++
++describe("PP-02 closed literal catalog", () => {
++  it.each(CORE_SENTINELS)("detects fixed signature $id after whitespace normalization", (entry) => {
++    const surfaces = [{ id: "sample", scope: entry.surface, text: entry.literal.replaceAll(" ", "\n\t") }];
++    expect(scanResidueSurfaces(surfaces, ["sample"]).errors).toContain(`PP-02 ${entry.id} residue on sample.`);
++  });
++
++  it.each(["https://gameatlas.example/", "https://docs.GAMEATLAS.example/", "Visit gameatlas.example for details"])("detects the reserved host: %s", (text) => {
++    expect(scanResidueSurfaces([{ id: "url", scope: "url", text }], ["url"]).errors).not.toEqual([]);
++  });
++
++  it.each(["https://notgameatlas.example/", "https://gameatlas.example.other.invalid/", "https://gameatlas.example-name.test/"])("allows host lookalikes: %s", (text) => {
++    expect(scanResidueSurfaces([{ id: "url", scope: "url", text }], ["url"]).errors).toEqual([]);
++  });
++
++  it("allows ordinary words, article quotations and short-name substrings", () => {
++    const surfaces = [{ id: "copy", scope: "public-text" as const, text: "Game Atlas called this an Atlas. Add item. Replace item. TODO: review." },
++      { id: "title", scope: "branding" as const, text: "Atlas Beetle Guide" }];
++    expect(scanResidueSurfaces(surfaces, ["copy", "title"]).errors).toEqual([]);
++  });
++
++  it("fails closed on missing, duplicate and unexpected coverage", () => {
++    const surface = { id: "one", scope: "public-text" as const, text: "Clean copy" };
++    for (const [surfaces, expected] of [[[], ["one"]], [[surface, surface], ["one"]], [[surface], []]] as const) {
++      expect(scanResidueSurfaces([...surfaces], [...expected]).errors.join()).toMatch(/coverage/);
++    }
++  });
++
++  it("limits evidence warnings to ordinary samples", () => {
++    const surfaces = CORE_SENTINELS.map((entry) => ({ id: entry.id, scope: entry.surface, text: entry.literal }));
++    const result = scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id), "evidence");
++    expect(result.warnings.join()).toMatch(/core.brand/);
++    expect(result.errors.join()).toMatch(/core.legal-notice/);
++    expect(result.errors.join()).toMatch(/core.setup-intro/);
++    expect(result.errors.join()).not.toMatch(/core.domain residue/);
++  });
++
++  it("checks decoded text, numeric entities, split elements, head metadata and JSON-LD", () => {
++    const surfaces = projectHtmlResidueSurfaces("/404.html", `<html><head><title>Field Notes</title><meta property="og:site_name" content="Game&#32;Atlas"><link rel="canonical" href="https://gameatlas&#46;example/404.html"><script type="application/ld+json">{"@type":"WebSite","name":"Game Atlas","url":"https://gameatlas.example"}</script></head><body><p>How to Configure <b>This Game</b> Site Starter</p></body></html>`);
++    const result = scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id));
++    expect(result.errors.join()).toMatch(/core.setup-title/);
++    expect(result.errors.join()).toMatch(/core.brand/);
++    expect(result.errors.join()).toMatch(/core.domain/);
++  });
++
++  it("does not turn implementation code or comments into public copy", () => {
++    const surfaces = projectHtmlResidueSurfaces("/", `<title>Field Notes</title><!-- Game Atlas --><script>const text = "How to Configure This Game Site Starter";</script><style>.GameAtlas{}</style><p>Game Atlas is quoted.</p>`);
++    expect(scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id)).errors).toEqual([]);
++  });
++
++  it("reads only the confirmed Pagefind 1.5.2 fragment fields", () => {
++    const fragment = { url: "/guide/", content: "How to Configure This Game Site Starter", word_count: 8,
++      filters: { category: ["Guides"] }, meta: { title: "Game Atlas", description: "A guide" }, anchors: [] };
++    const bytes = (value: unknown) => gzipSync(Buffer.from(`pagefind_dcd${JSON.stringify(value)}`));
++    const surfaces = projectPagefindResidueSurfaces("fragment/en_a.pf_fragment", bytes(fragment));
++    expect(scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id)).errors.join()).toMatch(/core.setup-title/);
++    expect(scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id)).errors.join()).toMatch(/core.brand/);
++    expect(() => projectPagefindResidueSurfaces("fragment/en_a.pf_fragment", bytes({ ...fragment, future: true }))).toThrow(/fields changed/);
++    expect(() => projectPagefindResidueSurfaces("fragment/en_a.pf_fragment", new Uint8Array([0, 1]))).toThrow();
++  });
++
++  it.each([
++    '<p>How to Configure This Game Site <span>Start</span>er</p>',
++    '<p>How to Configure This <em>Game Site</em> Starter</p>',
++    '<header><span class="brand__copy"><strong>At<span>la</span>s</strong></span></header>',
++    '<a href="https://gameatlas%2eexample/path">A link</a>',
++    '<a href="//docs.gameatlas%2eexample/path">A link</a>',
++  ])("detects rendered inline text and parsed encoded host: %s", (html) => {
++    const surfaces = projectHtmlResidueSurfaces("/", html);
++    expect(scanResidueSurfaces(surfaces, surfaces.map(({ id }) => id)).errors).not.toEqual([]);
++  });
++
++  it.each([
++    "https://gameatlas.example%2eother.invalid/",
++    "https://gameatlas.example@field-notes.example/",
++    "https://field-notes.example/gameatlas.example/",
++  ])("does not mistake URL paths, credentials or encoded host suffixes for the reserved host: %s", (text) => {
++    expect(scanResidueSurfaces([{ id: "url", scope: "url", text }], ["url"]).errors).toEqual([]);
++  });
++
++  it("allows a brand quotation in registered media text without treating it as site branding", () => {
++    const root = createCoreBuildFixture("starter-pp02-media-quote-");
++    try {
++      writeFileSync(join(root, "public/media/quote.svg"), '<svg xmlns="http://www.w3.org/2000/svg"><text>Game Atlas is quoted as a reference.</text></svg>');
++      const result = collectCopiedTextResidueSignals({ publicDirectory: join(root, "public"), readDirectory: join(root, "public"),
++        config: adoptFixtureConfig(gameConfig), mediaAssets: [{ src: "/media/quote.svg" }], purpose: "final" });
++      expect(result.errors).toEqual([]);
++    } finally { cleanupCoreBuildFixture(root); }
++  });
++});
+diff --git a/tests/residue-build.test.ts b/tests/residue-build.test.ts
+new file mode 100644
+index 0000000..858f036
+--- /dev/null
++++ b/tests/residue-build.test.ts
+@@ -0,0 +1,119 @@
++import { spawnSync } from "node:child_process";
++import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
++import { join } from "node:path";
++import { gzipSync, gunzipSync } from "node:zlib";
++import { afterAll, beforeAll, describe, expect, it } from "vitest";
++
++import gameConfig from "../game.config";
++import { CORE_SENTINELS } from "../scripts/core-safety-sentinels";
++import { createCoreBuildFixture, cleanupCoreBuildFixture, runFixtureNpm, writeFixtureGameConfigSource } from "./helpers/core-build-fixture";
++
++let root: string;
++const instruction = CORE_SENTINELS.find(({ id }) => id === "core.setup-title")!.literal;
++const audit = () => spawnSync("npm", ["exec", "--", "tsx", "scripts/audit-build.ts"], {
++  cwd: root, encoding: "utf8", env: { ...process.env, NODE_ENV: "production" }, timeout: 30_000,
++});
++
++beforeAll(() => {
++  root = createCoreBuildFixture("starter-pp02-build-");
++  const build = runFixtureNpm(root, "build");
++  expect(build.status, `${build.stdout}\n${build.stderr}`).toBe(0);
++}, 60_000);
++afterAll(() => { if (root) cleanupCoreBuildFixture(root); });
++
++describe("PP-02 real generated output", () => {
++  it("does not ship private media instructions", () => {
++    expect(() => readFileSync(join(root, "dist/media/README.md"))).toThrow();
++    expect(runFixtureNpm(root, "validate").status).toBe(0);
++  });
++
++  it.each([
++    { path: "404.html", mutate: (text: string) => text.replace("</body>", `<p>${instruction}</p></body>`) },
++    { path: "404.html", mutate: (text: string) => text.replace("</body>", '<p>How to Configure This Game Site <span>Start</span>er</p></body>') },
++    { path: "index.html", mutate: (text: string) => text.replace("</body>", '<a href="https://gameatlas%2eexample/path">An external link</a></body>') },
++    { path: "index.html", mutate: (text: string) => text.replace("</head>", `<meta name="description" content="${instruction}"></head>`) },
++    { path: "about/index.html", mutate: (text: string) => text.replace("</head>", `<script type="application/ld+json">{"@type":"Thing","description":"${instruction}"}</script></head>`) },
++    { path: "robots.txt", mutate: (text: string) => `${text}\n# https://gameatlas.example/\n` },
++    { path: "sitemap-index.xml", mutate: (text: string) => text.replace("field-notes.example", "gameatlas.example") },
++    { path: "sitemap-0.xml", mutate: (text: string) => text.replace("field-notes.example", "gameatlas.example") },
++    { path: "logo.svg", mutate: (text: string) => text.replace("</svg>", `<text>${instruction}</text></svg>`) },
++    { path: "favicon.svg", mutate: (text: string) => text.replace("</svg>", `<text>${instruction}</text></svg>`) },
++  ])("rejects stale residue in $path while source is clean", ({ path, mutate }) => {
++    const file = join(root, "dist", path);
++    const clean = readFileSync(file, "utf8");
++    const seeded = mutate(clean);
++    expect(seeded).not.toBe(clean);
++    try {
++      writeFileSync(file, seeded);
++      const result = audit();
++      expect(result.status).not.toBe(0);
++      expect(`${result.stdout}\n${result.stderr}`).toMatch(/PP-02/);
++    } finally { writeFileSync(file, clean); }
++  });
++
++  it("accepts an unrelated percent-encoded hostname in otherwise clean output", () => {
++    const file = join(root, "dist/index.html");
++    const clean = readFileSync(file, "utf8");
++    try {
++      writeFileSync(file, clean.replace("</body>", '<a href="https://gameatlas.example%2eother.invalid/">An external reference</a></body>'));
++      const result = audit();
++      expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
++    } finally { writeFileSync(file, clean); }
++  });
++
++  it("rejects a seeded search fragment and missing required search bytes", () => {
++    const directory = join(root, "dist/pagefind/fragment");
++    const file = join(directory, readdirSync(directory)[0]);
++    const clean = readFileSync(file);
++    try {
++      const decoded = gunzipSync(clean);
++      const data = JSON.parse(decoded.subarray(12).toString("utf8"));
++      data.meta.title = instruction;
++      writeFileSync(file, gzipSync(Buffer.from(`pagefind_dcd${JSON.stringify(data)}`)));
++      const seeded = audit();
++      expect(seeded.status).not.toBe(0);
++      expect(`${seeded.stdout}\n${seeded.stderr}`).toMatch(/PP-02.*pagefind/);
++      rmSync(file);
++      expect(audit().status).not.toBe(0);
++    } finally { writeFileSync(file, clean); }
++  });
++
++  it("fails closed when required copied text is unreadable or unregistered", () => {
++    const favicon = join(root, "dist/favicon.svg");
++    const clean = readFileSync(favicon);
++    try {
++      writeFileSync(favicon, new Uint8Array([0xff]));
++      expect(`${audit().stderr}`).toMatch(/PP-02.*unreadable/);
++      rmSync(favicon);
++      expect(audit().status).not.toBe(0);
++    } finally { writeFileSync(favicon, clean); }
++    const copied = join(root, "public/copied-instructions.txt");
++    try {
++      writeFileSync(copied, "Ordinary text still needs an explicit public asset registration.");
++      const result = runFixtureNpm(root, "validate");
++      expect(result.status).not.toBe(0);
++      expect(result.stderr).toMatch(/unregistered copied public text/);
++    } finally { rmSync(copied); }
++  });
++
++  it("excludes private notes but blocks ordinary sample branding only in final mode", () => {
++    const configPath = join(root, "game.config.ts");
++    const clean = readFileSync(configPath);
++    mkdirSync(join(root, "docs"), { recursive: true });
++    writeFileSync(join(root, "docs/private-notes.md"), instruction);
++    try {
++      writeFixtureGameConfigSource(root, JSON.stringify(gameConfig));
++      expect(runFixtureNpm(root, "validate").status).not.toBe(0);
++      const evidence = runFixtureNpm(root, "build:evidence");
++      expect(evidence.status, `${evidence.stdout}\n${evidence.stderr}`).toBe(0);
++      expect(evidence.stderr).toMatch(/Warning: PP-02 core.brand/);
++      expect(audit().status).not.toBe(0);
++      const guide = join(root, "src/content/guides/getting-started.mdx");
++      const cleanGuide = readFileSync(guide);
++      try {
++        writeFileSync(guide, `---\npageId: guide.getting-started\n---\n${instruction}\n`);
++        expect(runFixtureNpm(root, "build:evidence").status).not.toBe(0);
++      } finally { writeFileSync(guide, cleanGuide); }
++    } finally { writeFileSync(configPath, clean); }
++  }, 60_000);
++});

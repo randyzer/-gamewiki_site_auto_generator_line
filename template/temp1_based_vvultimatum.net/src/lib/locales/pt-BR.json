@@ -1,0 +1,365 @@
+{
+  "nav": [
+    "Raças",
+    "Chefes",
+    "Guias",
+    "Códigos",
+    "Ranking",
+    "Atualizações"
+  ],
+  "home": "Início",
+  "raceTitle": "Visão geral das raças",
+  "raceGuides": "Guias de raças",
+  "preview": "Prévia",
+  "read": "Leia mais",
+  "fan": "Wiki feita pela comunidade",
+  "open": "Abrir menu",
+  "close": "Fechar menu",
+  "categoriesOpen": "Abrir todas as categorias",
+  "categoriesClose": "Fechar categorias",
+  "theme": "Mudar para tema claro",
+  "darkTheme": "Mudar para tema escuro",
+  "ad": "Espaço publicitário · Prévia",
+  "heroDescription": "Um modelo independente de guias para explorar o combate espiritual. Compare caminhos de personagem, prepare o próximo encontro e reúna suas notas de progressão em uma referência da comunidade.",
+  "badges": [
+    "🎮 Guia comunitário",
+    "🔄 Atualizado 12 out.",
+    "⚔️ 3 caminhos",
+    "📈 Progressão",
+    "✨ Plano de habilidades"
+  ],
+  "actions": [
+    "Guia para iniciantes",
+    "Comparar raças",
+    "Ver registro de códigos"
+  ],
+  "latest": "Notas recentes do jogo",
+  "minor": "Nota",
+  "allUpdates": "Ver todas as notas",
+  "updates": [
+    "Planejamento de raça: prepare seu primeiro personagem de espada e um caminho equilibrado de habilidades",
+    "Checklist de equipamento: compare sua configuração antes do próximo encontro de progressão",
+    "Modelo comunitário: registre requisitos e separe informações confirmadas das perguntas em aberto"
+  ],
+  "start": "Comece aqui",
+  "journey": "Sua jornada pelo Spirit Atlas",
+  "steps": [
+    [
+      "Aprenda o básico",
+      "Pratique movimento, comandos de combate e notas úteis desde a primeira sessão."
+    ],
+    [
+      "Escolha sua raça",
+      "Explore Shinigami, Quincy e Hollow antes de definir seu caminho de personagem."
+    ],
+    [
+      "Organize seu caminho",
+      "Planeje os marcos desde a primeira arma até as habilidades mais avançadas."
+    ],
+    [
+      "Prepare seu equipamento",
+      "Compare itens, habilidades e anotações próprias antes de investir recursos."
+    ]
+  ],
+  "popular": "Páginas populares",
+  "trending": "Em alta agora",
+  "previous": "Anterior",
+  "next": "Próximo",
+  "page": "Página",
+  "trendingCards": [
+    [
+      "Guia para iniciantes",
+      "Uma lista inicial de movimento, primeiros encontros e sistemas de progressão."
+    ],
+    [
+      "Registro de códigos",
+      "Um lugar para recompensas verificadas, instruções de resgate e datas de revisão."
+    ],
+    [
+      "Banco de equipamentos",
+      "Planeje os espaços do personagem com notas claras sobre atributos e fontes."
+    ],
+    [
+      "Qual raça combina com você?",
+      "Compare três identidades de combate e encontre um caminho para seu jeito de jogar."
+    ],
+    [
+      "Ascensão e jogo avançado",
+      "Uma lista prática de melhorias duradouras e marcos de desenvolvimento."
+    ],
+    [
+      "Guia de santuários",
+      "Compare opções de habilidades antes de investir recursos na próxima configuração."
+    ],
+    [
+      "Eventos de facção e incursões",
+      "Prepare equipamento coordenado e uma lista para o próximo encontro em grupo."
+    ],
+    [
+      "Chefes e recompensas",
+      "Reúna rotas, preparação e um espaço para recompensas confirmadas."
+    ],
+    [
+      "Melhores configurações",
+      "Organize atributos, combinações de habilidades e equipamento para cada estilo."
+    ],
+    [
+      "Ranking de Shikai",
+      "Prévia editorial para comparar habilidades de espada e suas vantagens práticas."
+    ],
+    [
+      "Banco de armas",
+      "Uma referência de alcance, ritmo de ataque e notas sobre o manejo de armas."
+    ]
+  ],
+  "chips": [
+    "Progressão Hollow",
+    "Subir de nível",
+    "Amuletos espirituais",
+    "Guias de chefes"
+  ],
+  "aboutTitle": "O que é Spirit Atlas?",
+  "about": [
+    "Spirit Atlas é um modelo independente de guias para combate com espadas, habilidades espirituais e progressão de personagens. Seus três caminhos de raça oferecem um lugar comum para comparar combate próximo, encontros à distância e formas evolutivas. A estrutura reúne planejamento de rotas e páginas de referência legíveis em uma apresentação consistente.",
+    "Se você prepara seu primeiro personagem de espada, compara um caminho à distância ou acompanha uma evolução, a estrutura ajuda a registrar o que importa. O artigo de demonstração usa conteúdo editorial original de exemplo. Confira os requisitos dentro do jogo antes de usar estas notas para tomar decisões de progressão."
+  ],
+  "facts": [
+    [
+      "PROJETO",
+      "Spirit Atlas"
+    ],
+    [
+      "FORMATO",
+      "Wiki comunitária"
+    ],
+    [
+      "GÊNERO",
+      "RPG de combate"
+    ],
+    [
+      "CAMINHOS",
+      "3"
+    ],
+    [
+      "CONTEÚDO",
+      "Notas originais"
+    ],
+    [
+      "TIPO DE GUIA",
+      "Progressão"
+    ],
+    [
+      "STATUS",
+      "Modelo"
+    ]
+  ],
+  "snapshot": "Modelo editorial · 12 de outubro de 2026",
+  "exploreAll": "Explorar todos os guias",
+  "exploreTitle": "Explore a wiki",
+  "exploreDescription": "Notas de progresso, referências e rotas para sua próxima sessão.",
+  "exploreCards": [
+    [
+      "Guias de raças",
+      "Compare espada, distância e evolução com referências organizadas de progresso."
+    ],
+    [
+      "Estratégias de chefes",
+      "Preparação, padrões de encontro e espaço para recompensas verificadas."
+    ],
+    [
+      "Otimizar configurações",
+      "Planeje atributos, combinações de habilidades e equipamento para seu estilo."
+    ],
+    [
+      "Guias de áreas",
+      "Organize rotas, lugares úteis e as próximas áreas a visitar."
+    ],
+    [
+      "Banco de clãs",
+      "Uma referência para comparar bônus de personagem e escolhas de clã."
+    ],
+    [
+      "Códigos ativos",
+      "Reúna revisões com data e instruções claras para resgatar recompensas."
+    ],
+    [
+      "Mecânicas de combate",
+      "Registre bloqueio, aparos, movimento e o ritmo dos encontros."
+    ],
+    [
+      "Caminhos de progressão",
+      "Crie uma sequência clara de marcos para cada personagem."
+    ],
+    [
+      "Ranking de características",
+      "Compare vantagens, limitações e combinações úteis."
+    ]
+  ],
+  "faqTitle": "Perguntas frequentes",
+  "faqDescription": "Respostas rápidas sobre este modelo comunitário.",
+  "faqs": [
+    [
+      "O que é Spirit Atlas?",
+      "Spirit Atlas é uma demonstração independente de um guia da comunidade. Inclui navegação de raças e um artigo original de planejamento Shinigami, com modelos compartilhados em cinco idiomas. As outras páginas aparecem como prévias. Não é apresentado como um banco de dados atual e verificado do jogo."
+    ],
+    [
+      "Qual raça devo escolher?",
+      "Comece pelo seu estilo de combate favorito. A visão geral leva ao artigo completo de planejamento Shinigami."
+    ],
+    [
+      "Existem códigos neste modelo?",
+      "A área de códigos é uma prévia editorial. Nenhum exemplo é apresentado como código ativo."
+    ],
+    [
+      "Como preparo uma habilidade?",
+      "Registre os requisitos atuais e pratique movimento, equipamento e encontros antes do marco."
+    ],
+    [
+      "Posso mudar de raça?",
+      "Confira a interface atual e as instruções oficiais antes de gastar recursos ou reiniciar."
+    ],
+    [
+      "Como registro o progresso?",
+      "Anote seu marco, próximos passos e a data em que verificou cada requisito."
+    ],
+    [
+      "Devo evoluir meu Hollow?",
+      "Confira primeiro as consequências no jogo. Uma prévia não é uma recomendação verificada."
+    ],
+    [
+      "O guia funciona no celular?",
+      "Sim. Os mesmos modelos se adaptam às telas pequenas com navegação expansível."
+    ]
+  ],
+  "ctaTitle": "Uma rota para a próxima sessão?",
+  "ctaDescription": "Da escolha de personagem à preparação do próximo encontro, reúna suas notas em um guia comunitário claro e consistente.",
+  "cta": "Ler o guia Shinigami",
+  "play": "Link do jogo · Prévia",
+  "raceDescription": "Escolha seu caminho: Shinigami, Quincy ou Hollow. Compare identidades de combate, marcos e o desenvolvimento de cada personagem.",
+  "raceIntro": "A raça é o ponto de partida de um plano de personagem. Shinigami se concentra em combate com espada e uma arma espiritual; Quincy oferece uma identidade à distância; Hollow se organiza em torno de formas evolutivas. Esta visão geral reúne esses caminhos para comparar os encontros e os marcos que você deseja explorar. Abaixo há um artigo original completo de planejamento. As outras entradas são prévias editoriais e não abrem artigos inacabados nem afirmam mecanismos verificados da versão atual.",
+  "raceWarningTitle": "⚠️ Mudar o caminho do personagem",
+  "raceWarning": "Antes de reiniciar ou mudar de facção, confira os requisitos atuais e os recursos envolvidos. Registre as habilidades e os itens que podem ser perdidos. Este modelo não afirma limites atuais de mudança nem números de jogadores. As prévias reservam espaço para futuros guias verificados; use informações oficiais ao tomar decisões permanentes.",
+  "raceCards": [
+    [
+      "Guia Shinigami",
+      "Planejamento de arma espiritual, prática de espada e um caminho de Soul Reaper."
+    ],
+    [
+      "Guia Quincy",
+      "Preparação à distância, armas espirituais e progresso de habilidades."
+    ],
+    [
+      "Guia Hollow",
+      "Formas evolutivas, marcos e planejamento de características."
+    ],
+    [
+      "Escolher a melhor raça",
+      "Compare três identidades de combate e encontre o caminho para seu estilo."
+    ],
+    [
+      "Guia Vastocar",
+      "Uma referência de evolução para o caminho Hollow avançado."
+    ],
+    [
+      "Guia Arrancar",
+      "Remoção da máscara, planejamento de armas e próximos marcos."
+    ]
+  ],
+  "wiki": "Navegação da wiki",
+  "sidebar": [
+    "Primeiros passos",
+    "Raças",
+    "Chefes",
+    "Mapas e áreas",
+    "Clãs",
+    "Equipamento e habilidades",
+    "Sistemas e itens",
+    "Provas",
+    "Fabricação",
+    "Rankings",
+    "Progressão",
+    "Códigos",
+    "Atualizações"
+  ],
+  "overview": "Visão geral",
+  "codeTitle": "Registro de códigos",
+  "codeNote": "Nenhum código verificado",
+  "codeBody": "Registre fonte, recompensas e data antes de adicionar um código ativo.",
+  "allCodes": "Ver todos os códigos",
+  "sidebarAbout": "Um modelo independente de combate e progressão. Três caminhos, referências claras e conteúdo editorial original.",
+  "disclaimer": "WIKI NÃO OFICIAL. FEITA POR JOGADORES, PARA JOGADORES.",
+  "footerAbout": "Spirit Atlas é um modelo comunitário independente sobre caminhos de personagem, preparação de encontros, configurações e notas práticas para jogadores novos e experientes.",
+  "footerHeadings": [
+    "Links rápidos",
+    "Guias",
+    "Legal",
+    "Mais jogos"
+  ],
+  "footerLinks": [
+    [
+      "Site do jogo",
+      "Servidor da comunidade",
+      "Canal de vídeos",
+      "Planejador de habilidades"
+    ],
+    [
+      "Guia inicial",
+      "Guias de raças",
+      "Guias de chefes",
+      "Guia de equipamento"
+    ],
+    [
+      "Privacidade",
+      "Termos de uso"
+    ],
+    [
+      "Guia de jardim",
+      "Guia de aventura",
+      "Diretório comunitário"
+    ]
+  ],
+  "copyright": "© 2026 Spirit Atlas. Modelo editorial independente sem vínculo oficial.",
+  "email": "E-mail · Prévia",
+  "updated": "Última atualização",
+  "illustration": "Ilustração original",
+  "artwork": "Ilustração de Spirit Atlas",
+  "artDescription": "Uma cena original criada para este modelo, sem imagens oficiais do jogo.",
+  "artLink": "Ver ilustração",
+  "nextSteps": "Próximos passos",
+  "needHelp": "Precisa de ajuda?",
+  "related": "Leituras relacionadas",
+  "nextCards": [
+    [
+      "Progressão Shinigami",
+      "Planeje as próximas etapas do seu personagem de espada."
+    ],
+    [
+      "Preparar uma habilidade",
+      "Uma lista prática para o próximo encontro espiritual."
+    ]
+  ],
+  "helpRows": [
+    [
+      "Ainda não escolheu sua raça?",
+      "Visão geral das raças"
+    ],
+    [
+      "Preparando outro encontro?",
+      "Guia de encontros"
+    ]
+  ],
+  "relatedCards": [
+    [
+      "Clãs Shinigami",
+      "Prévia de referência para comparar bônus de personagem."
+    ],
+    [
+      "Habilidades espirituais",
+      "Planeje distância, mobilidade e habilidades de apoio."
+    ]
+  ],
+  "notFound": "Página não encontrada",
+  "notFoundDescription": "Este guia não está disponível. Prévias não têm rotas de artigo.",
+  "backHome": "Voltar ao início",
+  "inSection": "Nesta seção"
+}

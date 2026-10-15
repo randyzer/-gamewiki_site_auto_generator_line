@@ -1,0 +1,42 @@
+--- WS01-ACCEPT/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ WS02/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -29,6 +29,10 @@
+ This is a WS-01 candidate method, not a released Starter capability claim. Verify the exact three artifacts and canonical identity before dependent work. HARD STOP on missing Contract, hash/path/owner mismatch, 41-ID/16-column Registry drift, missing required evidence, source/build mismatch or illegal evidenceStatus/verifiedOutcome. NOT_RUN/PENDING/UNVERIFIED imply null; OBSERVED requires complete independent evidence before non-null outcomes. No current PASS inherits from test totals, support labels or older project PASS. Preserve newer BLOCK/PENDING conflicts and required re-review. P1 ordinary failures cannot become EXCEPTION, N/A or NOT_SELECTED.
+ 
+ REF-A/REF-B/REF-C are the deterministic §V suite. PROJECT-WOG/PROJECT-BOMBFARM/PROJECT-TASK-GUIDE are separate real adoption; both groups must pass for final release. This candidate does not provide a new V2.7 runner or authorize later workstreams.
++
++## Reusable Starter verification commands
++
++Read the exact selected Starter package.json first. Where its implemented scripts provide `verify:unadopted-final` and `verify:adopted-final`, run root `npm run check` and both verification commands for reusable-Core CI proof. Missing commands = HARD STOP for that dependent verification; do not guess from roadmap/version names. Unadopted verifier success means expected PP-02 rejection was observed for validate/final build. Adopted verifier success means a disposable synthetic Field Notes project's real validate/check/build passed with final marker and unapproved legal routes absent. Neither proves real-game/human/browser/release PASS. The actual project's `npm run build` remains canonical final; expected template failure is no production exemption.
+ 
+ ## Project Input
+ 
+--- WS01-ACCEPT/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ WS02/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -3,6 +3,8 @@
+ ## V2.7 normative foundation and inherited method
+ 
+ Status: WS-01 candidate, no acceptance verdict embedded; V2.7 product release and later workstreams are incomplete. The original v2.6.5 method is retained below; historical version paragraphs describe predecessor changes. Existing research, media, ads and Human/release lifecycle rules remain in force.
++
++WS-02 reusable-template readiness: the shipped example intentionally fails final validation/build with PP-02. For an exact Starter containing the implemented scripts, reusable-Core CI runs root `npm run check`, `npm run verify:unadopted-final`, then `npm run verify:adopted-final`. The negative verifier asserts PP-02 rejection of both validate/final build in an isolated unchanged copy; it never grants a production failure exemption. The adopted verifier uses synthetic Field Notes in a disposable full copy and requires actual validate/check/final build to pass, without the evidence marker or unapproved legal routes. Verify commands in the selected artifact's package.json before using them. Synthetic success is portable technical evidence only; real-project final readiness still requires its own validate/check/build and applicable human, browser, rights and policy gates. `build:evidence` never substitutes for canonical final; AX-01 browser evidence remains pending WS-06A.
+ 
+ Read `COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md` as the sole Product Contract/Capability Registry, `CAPABILITY_EVIDENCE_TEMPLATE_V2.7.md` for evidence recording, and PACKAGE_MANIFEST.json for exact canonical identity. The normative Contract holds durable requirement meaning, applicability, severity and three owners; this SOP supplies methods; Prompt enforces them; Starter implements its subset. No other file may redefine or duplicate Registry rows.
+ 
+--- WS01-ACCEPT/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ WS02/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -19,6 +19,15 @@
+ - [ ] REF-A/REF-B/REF-C satisfy all deterministic §V fixture/media/evidence obligations.
+ - [ ] PROJECT-* real adoption independently satisfies accurate-version obligations; cannot replace REF suite.
+ - [ ] Candidate is distinguished from release; no future Starter/browser commands are claimed available.
++
++## Reusable Starter adoption / CI evidence
++
++- [ ] Selected exact Starter package.json actually provides the two verification commands; unavailable commands stop this dependent verification.
++- [ ] Root `npm run check` retains all existing suites and negative cases without skips.
++- [ ] `npm run verify:unadopted-final` asserts PP-02 rejection of both validate and final build; arbitrary failure is not expected-failure proof.
++- [ ] `npm run verify:adopted-final` provides exact source/build-scoped child results: validate=0, check=0, final build=0, evidence marker absent and unapproved privacy/terms absent; disposable copies cleaned up.
++- [ ] Synthetic Field Notes proof is distinct from real-project, human, browser, media-rights and legal approval. Real projects still run their own canonical final pipeline.
++- [ ] CI uses those same gates; production Core/dependencies/lockfile remain unchanged for WS-02. AX-01 browser evidence stays pending WS-06A.
+ 
+ ## Content Reliability QA
+ 

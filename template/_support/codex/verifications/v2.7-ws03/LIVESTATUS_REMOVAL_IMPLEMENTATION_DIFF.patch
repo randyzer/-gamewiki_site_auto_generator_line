@@ -1,0 +1,395 @@
+--- a/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ b/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -1483,18 +1483,17 @@
+ 
+ ## V2.7 WS03D freshness truth
+ 
+-The bounded freshness slice keeps five facts distinct:
++The bounded freshness slice keeps four facts distinct:
+ 
+ - `publishedAt`: first page publication date.
+ - `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
+ - Fact/tool `patch` or version context: recorded game/content version, independent of dates.
+ - Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
+-- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
+-
+-Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
+-
+-The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
+-
+-Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++`liveStatus / observed-live / not-live` are **DEFERRED**, outside Active V2.7 Core. Do not author `liveStatus` in Page Inventory or move live-state fields into another schema. The strict inventory schema rejects the retired field; no compatibility adapter or replacement live model is provided. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry. General provenance evidenceNote privacy rules remain unchanged.
++
++The pure freshness projection exposes publishedAt, updatedAt, sourceCheckedAt and optional versionContext. Source accessedAt projects to sourceCheckedAt, never verifiedAt. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack. Page Inventory provides no live-state model. Synthetic freshness rendering proves only the mechanism, never actual game currency or a real project's FR-01/FR-02 outcome.
+ 
+ Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
+@@ -434,18 +434,17 @@
+ 
+ ## V2.7 WS03D freshness truth
+ 
+-The bounded freshness slice keeps five facts distinct:
++The bounded freshness slice keeps four facts distinct:
+ 
+ - `publishedAt`: first page publication date.
+ - `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
+ - Fact/tool `patch` or version context: recorded game/content version, independent of dates.
+ - Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
+-- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
+-
+-Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
+-
+-The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
+-
+-Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++`liveStatus / observed-live / not-live` are **DEFERRED**, outside Active V2.7 Core. Do not author `liveStatus` in Page Inventory or move live-state fields into another schema. The strict inventory schema rejects the retired field; no compatibility adapter or replacement live model is provided. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry. General provenance evidenceNote privacy rules remain unchanged.
++
++The pure freshness projection exposes publishedAt, updatedAt, sourceCheckedAt and optional versionContext. Source accessedAt projects to sourceCheckedAt, never verifiedAt. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack. Page Inventory provides no live-state model. Synthetic freshness rendering proves only the mechanism, never actual game currency or a real project's FR-01/FR-02 outcome.
+ 
+ Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -432,18 +432,17 @@
+ 
+ ## V2.7 WS03D freshness truth
+ 
+-The bounded freshness slice keeps five facts distinct:
++The bounded freshness slice keeps four facts distinct:
+ 
+ - `publishedAt`: first page publication date.
+ - `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
+ - Fact/tool `patch` or version context: recorded game/content version, independent of dates.
+ - Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
+-- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
+-
+-Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
+-
+-The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
+-
+-Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++`liveStatus / observed-live / not-live` are **DEFERRED**, outside Active V2.7 Core. Do not author `liveStatus` in Page Inventory or move live-state fields into another schema. The strict inventory schema rejects the retired field; no compatibility adapter or replacement live model is provided. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry. General provenance evidenceNote privacy rules remain unchanged.
++
++The pure freshness projection exposes publishedAt, updatedAt, sourceCheckedAt and optional versionContext. Source accessedAt projects to sourceCheckedAt, never verifiedAt. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack. Page Inventory provides no live-state model. Synthetic freshness rendering proves only the mechanism, never actual game currency or a real project's FR-01/FR-02 outcome.
+ 
+ Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro
+@@ -69,17 +69,6 @@
+               <dd><time datetime={freshness.sourceCheckedAt}>{freshness.sourceCheckedAt}</time></dd>
+             </div>
+           )}
+-          {freshness.liveStatus && (
+-            <div>
+-              <dt>Live status</dt>
+-              <dd>
+-                {freshness.liveStatus.state === "observed-live" ? <>
+-                  Observed live <time datetime={freshness.liveStatus.observedAt}>{freshness.liveStatus.observedAt}</time>
+-                  {" "}<a href={freshness.liveStatus.sourceUrl} rel="noreferrer">Status source</a>
+-                </> : "Not live telemetry"}
+-              </dd>
+-            </div>
+-          )}
+           {authorAttribution && (
+             <div>
+               <dt>Author</dt>
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro
+@@ -100,17 +100,6 @@
+               <dd><time datetime={freshness.sourceCheckedAt}>{freshness.sourceCheckedAt}</time></dd>
+             </div>
+           )}
+-          {freshness.liveStatus && (
+-            <div>
+-              <dt>Live status</dt>
+-              <dd>
+-                {freshness.liveStatus.state === "observed-live" ? <>
+-                  Observed live <time datetime={freshness.liveStatus.observedAt}>{freshness.liveStatus.observedAt}</time>
+-                  {" "}<a href={freshness.liveStatus.sourceUrl} rel="noreferrer">Status source</a>
+-                </> : "Not live telemetry"}
+-              </dd>
+-            </div>
+-          )}
+           {authorAttribution && (
+             <div>
+               <dt>Author</dt>
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts
+@@ -6,7 +6,7 @@
+   value: string;
+ }
+ 
+-type FreshnessPage = Pick<PageInventoryEntry, "publishedAt" | "updatedAt" | "sources" | "liveStatus">;
++type FreshnessPage = Pick<PageInventoryEntry, "publishedAt" | "updatedAt" | "sources">;
+ 
+ export function latestSourceAccessedAt(sources: readonly Pick<Provenance, "accessedAt">[]) {
+   return [...sources].sort((left, right) => right.accessedAt.localeCompare(left.accessedAt)).at(0)?.accessedAt;
+@@ -15,14 +15,10 @@
+ /** Projects authored facts without inferring verification, currency or live telemetry. */
+ export function resolvePageFreshness(page: FreshnessPage, versionContext?: VersionContext) {
+   const sourceCheckedAt = latestSourceAccessedAt(page.sources);
+-  const liveStatus = page.liveStatus?.state === "observed-live"
+-    ? { state: "observed-live" as const, observedAt: page.liveStatus.observedAt, sourceUrl: page.liveStatus.sourceUrl }
+-    : page.liveStatus ? { state: "not-live" as const } : undefined;
+   return {
+     ...(page.publishedAt ? { publishedAt: page.publishedAt } : {}),
+     updatedAt: page.updatedAt,
+     ...(sourceCheckedAt ? { sourceCheckedAt } : {}),
+     ...(versionContext ? { versionContext: { kind: versionContext.kind, value: versionContext.value } } : {}),
+-    ...(liveStatus ? { liveStatus } : {}),
+   };
+ }
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts
+@@ -52,16 +52,6 @@
+   }).strict(),
+ ]);
+ 
+-export const liveStatusSchema = z.discriminatedUnion("state", [
+-  z.object({ state: z.literal("not-live") }).strict(),
+-  z.object({
+-    state: z.literal("observed-live"),
+-    observedAt: isoDateSchema,
+-    sourceUrl: provenanceSchema.shape.sourceUrl,
+-    evidenceNote: provenanceSchema.shape.evidenceNote,
+-  }).strict(),
+-]);
+-
+ export const pageInventoryEntrySchema = z
+   .object({
+     pageId: z.string().regex(/^[a-z0-9]+(?:[.-][a-z0-9]+)*$/),
+@@ -100,7 +90,6 @@
+     description: z.string().trim().min(50).max(170),
+     publishedAt: isoDateSchema.optional(),
+     updatedAt: isoDateSchema,
+-    liveStatus: liveStatusSchema.optional(),
+     primaryKeyword: z.string().trim().min(2).max(80),
+     tags: z.array(z.string().trim().min(2).max(40)).min(1),
+     contentRef: z
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts
+@@ -24,27 +24,24 @@
+ });
+ 
+ 
+-it("renders independent freshness dates and an explicitly authored live observation", async () => {
++it("renders independent freshness dates without live metadata", async () => {
+   const page = { ...pageInventory.find(entry => entry.pageId === "guide.getting-started")!, publishedAt: "2026-08-10", updatedAt: "2026-09-20", sources: [
+     { sourceUrl: "https://example.com/qa-a", sourceType: "editorial" as const, accessedAt: "2026-09-18", evidenceNote: "Private synthetic source access evidence" },
+     { sourceUrl: "https://example.com/qa-b", sourceType: "editorial" as const, accessedAt: "2026-09-21", evidenceNote: "Private synthetic source access evidence B" },
+-  ], liveStatus: { state: "observed-live" as const, observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "PRIVATE_SYNTHETIC_LIVE_EVIDENCE" } };
++  ] };
+   const container = await AstroContainer.create();
+   const html = (await container.renderToString(EditorialArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Synthetic body</p>" } })).replace(/<!--.*?-->/g, "");
+   expect(html).toMatch(/<dt>Published<\/dt>[\s\S]*?<time datetime="2026-08-10"/);
+   expect(html).toMatch(/<dt>Last updated<\/dt>[\s\S]*?<time datetime="2026-09-20"/);
+   expect(html).toMatch(/<dt>Sources checked<\/dt>[\s\S]*?<time datetime="2026-09-21"/);
+-  expect(html).toContain("Observed live");
+-  expect(html).toContain('<time datetime="2026-09-22"');
+-  expect(html).toContain('href="https://example.com/qa-live-status"');
+-  expect(html).not.toMatch(/Last verified|Live now|Currently live|PRIVATE_SYNTHETIC_LIVE_EVIDENCE/);
++  expect(html).not.toMatch(/<dt>Live status<\/dt>|Observed live|Status source|Not live telemetry|Last verified|Live now|Currently live|Private synthetic source access evidence/);
+   expect(html).toContain('"datePublished":"2026-08-10"');
+   expect(html).toContain('"dateModified":"2026-09-20"');
+ });
+ 
+-it("does not infer a live claim when the page has no liveStatus", async () => {
++it("does not render live metadata for existing pages", async () => {
+   const page = pageInventory.find(entry => entry.pageId === "guide.getting-started")!;
+   const container = await AstroContainer.create();
+   const html = await container.renderToString(EditorialArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Body</p>" } });
+-  expect(html).not.toMatch(/Observed live|Not live telemetry|<dt>Live status<\/dt>/);
++  expect(html).not.toMatch(/Observed live|Status source|Not live telemetry|<dt>Live status<\/dt>/);
+ });
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/freshness.test.ts
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/freshness.test.ts
+@@ -6,41 +6,33 @@
+   { sourceUrl: "https://example.com/qa-source-a", sourceType: "editorial" as const, accessedAt: "2026-09-18", evidenceNote: "Private synthetic source A evidence" },
+   { sourceUrl: "https://example.com/qa-source-b", sourceType: "editorial" as const, accessedAt: "2026-09-21", evidenceNote: "Private synthetic source B evidence" },
+ ] };
+-const live = { state: "observed-live", observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "PRIVATE_SYNTHETIC_LIVE_EVIDENCE" };
+ async function resolve(input: unknown, context?: { kind: "patch" | "version"; value: string }) {
+   const module = await import("../src/core/freshness");
+   return module.resolvePageFreshness(input as Parameters<typeof module.resolvePageFreshness>[0], context);
+ }
+ 
+ describe("distinct freshness facts", () => {
+-  it("accepts explicitly evidenced observed-live status", () => {
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: live }).success).toBe(true);
+-  });
+-  it("accepts not-live as a non-telemetry declaration without live observation fields", () => {
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { state: "not-live" } }).success).toBe(true);
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { state: "not-live", observedAt: "2026-09-22" } }).success).toBe(false);
+-  });
+-  it.each(["observedAt", "sourceUrl", "evidenceNote"])("rejects observed-live missing its %s evidence", key => {
+-    const incomplete = { ...live } as Record<string, unknown>;
+-    delete incomplete[key];
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: incomplete }).success).toBe(false);
+-  });
+-  it("rejects HTTP live-status source and unknown state/fields", () => {
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { ...live, sourceUrl: "http://example.com/status" } }).success).toBe(false);
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { ...live, state: "live-now" } }).success).toBe(false);
+-    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { ...live, telemetry: true } }).success).toBe(false);
++  it.each([
++    { state: "observed-live", observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "Private retired observation evidence" },
++    { state: "not-live" },
++  ])("rejects retired liveStatus ($state) as an unknown page field", liveStatus => {
++    const result = pageInventoryEntrySchema.safeParse({ ...page, liveStatus });
++    expect(result.success).toBe(false);
++    expect(result.error?.issues).toEqual(expect.arrayContaining([
++      expect.objectContaining({ code: "unrecognized_keys", keys: ["liveStatus"] }),
++    ]));
+   });
+   it("rejects editorial update before publication without swapping dates", () => {
+     expect(pageInventoryEntrySchema.safeParse({ ...page, updatedAt: "2026-08-01" }).success).toBe(false);
+     expect(pageInventoryEntrySchema.safeParse({ ...page, updatedAt: page.publishedAt }).success).toBe(true);
+     expect(pageInventoryEntrySchema.safeParse(page).success).toBe(true);
+   });
+-  it("keeps publication/update/source access/live observation and patch context distinct", async () => {
+-    expect(await resolve({ ...page, liveStatus: live }, { kind: "patch", value: "4.2" })).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21", versionContext: { kind: "patch", value: "4.2" }, liveStatus: { state: "observed-live", observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status" } });
++  it("keeps publication/update/source access and patch context distinct", async () => {
++    expect(await resolve(page, { kind: "patch", value: "4.2" })).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21", versionContext: { kind: "patch", value: "4.2" } });
+   });
+   it("does not infer live state or version from existing dates", async () => {
+     expect(await resolve(page)).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21" });
+-    expect(await resolve({ ...page, liveStatus: { state: "not-live" } }, { kind: "version", value: "Reference edition A" })).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21", versionContext: { kind: "version", value: "Reference edition A" }, liveStatus: { state: "not-live" } });
++    expect(await resolve(page, { kind: "version", value: "Reference edition A" })).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21", versionContext: { kind: "version", value: "Reference edition A" } });
+   });
+   it("returns the latest source access date without mutating source order or leaking notes", async () => {
+     const module = await import("../src/core/freshness");
+@@ -49,6 +41,6 @@
+     expect(module.latestSourceAccessedAt(sources)).toBe("2026-09-21");
+     expect(module.latestSourceAccessedAt([])).toBeUndefined();
+     expect(JSON.stringify(sources)).toBe(before);
+-    expect(JSON.stringify(await resolve({ ...page, liveStatus: live }))).not.toMatch(/evidenceNote|PRIVATE_SYNTHETIC|Private synthetic/);
++    expect(JSON.stringify(await resolve({ ...page, sources }))).not.toMatch(/evidenceNote|Private synthetic/);
+   });
+ });
+--- a/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts
++++ b/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts
+@@ -154,27 +154,24 @@
+ });
+ 
+ 
+-it("renders independent freshness dates and an explicitly authored live observation", async () => {
++it("renders independent freshness dates without live metadata", async () => {
+   const page = { ...pageInventory.find(entry => entry.pageId === "guide.getting-started")!, publishedAt: "2026-08-10", updatedAt: "2026-09-20", sources: [
+     { sourceUrl: "https://example.com/qa-a", sourceType: "editorial" as const, accessedAt: "2026-09-18", evidenceNote: "Private synthetic source access evidence" },
+     { sourceUrl: "https://example.com/qa-b", sourceType: "editorial" as const, accessedAt: "2026-09-21", evidenceNote: "Private synthetic source access evidence B" },
+-  ], liveStatus: { state: "observed-live" as const, observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "PRIVATE_SYNTHETIC_LIVE_EVIDENCE" } };
++  ] };
+   const container = await AstroContainer.create();
+   const html = (await container.renderToString(WikiArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Synthetic body</p>" } })).replace(/<!--.*?-->/g, "");
+   expect(html).toMatch(/<dt>Published<\/dt>[\s\S]*?<time datetime="2026-08-10"/);
+   expect(html).toMatch(/<dt>Last updated<\/dt>[\s\S]*?<time datetime="2026-09-20"/);
+   expect(html).toMatch(/<dt>Sources checked<\/dt>[\s\S]*?<time datetime="2026-09-21"/);
+-  expect(html).toContain("Observed live");
+-  expect(html).toContain('<time datetime="2026-09-22"');
+-  expect(html).toContain('href="https://example.com/qa-live-status"');
+-  expect(html).not.toMatch(/Last verified|Live now|Currently live|PRIVATE_SYNTHETIC_LIVE_EVIDENCE/);
++  expect(html).not.toMatch(/<dt>Live status<\/dt>|Observed live|Status source|Not live telemetry|Last verified|Live now|Currently live|Private synthetic source access evidence/);
+   expect(html).toContain('"datePublished":"2026-08-10"');
+   expect(html).toContain('"dateModified":"2026-09-20"');
+ });
+ 
+-it("does not infer a live claim when the page has no liveStatus", async () => {
++it("does not render live metadata for existing pages", async () => {
+   const page = pageInventory.find(entry => entry.pageId === "guide.getting-started")!;
+   const container = await AstroContainer.create();
+   const html = await container.renderToString(WikiArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Body</p>" } });
+-  expect(html).not.toMatch(/Observed live|Not live telemetry|<dt>Live status<\/dt>/);
++  expect(html).not.toMatch(/Observed live|Status source|Not live telemetry|<dt>Live status<\/dt>/);
+ });
+--- a/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ b/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -545,18 +545,17 @@
+ 
+ ## V2.7 WS03D freshness truth
+ 
+-The bounded freshness slice keeps five facts distinct:
++The bounded freshness slice keeps four facts distinct:
+ 
+ - `publishedAt`: first page publication date.
+ - `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
+ - Fact/tool `patch` or version context: recorded game/content version, independent of dates.
+ - Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
+-- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
+-
+-Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
+-
+-The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
+-
+-Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++`liveStatus / observed-live / not-live` are **DEFERRED**, outside Active V2.7 Core. Do not author `liveStatus` in Page Inventory or move live-state fields into another schema. The strict inventory schema rejects the retired field; no compatibility adapter or replacement live model is provided. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry. General provenance evidenceNote privacy rules remain unchanged.
++
++The pure freshness projection exposes publishedAt, updatedAt, sourceCheckedAt and optional versionContext. Source accessedAt projects to sourceCheckedAt, never verifiedAt. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack. Page Inventory provides no live-state model. Synthetic freshness rendering proves only the mechanism, never actual game currency or a real project's FR-01/FR-02 outcome.
+ 
+ Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+--- a/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ b/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -1674,18 +1674,17 @@
+ 
+ ## V2.7 WS03D freshness truth
+ 
+-The bounded freshness slice keeps five facts distinct:
++The bounded freshness slice keeps four facts distinct:
+ 
+ - `publishedAt`: first page publication date.
+ - `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
+ - Fact/tool `patch` or version context: recorded game/content version, independent of dates.
+ - Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
+-- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
+-
+-Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
+-
+-The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
+-
+-Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++`liveStatus / observed-live / not-live` are **DEFERRED**, outside Active V2.7 Core. Do not author `liveStatus` in Page Inventory or move live-state fields into another schema. The strict inventory schema rejects the retired field; no compatibility adapter or replacement live model is provided. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry. General provenance evidenceNote privacy rules remain unchanged.
++
++The pure freshness projection exposes publishedAt, updatedAt, sourceCheckedAt and optional versionContext. Source accessedAt projects to sourceCheckedAt, never verifiedAt. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack. Page Inventory provides no live-state model. Synthetic freshness rendering proves only the mechanism, never actual game currency or a real project's FR-01/FR-02 outcome.
+ 
+ Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+--- a/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ b/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -452,18 +452,17 @@
+ 
+ ## V2.7 WS03D freshness truth
+ 
+-The bounded freshness slice keeps five facts distinct:
++The bounded freshness slice keeps four facts distinct:
+ 
+ - `publishedAt`: first page publication date.
+ - `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
+ - Fact/tool `patch` or version context: recorded game/content version, independent of dates.
+ - Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
+-- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
+-
+-Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
+-
+-The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
+-
+-Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++`liveStatus / observed-live / not-live` are **DEFERRED**, outside Active V2.7 Core. Do not author `liveStatus` in Page Inventory or move live-state fields into another schema. The strict inventory schema rejects the retired field; no compatibility adapter or replacement live model is provided. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry. General provenance evidenceNote privacy rules remain unchanged.
++
++The pure freshness projection exposes publishedAt, updatedAt, sourceCheckedAt and optional versionContext. Source accessedAt projects to sourceCheckedAt, never verifiedAt. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack. Page Inventory provides no live-state model. Synthetic freshness rendering proves only the mechanism, never actual game currency or a real project's FR-01/FR-02 outcome.
+ 
+ Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.

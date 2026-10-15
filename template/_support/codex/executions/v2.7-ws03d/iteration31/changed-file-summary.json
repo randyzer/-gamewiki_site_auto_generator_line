@@ -1,0 +1,93 @@
+[
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts",
+    "changed": true,
+    "new": false,
+    "added": 24,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-search-adapter.ts",
+    "changed": true,
+    "new": true,
+    "added": 38,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx",
+    "changed": true,
+    "new": false,
+    "added": 38,
+    "removed": 85
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/normalize-pagefind-output.ts",
+    "changed": true,
+    "new": false,
+    "added": 11,
+    "removed": 6
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/search-state.test.ts",
+    "changed": true,
+    "new": false,
+    "added": 34,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-search-adapter.test.ts",
+    "changed": true,
+    "new": true,
+    "added": 39,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-artifacts.test.ts",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+    "changed": true,
+    "new": false,
+    "added": 17,
+    "removed": 0
+  }
+]

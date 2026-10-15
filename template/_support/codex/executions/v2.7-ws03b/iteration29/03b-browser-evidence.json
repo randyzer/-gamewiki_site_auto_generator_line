@@ -1,0 +1,1859 @@
+{
+  "kind": "WS03B_SYNTHETIC_MEDIA_CONTRACT",
+  "qualificationAttempts": 1,
+  "retryCount": 0,
+  "rows": [
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "all-three-synthetic-media-types-render",
+          "passed": true,
+          "detail": [
+            "qa.image",
+            "qa.youtube",
+            "qa.image",
+            "qa.local"
+          ]
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 664.625
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.youtube-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 750,
+            "height": 421.875
+          }
+        },
+        {
+          "name": "qa.youtube-source-visible",
+          "passed": true,
+          "detail": [
+            "https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+          ]
+        },
+        {
+          "name": "qa.youtube-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.youtube-derived-video-ratio",
+          "passed": true,
+          "detail": "1920 / 1080"
+        },
+        {
+          "name": "qa.youtube-authored-equivalent-visible",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 664.625
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.local-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 885
+          }
+        },
+        {
+          "name": "qa.local-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-local"
+          ]
+        },
+        {
+          "name": "qa.local-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.local-derived-video-ratio",
+          "passed": true,
+          "detail": "800 / 600"
+        },
+        {
+          "name": "qa.local-authored-equivalent-visible",
+          "passed": true,
+          "detail": "This synthetic clip displays a solid blue field."
+        },
+        {
+          "name": "valid-media-composed-without-page-overflow",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        },
+        {
+          "name": "no-media-complete-without-empty-shells",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 857,
+            "emptyMediaShells": 0,
+            "mediaCount": 0
+          }
+        },
+        {
+          "name": "blocked-player-request-actually-intercepted",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "blocked-player-visible-equivalent-and-source",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "blocked-player-page-remains-composed",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "all-three-synthetic-media-types-render",
+          "passed": true,
+          "detail": [
+            "qa.image",
+            "qa.youtube",
+            "qa.image",
+            "qa.local"
+          ]
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 204.5
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.youtube-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 203.625
+          }
+        },
+        {
+          "name": "qa.youtube-source-visible",
+          "passed": true,
+          "detail": [
+            "https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+          ]
+        },
+        {
+          "name": "qa.youtube-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.youtube-derived-video-ratio",
+          "passed": true,
+          "detail": "1920 / 1080"
+        },
+        {
+          "name": "qa.youtube-authored-equivalent-visible",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 204.5
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.local-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 271.5
+          }
+        },
+        {
+          "name": "qa.local-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-local"
+          ]
+        },
+        {
+          "name": "qa.local-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.local-derived-video-ratio",
+          "passed": true,
+          "detail": "800 / 600"
+        },
+        {
+          "name": "qa.local-authored-equivalent-visible",
+          "passed": true,
+          "detail": "This synthetic clip displays a solid blue field."
+        },
+        {
+          "name": "valid-media-composed-without-page-overflow",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        },
+        {
+          "name": "no-media-complete-without-empty-shells",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 857,
+            "emptyMediaShells": 0,
+            "mediaCount": 0
+          }
+        },
+        {
+          "name": "blocked-player-request-actually-intercepted",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "blocked-player-visible-equivalent-and-source",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "blocked-player-page-remains-composed",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "all-three-synthetic-media-types-render",
+          "passed": true,
+          "detail": [
+            "qa.image",
+            "qa.youtube",
+            "qa.image",
+            "qa.local"
+          ]
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 664.63330078125
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.youtube-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 750,
+            "height": 421.8833312988281
+          }
+        },
+        {
+          "name": "qa.youtube-source-visible",
+          "passed": true,
+          "detail": [
+            "https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+          ]
+        },
+        {
+          "name": "qa.youtube-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.youtube-derived-video-ratio",
+          "passed": true,
+          "detail": "1920 / 1080"
+        },
+        {
+          "name": "qa.youtube-authored-equivalent-visible",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 664.6333618164062
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.local-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 885
+          }
+        },
+        {
+          "name": "qa.local-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-local"
+          ]
+        },
+        {
+          "name": "qa.local-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.local-derived-video-ratio",
+          "passed": true,
+          "detail": "800 / 600"
+        },
+        {
+          "name": "qa.local-authored-equivalent-visible",
+          "passed": true,
+          "detail": "This synthetic clip displays a solid blue field."
+        },
+        {
+          "name": "valid-media-composed-without-page-overflow",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        },
+        {
+          "name": "no-media-complete-without-empty-shells",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 857,
+            "emptyMediaShells": 0,
+            "mediaCount": 0
+          }
+        },
+        {
+          "name": "blocked-player-request-actually-intercepted",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "blocked-player-visible-equivalent-and-source",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "blocked-player-page-remains-composed",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "all-three-synthetic-media-types-render",
+          "passed": true,
+          "detail": [
+            "qa.image",
+            "qa.youtube",
+            "qa.image",
+            "qa.local"
+          ]
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 204.5
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.youtube-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 203.63333129882812
+          }
+        },
+        {
+          "name": "qa.youtube-source-visible",
+          "passed": true,
+          "detail": [
+            "https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+          ]
+        },
+        {
+          "name": "qa.youtube-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.youtube-derived-video-ratio",
+          "passed": true,
+          "detail": "1920 / 1080"
+        },
+        {
+          "name": "qa.youtube-authored-equivalent-visible",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 204.5
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.local-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 271.5
+          }
+        },
+        {
+          "name": "qa.local-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-local"
+          ]
+        },
+        {
+          "name": "qa.local-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.local-derived-video-ratio",
+          "passed": true,
+          "detail": "800 / 600"
+        },
+        {
+          "name": "qa.local-authored-equivalent-visible",
+          "passed": true,
+          "detail": "This synthetic clip displays a solid blue field."
+        },
+        {
+          "name": "valid-media-composed-without-page-overflow",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        },
+        {
+          "name": "no-media-complete-without-empty-shells",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 857,
+            "emptyMediaShells": 0,
+            "mediaCount": 0
+          }
+        },
+        {
+          "name": "blocked-player-request-actually-intercepted",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "blocked-player-visible-equivalent-and-source",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "blocked-player-page-remains-composed",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "all-three-synthetic-media-types-render",
+          "passed": true,
+          "detail": [
+            "qa.image",
+            "qa.youtube",
+            "qa.image",
+            "qa.local"
+          ]
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 664.625
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.youtube-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 750,
+            "height": 421.875
+          }
+        },
+        {
+          "name": "qa.youtube-source-visible",
+          "passed": true,
+          "detail": [
+            "https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+          ]
+        },
+        {
+          "name": "qa.youtube-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.youtube-derived-video-ratio",
+          "passed": true,
+          "detail": "1920 / 1080"
+        },
+        {
+          "name": "qa.youtube-authored-equivalent-visible",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 664.625
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.local-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 1180,
+            "height": 885
+          }
+        },
+        {
+          "name": "qa.local-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-local"
+          ]
+        },
+        {
+          "name": "qa.local-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.local-derived-video-ratio",
+          "passed": true,
+          "detail": "800 / 600"
+        },
+        {
+          "name": "qa.local-authored-equivalent-visible",
+          "passed": true,
+          "detail": "This synthetic clip displays a solid blue field."
+        },
+        {
+          "name": "valid-media-composed-without-page-overflow",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        },
+        {
+          "name": "no-media-complete-without-empty-shells",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 857,
+            "emptyMediaShells": 0,
+            "mediaCount": 0
+          }
+        },
+        {
+          "name": "blocked-player-request-actually-intercepted",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "blocked-player-visible-equivalent-and-source",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "blocked-player-page-remains-composed",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 1280,
+            "scrollWidth": 1280,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "all-three-synthetic-media-types-render",
+          "passed": true,
+          "detail": [
+            "qa.image",
+            "qa.youtube",
+            "qa.image",
+            "qa.local"
+          ]
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 204.5
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.youtube-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 203.625
+          }
+        },
+        {
+          "name": "qa.youtube-source-visible",
+          "passed": true,
+          "detail": [
+            "https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+          ]
+        },
+        {
+          "name": "qa.youtube-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.youtube-derived-video-ratio",
+          "passed": true,
+          "detail": "1920 / 1080"
+        },
+        {
+          "name": "qa.youtube-authored-equivalent-visible",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "qa.image-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 204.5
+          }
+        },
+        {
+          "name": "qa.image-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-author",
+            "https://example.com/qa-image"
+          ]
+        },
+        {
+          "name": "qa.image-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "image-intrinsic-dimensions-natural-file",
+          "passed": true,
+          "detail": {
+            "width": "1200",
+            "height": "675",
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "complete": true
+          }
+        },
+        {
+          "name": "image-caption-credit",
+          "passed": true,
+          "detail": "Synthetic QA author"
+        },
+        {
+          "name": "qa.local-responsive-intrinsic-ratio",
+          "passed": true,
+          "detail": {
+            "width": 362,
+            "height": 271.5
+          }
+        },
+        {
+          "name": "qa.local-source-visible",
+          "passed": true,
+          "detail": [
+            "https://example.com/qa-local"
+          ]
+        },
+        {
+          "name": "qa.local-rights-private",
+          "passed": true,
+          "detail": {
+            "privateOutput": false
+          }
+        },
+        {
+          "name": "qa.local-derived-video-ratio",
+          "passed": true,
+          "detail": "800 / 600"
+        },
+        {
+          "name": "qa.local-authored-equivalent-visible",
+          "passed": true,
+          "detail": "This synthetic clip displays a solid blue field."
+        },
+        {
+          "name": "valid-media-composed-without-page-overflow",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        },
+        {
+          "name": "no-media-complete-without-empty-shells",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 857,
+            "emptyMediaShells": 0,
+            "mediaCount": 0
+          }
+        },
+        {
+          "name": "blocked-player-request-actually-intercepted",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "blocked-player-visible-equivalent-and-source",
+          "passed": true,
+          "detail": "Technical QA equivalent: no game association"
+        },
+        {
+          "name": "blocked-player-page-remains-composed",
+          "passed": true,
+          "detail": {
+            "viewportWidth": 390,
+            "scrollWidth": 390,
+            "mainText": 1011,
+            "emptyMediaShells": 0,
+            "mediaCount": 4
+          }
+        }
+      ],
+      "overall": "PASS"
+    }
+  ],
+  "overall": "PASS",
+  "errors": [],
+  "safariProof": 0,
+  "capabilityPromotion": "NONE",
+  "lazyLoadReadiness": [
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "instances": [
+        {
+          "index": 0,
+          "placement": "hero",
+          "loading": "eager",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 826.65625,
+            "bottom": 1491.28125,
+            "width": 1180,
+            "height": 664.625
+          },
+          "viewportHeight": 900,
+          "inViewport": true,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 9.800000071525574,
+              "duration": 4.799999952316284,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "placement": "gallery",
+          "loading": "lazy",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 2809.6875,
+            "bottom": 3474.3125,
+            "width": 1180,
+            "height": 664.625
+          },
+          "viewportHeight": 900,
+          "inViewport": false,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 9.800000071525574,
+              "duration": 4.799999952316284,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        }
+      ],
+      "resourceEvents": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:21.991Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:21.999Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:25.383Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:25.386Z"
+        }
+      ],
+      "observedAt": "2026-10-08T00:09:24.712Z",
+      "qualificationAssertionsChanged": false
+    },
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "instances": [
+        {
+          "index": 0,
+          "placement": "hero",
+          "loading": "eager",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 883.171875,
+            "bottom": 1087.671875,
+            "width": 362,
+            "height": 204.5
+          },
+          "viewportHeight": 900,
+          "inViewport": true,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 3.299999952316284,
+              "duration": 3.100000023841858,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "placement": "gallery",
+          "loading": "lazy",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 2039.453125,
+            "bottom": 2243.953125,
+            "width": 362,
+            "height": 204.5
+          },
+          "viewportHeight": 900,
+          "inViewport": false,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 3.299999952316284,
+              "duration": 3.100000023841858,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        }
+      ],
+      "resourceEvents": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:26.332Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:26.335Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:29.387Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:29.389Z"
+        }
+      ],
+      "observedAt": "2026-10-08T00:09:28.784Z",
+      "qualificationAssertionsChanged": false
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "instances": [
+        {
+          "index": 0,
+          "placement": "hero",
+          "loading": "eager",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 826.7833251953125,
+            "bottom": 1491.4166259765625,
+            "width": 1180,
+            "height": 664.63330078125
+          },
+          "viewportHeight": 900,
+          "inViewport": true,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 48,
+              "duration": 32,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "placement": "gallery",
+          "loading": "lazy",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 2809.89990234375,
+            "bottom": 3474.5332641601562,
+            "width": 1180,
+            "height": 664.6333618164062
+          },
+          "viewportHeight": 900,
+          "inViewport": false,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 48,
+              "duration": 32,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        }
+      ],
+      "resourceEvents": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:31.270Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:31.274Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:32.508Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:32.510Z"
+        }
+      ],
+      "observedAt": "2026-10-08T00:09:31.897Z",
+      "qualificationAssertionsChanged": false
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "instances": [
+        {
+          "index": 0,
+          "placement": "hero",
+          "loading": "eager",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 883.1500244140625,
+            "bottom": 1087.6500244140625,
+            "width": 362,
+            "height": 204.5
+          },
+          "viewportHeight": 900,
+          "inViewport": true,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 5,
+              "duration": 5,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "placement": "gallery",
+          "loading": "lazy",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 2039.5333251953125,
+            "bottom": 2244.0333251953125,
+            "width": 362,
+            "height": 204.5
+          },
+          "viewportHeight": 900,
+          "inViewport": false,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 5,
+              "duration": 5,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            }
+          ]
+        }
+      ],
+      "resourceEvents": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:33.529Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:33.532Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:34.665Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:34.668Z"
+        }
+      ],
+      "observedAt": "2026-10-08T00:09:34.103Z",
+      "qualificationAssertionsChanged": false
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "instances": [
+        {
+          "index": 0,
+          "placement": "hero",
+          "loading": "eager",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": -1865.390625,
+            "bottom": -1200.765625,
+            "width": 1180,
+            "height": 664.625
+          },
+          "viewportHeight": 900,
+          "inViewport": false,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 18,
+              "duration": 1,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            },
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 723,
+              "duration": 1,
+              "transferSize": 0,
+              "encodedBodySize": 0,
+              "decodedBodySize": 0
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "placement": "gallery",
+          "loading": "lazy",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 117.625,
+            "bottom": 782.25,
+            "width": 1180,
+            "height": 664.625
+          },
+          "viewportHeight": 900,
+          "inViewport": true,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 18,
+              "duration": 1,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            },
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 723,
+              "duration": 1,
+              "transferSize": 0,
+              "encodedBodySize": 0,
+              "decodedBodySize": 0
+            }
+          ]
+        }
+      ],
+      "resourceEvents": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:36.083Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:36.180Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:36.788Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:36.790Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:37.413Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:37.420Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:38.008Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:38.012Z"
+        }
+      ],
+      "observedAt": "2026-10-08T00:09:36.801Z",
+      "qualificationAssertionsChanged": false
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "instances": [
+        {
+          "index": 0,
+          "placement": "hero",
+          "loading": "eager",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": -808.984375,
+            "bottom": -604.484375,
+            "width": 362,
+            "height": 204.5
+          },
+          "viewportHeight": 900,
+          "inViewport": false,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 4,
+              "duration": 2,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            },
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 610,
+              "duration": 0,
+              "transferSize": 0,
+              "encodedBodySize": 0,
+              "decodedBodySize": 0
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "placement": "gallery",
+          "loading": "lazy",
+          "currentSrc": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "complete": true,
+          "naturalWidth": 1200,
+          "naturalHeight": 675,
+          "rect": {
+            "top": 347.296875,
+            "bottom": 551.796875,
+            "width": 362,
+            "height": 204.5
+          },
+          "viewportHeight": 900,
+          "inViewport": true,
+          "performanceResources": [
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 4,
+              "duration": 2,
+              "transferSize": 506,
+              "encodedBodySize": 206,
+              "decodedBodySize": 206
+            },
+            {
+              "name": "http://127.0.0.1:49231/media/qa-contract.svg",
+              "startTime": 610,
+              "duration": 0,
+              "transferSize": 0,
+              "encodedBodySize": 0,
+              "decodedBodySize": 0
+            }
+          ]
+        }
+      ],
+      "resourceEvents": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:38.462Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:38.466Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:39.068Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:39.070Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:39.643Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:39.651Z"
+        },
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "at": "2026-10-08T00:09:40.239Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:49231/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:09:40.247Z"
+        }
+      ],
+      "observedAt": "2026-10-08T00:09:39.082Z",
+      "qualificationAssertionsChanged": false
+    }
+  ]
+}

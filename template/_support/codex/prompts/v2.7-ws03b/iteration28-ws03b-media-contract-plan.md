@@ -1,0 +1,576 @@
+# Actual ChatGPT REVIEW27 and PLAN28
+
+Observed: 2026-10-07T23:20:54.803Z
+Source: https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 27"
+      - text: "WORKSTREAM: WS03A semantic visual roles"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03A IMPLEMENTATION FOR CONTINUATION
+    - paragraph: 我独立重算了 iteration27 的关键证据，结果与 candidate 一致。
+    - paragraph: 最关键的数据是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "Phase A settled geometry: 6 rows 96 / 96 post-settlement samples DOMRect.height = 44px strictly computed/min/used height = 44px offsetHeight = 44 boundingBox.height = 44 oracle delta = 0 product delta = 0 Phase B targeted: 6 / 6 rows PASS 63 / 63 assertions PASS 1 qualification attempt 0 retry 0 unexpected error Phase C fresh47: 47 / 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN 0 non-WebKit regression failed assertions = 40 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED"
+    - paragraph: 我从 fresh raw 与 iteration19 frozen residual40 重新做了集合比较：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: current residuals = 40 outside frozen40 = 0 missing from frozen40 = 0 Chromium counterparts = 40 / 40 PASS Firefox counterparts = 40 / 40 PASS
+    - paragraph:
+      - text: 也就是说，这一轮 frozen40
+      - strong: 全部出现
+      - text: 。相对于 iteration22，唯一变化是此前暂时消失的：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: baseline:webkit:content-detail:390x844 table-local-scroll
+    - paragraph: 重新出现。
+    - paragraph: 它仍属于既有 frozen40，仍分类：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: PRODUCT_EVIDENCE_UNRESOLVED
+    - paragraph: 所以不能把它解释成新的03A回归，但也不能宣称被03A解决。
+    - paragraph: Closure 仍然：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "exit = 1 decision = BLOCKED sole error: missing/invalid real Safari keyboard evidence"
+    - paragraph: 这正是当前治理预期。
+    - paragraph: 关于最后的 integrity correction，我也接受这次修正：initial FAIL 唯一报错是 actual PLAN27 在 preflight namespace 中被保护、但 final auditor 错误地把它排除，造成“missing file = governance mutation”的假阳性。实际 PLAN SHA preflight/current 完全一致，corrected comparison 对同一个 preflight namespace 得到：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 6145 protected files unchanged product delta = 0 governance delta = 0 verification infrastructure delta = 0 exact13 = true history23–26 unchanged Contract = 41 unique IDs
+    - paragraph: 且没有重跑 browser qualification 或 closure 来“刷绿”。
+    - paragraph: 因此正式状态为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03A CANDIDATE: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03A FORMAL GATE: NOT CLOSED WS03 FORMAL GATE: NOT ACCEPTED WS06A FULL: BLOCKED Safari proof: 0 Capability promotion: NONE Release hold: ACTIVE"
+    - paragraph:
+      - text: 现在可以进入
+      - strong: WS03B
+      - text: ，但仍然只是一片。
+    - paragraph: 下面是 iteration28 的有限计划。
+    - button "添加到资料库":
+      - generic: PLAN28 — WS03B Media Contract, Adapter and Fallback Slice
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 28"
+        - text: "WORKSTREAM: WS03B"
+        - text: "SLICE: MEDIA DIMENSIONS / RIGHTS-CREDIT REFERENCES / VIDEO EQUIVALENT / UNIFIED PRESENTATION FALLBACK"
+        - text: "PREDECESSOR: REVIEW27 ACCEPTED FOR CONTINUATION"
+        - text: "SCOPE: WS03B ONLY"
+        - text: "03C_SHARE_MEDIA: OUT_OF_SCOPE"
+        - text: "03D_SEARCH_FRESHNESS: OUT_OF_SCOPE"
+        - text: "WS06A_FULL: BLOCKED"
+        - text: "SAFARI_PROOF: 0"
+      - heading "1. 当前真实媒体基础" [level=2]
+      - paragraph: 现有 Starter 已经有一套可用而且应该继续复用的媒体体系：
+      - code: src/data/media/media.json ↓ src/data/schemas/media.ts ↓ src/data/media/catalog.ts ↓ hero / gallery / trailer ↓ GameMedia / VideoEmbed / ScreenshotGallery
+      - paragraph: 当前支持：
+      - code: local image local MP4 / WebM local video poster YouTube canonical 11-char ID hero gallery trailer alt caption sourceUrl
+      - paragraph: 并已经存在：
+      - code: MEDIA_DECISION_TABLE media-readiness.ts rights_state human_decision visual_gate_state
+      - paragraph:
+        - text: 所以 WS03B
+        - strong: 不得再造第二套媒体生命周期或 rights engine
+        - text: 。
+      - separator
+      - heading "2. 当前真正缺口" [level=1]
+      - paragraph: 03B只补当前模型中真实缺失的四件事：
+      - code: 1. intrinsic dimensions + derived aspect ratio 2. rights evidence reference 3. optional public credit 4. video accessible equivalent
+      - paragraph: 以及一个统一 presentation adapter，使：
+      - code: schema metadata → one resolver → image/video renderer → deterministic fallback
+      - paragraph: 不再让不同 renderer 自己解释这些字段。
+      - separator
+      - heading "3. 不选择的方案" [level=1]
+      - heading "A. 把所有逻辑直接塞进 Astro components" [level=2]
+      - paragraph: 拒绝。
+      - paragraph: 会导致：
+      - code: GameMedia VideoEmbed future share-media
+      - paragraph: 分别解释 dimensions/credit/fallback。
+      - paragraph: 03C之后容易漂移。
+      - separator
+      - heading "B. 建 Media Engine / provider abstraction" [level=2]
+      - paragraph: 拒绝。
+      - paragraph: 不新增：
+      - code: DAM CDN remote image provider upload API transcoder iframe provider registry media workflow engine rights engine placement DSL
+      - separator
+      - heading "C. 选择：bounded media schema + pure presentation adapter" [level=2]
+      - code: validated MediaAsset ↓ resolveMediaPresentation() ↓ GameMedia / VideoEmbed
+      - paragraph: 这是本切片选型。
+      - separator
+      - heading "4. Schema设计" [level=1]
+      - paragraph: 保留：
+      - code: id type src alt caption sourceUrl
+      - paragraph: 增加共同字段：
+      - code: "dimensions: { width: positive integer, height: positive integer, } rightsRef: non-empty string credit?: { text: non-empty string, url?: HTTPS URL, }"
+      - paragraph:
+        - code: dimensions
+        - text: 和
+        - code: rightsRef
+        - text: 对资产成为显式必填。
+      - separator
+      - heading "5. 为什么 dimensions 不允许只填一个" [level=1]
+      - paragraph: 禁止：
+      - code: width only height only aspectRatio string only "16:9" "1.777" CSS ratio
+      - paragraph: 只接受：
+      - code: "dimensions: { width: 1920, height: 1080, }"
+      - paragraph: aspect ratio由 Core确定性推导：
+      - code: width / height
+      - paragraph: 因此不会出现：
+      - code: width=1920 height=1080 aspectRatio=4:3
+      - paragraph: 三份真相。
+      - separator
+      - heading "6. 为什么 rightsRef 必填但不代表批准" [level=1]
+      - paragraph: 例如：
+      - code: "rightsRef: \"media-rights:official-trailer\""
+      - paragraph: 其语义只是：
+      - blockquote:
+        - paragraph: 项目存在一个可追溯的人类 rights/usage evidence reference。
+      - paragraph: 它绝不表示：
+      - code: VERIFIED APPROVED legal commercially reusable
+      - paragraph: 这些仍由：
+      - code: MEDIA_DECISION_TABLE SOP Human review
+      - paragraph: 持有。
+      - paragraph: Starter只检查：
+      - code: non-empty reference exists
+      - paragraph: 不解析它的法律意义。
+      - separator
+      - heading "7. Credit 与 rights 分开" [level=1]
+      - paragraph:
+        - code: credit
+        - text: 是
+        - strong: 公开展示数据
+        - text: 。
+      - paragraph: 例如：
+      - code: "credit: { text: \"Official artwork — Example Studio\", url: \"https://example.com/press-kit\", }"
+      - paragraph: 它可以不存在，因为不是每个资产都必须公开 attribution。
+      - paragraph: 而：
+      - code: rightsRef
+      - paragraph: 不公开渲染。
+      - paragraph: 必须增加测试确保：
+      - code: rightsRef workflow state approval state
+      - paragraph: 不会泄漏到公开 HTML。
+      - separator
+      - heading "8. Video accessible equivalent" [level=1]
+      - paragraph: Video新增必填：
+      - code: accessibleEquivalent
+      - paragraph: 采用 bounded union：
+      - code: "accessibleEquivalent: | { kind: \"text\", text: string } | { kind: \"link\", label: string, href: safe local path | HTTPS URL }"
+      - paragraph: 用途：
+      - heading "text" [level=3]
+      - paragraph: 视频核心内容可以用简明文字说明时：
+      - code: “Video shows the route from the western gate to the first objective and the two optional exits.”
+      - heading "link" [level=3]
+      - paragraph: 已有 transcript / textual description 时：
+      - code: Read transcript
+      - paragraph: 链接到项目内部页面或 HTTPS source。
+      - separator
+      - heading "9. Video equivalent 不是 alt/title" [level=1]
+      - paragraph: 现有：
+      - code: alt → iframe/video accessible title
+      - paragraph: 继续存在。
+      - paragraph: 但是：
+      - code: title = "Official launch trailer"
+      - paragraph: 并不能等价描述视频内容。
+      - paragraph: 因此：
+      - code: alt/title ≠ accessible equivalent
+      - paragraph: 03B明确分离这两个责任。
+      - separator
+      - heading "10. Migration规则" [level=1]
+      - paragraph: 这是03B的重要 fail-closed决定。
+      - paragraph: 现有：
+      - code: "{ assets: [], pages: [] }"
+      - paragraph: 仍完全合法。
+      - paragraph: 因此 generic Starter无需虚构资产。
+      - paragraph: 但任何已有资产对象：
+      - code: image video
+      - paragraph: 升级到03B后必须显式补：
+      - code: dimensions rightsRef
+      - paragraph: Video还必须补：
+      - code: accessibleEquivalent
+      - paragraph: 禁止自动生成：
+      - code: "dimensions: 1920×1080 rightsRef: \"approved\" accessibleEquivalent: alt"
+      - paragraph: 所以：
+      - code: legacy empty manifest → compatible legacy populated asset without new evidence → migration required / fail closed
+      - paragraph: 这正符合：
+      - code: legacy missing evidence must not become approved through defaults
+      - separator
+      - heading "11. Unified presentation adapter" [level=1]
+      - paragraph: 新增：
+      - code: src/core/media-presentation.ts
+      - paragraph: 核心 API：
+      - code: "resolveMediaPresentation(asset: MediaAsset)"
+      - paragraph: 返回类似：
+      - code: "{ id, type, dimensions: { width, height, }, aspectRatio: { width, height, }, publicCredit: Credit | null, source: { url, label, }, videoEquivalent: ... | null, }"
+      - paragraph: 注意：
+      - code: rightsRef
+      - paragraph:
+        - text: 可以供 validation/reconciliation读取，但
+        - strong: 不进入 public presentation payload
+        - text: 。
+      - separator
+      - heading "12. Adapter禁止做的事" [level=1]
+      - paragraph: 禁止：
+      - code: 判断版权是否合法 rightsRef → APPROVED 自动选择媒体 自动fallback到另一资产 远程availability probe 自动改placement 自动crop 自动算最佳图片
+      - paragraph: Adapter只做：
+      - code: validated data → deterministic presentation metadata
+      - separator
+      - heading "13. Dimensions实际消费" [level=1]
+      - heading "Image" [level=2]
+      - paragraph: 渲染：
+      - code: <img width="..." height="..." ... >
+      - paragraph: 现有：
+      - code: "width: 100%; height: auto;"
+      - paragraph: 继续保持。
+      - paragraph: 因此 browser获得稳定 intrinsic ratio，同时仍 responsive。
+      - separator
+      - heading "Video" [level=2]
+      - paragraph:
+        - code: .video-embed
+        - text: 不再只能写死：
+      - code: 16 / 9
+      - paragraph: 改成受控：
+      - code: "--media-aspect-ratio"
+      - paragraph: 由 adapter 的：
+      - code: width / height
+      - paragraph: 提供。
+      - paragraph: 默认不存在，因为 schema已经要求 dimensions。
+      - paragraph: 不引入 layout DSL。
+      - separator
+      - heading "14. Video fallback" [level=1]
+      - paragraph: 无论：
+      - code: local video YouTube iframe
+      - paragraph: figure下都必须存在：
+      - code: accessible equivalent + source link
+      - paragraph: 因此第三方 embed被网络/隐私工具阻断时，页面仍有可理解的公开文本路径。
+      - paragraph: 不是用 JS检测：
+      - code: iframe failed
+      - paragraph: 而是始终提供 deterministic fallback information。
+      - separator
+      - heading "15. Image fallback边界" [level=1]
+      - paragraph: Local image path仍由 build validation确保存在。
+      - paragraph: 因此不新增运行时：
+      - code: onerror replacement engine
+      - paragraph: Image的 deterministic fallback仍是：
+      - code: alt caption if any credit if any source link
+      - paragraph: Missing local asset继续：
+      - code: build/validation BLOCK
+      - paragraph: 而不是渲染占位图。
+      - separator
+      - heading "16. No-media继续是合法一等状态" [level=1]
+      - paragraph: 03B不能把：
+      - code: no page mapping
+      - paragraph: 变成错误。
+      - paragraph: 以下继续合法：
+      - code: "{ \"assets\": [], \"pages\": [] }"
+      - paragraph: 和：
+      - code: "{ \"assets\": [], \"pages\": [ {\"pageId\": \"home\"} ] }"
+      - paragraph: Renderer不能产生：
+      - code: empty media column empty gallery empty trailer frame fallback placeholder
+      - paragraph: 这与现有 NO MEDIA NEEDED 生命周期一致。
+      - separator
+      - heading "17. 03B不改 placements" [level=1]
+      - paragraph: 仍只有：
+      - code: hero gallery trailer
+      - paragraph: 不新增：
+      - code: cover inline background thumbnail og share
+      - paragraph: 尤其：
+      - code: share/OG media = 03C
+      - paragraph: 明确排除。
+      - separator
+      - heading "18. Exact Starter scope" [level=1]
+      - paragraph:
+        - text: 允许修改
+        - strong: 12 个 Starter files
+        - text: ：
+      - code: 1. src/data/schemas/media.ts 2. src/core/media-presentation.ts NEW 3. src/data/media/catalog.ts 4. src/components/media/GameMedia.astro 5. src/components/media/VideoEmbed.astro 6. src/styles/global.css 7. scripts/media-validation.ts 8. tests/media.test.ts 9. tests/media-rendering.test.ts 10. tests/media-build.test.ts 11. docs/media/README.md 12. docs/CONTENT_AND_DATA_GUIDE.md
+      - separator
+      - heading "19. 明确不改" [level=1]
+      - code: src/data/media/media.json src/core/media-readiness.ts page-inventory game.config.ts routes SEO/share search/Pagefind ads package.json package-lock.json CI browser matrix runner closure verifier policy/control
+      - paragraph: 默认 production media manifest继续为空。
+      - paragraph: 不为了测试塞假游戏资产。
+      - separator
+      - heading "20. Triad同步 scope" [level=1]
+      - paragraph: 同步4个治理/执行文件：
+      - code: 13. GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md 14. GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md 15. GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md 16. GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph: 总 product/governance scope：
+      - code: 16 files
+      - paragraph: 如实际实现需要第17个：
+      - code: STOP REPLAN
+      - separator
+      - heading "21. SOP责任" [level=1]
+      - paragraph: SOP新增/明确：
+      - code: dimensions rightsRef public credit video accessible equivalent
+      - paragraph: 方法责任。
+      - paragraph: 必须明确：
+      - code: sourceUrl = provenance rightsRef = evidence pointer credit = public attribution rights approval = Human lifecycle decision
+      - paragraph: 四者不等价。
+      - separator
+      - heading "22. Prompt责任" [level=1]
+      - paragraph: Prompt执行：
+      - code: missing dimensions → STOP missing rightsRef → STOP video missing accessibleEquivalent → STOP invalid credit URL → STOP
+      - paragraph: 但禁止：
+      - code: rightsRef present → APPROVED
+      - paragraph: 若 lifecycle仍：
+      - code: UNRESOLVED PENDING BLOCK
+      - paragraph: Prompt继续遵循已有 Media Decision Table。
+      - separator
+      - heading "23. RED phase" [level=1]
+      - paragraph: 第一次03B mutation前记录：
+      - code: WS03A continuation ACCEPT current exact source identity next authorized slice = 03B
+      - paragraph: 第一次 test mutation后：
+      - code: 03B continuation state = STALE
+      - paragraph: 随后只先修改：
+      - code: tests/media.test.ts tests/media-rendering.test.ts tests/media-build.test.ts
+      - paragraph: 运行 targeted RED。
+      - paragraph: 必须真实 non-zero。
+      - separator
+      - heading "24. RED schema tests" [level=1]
+      - paragraph: 至少新增：
+      - code: image missing dimensions → reject image missing rightsRef → reject video missing dimensions → reject video missing rightsRef → reject video missing accessibleEquivalent → reject zero/negative/noninteger dimension → reject authored aspectRatio → reject unknown metadata field → reject invalid credit object → reject non-HTTPS external credit URL → reject invalid accessibleEquivalent → reject
+      - separator
+      - heading "25. RED compatibility tests" [level=1]
+      - paragraph: 必须同时证明：
+      - code: empty canonical manifest still PASS no-media page mapping still PASS
+      - paragraph: 以及：
+      - code: old populated image/video without new fields → explicit migration failure
+      - paragraph: 不能静默补默认。
+      - separator
+      - heading "26. GREEN implementation" [level=1]
+      - paragraph: RED保存后才实现12+4 scope。
+      - paragraph: 然后重新跑 media targeted suites，要求全 PASS。
+      - separator
+      - heading "27. Rendering tests" [level=1]
+      - paragraph: 必须实际验证：
+      - heading "Image" [level=3]
+      - code: width attribute height attribute alt caption credit source link
+      - paragraph: 并验证：
+      - code: rightsRef not present in HTML
+      - separator
+      - heading "Video" [level=3]
+      - paragraph: 验证：
+      - code: derived aspect ratio consumed accessible equivalent visible credit visible when authored source link visible rightsRef absent publicly
+      - paragraph: 同时现有：
+      - code: controls playsinline YouTube nocookie permissions referrerpolicy
+      - paragraph: 全部保留。
+      - separator
+      - heading "28. Unified adapter tests" [level=1]
+      - paragraph: 直接测试：
+      - code: resolveMediaPresentation(image) resolveMediaPresentation(local video) resolveMediaPresentation(YouTube)
+      - paragraph: 必须一致返回：
+      - code: dimensions ratio source credit fallback/equivalent
+      - paragraph: 不允许 component自己重新推导另一套比例。
+      - separator
+      - heading "29. Negative local-file行为" [level=1]
+      - paragraph: 现有：
+      - code: missing image missing local video missing poster
+      - paragraph: 仍必须 fail closed。
+      - paragraph: 新增 metadata不能削弱：
+      - code: safe /media path file existence poster scope YouTube canonical ID
+      - separator
+      - heading "30. Root/adoption regression" [level=1]
+      - paragraph: GREEN后：
+      - code: npm run check npm run verify:unadopted-final npm run verify:adopted-final git diff --check
+      - paragraph: 要求全部保持既有语义。
+      - paragraph: 测试数量允许增加。
+      - paragraph: 记录：
+      - code: before = 780 after = actual
+      - separator
+      - heading "31. 03B targeted browser fixture" [level=1]
+      - paragraph: 不能只靠 Astro string render。
+      - paragraph:
+        - text: 建立 disposable adopted fixture，加入
+        - strong: 纯 synthetic media
+        - text: 。
+      - paragraph: 至少包含：
+      - code: one image one local video or test video one YouTube video
+      - paragraph: 全部带：
+      - code: dimensions rightsRef
+      - paragraph: video带：
+      - code: accessibleEquivalent
+      - paragraph:
+        - text: 不修改 canonical
+        - code: media.json
+        - text: 。
+      - separator
+      - heading "32. Targeted browser states" [level=1]
+      - paragraph: 必须覆盖以下状态。
+      - heading "State A — valid media" [level=2]
+      - paragraph: 至少验证：
+      - code: image intrinsic width/height present image responsive without distortion video wrapper ratio matches dimensions caption/source/credit visible video equivalent visible rightsRef not rendered
+      - separator
+      - heading "State B — no media" [level=2]
+      - paragraph: 验证：
+      - code: no empty hero media shell no empty gallery no empty trailer page remains composed
+      - separator
+      - heading "State C — third-party embed unavailable" [level=2]
+      - paragraph: 针对 synthetic YouTube fixture，只在浏览器测试中阻断：
+      - code: youtube-nocookie request
+      - paragraph: 验证：
+      - code: page does not collapse accessible equivalent remains visible source link remains visible
+      - paragraph: 这只是网络故障模拟。
+      - paragraph: 不得改变 production renderer。
+      - separator
+      - heading "State D — invalid/missing local asset" [level=2]
+      - paragraph: 这是 build/validation negative fixture：
+      - code: must reject before browser acceptance
+      - paragraph: 不需要让浏览器访问故意损坏的 production build。
+      - separator
+      - heading "33. Browser engines" [level=1]
+      - paragraph: 新03B visible surfaces至少运行：
+      - code: Chromium Firefox WebKit
+      - paragraph: 代表性 desktop + mobile viewport。
+      - paragraph: 无需重复整个47矩阵作为03B-specific测试。
+      - paragraph: 它们是额外 evidence。
+      - separator
+      - heading "34. Browser accessibility边界" [level=1]
+      - paragraph: 检查：
+      - code: image alt video title accessible equivalent source/credit links no horizontal overflow ratio/responsive behavior
+      - paragraph: 但不把：
+      - code: programmatic focus()
+      - paragraph: 当真实 keyboard PASS。
+      - paragraph: AX promotion仍为 NONE。
+      - separator
+      - heading "35. Normal cleanup" [level=1]
+      - paragraph: 继续使用已接受的短 owned TMP：
+      - code: /tmp/c2c28a.*
+      - paragraph: 规则：
+      - code: normal Astro stop PID gone fixture gone known Node/tsx cache only 0 symlink 0 path escape 0 unknown 0 fallback signal root removed
+      - separator
+      - heading "36. 03B targeted PASS后重新 fresh47" [level=1]
+      - paragraph: 再用：
+      - code: /tmp/c2c28b.*
+      - paragraph:
+        - text: 运行
+        - strong: 原始未修改
+        - text: ：
+      - code: npm run check:browser
+      - paragraph: 一次：
+      - code: attempt=1 retry=0
+      - paragraph: 必须：
+      - code: 47 executed 0 NOT_RUN 0 non-WebKit regression
+      - separator
+      - heading "37. Frozen WebKit rule继续" [level=1]
+      - paragraph: post03B residual必须：
+      - code: ⊆ iteration19 frozen40
+      - paragraph: 任何集合外 WebKit failure：
+      - code: STOP
+      - paragraph: 重新计算当前：
+      - code: Chromium N/N counterparts Firefox N/N counterparts
+      - paragraph: 不能复用 iteration27 的40/40。
+      - separator
+      - heading "38. Residual delta" [level=1]
+      - paragraph: 同时与 iteration27 post03A source比较：
+      - code: persisted disappeared reappearedFromFrozen40 newOutsideFrozen40
+      - paragraph: 如果数量变化，必须披露。
+      - paragraph: 不能用“仍属于40”隐藏变化。
+      - separator
+      - heading "39. Current policy / closure" [level=1]
+      - paragraph: 重新核：
+      - code: WebKit version/revision native probe host policy SHA Arrow control SHA
+      - paragraph: 然后原：
+      - code: verify:browser-closure
+      - paragraph: 仍不提供 Safari proof。
+      - paragraph: 期望若 residual仍存在：
+      - code: BLOCKED sole missing real Safari keyboard evidence
+      - separator
+      - heading "40. Exact identity" [level=1]
+      - paragraph: 绑定 post03B：
+      - code: Starter branch/head/working tree SOP working tree Prompt working tree Contract fixture source dist Playwright three engines host matrix runner closure policy/control
+      - paragraph: 不能引用 iteration27 source身份作为 post03B PASS。
+      - separator
+      - heading "41. Contract / Registry" [level=1]
+      - paragraph: 始终：
+      - code: Contract SHA unchanged 41 capability IDs 0 duplicate IDs
+      - paragraph: 03B不新增 capability。
+      - paragraph: 涉及：
+      - code: MC-01 MC-03 MC-05
+      - paragraph: 只是技术实现增量。
+      - paragraph: 不自动把这些 capability判 PASS。
+      - separator
+      - heading "42. 03C明确不开始" [level=1]
+      - paragraph: 即使03B完全通过：
+      - code: OG/share image twitter image share fallback SEO-02 implementation
+      - paragraph: 本轮一律不做。
+      - paragraph: 因为：
+      - code: 03C consumes accepted 03B media authority
+      - paragraph: 必须等独立 REVIEW28 后才能计划。
+      - separator
+      - heading "43. Execution artifacts" [level=1]
+      - paragraph: Actual PLAN：
+      - code: template/codex/prompts/v2.7-ws03b/ iteration28-ws03b-media-contract-plan.md
+      - paragraph: Execution：
+      - code: template/codex/executions/v2.7-ws03b/iteration28/
+      - paragraph: 至少保存：
+      - code: preflight continuation-before-mutation stale-state pre/post images scope check RED GREEN root/adoption/diff 03b browser evidence fixture/build identity cleanup fresh47 expected identity native probe residual comparison counterpart audit closure recheck integrity result
+      - separator
+      - heading "44. STOP条件" [level=1]
+      - paragraph: 以下立即停止：
+      - code: 需要新 provider 需要 remote image 需要 DAM/CDN/upload/transcoding 需要 media placement DSL 需要修改 media-readiness lifecycle enum 需要自动 rights approval 需要03C share media 需要 SEO/search/date changes 需要 Page Inventory/route改变 default empty media manifest失效 rightsRef泄漏公开HTML video没有真实 accessible equivalent targeted browser任一必要 state FAIL fresh47非WebKit regression new residual outside frozen40 cleanup异常 Contract/Registry变化 超出16个 approved product/governance files
+      - separator
+      - heading "45. 最终 candidate语义" [level=1]
+      - paragraph: Codex全部执行成功最多写：
+      - code: "WS03B: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: 不能自行写：
+      - code: WS03B ACCEPT MC-* PASS WS03 formal Gate closed 03C authorized
+      - separator
+      - heading "46. 独立 REVIEW28 后" [level=1]
+      - paragraph: 只有独立接受：
+      - code: "WS03B: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION"
+      - paragraph: 后，standing authorization 才允许下一有限动作：
+      - code: PLAN29 — WS03C share media authority
+      - paragraph: 仍不会解锁：
+      - code: formal WS03 Gate 04A formal integration 05 06B 07 08 release
+      - heading "PLAN28一句话边界" [level=2]
+      - code: 让现有媒体系统知道“资产真实尺寸是什么、 权利证据在哪里、公开credit是什么、 视频的文字等价路径是什么”， 并让所有renderer通过同一个受控adapter消费； 但绝不让Starter替人判断版权， 也不把03B变成媒体平台。
+    - paragraph:
+      - text: iteration27 因此可以关闭为
+      - strong: WS03A continuation ACCEPT
+      - text: ；下一步严格是上述 WS03B 单切片。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

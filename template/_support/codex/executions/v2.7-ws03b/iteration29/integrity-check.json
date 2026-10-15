@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "approvedConditionalScope": 2,
+  "changedFiles": [
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts"
+  ],
+  "protectedFilesUnchanged": 6293,
+  "iteration28Frozen": true,
+  "productDelta": 2,
+  "ContractSHA": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+  "canonicalCapabilityRows": 41,
+  "uniqueCapabilityIds": 41,
+  "duplicateCapabilityRows": 0,
+  "verificationInfrastructureDelta": 0,
+  "errors": []
+}

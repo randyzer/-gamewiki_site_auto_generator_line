@@ -1,0 +1,701 @@
+# Actual PLAN23
+
+Captured 2026-10-07T15:58:41.735Z
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: 已经完成对当前真实实现的核对。03A 最合适的不是“继续堆 CSS”，也不是引入 Theme Engine，而是做一个
+      - strong: 非常窄的 typed role adapter + CSS semantic token 消费层
+      - text: ：配置只允许选择有限角色，CSS仍负责具体视觉值；默认值必须精确保持现在的几何和交互，因此不会因为 03A 本身让 Starter 获得新的“游戏调性”。
+    - button "添加到资料库":
+      - generic: PLAN23 — WS03A Semantic Visual Roles Slice
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - generic: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 23"
+        - text: "WORKSTREAM: WS03A — semantic font / density / shape / state roles"
+        - text: "PLAN_STATUS: READY FOR AUTONOMOUS EXECUTION"
+        - text: "PREDECESSOR: ITERATION22 DEVELOPMENT READINESS ACCEPTED"
+        - text: "AUTHORIZED_SCOPE: WS03A ONE SLICE ONLY"
+        - text: "CURRENT_READINESS: ACCEPTED_FOR_BOUNDED_DEVELOPMENT UNTIL FIRST PRODUCT MUTATION"
+        - text: "WS06A_FULL: BLOCKED"
+        - text: "SAFARI_PROOF: 0"
+        - text: "FORMAL_WS03_GATE: NOT_ACCEPTED"
+      - heading "1. 当前真实基础" [level=1]
+      - paragraph: 现有 Starter 已经有：
+      - code:
+        - generic: theme.css → palette → page-family accent tokens page-families.css → Inventory module → --page-accent BaseLayout → body[data-page-family=page.module] global.css → 实际字体/间距/几何/hover/focus/current表现
+      - paragraph: 当前字体其实已经形成三种角色：
+      - code: "--display --body --mono"
+      - paragraph:
+        - text: 但实际 font stack定义仍硬编码在
+        - code: global.css
+        - text: 。
+      - paragraph: 密度、形状和交互状态同样主要表现为：
+      - code: 48px / 26px / clamp(...) border shape hover translate hover shadow focus outline current-state color
+      - paragraph:
+        - text: 分散在
+        - code: global.css
+        - text: 中。
+      - paragraph:
+        - text: 当前
+        - code: gameConfigSchema
+        - text: 是 strict config，并且：
+      - code: 没有 theme 没有 typography 没有 density 没有 shape 没有 state
+      - paragraph:
+        - code: game.config.ts
+        - text: 也没有相关选择。
+      - paragraph: WS04A Dependency Ledger正确记录：
+      - code: 主题语义 = WAITING_WS03A
+      - paragraph: 并要求未来03A实际接口被接受后再绑定，而不能让03A迁就之前的猜测。
+      - separator
+      - heading "2. 三方案比较" [level=1]
+      - heading "A — CSS-only semantic roles" [level=2]
+      - paragraph: 做法：
+      - code: theme.css增加font/density/shape/state CSS variables global.css消费 项目直接编辑CSS
+      - paragraph: 优点：
+      - code: 实现最小 无schema迁移
+      - paragraph: 问题：
+      - code: 没有typed project choice 错误值不能fail closed 04A只能绑定“某些CSS变量” 无法区分合法角色选择与任意样式编辑
+      - paragraph: 不选。
+      - separator
+      - heading "B — Bounded typed adapter + CSS roles" [level=2]
+      - paragraph: 做法：
+      - code: game.config ↓ 严格有限 visualRoles ↓ Core resolver ↓ BaseLayout data attributes ↓ theme.css semantic tokens ↓ global.css
+      - paragraph: 配置只能选择有限 enum。
+      - paragraph: 不允许：
+      - code: font-family自由字符串 任意px/rem 任意border-radius 任意CSS 任意style object 组件级override
+      - paragraph: 优点：
+      - code: typed fail closed 容易被04A引用 旧config可兼容 不形成Theme Engine CSS仍然控制真实presentation
+      - paragraph:
+        - strong: 选择 B。
+      - separator
+      - heading "C — Theme Engine" [level=2]
+      - paragraph: 例如：
+      - code: "theme: fonts: arbitrary... spacing: arbitrary... surfaces... components... states... pageOverrides..."
+      - paragraph: 或者 runtime palette / component style registry。
+      - paragraph: 明确拒绝。
+      - paragraph: 这违反当前 Blueprint 已接受的：
+      - code: No Theme Engine No runtime theme editor No arbitrary per-page style config
+      - paragraph: 也会把03A扩大成新的设计系统。
+      - separator
+      - heading "3. 03A 的准确接口" [level=1]
+      - paragraph: 新增 config key：
+      - code: visualRoles
+      - paragraph: 只允许四个角色。
+      - code: "visualRoles: { font: \"editorial\" | \"interface\", density: \"comfortable\" | \"compact\", shape: \"square\" | \"soft\", state: \"lifted\" | \"quiet\", }"
+      - paragraph: 这就是完整03A typed project interface。
+      - paragraph: 不增加第五类。
+      - separator
+      - heading "4. 默认值" [level=1]
+      - paragraph: Legacy config没有：
+      - code: visualRoles
+      - paragraph: 时 resolver返回：
+      - code: font = editorial density = comfortable shape = square state = lifted
+      - paragraph:
+        - text: 这些默认值必须映射为
+        - strong: 当前现有 Starter 的准确表现
+        - text: 。
+      - paragraph: 也就是说：
+      - blockquote:
+        - paragraph: 仅仅实施03A、不配置 visualRoles，不能改变当前默认页面的字体层级、主要间距、触控尺寸、矩形形状和已有 hover lift行为。
+      - separator
+      - heading "5. 为什么 config 中不直接 default()" [level=1]
+      - paragraph:
+        - code: gameConfigSchema
+        - text: 保持：
+      - code: visualRoles optional
+      - paragraph: 而不是把默认对象静默写入 parsed config。
+      - paragraph: 由专门 resolver完成：
+      - code: undefined → DEFAULT_VISUAL_ROLES
+      - paragraph: 这样能清楚区分：
+      - code: Legacy / unconfigured project
+      - paragraph: 和：
+      - code: Project explicitly chose visual roles
+      - paragraph: 以后04A适配记录也可以知道：
+      - blockquote:
+        - paragraph: 这是项目明确选择，还是 Starter fallback。
+      - separator
+      - heading "6. authored object 必须完整" [level=1]
+      - paragraph: 如果项目开始写：
+      - code: "visualRoles: {...}"
+      - paragraph: 则四个字段必须全部提供。
+      - paragraph: 例如以下应 FAIL：
+      - code: "visualRoles: { font: \"interface\" }"
+      - paragraph: 不能让项目只改一个字段、其他三个静默补默认。
+      - paragraph: 理由：
+      - blockquote:
+        - paragraph: 一旦项目声明视觉适配，选择应明确可审核。
+      - paragraph: 因此：
+      - code: visualRoles absent → migration fallback visualRoles present → 四项 explicit
+      - separator
+      - heading "7. 不允许任意值" [level=1]
+      - paragraph: 必须拒绝：
+      - code: "font: \"Cinzel\" font: \"fantasy\" fontFamily: \"...\" density: \"very-dense\" density: \"12px\" shape: \"8px\" borderRadius: \"...\" state: \"animated\" hoverTransform: \"...\""
+      - paragraph: 同样拒绝 unknown keys。
+      - separator
+      - heading "8. 新 Core adapter" [level=1]
+      - paragraph: 新增：
+      - code: src/core/theme-roles.ts
+      - paragraph: 责任严格限定为：
+      - code: validated visual-role choice → resolved role identifiers
+      - paragraph: 建议 API：
+      - code:
+        - generic: "DEFAULT_VISUAL_ROLES resolveVisualRoles( visualRoles: GameConfig[\"visualRoles\"] ): ResolvedVisualRoles"
+      - paragraph: 输出永远只有：
+      - code: font density shape state
+      - paragraph: 不输出：
+      - code: CSS strings styles colors routes page families game identity
+      - separator
+      - heading "9. BaseLayout binding" [level=1]
+      - paragraph: 当前：
+      - code: "<html lang=...> ... <body data-page-family={page.module}>"
+      - paragraph: 03A后：
+      - code: "<html lang=... data-theme-font={roles.font} data-theme-density={roles.density} data-theme-shape={roles.shape} data-theme-state={roles.state} >"
+      - paragraph: 而：
+      - code:
+        - generic: body[data-page-family=page.module]
+      - paragraph: 保持原样。
+      - paragraph: 所以两层含义明确：
+      - code: html data-theme-* → site-wide semantic visual roles body data-page-family → page-family accent
+      - paragraph: 禁止：
+      - code: route → theme pageType → theme module → font/density/shape component → invented role
+      - separator
+      - heading "10. Font roles" [level=1]
+      - paragraph:
+        - code: theme.css
+        - text: 新增 Core role tokens，例如：
+      - code: "--role-font-display --role-font-body --role-font-utility"
+      - paragraph:
+        - code: global.css
+        - text: 现有：
+      - code: "--display --body --mono"
+      - paragraph: 改为消费这些 role tokens。
+      - paragraph: 默认：
+      - heading "editorial" [level=3]
+      - paragraph: 必须精确保存现在：
+      - code: "display: \"Iowan Old Style\", \"Baskerville\", \"Times New Roman\", serif body: \"Avenir Next\", \"Gill Sans\", \"Trebuchet MS\", sans-serif utility: \"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace"
+      - heading "interface" [level=3]
+      - paragraph: 使用稳定的系统 UI stack。
+      - paragraph: 不下载字体。
+      - paragraph: 不添加：
+      - code: Google Fonts remote font font asset dependency
+      - paragraph: 本切片不是字体加载系统。
+      - separator
+      - heading "11. Density roles" [level=1]
+      - paragraph: 只开放四个高杠杆 semantic slots。
+      - paragraph: 例如：
+      - code: "--role-shell-gutter --role-section-spacing --role-card-padding --role-control-min-height"
+      - heading "comfortable" [level=3]
+      - paragraph: 映射当前已有值：
+      - code: shell gutter = 48px section = 当前既有section间距 card padding = 26px control min = 48px
+      - heading "compact" [level=3]
+      - paragraph: 可以收紧为受控值，例如：
+      - code: shell gutter = 36px card padding = 22px control min = 44px section spacing = 较小的受控clamp
+      - paragraph: 硬规则：
+      - code: 任何interactive target不能因compact低于44px
+      - paragraph: 不能建立：
+      - code: global spacing scale 8pt system arbitrary multiplier per-component density config
+      - separator
+      - heading "12. Shape roles" [level=1]
+      - paragraph: 只提供三个 semantic geometry hooks：
+      - code: "--role-control-radius --role-surface-radius --role-media-radius"
+      - heading "square" [level=3]
+      - paragraph: 必须：
+      - code: 0px
+      - paragraph: 从而保持当前默认视觉。
+      - heading "soft" [level=3]
+      - paragraph: 使用有限固定值。
+      - paragraph: 建议：
+      - code: control = 8px surface = 12px media = 10px
+      - paragraph: 它们是 Core-supported profile，不是游戏事实。
+      - separator
+      - heading "13. Global CSS消费范围" [level=1]
+      - paragraph: Shape只允许接入代表性共享 surface，例如：
+      - code: .button .mobile-nav__toggle .desktop-nav__menu .mobile-nav__panel .portal-start__link .portal-card .game-media image/video surface
+      - paragraph: 不进行全站机械：
+      - code: "border-radius: var(...)"
+      - paragraph: 替换。
+      - paragraph: 03A不是全CSS重构。
+      - separator
+      - heading "14. State roles" [level=1]
+      - paragraph:
+        - text: State只控制
+        - strong: 非必要 decorative interaction treatment
+        - text: 。
+      - paragraph: 不允许控制：
+      - code: keyboard reachability focus existence focus outline visibility aria-current semantics open/closed semantics Escape navigation behavior
+      - paragraph: 这些继续属于 Stable Core。
+      - paragraph: 允许控制：
+      - code: hover lift hover decorative shadow
+      - separator
+      - heading "lifted" [level=2]
+      - paragraph: 必须映射当前已有行为，例如：
+      - code: .button:hover → translate(-3px, -3px) → existing shadow .portal-card:hover → current -3px lift → current shadow .portal-start__link:hover → current -4px lift → current accent shadow
+      - separator
+      - heading "quiet" [level=2]
+      - paragraph: 映射：
+      - code: "transform: none box-shadow: none"
+      - paragraph: 但仍保留：
+      - code: border/color hover feedback focus-visible aria-current reduced-motion behavior
+      - paragraph: 所以：
+      - code: state=quiet ≠ disabled interaction
+      - separator
+      - heading "15. 必须保持不变的状态规则" [level=1]
+      - paragraph: 以下不要迁入 configurable state：
+      - code: a/button/input/select :focus-visible 3px focus outline mobile aria-current desktop active/current semantics details open/closed keyboard/focus restoration reduced-motion safeguards
+      - paragraph: 这样项目不能用 theme config削弱可访问性。
+      - separator
+      - heading "16. 不改 palette" [level=1]
+      - paragraph: 本切片禁止改变当前：
+      - code: "--color-* --page-accent page-family token mapping"
+      - paragraph: 包括：
+      - code: "--color-guides --color-heroes ..."
+      - paragraph: 03A不是 palette redesign。
+      - separator
+      - heading "17. 不写游戏 identity" [level=1]
+      - paragraph: Canonical：
+      - code: game.config.ts
+      - paragraph:
+        - text: 本轮
+        - strong: 保持不修改
+        - text: 。
+      - paragraph: 因此 shipped Game Atlas仍然：
+      - code: visualRoles omitted
+      - paragraph: 由 legacy/default resolver得到：
+      - code: editorial comfortable square lifted
+      - paragraph: 不因为03A凭空声明：
+      - code: Fantasy Tactical Bomb Farm War of Genesis
+      - paragraph: 等主题。
+      - separator
+      - heading "18. 未来04A如何使用" [level=1]
+      - paragraph: 03A候选接受后，04A可以引用真实技术接口：
+      - code: visual evidence → font role → density role → shape role → state role
+      - paragraph: 例如一个项目将来可以记录：
+      - code: font = interface
+      - paragraph: 但必须同时记录：
+      - code: why visual evidence decision owner human review
+      - paragraph: 03A接口存在：
+      - code: ≠ 该项目的VF/GI PASS
+      - separator
+      - heading "19. 三件套责任" [level=1]
+      - heading "Starter" [level=2]
+      - paragraph: 负责：
+      - code: schema typed adapter data attributes CSS role mapping fallback tests browser technical evidence
+      - separator
+      - heading "SOP" [level=2]
+      - paragraph: 负责：
+      - code: 视觉依据如何映射角色 谁做选择 fallback和explicit choice区别 禁止仅换角色就声称GI-02/VF PASS 人工视觉审核责任
+      - separator
+      - heading "Master Prompt" [level=2]
+      - paragraph: 负责：
+      - code: 执行accepted role choice 检查unknown/missing role 禁止推测游戏风格 禁止扩展enum 禁止绕开fallback 执行03A slice证据和STOP
+      - paragraph: 三者不得互相复制 Registry。
+      - separator
+      - heading "20. Exact product file scope" [level=1]
+      - paragraph:
+        - text: Starter允许修改恰好以下
+        - strong: 9 files
+        - text: ：
+      - code: 1. src/config/schema.ts 2. src/core/theme-roles.ts NEW 3. src/layouts/BaseLayout.astro 4. src/styles/theme.css 5. src/styles/global.css 6. tests/config.test.ts 7. tests/theme.test.ts 8. README.md 9. docs/CONTENT_AND_DATA_GUIDE.md
+      - paragraph: 明确：
+      - code: game.config.ts
+      - paragraph:
+        - strong: 不修改。
+      - separator
+      - heading "21. Exact SOP/Prompt synchronization scope" [level=1]
+      - paragraph:
+        - text: 允许同步
+        - strong: 4 files
+        - text: ：
+      - code: 10. Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ NEW_GAME_SITE_SOP_v2.7.md 11. Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ QA_CHECKLIST.md 12. Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ EXECUTION_PROMPT.md 13. Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+      - paragraph: 总产品/治理同步 scope：
+      - code: 13 files
+      - paragraph: 如果需要第14个 product/governance file：
+      - code: STOP REPLAN
+      - paragraph: Execution metadata和Actual PLAN不计入13。
+      - separator
+      - heading "22. 明确禁止修改" [level=1]
+      - paragraph: 不得修改：
+      - code: Canonical Contract Registry Roadmap Blueprint page-inventory page-families.css media schema media manifest media readiness SEO search Pagefind ads package.json package-lock.json CI browser matrix core browser runner closure verifier WebKit policy/control real game projects
+      - separator
+      - heading "23. 03B/03C/03D 全部排除" [level=1]
+      - paragraph: 本轮禁止：
+      - code: media dimensions rights credit video equivalent share image og:image search date/freshness patch semantics
+      - paragraph: 即使实现时发现它们“顺手可以做”，也不能做。
+      - separator
+      - heading "24. First mutation → readiness STALE" [level=1]
+      - paragraph: 编辑第一个 product file之前：
+      - paragraph: 保存：
+      - code: iteration23/readiness-before-mutation.json
+      - paragraph: 绑定：
+      - code: iteration22/readiness-acceptance.json review SHA source identity expiresAt nextAuthorizedSlice=WS03A
+      - paragraph: 确认仍未过期、source未漂移。
+      - paragraph: 然后第一次修改以下任一：
+      - code: 13 allowed files
+      - paragraph: 立即写：
+      - code: iteration23/readiness-state.json
+      - paragraph: 状态：
+      - code: "STALE reason: WS03A_FIRST_PRODUCT_MUTATION"
+      - paragraph: 从此不能再引用：
+      - code: iteration22 fresh47
+      - paragraph: 作为 post-change proof。
+      - separator
+      - heading "25. RED phase" [level=1]
+      - paragraph: 先只修改：
+      - code: tests/config.test.ts tests/theme.test.ts
+      - paragraph: 建立失败测试。
+      - paragraph: 然后运行：
+      - code: npm run test -- tests/config.test.ts tests/theme.test.ts
+      - paragraph: 必须非0。
+      - paragraph: 保存：
+      - code: red-theme-tests.log red-theme-tests.json
+      - separator
+      - heading "26. RED tests具体要求" [level=1]
+      - heading "Config" [level=2]
+      - paragraph: 新增测试：
+      - code: legacy config without visualRoles → still valid complete explicit visualRoles → valid visualRoles present but missing one role → FAIL unknown role value → FAIL unknown visualRoles key → FAIL arbitrary font/CSS/unit values → FAIL
+      - separator
+      - heading "Theme / Layout" [level=2]
+      - paragraph: 新增测试要求：
+      - code: BaseLayout exposes exactly four data-theme-* bindings bindings come only from resolved visualRoles body data-page-family remains page.module theme.css contains all approved role selectors global.css consumes semantic role tokens default roles retain exact current fallback values focus/current semantic Core selectors remain invariant no inline arbitrary style binding no route/pageType/module-derived theme-role binding
+      - paragraph: RED不能通过删除原测试实现。
+      - separator
+      - heading "27. GREEN implementation" [level=1]
+      - paragraph: RED证据保存后才实施：
+      - code: schema adapter layout CSS docs SOP Prompt
+      - paragraph: 然后重新：
+      - code: npm run test -- tests/config.test.ts tests/theme.test.ts
+      - paragraph: 必须 PASS。
+      - separator
+      - heading "28. Schema compatibility contract" [level=1]
+      - paragraph: 实施后：
+      - code: old config without visualRoles → PASS explicit complete visualRoles → PASS
+      - paragraph: 但：
+      - code: partial explicit visualRoles → FAIL
+      - paragraph: Legacy compatibility是：
+      - blockquote:
+        - paragraph: 旧项目无需立即编辑配置。
+      - paragraph: 不是：
+      - blockquote:
+        - paragraph: 新配置可以半填半猜。
+      - separator
+      - heading "29. Starter docs同步" [level=1]
+      - paragraph: README / Content Guide必须明确：
+      - code: game.config visualRoles → selects finite supported roles theme.css → owns actual semantic token values/palette page-families.css → continues only page accent mapping
+      - paragraph: 禁止把：
+      - code: visualRoles
+      - paragraph: 描述成 Theme Engine。
+      - separator
+      - heading "30. SOP同步内容" [level=1]
+      - paragraph: SOP只增加03A方法语义：
+      - code: visual evidence → explicit role decision → typed implementation → browser evidence → human visual review later
+      - paragraph: 明确：
+      - code: role choice valid ≠ game identity verified
+      - paragraph: 默认 fallback不能被写成：
+      - code: project-approved theme
+      - separator
+      - heading "31. QA同步" [level=1]
+      - paragraph: 新增03A QA：
+      - code:
+        - generic: "[ ] enum value supported [ ] all four explicit when authored [ ] legacy omission maps exact fallback [ ] no arbitrary CSS payload [ ] page-family authority unchanged [ ] focus/current invariant [ ] compact target >=44 [ ] default geometry regression absent [ ] alternate role browser evidence exists [ ] source/build identity exact"
+      - separator
+      - heading "32. Execution Prompt / Master Prompt同步" [level=1]
+      - paragraph: HARD STOP：
+      - code: unknown visual role partial authored role object role inferred from genre/name/logo custom role enum invented focus/current semantics weakened default geometry drift role implementation requires Theme Engine
+      - paragraph: 不得自动选择：
+      - code: fantasy game → editorial shooter → interface
+      - paragraph: 必须来自未来 Game Adaptation evidence。
+      - separator
+      - heading "33. Root regression" [level=1]
+      - paragraph: GREEN后执行：
+      - code: npm run check
+      - paragraph: 要求：
+      - code: "Astro: 0 errors 0 warnings 0 hints all test files PASS"
+      - paragraph: 测试总数可以因03A新增测试增加。
+      - paragraph: 必须记录：
+      - code: before = 757 after = actual new total
+      - paragraph: 不能要求仍等于757。
+      - separator
+      - heading "34. Adoption regression" [level=1]
+      - paragraph: 继续：
+      - code: npm run verify:unadopted-final
+      - paragraph: 必须保持：
+      - code: "meta command exit0 internal validate: EXPECTED_PP02_REJECTION internal build: EXPECTED_PP02_REJECTION"
+      - paragraph: 然后：
+      - code: npm run verify:adopted-final
+      - paragraph: 必须：
+      - code: validate PASS check PASS build PASS
+      - paragraph: 这尤其证明：
+      - code: legacy fixture missing visualRoles → default compatibility works
+      - paragraph: 然后：
+      - code: git diff --check
+      - paragraph: PASS。
+      - separator
+      - heading "35. 03A 新表面 Browser Evidence" [level=1]
+      - paragraph: Base47只能证明默认 profile没有破坏 Core。
+      - paragraph: 它不能证明：
+      - code: interface compact soft quiet
+      - paragraph: 真的工作。
+      - paragraph: 因此必须有单独的：
+      - code: WS03A targeted browser evidence
+      - separator
+      - heading "36. Targeted synthetic profile" [level=1]
+      - paragraph: 使用现有：
+      - code: createFullProjectFixture(true)
+      - paragraph: 生成 adopted Field Notes disposable fixture。
+      - paragraph: 只在临时 fixture中添加：
+      - code: "visualRoles: { font: \"interface\", density: \"compact\", shape: \"soft\", state: \"quiet\", }"
+      - paragraph: 这是纯技术 synthetic profile。
+      - paragraph: 它不是游戏主题。
+      - separator
+      - heading "37. Temporary fixture mutation安全" [level=1]
+      - paragraph: 修改 fixture config时：
+      - code: exact marker match = 1
+      - paragraph: 否则 STOP。
+      - paragraph: 禁止修改 canonical：
+      - code: game.config.ts
+      - paragraph: 记录：
+      - code: pre-patch fixture source hash post-patch fixture source hash build hash
+      - separator
+      - heading "38. 03A targeted browsers" [level=1]
+      - paragraph: 至少实际运行：
+      - code: Chromium Firefox WebKit
+      - paragraph: 同一最终 build。
+      - paragraph: 建议 viewport：
+      - code: 800 x 900
+      - paragraph: 因为该宽度能真实观察 shell/density变化，而不会被1180px max-width掩盖。
+      - separator
+      - heading "39. Targeted browser assertions" [level=1]
+      - paragraph: 三个 engine都必须验证：
+      - heading "Role binding" [level=3]
+      - code:
+        - generic: html[data-theme-font="interface"] html[data-theme-density="compact"] html[data-theme-shape="soft"] html[data-theme-state="quiet"]
+      - paragraph: 并确认：
+      - code:
+        - generic: body[data-page-family]
+      - paragraph: 仍来自原 Inventory module。
+      - separator
+      - heading "Font" [level=3]
+      - paragraph: 实际 computed styles验证：
+      - code: body hero/article heading utility/navigation text
+      - paragraph: 符合 interface profile。
+      - paragraph: 不要只检查CSS文件里有变量。
+      - separator
+      - heading "Density" [level=3]
+      - paragraph: 实际 computed：
+      - code: "--role-shell-gutter --role-card-padding --role-control-min-height --role-section-spacing"
+      - paragraph: 并至少一个真实 rendered control：
+      - code: minHeight >= 44px
+      - separator
+      - heading "Shape" [level=3]
+      - paragraph: 实际 surface：
+      - code: portal card shared control
+      - paragraph: 得到 soft radius。
+      - separator
+      - heading "State" [level=3]
+      - paragraph: 对代表性 hoverable surface：
+      - code: state=quiet
+      - paragraph: 实际 hover后：
+      - code: transform = none box-shadow = none
+      - paragraph: 但元素仍有可观察 hover style，例如 border/color变化。
+      - paragraph: 不使用：
+      - code: programmatic focus fake keyboard synthetic scroll
+      - paragraph: 来声称 AX 证据。
+      - separator
+      - heading "40. Focus/current证据边界" [level=1]
+      - paragraph: 03A targeted browser不需要重新证明 Safari keyboard。
+      - paragraph: Focus/current不允许由 role config变化，因此：
+      - code: unit/static boundary test + fresh unchanged47
+      - paragraph: 保护这部分。
+      - paragraph: 不能在 targeted fixture里：
+      - code: element.focus()
+      - paragraph: 然后声称键盘可访问性 PASS。
+      - separator
+      - heading "41. Targeted browser result" [level=1]
+      - paragraph: 只有：
+      - code: 3 engines × all03A assertions PASS
+      - paragraph: 才通过。
+      - paragraph: 保存：
+      - code: 03a-browser-evidence.json 03a-browser-run.log 03a-fixture-identity.json 03a-cleanup.json
+      - paragraph: 这只是：
+      - code: WS03A new-surface technical evidence
+      - paragraph: 不提升 AX。
+      - separator
+      - heading "42. Targeted browser TMP cleanup" [level=1]
+      - paragraph: 继续采用 iteration22 已验证规则。
+      - paragraph: 使用唯一：
+      - code: /tmp/c2c23a.XXXXXX
+      - paragraph: macOS允许：
+      - code: /private/tmp/c2c23a.*
+      - paragraph: 完整 inventory。
+      - paragraph: 只清理：
+      - code: known tsx transform cache known Node compile cache actual stale IPC socket owned disposable fixture
+      - paragraph: 要求：
+      - code: 0 symlink 0 escape 0 unknown normal preview stop PID gone fixture gone root gone no signal fallback
+      - separator
+      - heading "43. Post-change Fresh47" [level=1]
+      - paragraph: 03A新表面 PASS后，再针对修改后的 canonical source运行：
+      - code: unchanged npm run check:browser
+      - paragraph: 不得引用 iteration22 raw。
+      - paragraph: 使用新的短 owned TMP：
+      - code: /tmp/c2c23b.XXXXXX
+      - paragraph: 保持：
+      - code: matrix unchanged runner unchanged policy unchanged closure unchanged
+      - paragraph: Qualification：
+      - code: one attempt zero retry
+      - separator
+      - heading "44. Fresh47 continuation requirements" [level=1]
+      - paragraph: 必须：
+      - code: 47 planned 47 executed 0 NOT_RUN
+      - paragraph: 所有非WebKit：
+      - code: PASS
+      - paragraph: WebKit residual：
+      - code: ⊆ iteration19 frozen residual40
+      - paragraph: 任何集合外 failure：
+      - code: STOP
+      - separator
+      - heading "45. 与 iteration22 做 delta observation" [level=1]
+      - paragraph: 另外生成：
+      - code: post03a-vs-pre03a-residual-delta.json
+      - paragraph: 记录：
+      - code: pre03A = iteration22 current39 post03A = current fresh set persisted disappeared reappeared-from-frozen40 new-outside-frozen40
+      - paragraph: 语义：
+      - code: new-outside-frozen40 > 0 → BLOCK
+      - paragraph: 若 iteration22 暂时消失的旧 residual重新出现，但仍属于 frozen40：
+      - code: 不自动称为产品回归 但必须在 independent review 明确列出
+      - paragraph: 不能隐藏数量变化。
+      - separator
+      - heading "46. Fresh dual-engine counterpart" [level=1]
+      - paragraph: 针对 post-change fresh WebKit residual，重新要求：
+      - code: Chromium N/N PASS Firefox N/N PASS
+      - paragraph: 必须来自这一轮 fresh47。
+      - paragraph: 不能引用：
+      - code: iteration22 39/39
+      - separator
+      - heading "47. Fresh policy/native/control" [level=1]
+      - paragraph: 重新检查：
+      - code: WebKit version/revision host native keyboard probe policy SHA Arrow control SHA
+      - paragraph: 如果身份漂移：
+      - code: STOP
+      - paragraph: 不能继续套 iteration14 policy。
+      - separator
+      - heading "48. Closure negative recheck" [level=1]
+      - paragraph: 使用未修改：
+      - code: verify:browser-closure
+      - paragraph: Safari evidence仍不提供。
+      - paragraph: 若 raw存在 accepted residual，正确结果仍必须：
+      - code: "BLOCKED exit1 sole error: missing/invalid real Safari keyboard evidence"
+      - paragraph: 有任何额外错误：
+      - code: WS03A continuation BLOCKED
+      - separator
+      - heading "49. Full post-slice identity" [level=1]
+      - paragraph: 重新绑定：
+      - code: Starter branch HEAD post03A working-tree SHA SOP post03A working-tree SHA Prompt post03A working-tree SHA Contract SHA fixture source dist Playwright 3 engines host runner/matrix/closure policy/control
+      - paragraph: 这才是03A continuation evidence。
+      - paragraph: iteration22 source identity此时仅作为：
+      - code: pre-slice baseline
+      - separator
+      - heading "50. Exact execution metadata" [level=1]
+      - paragraph: 保存 Actual PLAN：
+      - code: template/codex/prompts/v2.7-ws03a/ iteration23-ws03a-semantic-visual-roles-plan.md
+      - paragraph: Execution root：
+      - code: template/codex/executions/v2.7-ws03a/iteration23/
+      - paragraph: 至少包含：
+      - code: preflight.json readiness-before-mutation.json readiness-state.json preimages.json scope-check.json red-theme-tests.log red-theme-tests.json green-theme-tests.log green-theme-tests.json root-check.log unadopted-final.log adopted-final.log git-diff-check.log 03a-browser-evidence.json 03a-browser-run.log 03a-fixture-identity.json 03a-cleanup.json fresh47/ core-browser-evidence.json native-keyboard-probe.json preview-cleanup-audit.json failure screenshots... fresh47-command-result.json fresh47-expected-identity.json fresh47-bound-native-probe.json post03a-residual-comparison.json post03a-vs-pre03a-residual-delta.json post03a-dual-engine-counterparts.json closure-recheck.json closure-recheck.log triad-post-identity.json integrity-check.json result.md
+      - paragraph: 允许 execution-only helpers。
+      - paragraph: 不得把 helper放入 Starter scripts。
+      - separator
+      - heading "51. Scope integrity" [level=1]
+      - paragraph: 结束前必须证明：
+      - code: product/governance changed files = exact approved 13
+      - paragraph: 加上：
+      - code: Actual PLAN iteration23 execution metadata
+      - paragraph: 不得出现其它 product delta。
+      - separator
+      - heading "52. Contract / verification invariants" [level=1]
+      - paragraph: 必须继续：
+      - code: Contract SHA unchanged 41 IDs unchanged 0 duplicates
+      - paragraph: 并且：
+      - code: core-browser-matrix unchanged run-core-browser-evidence unchanged core-browser-evidence validator unchanged verify-ws06a-browser-closure unchanged package/lock unchanged CI unchanged policy/control unchanged
+      - separator
+      - heading "53. 03A STOP conditions" [level=1]
+      - paragraph: 以下任何一个发生立即停止：
+      - code: 需要第5种 visual role 需要任意CSS value config 需要动态 Theme Engine 需要font provider/dependency 需要media/search字段 需要route/Inventory改变 default profile几何变化导致Core regression compact control <44px focus/current semantics被config控制 page family开始决定font/density/shape/state unknown visualRoles被接受 partial authored visualRoles被接受 targeted browser有engine failure fresh47缺行 non-WebKit regression new WebKit failure outside frozen40 unknown infrastructure policy/control drift abnormal preview cleanup TMP unknown/symlink/path escape Contract/Registry变化
+      - separator
+      - heading "54. Codex execution verdict" [level=1]
+      - paragraph: 即使全部通过，Codex只能写：
+      - code: "WS03A CANDIDATE: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: 不得自行写：
+      - code: WS03A FORMAL ACCEPT WS03 Gate PASS VF PASS GI PASS
+      - separator
+      - heading "55. Independent review scope" [level=1]
+      - paragraph: ChatGPT最终独立核验：
+      - code: actual 13-file delta typed API defaults migration strict rejection default geometry preservation targeted03A browser fresh root/adoption fresh47 residual subset dual-engine current counterparts closure negative result cleanup triad identity Contract/runner invariants
+      - separator
+      - heading "56. 通过后的准确状态" [level=1]
+      - paragraph: 若独立 ACCEPT：
+      - code: "WS03A CANDIDATE IMPLEMENTATION: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION"
+      - paragraph: 而不是：
+      - code: FORMAL WS03A GATE CLOSED
+      - paragraph: 因为：
+      - code: WS06A FULL仍BLOCKED Safari proof仍0 formal WS03 Gate仍NOT_ACCEPTED
+      - paragraph: 03A的技术接口可以被冻结为当前候选输入，用于后续 continuation planning，但：
+      - code: 04A formal binding 05 formal dependency release
+      - paragraph: 仍不能提前宣告满足。
+      - separator
+      - heading "57. 能力结果" [level=1]
+      - paragraph: 本轮即使成功：
+      - code: VF-01 / VF-02 / GI-02
+      - paragraph: 也不能自动 PASS。
+      - paragraph: 得到的只是：
+      - blockquote:
+        - paragraph: Starter现在拥有一个受控的语义视觉角色技术接口。
+      - paragraph: 某个真实项目是否：
+      - code: 有游戏识别 有正确字体/密度/形状 真正符合游戏调性
+      - paragraph: 仍需 Game Adaptation evidence + Human review。
+      - separator
+      - heading "58. PLAN23 Exit Gate" [level=1]
+      - code: "iteration23: slice: WS03A_ONLY interface: visualRoles: font: - editorial - interface density: - comfortable - compact shape: - square - soft state: - lifted - quiet migration: legacy_omission_valid: true explicit_object_requires_all4: true arbitrary_css_forbidden: true default: preserves_existing_font_stack: true preserves_existing_density_geometry: true preserves_square_shape: true preserves_existing_hover_lift: true product_scope: files: 9 sop_prompt_scope: files: 4 total_changed_governance_product_files: 13 excluded: media: true search: true share_media: true freshness: true inventory: true routes: true contract: true registry: true package: true browser_runner: true policy: true readiness: iteration22_before_mutation: VERIFIED after_first_mutation: STALE red_green: targeted_red_observed: true targeted_green_pass: true regression: root_check: PASS unadopted_expected_rejection: PASS adopted_final: PASS diff_check: PASS new_surface_browser: chromium: PASS firefox: PASS webkit: PASS synthetic_profile: interface_compact_soft_quiet post_change_fresh47: executed: 47 not_run: 0 non_webkit_failures: 0 webkit_residual: subset_of_frozen40: true outside_baseline: 0 current_counterparts: chromium_complete: true firefox_complete: true cleanup: normal: true contract: ids: 41 unchanged: true ws06a_full: BLOCKED safari_proof: 0 formal_ws03_gate: NOT_ACCEPTED capability_promotion: NONE final_candidate_state: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - heading "59. 本轮真正要证明的一句话" [level=1]
+      - code: 一个旧项目什么都不配置时，表现完全保持； 一个新项目可以从有限、可验证的font/density/shape/state角色中显式选择； 这个选择能改变真实渲染，但不能修改Core行为、页面真相、可访问性语义或游戏事实。
+      - paragraph: 这就是 WS03A 的完整边界。
+    - paragraph:
+      - text: 这个方案里我特意让 game.config.ts
+      - strong: 保持不动
+      - text: ：这样默认 Starter 不会为了测试新接口而获得一套虚构“主题身份”。真正的 alternate profile 只存在于 disposable adopted fixture 中。实施后的最大技术变化就是一条非常窄的链路：
+    - paragraph: optional strict visualRoles → resolver → html data attributes → semantic CSS tokens
+    - paragraph: 而不是建立一个新的主题系统。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button:
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

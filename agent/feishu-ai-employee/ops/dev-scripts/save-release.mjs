@@ -1,0 +1,11 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});
+const p=c.pages()[0]||await c.newPage();
+await p.goto('https://open.feishu.cn/app/cli_aa476f5e72789ccc/version/create',{waitUntil:'domcontentloaded'});
+await p.getByText('版本详情',{exact:true}).waitFor({timeout:20000});
+await p.locator('input[placeholder="对用户展示的正式版本号"]').fill('0.1.0');
+await p.locator('textarea[placeholder*="更新日志"]').fill('首次发布：支持飞书私聊任务和 AI 游戏网站助手的基础通信能力。');
+console.log('checkbox',JSON.stringify(await p.locator('input[type=checkbox]').evaluateAll(es=>es.map(e=>e.checked))));
+await p.getByText('保存',{exact:true}).last().click();await p.waitForTimeout(1700);
+console.log(JSON.stringify({url:p.url(),tail:(await p.locator('body').innerText()).slice(-1800)},null,2));
+await c.close();

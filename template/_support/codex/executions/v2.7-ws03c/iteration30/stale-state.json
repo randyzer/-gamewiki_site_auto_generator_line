@@ -1,0 +1,6 @@
+{
+  "state": "STALE",
+  "priorAcceptance": "iteration29 WS03B continuation",
+  "reason": "First WS03C test mutation; prior acceptance is historical only for subsequent source",
+  "at": "2026-10-08T00:31:50.719984+00:00"
+}

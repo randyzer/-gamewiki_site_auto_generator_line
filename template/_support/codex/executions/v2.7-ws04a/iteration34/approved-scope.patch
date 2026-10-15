@@ -1,0 +1,321 @@
+diff --git a/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md b/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md
+new file mode 100644
+index 0000000..0e95384
+--- /dev/null
++++ b/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md
+@@ -0,0 +1,83 @@
++# WS03 候选接口绑定基线 V1
++
++日期：2026-10-08。状态：**CANDIDATE_INTERFACE_BASELINE / WS04A_BINDING_PREPARATION_ONLY**。不是正式 WS03 ACCEPT，也不是 WS04A 契约 ACCEPT。依据[实际 PLAN34](../../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md)和[独立 REVIEW33](../../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md)。本文件整理已存在的候选接口，供[第18轮适配方法](GAME_ADAPTATION_METHOD_V1.md)未来绑定；不新增生产 schema、配置或 capability outcome。
++
++## 来源与证据范围
++
++准确来源见[三件套身份](../../codex/executions/v2.7-ws03d/iteration33/triad-post-identity.json)，而非只看目录名或 HEAD：
++
++| 工件 | 当前 working-tree SHA256 |
++| --- | --- |
++| Starter | `bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1` |
++| SOP | `cf2a82a592c3acee5a244a1422d649b76d2eb6ed9f0e48bca722105ec83408ab` |
++| Master Prompt | `ceae58a4fbbcb0994e0f392074e961e1b3773070307fa485a2ea53af2c0560f1` |
++
++[SOP 唯一 Contract/Registry](../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md) SHA256 为 `1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c`，规范 H 表41个唯一 ID。下面的 capability 仅为关联，outcome 不在此裁定。
++
++| 切片 | 实际独立继续演进审查 | 此审查的含义 |
++| --- | --- | --- |
++| 03A 主题 | [REVIEW27](../../codex/executions/v2.7-ws03a/iteration27/chatgpt-independent-review.md) | 候选机制接受；后续源码身份以 REVIEW33 为准 |
++| 03B 媒体 | [REVIEW29](../../codex/executions/v2.7-ws03b/iteration29/chatgpt-independent-review.md) | 候选机制接受；历史失败及其有限解决保留 |
++| 03C 分享 | [REVIEW30](../../codex/executions/v2.7-ws03c/iteration30/chatgpt-independent-review.md) | 同一媒体权威和产物审计的候选机制接受 |
++| 03D 搜索 | [REVIEW31](../../codex/executions/v2.7-ws03d/iteration31/chatgpt-independent-review.md) | provider seam 与状态机制接受；原 detail 快照瑕疵保留 |
++| 03D 时效 | [REVIEW33](../../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md) | 当前源上78条定向断言通过；第32轮 FAIL 不改写 |
++
++当前[第33轮审计](../../codex/executions/v2.7-ws03d/iteration33/continuation-audit.json)：859项产品测试保留并准确绑定当前源；fresh47实际37 PASS / 10 WebKit FAIL，40条残留无新增，Chromium/Firefox对应各40/40。这些证据支持有限开发，不能替代真实 Safari、人审或正式 Gate。Safari proof0、WS06A FULL BLOCKED、WS03 formal NOT_ACCEPTED；04A Gate OPEN/schema NOT_FROZEN，05及后续正式实施仍未授权。
++
++## 03A — 语义主题角色
++
++关联：VF-01、VF-02、GI-02。权威 owner：Game Config 存选择值，Core 存解析/呈现机制，项目适配记录存依据与理由。
++
++- 实际字段：[config/schema.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/schema.ts) 的 `gameConfigSchema.visualRoles`，内部 `visualRolesSchema` 为 strict object：`font=editorial/interface`、`density=comfortable/compact`、`shape=square/soft`、`state=lifted/quiet`。内部 schema 不是导出的调用 API。
++- 导出：[core/theme-roles.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/theme-roles.ts) 的 `DEFAULT_VISUAL_ROLES`、`resolveVisualRoles()`、`ResolvedVisualRoles`。整体省略返回 editorial/comfortable/square/lifted；显式提供须完整四角色，未知值或字段被 config parser 拒绝。
++- 使用入口：[BaseLayout.astro](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro) 将解析值绑定到 `data-theme-font`、`data-theme-density`、`data-theme-shape`、`data-theme-state`。角色是有限语义选项，非任意字体上传或完整品牌资产系统。
++- 迁移：旧配置省略角色可保持默认；任何显式新角色由同一严格配置验证。不得为迁移发明 genre→role 默认映射。
++- 04A 可记录游戏证据引用→现有角色选择引用→理由、选择者和可用性审查；不得另建 font/density/shape/state 配置真相。Continuation ACCEPT 不等于 VF-01/VF-02 PASS，更不等于 GI-02 实际游戏识别人审 PASS。
++
++## 03B — 媒体、尺寸、来源与视频等价
++
++关联：MC-02/03/04/05。权威 owner：[media.json](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/media.json) 存资产和每页映射；项目唯一媒体决定表持生命周期/人工决定；Core 负责呈现，04A 只说明任务需求及选择依据。
++
++- 实际 schema：[data/schemas/media.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts) 导出 `imageAssetSchema`、`videoAssetSchema`、`mediaManifestSchema`、`parseMediaManifest()`。共同字段 `dimensions.width/height` 为正整数、`rightsRef` 为非空证据指针、`sourceUrl` 为 HTTPS；`credit` 可省略，提供时持 `text` 和可选 HTTPS `url`。视频必需 `accessibleEquivalent`，可为 text 或安全本地/HTTPS link。`rightsRef` 永远不表示权利批准。
++- 目录入口：[data/media/catalog.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts) 的 `createMediaCatalog()`、`mediaCatalog`、`getPageMedia()`、`getPresentation()`。未映射页面返回空 gallery、无 hero/trailer；unknown Page ID 映射、重复 ID、槽位类型不匹配被拒绝。可选 `localFileExists` 参数检查本地资产/poster存在；不能把未传该参数当成已经查过文件。
++- 投影：[core/media-presentation.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-presentation.ts) 的 `resolveMediaPresentation()` 返回尺寸/比例、公开 credit/source 和视频 equivalent；不公开 rightsRef。
++- 使用入口：[GameMedia](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/GameMedia.astro)、[VideoEmbed](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/VideoEmbed.astro)、[ScreenshotGallery](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/ScreenshotGallery.astro)。视频具有独立等价内容与不播放说明；这些不是播放可用性或版权证明。实际产物检查见 [scripts/media-validation.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts) 的 `collectMediaHtmlErrors()`。
++- 迁移：已存在的非空旧资产必须补齐真实尺寸、rightsRef 和适用的视频等价字段，不能凭默认值自动批准；空 manifest 可保持为空。Caption/credit 省略可接受，必需 dimensions/rightsRef/视频 equivalent 缺失则拒绝。保留 local MP4/WebM、YouTube ID 的既有范围，不新增 provider。
++- 04A 可引用资产 ID、媒体 need/use 决定行、权利证据、公开署名选择依据、视频使用/排除与等价要求；不得复制 asset src/dimensions、生命周期状态表或 renderer fallback 逻辑。
++- [core/media-readiness.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts) 保持项目唯一媒体表及 final/evidence 投影。表缺席不会证明每页采用覆盖已满足；完整 no-media、人审和使用批准仍属后续项目义务。
++
++## 03C — 同一 manifest 的分享图
++
++关联：SEO-02、MC-02/03。权威 owner：Media Manifest 选图，SEO 只格式化公开元数据，项目权利决定仍单独引用。
++
++- 字段：[media schema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts) 中每页 `share`（即 manifest `pages[]` 映射的 `page.share`，不是 Page Inventory 字段）和 manifest `defaultShare`。
++- 解析：[mediaCatalog.getShareMedia(pageId)](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts)：已知页面按 explicit share→有信息性 alt 的 hero→defaultShare→undefined；unknown pageId 返回 undefined。Explicit/default share 必须引用存在的信息性 image，不能选 video 或 decorative image。
++- 投影与入口：[resolveShareMetadata()](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts) 由 site URL 与本地 image src 生成公开 URL，输出 width/height/alt；无 image 返回 undefined。[BaseLayout](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro) 同源输出 OG/Twitter 标签；分享引用本身不插入正文 figure。
++- 验证：[collectShareHtmlErrors()](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts) 检查标签、当地输出文件及私有权利证据泄漏；final indexable output 要求可解析分享图。Resolver 的 undefined 是投影结果，不是该 final 要求的豁免。
++- 迁移：没有 informative hero 的 indexable 页须在原 manifest 提供 explicit/default share；旧有 hero可按相同优先级解析。无关 non-indexable/evidence 输出仍按现有上下文验证。
++- 04A 只引用该 manifest 选择和 need/use 理由；不得新建 `ogImage`、`twitterImage`、`socialImage` 资产 authority，也不替换权利审查。
++
++## 03D-search — provider seam 与技术开关
++
++关联：IA-03。权威 owner：`features.search` 是唯一技术启用真相；Core定义 provider-neutral 结果契约；Pagefind adapter持具体索引边界；项目适配决定持玩家任务、corpus 和启用/关闭理由。
++
++- [search-state.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts) 导出 `SearchProvider`、`SearchOutcome`、`runSearchProvider()`、`normalizeSearchResult()`。Outcome 为 results/empty/error；query trim后最多120字符；空查询不调用 provider；异常返回通用 error、不公开内部错误。
++- [pagefind-search-adapter.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-search-adapter.ts) 导出 `createPagefindSearchProvider()` 和 `loadPagefindSearchProvider()`；初始化 Pagefind，最多取前20项，经 Core normalize 丢弃不安全本地 URL。没有 provider registry、远程 API 或配置 provider 字段。
++- [SearchIsland](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx) 管 idle/loading UI、lazy provider、query/history及请求竞态。Idle未加载 provider不冒充服务在线；results/empty/error互相独立，后发请求不会被旧响应覆盖。
++- Config/Inventory/路由的既有 `features.search` 解析保持唯一开关：关闭则无搜索 route/组件/索引输出；Pagefind版本和预算不在适配记录另存配置。迁移可保持原开关，不引入另一 enable 字段。
++- 04A 的项目 ENABLED/DISABLED 决定只是决定描述，映射到 `features.search`；不能成为独立运行时 authority。实际玩家搜索需求、corpus质量和开启依据仍须真实采用核验。
++
++## 03D-freshness — 分离五类事实
++
++关联：FR-01、FR-02。权威 owner：Page Inventory持 publication/update/live observation，Provenance持来源访问时间，Fact/Tool持既有 patch/updatedAt，Core仅投影，04A持证据选择与动态标签理由。
++
++- [pageInventoryEntrySchema / liveStatusSchema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts)：`publishedAt`、`updatedAt`、可选 `liveStatus` 分开；published存在时updated不得早于published。Strict union为 `{state:"not-live"}` 或 observed-live（必需 observedAt、HTTPS sourceUrl、非空 evidenceNote）。
++- [provenanceSchema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/provenance.ts) 的 `accessedAt` 是 source access；[fact schema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/facts.ts)及[tool schema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/tools.ts) 仍持实际 `patch`/`updatedAt`，未新增独立 version 字段。
++- [core/freshness.ts](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts) 导出 `latestSourceAccessedAt()`、`resolvePageFreshness()`、`VersionContext`。可选 versionContext的 patch/version语义由调用者明确提供，不能从日期推导；resolver并非已把所有消费者迁成该调用。Source checked为max(accessedAt)，不冒称 verified；私有 evidenceNote不返回公共投影。
++- 使用入口：[EditorialArticle](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro)、[WikiArticle](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro)、[Sources](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro)；[EntityDetail](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro) 呈现 Recorded version/Recorded patch；[homepage](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro) 的 Latest updates 明示 Ordered by recorded update date，保留 updatedAt降序/priority tie-break。
++- 省略 liveStatus不输出/推导 live claim；not-live表示未声明实时遥测，不表示游戏离线。Observed-live是有日期与来源的观察快照，不表示 Live now。原 canonical Inventory未添加虚构 liveStatus。
++- 迁移保持原日期值；更新早于出版需取得真实更正，不能交换/自动改成今天。没有 verifiedAt或遥测系统。04A只记录 publication/update、patch、source check、live observation及动态标签依据的引用/理由，不能合并日期或复制其值作为新 authority。
++
++## 给 WS04A 的交接
++
++逐项 reconciliation见[依赖台账](WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md)，最小未来范围见[绑定准备](WS04A_BINDING_READINESS_V1.md)。当前可基于这些接口设计；正式适配 schema/集成和 WS05仍等待原 DAG的实际条件。独立继续演进认可不会自动变成 VF、MC、SEO、IA、FR能力 PASS；真实游戏识别、权利、人审、REF suite、真实采用和最终三件套交付均保持各自义务。
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md b/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md
+index a7f0fe3..f23ad31 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md
++++ b/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md
+@@ -1,40 +1,37 @@
+ # WS-03 接口依赖台账 V1
+ 
+-日期：2026-10-06。状态：DESIGN_DEPENDENCIES_ONLY / NON-NORMATIVE / NOT SCHEMA。这里只记录现存接口和待接受依赖，不声明适配契约冻结，也不创建生产 enum。路线前置见[已接受 DAG](../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)。
++更新：2026-10-08。第18轮设计日期2026-10-06。状态：DESIGN_DEPENDENCIES_ONLY / NON-NORMATIVE / NOT SCHEMA。[第18轮方法审查](../../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)的设计目的保留；原版字节见[本轮preimage](../../codex/executions/v2.7-ws04a/iteration34/preimages/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md)。本轮按[实际PLAN34](../../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md)核实已有候选接口，不冻结适配契约，不创建生产enum。
+ 
+-下表 Concern 是本文件定位标签，不是 capability ID。Current state 仅为设计依赖标记：AVAILABLE_NOW、PARTIAL_EXISTING_INTERFACE、WAITING_WS03A/B/C/D；不得填 Contract 的 PASS/FAIL/NOT_APPLICABLE。目前没有任何 WS-03 切片 ACCEPT。
++## 状态含义与当前依据
+ 
+-## 当前依据
++Concern是本文件定位标签，不是capability ID；状态也不是Contract的PASS/FAIL/NOT_APPLICABLE。CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING表示：实际接口存在、候选实现获得独立继续演进认可、可供设计/绑定准备引用；不表示正式WS03前置已满足，禁止简称为ACCEPTED_INTERFACE。AVAILABLE_NOW只指既有入口；PARTIAL_EXISTING_INTERFACE表示已有机制尚未证明完整采用义务。
+ 
+-- [gameConfigSchema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/schema.ts)：strict brand、feature flags、导航 Page ID groups、featuredPageIds；没有本设计可直接绑定的完整语义字体/形状/密度角色接口。
+-- [pageInventoryEntrySchema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts)：Page ID、route、状态、来源/日期和 relatedPageIds。实际可用性还依赖 config 和原 Core 解析；schema 不独自批准发布。
+-- [mediaManifestSchema](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts)：image/video、src、alt、caption、sourceUrl 和 pageId→hero/gallery/trailer；本地 MP4/WebM、YouTube ID 和本地视频 poster 已存在。没有结构化尺寸、rights/credit 或完整 accessible equivalent 字段；来源不等于批准。
+-- [media-readiness](../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts)：项目唯一 Markdown 决定表、既有状态组合和 final/evidence 投影已存在；表缺席时不产生此模块错误，不能据此声称每页 MC-04 已落实。
++当前准确字段、导出/内部符号、消费者、默认/拒绝/迁移和三件套源身份见[候选接口基线](WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md)。03A/B/C/D-search/D-freshness均已独立IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION；原第18轮“没有任何切片接受”仅是当时快照。正式WS03 NOT_ACCEPTED、完整06A BLOCKED、Safari proof0；正式04A Gate OPEN、schema NOT_FROZEN。依据[原DAG及有限开发边界](../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)，本轮仅设计/准备。
+ 
+-## 依赖与核实动作
++## 第18轮需求与当前接口逐行对照
+ 
+-| Concern | 适配问题/能力引用 | 目前实际入口 | WS-03 依赖 | Current state | 现在可设计的内容 | 04A Gate 前必须等待什么 | 接受后核实动作 |
+-| --- | --- | --- | --- | --- | --- | --- | --- |
+-| 页面引用 | IA-01、ID-01 | Inventory Page ID、config 导航/功能 | 无新 ID authority 需求 | AVAILABLE_NOW | 为什么选该页、相关性/任务理由；只引用原记录 | 整体 04A 契约和对应组合依赖仍待接受 | 用实际项目资格检查 unknown/disabled/draft 等上下文；不复制 route/发布值 |
+-| 主题语义 | VF-01、VF-02、GI-02 | brand 与现有样式；严格配置 | WS-03A | WAITING_WS03A | 游戏证据→字体/形状/密度/状态角色的需求 | 03A 实际语义角色/约束/兼容与浏览器证据 ACCEPT | 引用接受后的实际字段/API；删除猜测，不强制 Core 采用本设计的命名 |
+-| 媒体尺寸/权利引用 | MC-02、MC-03、MC-04 | media assets/pages；现有媒体决定表 | WS-03B | WAITING_WS03B | 每页需求和来源/权利/语义责任 | 尺寸/比例、credit/rights 引用及 adapter/fallback 实现 ACCEPT | 确认资产和决定记录唯一权威、旧数据迁移不自动批准 |
+-| 视频等价与失败状态 | MC-05、MC-03 | local MP4/WebM、YouTube、poster 与现有渲染 | WS-03B | WAITING_WS03B | 视频使用/排除理由、等价说明需求与不播放答案 | 接受的 accessible equivalent/统一 fallback 及约束 | 核实真实播放、无媒体、缺失/失败、等价与 legacy 边界；不新增 provider |
+-| 分享图 | SEO-02、MC-02、MC-03 | 现有 SEO/媒体权威；WoG 历史缺 og:image | WS-03C（依赖 03B） | WAITING_WS03C | 每个 indexable 页的分享媒体需求/缺口 | 同一 media authority 的解析和生成产物审计 ACCEPT | 从实际 accepted resolver 绑定；不另造 ogImage authority |
+-| 搜索选择/状态 | IA-03 | features.search、Pagefind 和现有搜索 | WS-03D 搜索切片 | WAITING_WS03D | corpus/玩家查询理由，空/错误/关闭需求 | query/result 边界、安全/预算和开关输出 ACCEPT | 使用真实接口、路由和索引范围；不将字段存在当启用依据 |
+-| 时间/标签 | FR-01、FR-02 | publishedAt、updatedAt、来源/验证日期 | WS-03D 日期切片 | WAITING_WS03D | published/updated/verified、patch/标签证据区别 | 日期与 patch/验证语义 ACCEPT | 确认渲染的具体语义与证据；搜索接受不等于日期切片接受 |
+-| 媒体生命周期引用 | MC-04、PA-01 | 唯一媒体决定表和 final/evidence 投影 | 03B 后核实引用关系 | PARTIAL_EXISTING_INTERFACE | 保存现有 literal 和审核责任，不复制状态表 | 补齐采用覆盖及新接口绑定的正负证据 | 对照现存行为；方法更完整不能宣称旧 validator 已强制全覆盖 |
+-| 组合意图 | CU-01、CU-02、ID-01 | 方法只说明任务与组合意图 | 所需 03 接口；其后 WS-05 | PARTIAL_EXISTING_INTERFACE | 不含技术 Pattern ID 的组合选择理由 | 03 输入及 04A 契约先接受；04B 等待 05 实例 | 04A 不以尚未实现的 Pattern 页面作为退出条件，避免与 05 循环依赖 |
+-
+-## 接口接受后的核实顺序
+-
+-1. 取得该 WS-03 切片的实际独立 ACCEPT、源/构建及接口证据，确认切片范围；只接受计划或同阶段其他切片不算接受本接口。
+-2. 读取实际 schema、adapter/render 入口、默认值、迁移/兼容及正负证据；记录准确来源身份。
+-3. 比较本台账的需求与实际能力，删除不存在的假设；若需求尚不满足，进入对应有限修订，不能私加配置字段或改变规范。
+-4. 修订工作表的引用/绑定规则；每个概念记录将来映射到实际哪一个 authority，保留决定理由，不迁出 Inventory/manifest 真相。
+-5. 制定 04A 的有限适配 schema/引用实施计划：未知/disabled Page ID、模式/媒体不匹配、未决权利、完整 no-media、旧人审与新构建分离等正负证据，三件套同期同步并独立审查。
++MATCH只说明候选机制与设计需求对应，不裁定能力PASS。PARTIAL须保留具体缺口；OBSOLETE_ASSUMPTION说明旧接口缺失判断已过时；NO_INTERFACE_REQUIRED说明该理由无需新增Core接口。
+ 
+-方向始终是“已接受 WS-03 接口→04A 绑定”，不能为满足早期方法表而迫使 WS-03 实现假接口。WS-06A 尚未关闭，阻止 WS-03 产品实施；本台账设计并不解除该前置。
+-
+-## 与后续组合/采用的交接
+-
+-04A 接受契约后才能供 WS-05 使用；WS-05 输出供 04B 实例核验，不能反过来要求 04A 先完成 05 实例。确定性 REF-A/B/C、三个 PROJECT-* 采用和三件套 release 保持不同证据义务。本文件中的 AVAILABLE_NOW 仅指现存引用入口，不代表任何 workstream、能力或 release PASS。
++| Concern | 能力关联 | 当前真实入口 | 旧设计假设与现在的对照 | 分类 | Current state | 04A现在可绑定的设计信息 | 正式Gate前仍需什么 |
++| --- | --- | --- | --- | --- | --- | --- | --- |
++| 页面引用 | IA-01、ID-01 | Inventory Page ID/relatedPageIds、Config navigation/featuredPageIds | 旧设计已能引用Page ID；任务/相关性理由无需新ID authority | NO_INTERFACE_REQUIRED | AVAILABLE_NOW / FORMAL_DEPENDENCIES_PENDING | 引用原页和任务/下一步理由；不复制route/publication | 实际采用上下文核对unknown/disabled/draft等目标及完整04A前置 |
++| 主题语义 | VF-01、VF-02、GI-02 | gameConfigSchema.visualRoles、resolveVisualRoles()、DEFAULT_VISUAL_ROLES、BaseLayout data-theme-* | “无语义角色接口”已过时；四种角色现在存在，实际游戏识别仍未证明 | OBSOLETE_ASSUMPTION | CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING | 游戏证据→现有角色引用→选择/可用性理由 | 正式03A/03整体接受及真实游戏视觉/内容人审 |
++| 媒体尺寸/权利引用 | MC-02、MC-03、MC-04 | mediaManifestSchema、dimensions/rightsRef/credit、createMediaCatalog()、resolveMediaPresentation() | “无结构尺寸/权利指针”已过时；rightsRef不是批准 | OBSOLETE_ASSUMPTION | CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING | 资产ID、唯一媒体决定行、需求/来源/权利依据引用 | 正式03B输入、项目使用批准、每页需求/覆盖与语义证据 |
++| 视频等价与失败状态 | MC-05、MC-03 | videoAssetSchema.accessibleEquivalent、VideoEmbed、GameMedia/ScreenshotGallery | strict等价字段和统一投影已存在，旧设计需求可映射；播放/真实答案依项目核验 | MATCH | CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING | 用/不用理由、视频资产/等价要求引用、完整不播放答案 | 正式03B、实际播放/失败/no-media/等价和legacy边界证据 |
++| 分享图 | SEO-02、MC-02、MC-03 | manifest pages[].share/defaultShare、mediaCatalog.getShareMedia()、resolveShareMetadata() | 同一媒体authority候选resolver及生成审计已存在 | MATCH | CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING | 原manifest选图引用、需求/权利理由；不另建OG资产库 | 正式03C/03B及真实indexable产物与权利审查 |
++| 搜索选择/状态 | IA-03 | features.search、SearchProvider/SearchOutcome、runSearchProvider()、Pagefind adapter、SearchIsland | query/result/empty/error边界已具候选实现，开关唯一 | MATCH | CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING | corpus/玩家任务理由、项目启用/关闭决定→已有features.search | 正式03D-search及真实采用的选择、索引/查询质量证据 |
++| 时间/标签 | FR-01、FR-02 | Inventory publishedAt/updatedAt/liveStatus、Provenance accessedAt、Fact/Tool patch、resolvePageFreshness()/latestSourceAccessedAt() | 旧“来源/验证日期”混用假设过时；source check不是verification，无verifiedAt | OBSOLETE_ASSUMPTION | CANDIDATE_INTERFACE_AVAILABLE / FORMAL_WS03_GATE_PENDING | 五类事实依据分别引用、动态标签真实依据/审核责任 | 正式03D-freshness和实际游戏日期/patch/live/标签依据；搜索接受不替代时效接受 |
++| 媒体生命周期引用 | MC-04、PA-01 | media-readiness.ts、项目唯一媒体决定表、final/evidence投影 | 指针/投影已有；表缺席不报此模块错误，未证明逐页采用覆盖 | PARTIAL | PARTIAL_EXISTING_INTERFACE / FORMAL_DEPENDENCIES_PENDING | 引用原lifecycle记录和负责人，保留旧literal；不复制状态表 | 完整采用覆盖、权利/人审与新源/构建绑定；是否新增检查须另行有限计划 |
++| 组合意图 | CU-01、CU-02、ID-01 | 第18轮工作表C的desiredPatternIntent、既有Core/Inventory引用 | 方法可持任务意图；尚无本轮可冻结的WS05 Pattern接口 | PARTIAL | PARTIAL_EXISTING_INTERFACE / FORMAL_DEPENDENCIES_PENDING | 只写组合意图/理由，不造Pattern ID | 正式03/04A之后WS05实现，再供04B实例；不要求04A先完成05实例 |
++
++## 正式条件具备后的核实顺序
++
++1. 获得正式WS03接口与完整06A的实际独立接受，重新核对source/build身份。候选继续演进审查、计划或同阶段其他切片都不替代正式前置。
++2. 读取真实schema、adapter/render、默认、兼容/迁移及正负证据；从本基线定位，不以设计命名强迫Core改造。
++3. 比较需求和实际接口；PARTIAL仍明确缺项；源变化先重新绑定，不能私加配置或改规范。
++4. 更新未来工作表绑定：理由由适配记录持有，技术值只引用原Inventory/Config/manifest/事实权威。现有第18轮模板的旧等待用语保留历史意义，当前候选状态以本台账为准。
++5. 再制定有限04A实施计划，逐字段owner和正负证据明确，三件套同期同步并独立审查。最小准备见[绑定准备](WS04A_BINDING_READINESS_V1.md)，当前不创建adaptation schema。
++
++## 后续交接边界
++
++方向仍为实际WS03接口→04A绑定。完整06A及正式03尚未接受，仍阻止正式04A契约/schema实施与WS05；设计准备不解除原前置。04A正式契约之后供05，05之后供04B；不形成循环。REF-A/B/C、三个PROJECT-*、真实内容/媒体/人审与release保持独立证据义务。正式关闭2/8、Safari proof0、能力不提升。
+diff --git a/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md b/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md
+new file mode 100644
+index 0000000..81c7a4b
+--- /dev/null
++++ b/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md
+@@ -0,0 +1,41 @@
++# WS04A 绑定准备 V1
++
++日期：2026-10-08。状态：**BINDING_PREPARATION_ONLY / FORMAL_GATE_OPEN / SCHEMA_NOT_FROZEN**。依据[实际 PLAN34](../../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md)、[接口基线](WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md)及[第18轮方法](GAME_ADAPTATION_METHOD_V1.md)。这是未来工作的准备输入，尚不是适配 schema 的实施计划。
++
++## 当前条件
++
++03A/B/C/D-search/D-freshness 候选均获独立 IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION，准确当前源码及 REVIEW33见接口基线。正式 WS03 NOT_ACCEPTED、WS06A FULL BLOCKED、Safari proof0；04A正式契约 Gate OPEN，WS05 NOT_STARTED/NOT_AUTHORIZED。主任务关闭数仍2/8；本文件不修改路线 DAG、规范41 ID或能力 outcome。
++
++## 未来记录的最小所有权
++
++以下名称是设计栏目，**不是新增生产字段、enum或 API**。引用应定位到实际权威记录/文件/行及准确项目源/构建；记录“未提供”不代表已经批准。
++
++| 第18轮方法栏目/未来记录概念 | 04A真正拥有的决定或理由 | 必须引用的现有权威 | 设计时拒绝的重复真相 |
++| --- | --- | --- | --- |
++| A 身份与审查责任 | 采用范围、事实/视觉/权利审核责任、审核范围/证据/复查触发 | 三件套源、项目源/dist、SOP唯一Contract；项目审核原记录 | 另建Registry、能力outcome、自动审批状态 |
++| B 游戏词汇/分类 | 玩家使用术语的游戏证据引用及选择理由 | 原事实/内容/Inventory记录 | 凭genre发明术语、角色、掉率或分类 |
++| C 玩家任务/承诺答案 | Page ID的主要任务、可支持答案、承诺落差处理及下一步理由 | Inventory与内容/事实记录、relatedPageIds | route、publicationStatus、indexability、实际答案事实的副本 |
++| D 主题选择 | 证据→现有visualRoles选择引用→理由/负责人/可用性审查 | gameConfigSchema.visualRoles及当前配置 | 第二套font/density/shape/state配置、任意字体系统 |
++| E 媒体需求/使用 | 四类material value、用/不用视频理由、no-media完整答案方案、所需等价内容理由 | 唯一媒体决定表、manifest资产ID、原权利证据/人审 | asset URL/dimensions、rights state/lifecycle表、替代fallback实现 |
++| E 分享 | 此页分享媒体需求及选图理由 | manifest pages[].share/defaultShare、getShareMedia() | ogImage/twitterImage/socialImage资产authority |
++| F 搜索决定 | 玩家任务/corpus及ENABLED或DISABLED理由、选择者/依据 | 现有features.search、实际搜索结果及索引范围 | 独立enable字段、provider registry或backend配置 |
++| F 相关路径 | 下一有用Page ID的任务相关性与选择理由 | Inventory/原relation authority及有效目标 | 另存route或仅凭更新时间推导相关性 |
++| F 时效/动态标签 | 各事实的来源理由及审核责任；Popular/Trending/Latest/Live的明确数据/编辑依据 | Inventory日期/liveStatus、Provenance.accessedAt、Fact/Tool.patch/updatedAt | publishedAt/updatedAt/patch/live observation值的第二authority或合并日期 |
++| C desiredPatternIntent | 组合意图及理由 | 现有方法工作表中的意图；未来WS05准确组合输入 | patternId enum、pattern schema/runtime或三组合实现 |
++
++项目的视觉或搜索决定可以引用选定值，但正式运行值仍只从现有Config读取；两者不一致必须显式报告，不能在适配记录里另开运行分支。媒体权利证据指针不是批准；来源访问不是verification；游戏事实和真人审核不能由执行授权推定。
++
++## 获得正式条件后的最小实施候选
++
++1. 重新核对正式WS03与完整06A实际ACCEPT、所需接口/构建身份及原DAG；当前所有准备材料在相关源变化后重新绑定。
++2. 决定最小记录载体和引用定位方式，限定于上表的真正适配决定；逐字段给唯一owner。再制定有限实施计划，明确文件范围及SOP/Starter/Prompt同期影响；本轮不预建该载体、路径或schema。
++3. 核对Page ID/asset ID/决定行在实际采用上下文的有效性；unknown/disabled/draft、媒体类型不匹配、未决权利不能因工作表有记录而变成有效。
++4. 用正负证据验证缺失/冲突引用、重复authority、搜索决定与唯一开关不一致、publication/update/source/patch/live误合并、原人审与新构建身份不同；不修改原规范或替项目批准内容。
++5. 为每页关联任务、媒体/no-media、时效和责任。保持旧lifecycle和final/evidence边界；是否新增完整采用覆盖验证，须在那个正式计划明确，不能声称当前media-readiness已经全覆盖。
++6. 保留desiredPatternIntent作为理由；04A不得要求尚未实现的WS05实例作为自身退出前置，避免循环依赖。正式04A后交给WS05，WS05后再进行04B实例验证。
++
++这些是未来范围的识别，不是立即实施授权。不得现在创建adaptation数据文件、schema、配置字段、Pattern enum或游戏站组合。实际REF-A/B/C、WoG/Bomb Farm/任务指南三类采用、媒体使用批准、真人视觉/内容检查和release仍须对应后续Gate。
++
++## 本轮可验收产物
++
++只验收准确接口/权威映射、九行依赖reconciliation、所有文档路径/符号/本地链接、范围和保护字节以及事实进度纠正；产品测试/构建/浏览器NOT_RUN，因为产品和三件套增量0。结果须[独立审查](../../codex/executions/v2.7-ws04a/iteration34/result.md)实际接受才可称绑定准备已获接受；该接受仍不关闭正式WS03/04A。
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/roadmap/V2.7_TASK_LEDGER.md b/Users/randyz/work/coding/hot_words_web/template/roadmap/V2.7_TASK_LEDGER.md
+index ca9c428..ad41383 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/roadmap/V2.7_TASK_LEDGER.md
++++ b/Users/randyz/work/coding/hot_words_web/template/roadmap/V2.7_TASK_LEDGER.md
+@@ -1,14 +1,14 @@
+ # V2.7 统一任务台账
+ 
+-更新：2026-10-07，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；索引整理不是产品独立验收；第18～20轮实际审查见下。
++更新：2026-10-08，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；索引整理不是产品独立验收；第18～34轮状态及实际审查见下。
+ 
+ 目标：从V2.6.5三件套、真实项目缺口和五案例可借鉴能力，交付协同工作的V2.7 SOP、Starter、Master Prompt。商业适用性须由真实采用与人审证明；不以技术通过宣称收入、流量或案例商业成功。
+ 
+ ## 计数规则与当前总数
+ 
+-第20轮最新：[五文件治理修订](../codex/executions/v2.7-ws06a/iteration20/result.md)已获[实际独立ACCEPT — GOVERNANCE AMENDMENT ONLY](../codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md)，有限开发流程生效；当前源码readiness仍NOT_EVALUATED。完整WS06A BLOCKED、Safari proof0、WS03未开始、能力未提升，主任务仍2/8关闭。下一有限动作是当前源码Development Readiness审计/独立裁定；本轮产品tests/build/浏览器矩阵NOT_RUN，产品增量0。第19轮[替代设计](../codex/executions/v2.7-ws06a/iteration19/result.md)保留，现行依赖以路线§3.1为准。
++第33轮最新：[实际独立REVIEW33](../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md)接受03D-freshness候选；03A/B/C/D-search/D-freshness五片均IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION。准入流程及每片继续演进实际记录见[接口基线](../design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md)，第20轮治理仍由原路线§3.1持有。正式WS03 NOT_ACCEPTED、完整WS06A BLOCKED、Safari proof0，能力未提升；主任务仍2/8关闭。第34轮按[实际PLAN34](../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md)完成候选接口整合/04A绑定准备及索引纠正，状态READY_FOR_INDEPENDENT_REVIEW；没有产品/schema实施，产品tests/build/browser NOT_RUN。
+ 
+-- 正式路线8个主任务：关闭2，部分实施且受阻1，未开始产品实施5（其中WS-04A方法设计已独立ACCEPT，契约Gate仍OPEN）。主任务只有全部所需子Gate独立接受才关闭。
++- 正式路线8个主任务：关闭2，部分实施且受阻2（WS03、WS06），未开始产品实施4（WS04仅方法设计/绑定准备，契约Gate仍OPEN）。主任务只有全部所需子Gate独立接受才关闭。
+ - WS-03A/B/C/D、WS-04A/B、WS-06A/B是子阶段，不加到8个主任务总数。03D搜索/时效、05三组合仍需各自验证。
+ - 协作第16轮两文件修复已独立ACCEPT关闭；第17轮策略实现已实施并完成回归，已获实际独立ACCEPT（仅机制实现），Safari真实补证待取得；第13～15轮分别是诊断、策略提案、修复计划，不是三个新增产品任务。
+ - 2/8不是产品完成25%。不把历史四个安全检查点、文档数量或测试数重复计为新主任务完成。
+@@ -20,9 +20,9 @@
+ | --- | --- | --- | --- | --- |
+ | WS-01 | 单一规范源、三件套引用、证据方法 | CLOSED；方法/工程独立ACCEPT | 后续功能变化仍须三件套同期同步 | [result](../codex/executions/v2.7-ws01/result.md)、[审查](../codex/executions/v2.7-ws01/verification.md) |
+ | WS-02 | Core连续性、采用构建/CI流程 | CLOSED；采用fixture与拒绝默认final独立ACCEPT | 本地验证不冒充远程CI、真实游戏验收 | [result](../codex/executions/v2.7-ws02/result.md)、[审查](../codex/executions/v2.7-ws02/verification.md) |
+-| WS-03 | 主题、媒体/视频、分享图、搜索/时效接口 | 产品实施未开始；当前源码准入NOT_EVALUATED | 下一里程碑是独立准入审计；候选与正式前置见路线§3.1/§4 | [路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)、[治理接受](../codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md) |
+-| WS-04 | 游戏适配方法/接口与实例验证 | 产品实施未开始；第18轮方法设计已独立ACCEPT，仅METHODS DESIGN | 04A设计/接口Gate依WS-03；04B实例依WS-05 | [方法设计](../design/ws04a/GAME_ADAPTATION_METHOD_V1.md)、[实际审查](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md) |
+-| WS-05 | hub/wiki、task-guide、media-rich article三组合 | 产品实施未开始 | 逐组合依03及04A，使用真实Core | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
++| WS-03 | 主题、媒体/视频、分享图、搜索/时效接口 | 五候选切片实施并独立继续演进接受；正式Gate NOT_ACCEPTED | 真实Safari/完整06A和正式WS03仍缺；候选接口整合供设计准备 | [路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)、[治理接受](../codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md) |
++| WS-04 | 游戏适配方法/接口与实例验证 | 第18轮METHODS_DESIGN_ACCEPTED；第34轮绑定准备已更新待独立审查；schema NOT_FROZEN | 正式04A Gate OPEN依正式WS03；产品实施未开始，04B依05 | [方法设计](../design/ws04a/GAME_ADAPTATION_METHOD_V1.md)、[实际审查](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md) |
++| WS-05 | hub/wiki、task-guide、media-rich article三组合 | NOT_STARTED / NOT_AUTHORIZED | 逐组合依正式03及04A，使用真实Core | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+ | WS-06 | Core及组合独立验收体系 | PARTIAL / BLOCKED；06A工具及部分修复已做，06B未开始 | 06A资格失败未解决；06B需04B/05及06A | [实际结果](../codex/executions/v2.7-ws06a/result.md)、[第16轮本地结果](../codex/executions/v2.7-ws06a/iteration16/result.md) |
+ | WS-07 | WoG、Bomb Farm、任务指南三类真实采用 | 产品实施未开始；V2.7最终采用验收0/3 | 需06B及相关组合通过；历史项目报告仅作输入 | [项目证据对应](../audit/REAL_PROJECT_AND_REFERENCE_EVIDENCE_CROSSWALK_V1.md) |
+ | WS-08 | 41能力跨版比较、三件套兼容组装 | 未开始；交付根未创建 | 全部必要Gate通过后导出并复验 | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+@@ -33,11 +33,12 @@
+ 
+ | 子阶段 | 状态 | 退出依据 |
+ | --- | --- | --- |
+-| 03A 主题角色 | NOT_STARTED | 接口、两种主题及可用性验证接受 |
+-| 03B 媒体/视频 | NOT_STARTED | schema/adapter/render、缺失/fallback与证据边界接受 |
+-| 03C 分享媒体 | NOT_STARTED | 03B后，同一媒体权威与实际产物审计接受 |
+-| 03D 搜索/时效 | NOT_STARTED | 搜索与日期两部分分别验证，不冒充实时数据 |
+-| 04A 方法/适配契约 | METHODS_DESIGN_ACCEPTED / GATE_OPEN | 第18轮仅方法设计接受；等待03实际接口接受→绑定核实，schema未冻结 |
++| 03A 主题角色 | IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION；formal PENDING | [REVIEW27](../codex/executions/v2.7-ws03a/iteration27/chatgpt-independent-review.md)；正式依赖未满足 |
++| 03B 媒体/视频 | IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION；formal PENDING | [REVIEW29](../codex/executions/v2.7-ws03b/iteration29/chatgpt-independent-review.md) |
++| 03C 分享媒体 | IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION；formal PENDING | [REVIEW30](../codex/executions/v2.7-ws03c/iteration30/chatgpt-independent-review.md) |
++| 03D-search | IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION；formal PENDING | [REVIEW31](../codex/executions/v2.7-ws03d/iteration31/chatgpt-independent-review.md) |
++| 03D-freshness | IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION；formal PENDING | [REVIEW33](../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md)；32失败永久保留 |
++| 04A 方法/适配契约 | METHODS_DESIGN_ACCEPTED / GATE_OPEN | 第18轮仅方法设计接受；候选接口绑定准备更新待审，正式03依赖仍未满足，schema NOT_FROZEN |
+ | 04B 实例组装 | NOT_STARTED | 05后至少两种不同配置实例接受 |
+ | 06A Core浏览器 | BLOCKED | 修复与真实资格/证据问题解决，再独立验收 |
+ | 06B 组装验收 | NOT_STARTED | 04B/05/06A后，REF-A/B/C与组装验收机制接受 |
+@@ -62,7 +63,7 @@
+ 
+ ## 以产品成果衡量的后续里程碑
+ 
+-1. 修复焦点迁移并取得真实浏览器证据；明确保留WebKit尚未解决的资格问题。
++1. 焦点有限修复已于第16轮独立接受；五个03候选切片已继续演进接受。当前新增里程碑是准确接口基线/04A绑定准备；Safari/完整06A正式条件仍未具备，不重复同源37/10证据。
+ 2. 完成06A Gate后，按已接受接口/适配/组合前置，形成一条实际Core上的可查看游戏站组合，验证玩家入口→答案→下一步，以及有依据的主题/媒体或完整no-media方案。它是WS-05/04B的有限里程碑，不取代三组合或三项目最终验收。
+ 3. 补齐三组合、REF-A/B/C与三类真实采用，完成逐能力跨版和三件套交付；最终位置仍为Repo_hotgameweb/GAME_SITE_SYSTEM_V2.7/。
+ 
+@@ -75,3 +76,11 @@
+ 进度纠偏仅更新入口与准备设计输入；随后第16轮独立实施两文件修复。已接受路线/DAG、41项规范、历史证据、能力outcome或发布状态未改变。后续实际实现结果出来时同步本台账、PROJECT_STATE和README；历史审查/哈希快照不覆盖。
+ 
+ 第18轮：[WS04A有限方法设计结果](../codex/executions/v2.7-ws04a/iteration18/result.md)及[实际独立ACCEPT](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)。五份文档接受，产品增量0，build/tests NOT_RUN；主任务关闭仍2/8，等待WS03接受后的04A绑定核实。06A Safari proof0与既有关键路径保持。
++
++## 第21～34轮当前增量与历史边界
++
++第22轮当前源准入独立接受后进入逐片开发；03A(27)、03B(29)、03C(30)、03D-search(31)、03D-freshness(33)独立继续演进接受。第23/24序列化失败、第25几何断言失败、第26INCONCLUSIVE、第28WebKit lazy-load失败、第32观察脚本失败均保留，不能因后续通过改写。
++
++[第33轮实际审计](../codex/executions/v2.7-ws03d/iteration33/continuation-audit.json)：当前产品源绑定859 tests/48 files PASS，fresh47完整执行37 PASS/10 WebKit FAIL，40残留均persisted、零新增，37环境输入受阻/3产品证据未解，当前双引擎对应各40/40 PASS；closure仍BLOCKED，唯一缺真实Safari键盘证据。第33轮产品增量0，仅修观察脚本；freshness的18文件实现来自第32轮。原32六病例FAIL/零有效断言/fresh47 NOT_STARTED保留。
++
++[第34轮接口基线](../design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md)、[依赖对照](../design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md)、[绑定准备](../design/ws04a/WS04A_BINDING_READINESS_V1.md)仅供设计/集成准备，READY_FOR_INDEPENDENT_REVIEW。三件套/产品增量0，无产品测试重跑；不改变原DAG。04A正式契约/schema、05、06B、07、08、最终assembly/release仍受正式前置约束。当前最终采用0/3、交付根未创建。
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/PROJECT_STATE.md b/Users/randyz/work/coding/hot_words_web/template/PROJECT_STATE.md
+index 688ba25..dec5974 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/PROJECT_STATE.md
++++ b/Users/randyz/work/coding/hot_words_web/template/PROJECT_STATE.md
+@@ -1,6 +1,6 @@
+ # Game Site System V2.7 — 当前项目状态
+ 
+-更新：2026-10-07（Asia/Taipei）。最新用户要求优先于历史计划。当前总览见 [统一任务台账](roadmap/V2.7_TASK_LEDGER.md)；本页保留工程与证据上下文，原始审查记录不改写。
++更新：2026-10-08（Asia/Taipei）。最新用户要求优先于历史计划。当前总览见 [统一任务台账](roadmap/V2.7_TASK_LEDGER.md)；本页保留工程与证据上下文，原始审查记录不改写。
+ 
+ ## 项目目标
+ 
+@@ -14,9 +14,13 @@ V2.6.5 三件套 → 真实项目验证 → 能力缺口 → 五案例提炼 →
+ 
+ ## 当前阶段
+ 
+-2026-10-07最新：第19轮替代方案[设计独立接受](codex/executions/v2.7-ws06a/iteration19/result.md)；第20轮五文件治理修订已获[实际独立ACCEPT — GOVERNANCE AMENDMENT ONLY](codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md)，有限开发流程已生效，见[本轮结果](codex/executions/v2.7-ws06a/iteration20/result.md)与[现行路线§3.1](roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)。当前源码准入NOT_EVALUATED，完整WS06A BLOCKED、Safari proof0、WS03未开始、能力状态未提升，主任务仍2/8关闭。本轮产品增量0，产品tests/build/浏览器矩阵NOT_RUN。下一有限步骤为当前源码Development Readiness审计/独立裁定；尚未开始该审计或WS03A代码。
++2026-10-08最新：[实际独立REVIEW33](codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md)已接受03D-freshness候选；WS03A/B/C/D-search/D-freshness五个候选切片均IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION。第22轮准入及逐片开发遵循[路线§3.1](roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)；准确接口和继续演进证据见[当前候选接口基线](design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md)。正式WS03 NOT_ACCEPTED、完整WS06A BLOCKED、Safari proof0，能力未提升。
+ 
+-**正式路线共8个主任务：2个关闭，1个部分实施且受阻，5个尚未开始产品实施。** WS-01、WS-02 已独立 ACCEPT；WS-06A新源资格37 PASS / 10 FAIL，历史36/11保留，WS-06B 未开始。第13轮诊断、第14轮WebKit策略提案、第15轮焦点修复计划均已独立接受，但不构成WS-06A通过。第16轮两文件修复已完成本地RED/GREEN、专项15病例和root/adopted711测试，已获原ChatGPT独立ACCEPT并关闭有限修复；整体06A仍BLOCKED。第17轮策略实现已完成87/757测试及新37/10矩阵，已获原ChatGPT实际独立ACCEPT，仅接受实现机制；真实Safari补证待取得。WS-04A第18轮方法设计已独立ACCEPT，适配接口实施未开始、契约Gate仍OPEN，等待WS03实际接受后的绑定核实。其余主任务未实施，最终交付未创建，A4不恢复。
++**正式路线8个主任务：2个关闭，2个部分实施且受阻（WS03、WS06），4个未开始产品实施（WS04只有方法设计/绑定准备）。** WS01/02独立ACCEPT不变，主任务关闭仍2/8，真实最终采用0/3、交付根未创建。第34轮按[实际PLAN34](codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md)完成候选接口整理、[依赖核实](design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md)、[04A绑定准备](design/ws04a/WS04A_BINDING_READINESS_V1.md)和事实索引纠正，READY_FOR_INDEPENDENT_REVIEW；04A仍METHODS_DESIGN_ACCEPTED、formal Gate OPEN、schema NOT_FROZEN。WS05 NOT_STARTED/NOT_AUTHORIZED；产品/SOP/Prompt增量0，本轮产品tests/build/browser NOT_RUN。
++
++第33轮实际证据：同源保留859 tests/48 files PASS及Astro/采用/拒绝检查；六个freshness病例78/78断言PASS；fresh47全执行37 PASS/10 WebKit FAIL、40残留与31完全一致（37环境输入受阻/3产品证据未解），当前Chromium和Firefox对应各40/40 PASS。Closure exit1 BLOCKED仍只缺真实Safari键盘证据，不提升正式验收。第32轮六病例FAIL、0/78有效断言、fresh47 NOT_STARTED及其他历史失败永久保留，后续成功不反改历史。第34轮不重复同源browser证据，继续整合实际接口供未来适配绑定。
++
++以下第1～20轮记录是历史上下文，当前事实以上述最新状态和实际审查为准。A4不恢复，正式04A/schema、05/06B/07/08及release仍受原DAG/完整06A和正式WS03前置约束。
+ 
+ 三件套关系、目录盘点与有限清理已获独立 ACCEPT。[V2.7 蓝图](architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md)通过12项设计标准；[路线](roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)通过15项设计标准。2/8只表示主任务关闭数，不表示产品工作量完成25%。协作轮次、41项能力、47项浏览器病例、主任务分别计数。
+ 
+@@ -57,7 +61,7 @@ WS-06A：用户授权按计划推进下一步。[实际有限 PLAN](codex/prompt
+ | A3 / AX-01 | `b067e8d4050478072f25a1dc78a8526cdd128cfd` | 实现获独立接受；浏览器证据未完成，不能写 PROVEN |
+ | A4 | 无提交 | 未完成半成品保存到 `archive/paused-a4/2026-10-01/`，不计入有效候选 |
+ 
+-开发候选：`Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE`，当前分支 `v2.7/evolution`，HEAD 保持 A3；旧 `phase-a/core-safety` ref 保留。候选工作树包含已 ACCEPT 的 WS-02 及执行中的 WS-06A 未提交增量；不是 CLEAN A3。WS-06A 原15文件阶段 Core src/** 与 A3 一致；iteration12明确授权后仅增加 .prose min-width:0 和 exact same-URL 默认刷新抑制，两处测试同步。历史文档迁移提案保存在 `cleanup/proposed-starter-docs-2026-10-01/`，尚未实施。
++开发候选：`Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE`，当前分支 `v2.7/evolution`，HEAD 保持 A3；旧 `phase-a/core-safety` ref 保留。候选工作树包含已 ACCEPT 的 WS-02、WS-06A有限修复/验收机制及五个WS03候选接口的未提交增量；完整06A与正式03仍未接受，不是 CLEAN A3。WS-06A 原15文件阶段 Core src/** 与 A3 一致；iteration12明确授权后仅增加 .prose min-width:0 和 exact same-URL 默认刷新抑制，两处测试同步。历史文档迁移提案保存在 `cleanup/proposed-starter-docs-2026-10-01/`，尚未实施。
+ 
+ ## 冻结比较基线
+ 

@@ -1,0 +1,25 @@
+{
+  "repository": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+  "branch": "phase-a/core-safety",
+  "parentHead": "a3c1bd31d87321ae40c44933fad8f8649e7f017d",
+  "trackedNameStatus": "M\tREADME.md\nM\tdocs/CONTENT_AND_DATA_GUIDE.md\nD\tpublic/media/README.md\nM\tscripts/audit-build.ts\nM\tscripts/build-site.ts\nM\tscripts/validate-site.ts\nM\tsrc/config/schema.ts\nM\tsrc/core/content-files.ts\nM\tsrc/core/html-audit.ts\nM\tsrc/core/pagefind-artifacts.ts\nM\ttests/content-files.test.ts\nM\ttests/core-safety-build.test.ts\nM\ttests/evidence-build.test.ts\nM\ttests/helpers/core-build-fixture.ts\nM\ttests/legal-safety.test.ts\nM\ttests/media-build.test.ts\nM\ttests/release-identity.test.ts\nM\ttests/runtime-contract.test.ts\n",
+  "untrackedFiles": [
+    "docs/PP02_PRODUCTION_RESIDUE.md",
+    "docs/media/README.md",
+    "scripts/core-safety-sentinels.ts",
+    "scripts/residue-artifacts.ts",
+    "tests/core-safety-sentinels.test.ts",
+    "tests/residue-build.test.ts"
+  ],
+  "patchSha256": "c42c7700171b3b8b52c522eafc61ca7656385b96510a216a407b9780b8d02742",
+  "frozenHead": "29b25559cf2af859bca359c7f7fda686a4803c95",
+  "frozenStatus": "",
+  "commitCreated": true,
+  "closure": {
+    "commit": "aad6464b6be1584297866518e2ac036fbd0bd1a4",
+    "parent": "a3c1bd31d87321ae40c44933fad8f8649e7f017d",
+    "tree": "82b86eb5bb3ca9a65e22bbbf95f7a39d99ade5fa",
+    "status": "",
+    "changedFilesWithRenameDetection": "M\tREADME.md\nM\tdocs/CONTENT_AND_DATA_GUIDE.md\nA\tdocs/PP02_PRODUCTION_RESIDUE.md\nR100\tpublic/media/README.md\tdocs/media/README.md\nM\tscripts/audit-build.ts\nM\tscripts/build-site.ts\nA\tscripts/core-safety-sentinels.ts\nA\tscripts/residue-artifacts.ts\nM\tscripts/validate-site.ts\nM\tsrc/config/schema.ts\nM\tsrc/core/content-files.ts\nM\tsrc/core/html-audit.ts\nM\tsrc/core/pagefind-artifacts.ts\nM\ttests/content-files.test.ts\nM\ttests/core-safety-build.test.ts\nA\ttests/core-safety-sentinels.test.ts\nM\ttests/evidence-build.test.ts\nM\ttests/helpers/core-build-fixture.ts\nM\ttests/legal-safety.test.ts\nM\ttests/media-build.test.ts\nM\ttests/release-identity.test.ts\nA\ttests/residue-build.test.ts\nM\ttests/runtime-contract.test.ts"
+  }
+}

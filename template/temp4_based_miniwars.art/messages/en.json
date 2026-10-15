@@ -1,0 +1,417 @@
+{
+  "brand": "FRONTIER OPS",
+  "tagline": "FIELD CODEX",
+  "signal": "SIGNAL · DEMO",
+  "topContext": "COUNTRY OPS · SANDBOX",
+  "build": "CONCEPT BUILD",
+  "unofficial": "ORIGINAL DEMO CODEX",
+  "preview": "Preview",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "navigation": "Main navigation",
+  "search": "Search",
+  "allGuides": "All guides",
+  "backGuides": "Back to guides",
+  "readGuide": "Read guide",
+  "viewAll": "View all",
+  "minutes": "min",
+  "read": "read",
+  "author": "Frontier Codex Team",
+  "nav": [
+    "Buildings",
+    "Strategy",
+    "Systems",
+    "Tier List",
+    "Guides",
+    "Codes",
+    "News",
+    "Patch",
+    "FAQ"
+  ],
+  "footer": {
+    "description": "An original strategy reference for Frontier Ops, a fictional country-building sandbox. Explore structures, economy plans, and field reports that help turn a fragile outpost into a lasting frontier.",
+    "notice": "ORIGINAL PLACEHOLDER CONTENT · NOT A RELEASED GAME OR OFFICIAL GAME GUIDE.",
+    "codex": "Codex",
+    "players": "Players",
+    "copyright": "© 2026 FRONTIER CODEX · ORIGINAL DEMO",
+    "built": "BUILT WITH NEXT.JS · READY FOR THE NEXT FRONTIER"
+  },
+  "hero": {
+    "eyebrow": "FIELD BUILD · OCTOBER 2026",
+    "context": "SANDBOX · FRONTIER OPS",
+    "first": "RAISE A COUNTRY.",
+    "second": "CLAIM",
+    "third": "YOUR",
+    "fourth": "FRONTIER",
+    "description": "An original field codex for Frontier Ops, a country-building sandbox concept where a strong supply line sets the pace. Opening orders, structure priorities, and the decisions that keep an outpost standing.",
+    "strategy": "Pick a strategy",
+    "buildings": "Browse buildings",
+    "meta": "META · S-TIER · CONCEPT BUILD",
+    "fullTier": "Full tier list",
+    "stats": [
+      "Buildings",
+      "Strategies",
+      "Systems",
+      "Guides"
+    ]
+  },
+  "about": {
+    "eyebrow": "About this codex",
+    "title": "What is Frontier Ops?",
+    "paragraphs": [
+      "Frontier Ops is an original strategy sandbox concept created for this template. Begin with a small settlement, establish reliable supplies, recruit a workforce, and choose when to extend your border. The sample setting turns each round into an exercise in planning: balance growth, protection, and the cost of holding new ground before committing your reserves.",
+      "This Frontier Codex demonstrates the structure of a complete guide site without pretending that a complete game database exists. The visible building, doctrine, and news records are editorial previews. The opening guide is the complete playable reading path; every preview remains clearly marked until its own content is ready."
+    ],
+    "start": "New here? Start with",
+    "links": [
+      [
+        "Opening briefing",
+        "Your first ten minutes, one decision at a time."
+      ],
+      [
+        "Steady growth",
+        "A measured route to a resilient settlement."
+      ],
+      [
+        "Priority ranks",
+        "Which upgrades deserve the earliest resources."
+      ]
+    ]
+  },
+  "doctrine": {
+    "eyebrow": "Field manual",
+    "title": "Choose your doctrine",
+    "items": [
+      [
+        "Buildings",
+        "21 structure concepts, ranked & explained"
+      ],
+      [
+        "Strategies",
+        "7 possible routes through the opening"
+      ],
+      [
+        "Systems",
+        "7 mechanics: Supply, Trade, Defense…"
+      ],
+      [
+        "Tier List",
+        "Structures ranked by practical value"
+      ],
+      [
+        "Guides",
+        "Detailed playbooks for every match phase"
+      ],
+      [
+        "Codes",
+        "Not available — a concept-only preview"
+      ],
+      [
+        "Patch Notes",
+        "Concept build and editorial update log"
+      ],
+      [
+        "FAQ",
+        "Quick answers to common field questions"
+      ]
+    ]
+  },
+  "dashboard": {
+    "eyebrows": [
+      "Doctrine",
+      "Latest update",
+      "Top of meta"
+    ],
+    "titles": [
+      "Top strategies",
+      "Industrial flow & defense briefing",
+      "Must-build picks"
+    ],
+    "date": "OCT 12, 2026 · CONCEPT BUILD",
+    "changes": [
+      "Supply Depot concept connects collection zones to production clusters.",
+      "Foundry chain preview outlines a route from timber to finished steel.",
+      "Watch Post preview introduces a modest defensive perimeter.",
+      "Worker assignments demonstrate why spare capacity matters.",
+      "Builder allocation notes explain the cost of expanding too quickly."
+    ]
+  },
+  "buildingSection": {
+    "eyebrow": "Mandatory picks",
+    "title": "Structures worth planning around",
+    "all": "All buildings"
+  },
+  "buildings": [
+    {
+      "title": "Builder Lodge",
+      "code": "INF-01 · EARLY",
+      "category": "Production",
+      "description": "A Builder Lodge represents construction capacity in the demo setting. Prioritise a reliable build crew before filling every plot with low-yield structures. Extra capacity helps the entire settlement respond when the next decision changes your plan.",
+      "tags": [
+        "Production",
+        "Tempo",
+        "Build speed"
+      ],
+      "cost": "LOW COST · OPENING PRIORITY"
+    },
+    {
+      "title": "Supply Depot",
+      "code": "INF-02 · EARLY",
+      "category": "Production",
+      "description": "A shared collection point keeps the industrial district organised. Place it near the working cluster so your supply route stays short, then expand around that centre. This preview shows how support infrastructure can make every other plot more useful.",
+      "tags": [
+        "Production",
+        "Collection",
+        "Supply flow"
+      ],
+      "cost": "MID COST · CORE INFRASTRUCTURE"
+    },
+    {
+      "title": "Aerial Outpost",
+      "code": "MIL-05 · MID",
+      "category": "Military",
+      "description": "The Aerial Outpost is a mid-game response concept, designed to extend reach once an economy can support replacement costs. Build a dependable reserve before planning an attack. A mobile force only helps when the settlement behind it remains stable.",
+      "tags": [
+        "Military",
+        "Response",
+        "Expansion"
+      ],
+      "cost": "HIGH COST · MID-GAME OPTION"
+    }
+  ],
+  "metaNames": [
+    "Builder Lodge",
+    "Supply Depot",
+    "Power Station",
+    "Research Hub"
+  ],
+  "strategySection": {
+    "eyebrow": "Battle plans",
+    "title": "Featured strategies",
+    "all": "All strategies"
+  },
+  "strategies": [
+    {
+      "title": "Steady Growth",
+      "category": "Economy first",
+      "description": "Put the supply network ahead of an early army. Build dependable income, keep a small reserve, and only switch into mobile defense when the settlement can replace losses. The demo plan favours consistent progress and leaves room to react to the map.",
+      "tags": [
+        "Beginner",
+        "New settlers",
+        "Long rounds"
+      ],
+      "steps": "15 steps"
+    },
+    {
+      "title": "Sky Patrol · Rapid Response",
+      "category": "Military rush",
+      "description": "Trade some long-term growth for an earlier response window. Keep the opening compact, identify an exposed approach, and prepare a mobile patrol before the frontier gets crowded. The right timing matters more than filling every available unit slot.",
+      "tags": [
+        "Intermediate",
+        "Active frontiers",
+        "Open approaches"
+      ],
+      "steps": "13 steps"
+    },
+    {
+      "title": "Fortified Frontier",
+      "category": "Turtle defense",
+      "description": "Keep the working district behind a compact perimeter, protect the housing zone, and allow reserves to accumulate. A slower opening can pay off if the settlement survives pressure without replacing its workforce. The plan turns safe production into a later opportunity.",
+      "tags": [
+        "Intermediate",
+        "Hostile borders",
+        "Narrow approaches"
+      ],
+      "steps": "13 steps"
+    }
+  ],
+  "newsSection": {
+    "eyebrow": "Signal · field feed",
+    "title": "Latest frontier dispatches",
+    "all": "All news"
+  },
+  "news": [
+    {
+      "category": "Patch",
+      "title": "Frontier concept briefing — supply routes and a stronger industrial foundation",
+      "description": "This editorial preview explores a shared depot, a connected foundry district, and defensive planning. It illustrates how an update recap would translate changes into the next decisions a player makes.",
+      "publishedAt": "2026-10-12"
+    },
+    {
+      "category": "Codes",
+      "title": "Frontier Ops rewards — concept status and what is actually available",
+      "description": "This fictional setting has no redeemable rewards or active codes. The preview records that boundary clearly and demonstrates how a future rewards page could keep availability and verification separate.",
+      "publishedAt": "2026-10-10"
+    },
+    {
+      "category": "Meta",
+      "title": "Mobile response briefing — when an aerial outpost fits the opening plan",
+      "description": "A resilient supply network comes before expensive mobility. This preview outlines the questions to ask before committing to a rapid response force and the reserve that makes such a decision sustainable.",
+      "publishedAt": "2026-10-08"
+    }
+  ],
+  "guideSection": {
+    "eyebrow": "Field reports",
+    "title": "Latest guides"
+  },
+  "purpose": {
+    "eyebrow": "Why this codex exists",
+    "title": "A frontier field manual built around clear decisions",
+    "paragraphs": [
+      "A useful guide should explain the decision behind a build order, not just list purchases. This original demo follows that idea: distinguish an opening priority from a later option, explain the reserve that protects the plan, and keep draft material visibly separate from a complete guide.",
+      "Use the site as a reading path and a future reference. Start with the complete opening briefing, then explore the preview cards to see the planned topics. Their layout preserves the depth of a full codex while their status makes clear which material is already available."
+    ]
+  },
+  "faq": {
+    "eyebrow": "Common questions",
+    "title": "Frontier Ops at a glance",
+    "all": "Full FAQ",
+    "items": [
+      [
+        "What kind of game is Frontier Ops?",
+        "An original country-building sandbox concept used to demonstrate this template. Its economy, structures, and defensive plans are illustrative rather than verified mechanics from a released title."
+      ],
+      [
+        "Are there any working reward codes?",
+        "No. This fictional concept has no live game, redemption system, or rewards. The codes entry is an editorial preview and makes no claim that a reward can be collected."
+      ],
+      [
+        "Where should a new reader begin?",
+        "The opening briefing is the complete guide in this demo. It introduces the planning loop, a ten-step opening, and the habits that help you keep an expanding settlement manageable."
+      ]
+    ]
+  },
+  "cta": {
+    "eyebrow": "Recruit · step 01",
+    "title": "New to the frontier?",
+    "description": "Start with the complete opening briefing. A calm first ten minutes, a dependable supply line, and a clear next decision before the map asks you to react."
+  },
+  "guides": {
+    "eyebrow": "Field manual · section 08",
+    "title": "Frontier Ops guides",
+    "description": "Long-form field reports for a country-building sandbox concept. Opening orders, supply planning, and the small decisions that help a fragile outpost become a dependable settlement.",
+    "about": "About Frontier Ops guides",
+    "paragraphs": [
+      "Each complete guide in this codex is written as a practical reading path rather than a quick collection of tips. The opening briefing follows a settlement from its first production plot to a stable defensive position, with clear decision points and a reserve-minded approach. Start there if this is your first visit; the remaining topics are clearly marked previews of the planned library.",
+      "The preview records introduce future structure references and strategic choices without claiming that those pages already exist. Use the complete opening guide for the finished example. The broader doctrine cards show how a larger codex would connect buildings, systems, and long-form field reports."
+    ],
+    "reading": "Reading path by skill level",
+    "readingItems": [
+      "First visit → Opening briefing. Build a calm, repeatable first ten minutes.",
+      "Next round → Steady growth preview. Plan a supply network that keeps working.",
+      "Active borders → Sky patrol preview. Consider timing before committing resources."
+    ],
+    "topics": "Topics covered",
+    "topicItems": [
+      "Opening orders — a practical sequence for the first ten minutes.",
+      "Map reads — deciding when to change a plan because the border has changed.",
+      "Later goals — protecting reserves while turning production into steady expansion."
+    ],
+    "jump": "Jump to guide",
+    "extra": [
+      "Strategies hub",
+      "Building tier list",
+      "FAQ"
+    ],
+    "pair": "Pair Frontier Ops guides with",
+    "pairItems": [
+      [
+        "Buildings",
+        "Identify each structure mentioned in a report."
+      ],
+      [
+        "Tier List",
+        "Understand why the plan prioritises an upgrade."
+      ],
+      [
+        "Game Systems",
+        "Follow the mechanics behind each decision."
+      ]
+    ]
+  },
+  "article": {
+    "eyebrow": "Field report",
+    "seeAlso": "See also",
+    "apply": "Apply this Frontier Ops guide with",
+    "applyDescription": "Turn a reading plan into a repeatable opening. These preview references show where structure priorities, strategic choices, and supporting systems will connect to the guide.",
+    "pairItems": [
+      [
+        "Tier List",
+        "Review which structures deserve the first resources in a future ranking."
+      ],
+      [
+        "Strategies",
+        "See how the opening fits into a longer settlement plan."
+      ],
+      [
+        "Buildings",
+        "Explore the planned structure references and their role in the opening."
+      ]
+    ],
+    "continue": "Continue reading",
+    "more": "More Frontier Ops guides"
+  },
+  "notFound": {
+    "title": "Signal not found",
+    "description": "This field report is outside the available codex. Return to the guides to find a complete reading path.",
+    "home": "Return to base"
+  },
+  "previews": [
+    {
+      "slug": "steady-growth-build-order",
+      "category": "Economy",
+      "title": "Steady-growth build order — from starter field to industry",
+      "description": "A preview of the full economic arc: replace a cramped opening with a connected supply network, prepare replacement costs, and plan a steady path into an industrial district.",
+      "minutes": 9,
+      "publishedAt": "2026-09-28"
+    },
+    {
+      "slug": "sky-patrol-playbook",
+      "category": "Military",
+      "title": "Sky patrol response playbook — outposts and supply lines",
+      "description": "The mid-game response window, explained as a preview. When to reserve resources for mobility, how to read an exposed approach, and why protecting production still comes first.",
+      "minutes": 8,
+      "publishedAt": "2026-09-25"
+    },
+    {
+      "slug": "fortified-frontier-guide",
+      "category": "Strategy",
+      "title": "Fortified frontier guide — holding a busy border in Frontier Ops",
+      "description": "A defensive reading path preview: spot pressure early, build a compact perimeter, keep the workforce protected, and turn a quiet reserve into a later opportunity.",
+      "minutes": 9,
+      "publishedAt": "2026-09-22"
+    },
+    {
+      "slug": "expansion-planning-guide",
+      "category": "Strategy",
+      "title": "Frontier Ops expansion strategy — connecting territory without losing the core",
+      "description": "Taking a new plot is only the start. This preview considers supply distances, reserve requirements, and the route back to safety before a settlement commits to expansion.",
+      "minutes": 9,
+      "publishedAt": "2026-09-19"
+    },
+    {
+      "slug": "industrial-scaling-guide",
+      "category": "Economy",
+      "title": "Frontier Ops scaling guide — power stations, research hubs, and reserves",
+      "description": "A preview of the later economic skeleton. Compare upgrade costs, connect the next production district, and keep a reserve available before investing everything in one project.",
+      "minutes": 10,
+      "publishedAt": "2026-09-16"
+    },
+    {
+      "slug": "aerial-outpost-guide",
+      "category": "Military",
+      "title": "Frontier Ops aerial outpost guide — when a mobile force fits the plan",
+      "description": "A closer look at the aerial response concept: patrol reach, support infrastructure, replacement costs, and the defensive questions to settle before the first deployment.",
+      "minutes": 9,
+      "publishedAt": "2026-09-13"
+    },
+    {
+      "slug": "economy-planning-mistakes",
+      "category": "Economy",
+      "title": "Frontier Ops economy mistakes — ten habits that weaken a growing settlement",
+      "description": "The less obvious supply leaks in a concept round: crowded plots, oversized defenses, scattered housing, and purchases made before the reserve can support them.",
+      "minutes": 8,
+      "publishedAt": "2026-09-10"
+    }
+  ]
+}

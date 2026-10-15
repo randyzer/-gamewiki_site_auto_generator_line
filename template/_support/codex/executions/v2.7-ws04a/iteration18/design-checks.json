@@ -1,0 +1,380 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 18,
+  "stage": "PRE_INDEPENDENT_REVIEW",
+  "designFiles": 5,
+  "scopeFiles": [
+    "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+    "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+    "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+    "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+    "template/design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+    "template/codex/prompts/v2.7-ws04a/iteration18-ws04a-methods-design-plan.md"
+  ],
+  "protectedFilesVerified": 5759,
+  "candidateFilesVerified": 237,
+  "gitIdentityChecks": [
+    {
+      "root": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "field": "head",
+      "actual": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "expected": "b067e8d4050478072f25a1dc78a8526cdd128cfd"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "field": "tree",
+      "actual": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1",
+      "expected": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "field": "branch",
+      "actual": "v2.7/evolution",
+      "expected": "v2.7/evolution"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE",
+      "field": "head",
+      "actual": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "expected": "9a13b7314b9cb102b0c440d9677ab22400109e8f"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE",
+      "field": "tree",
+      "actual": "e485499deac3dafea83391000d9cfa6e37d4a0c3",
+      "expected": "e485499deac3dafea83391000d9cfa6e37d4a0c3"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE",
+      "field": "branch",
+      "actual": "v2.7/normative-foundation",
+      "expected": "v2.7/normative-foundation"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE",
+      "field": "head",
+      "actual": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "expected": "f655a0e08529060be8b716330ffcecf489a4484d"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE",
+      "field": "tree",
+      "actual": "6adc7107c498459ed92696cb189cfc1ec9915258",
+      "expected": "6adc7107c498459ed92696cb189cfc1ec9915258"
+    },
+    {
+      "root": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE",
+      "field": "branch",
+      "actual": "v2.7/normative-foundation",
+      "expected": "v2.7/normative-foundation"
+    }
+  ],
+  "localLinksChecked": 40,
+  "localLinks": [
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "../../codex/executions/v2.7-ws04a/iteration18/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "../../codex/prompts/v2.7-ws04a/iteration18-ws04a-methods-design-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "../../roadmap/WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "target": "GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "target": "../../codex/executions/v2.7-ws04a/iteration18/result.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "target": "WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "target": "WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "target": "WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/schema.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../../gameweb/game_warofgenesis/docs/PRELAUNCH_ACCEPTANCE_2026-09-15.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../../gameweb/game_bombfarm_v2/docs/VISUAL_MEDIA_GAP_REPORT.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../../gameweb/game_bombfarm_v2/docs/V2_1_VISUAL_MEDIA_ENRICHMENT_REPORT.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../../gameweb/game_bombfarm_v2/docs/V2_1_HUMAN_VISUAL_REVIEW_EVIDENCE.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../../gameweb/game_warofgenesis/src/data/page-inventory.json",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../../gameweb/game_bombfarm_v2/src/data/page-inventory.json",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../5_SITE_PATTERN_CAPABILITY_AUDIT.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "target": "../../LIVE_SITE_VALIDATION_2026-10-01.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "target": "GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "target": "GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "target": "WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "target": "WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "../../../prompts/v2.7-ws04a/iteration18-ws04a-methods-design-plan.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "../../../../design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "../../../../design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "../../../../design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "../../../../design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "../../../../design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md",
+      "exists": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "target": "preflight.json",
+      "exists": true
+    }
+  ],
+  "canonicalContractSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+  "canonicalCapabilityCount": 41,
+  "referencedCapabilityIds": [
+    "CU-01",
+    "CU-02",
+    "DS-01",
+    "FR-01",
+    "FR-02",
+    "GI-02",
+    "IA-01",
+    "IA-03",
+    "ID-01",
+    "MC-02",
+    "MC-03",
+    "MC-04",
+    "MC-05",
+    "PA-01",
+    "PP-02",
+    "SEO-02",
+    "TL-01",
+    "TL-02",
+    "VF-01",
+    "VF-02"
+  ],
+  "structuralPresenceChecks": {
+    "A0_A9_present": true,
+    "six_worksheet_sections": true,
+    "WS03_dependencies": true,
+    "four_examples_each": true,
+    "media_literals_preserved_in_design": true,
+    "missing_table_not_pass": true,
+    "no_media_unavailability_distinct": true,
+    "pattern_intent_only": true,
+    "gate_not_closed": true,
+    "historical_scope_boundary": true
+  },
+  "historicalSourceFingerprints": {
+    "gameweb/game_warofgenesis/docs/PRELAUNCH_ACCEPTANCE_2026-09-15.md": {
+      "sha256": "426a7a77204cb32502b3086671cdfeb3f587751fd3bab2591a7d0a23e96a5235",
+      "mode": 420,
+      "symlink": false
+    },
+    "gameweb/game_bombfarm_v2/docs/VISUAL_MEDIA_GAP_REPORT.md": {
+      "sha256": "0a5d98a879fbd204e4ad558cfd53544cf321ac90e6b0fad2d0ebf92e398e732f",
+      "mode": 420,
+      "symlink": false
+    },
+    "gameweb/game_bombfarm_v2/docs/V2_1_VISUAL_MEDIA_ENRICHMENT_REPORT.md": {
+      "sha256": "ed331ab8e783eeaff75daa8b68075c3aab547e99331e315b56e7a8b0bd29d7be",
+      "mode": 420,
+      "symlink": false
+    },
+    "gameweb/game_bombfarm_v2/docs/V2_1_HUMAN_VISUAL_REVIEW_EVIDENCE.md": {
+      "sha256": "fc252d35368c40f10f901d514ebc3667f96f1f0e3aaa35c23bb5efda08d34046",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/5_SITE_PATTERN_CAPABILITY_AUDIT.md": {
+      "sha256": "579ad63a6662f2ad2c2d937346538d914381cacf042a89cb3d905f6685c50abf",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/LIVE_SITE_VALIDATION_2026-10-01.md": {
+      "sha256": "fbc14494b4e5e46271baba72f3f41e9ae074d5a367365a44a03a279f6e80e8da",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "designFingerprints": {
+    "template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md": {
+      "sha256": "d01ff3e478989b665ba27192a028bfd40bf326de6133c44dc84afac27922cedf",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/design/ws04a/GAME_ADAPTATION_DECISION_WORKSHEET_V1.md": {
+      "sha256": "600a6d580f0705887bbf647ec08643707d12c5a40bafecb2f058a0942569a769",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md": {
+      "sha256": "c00fd7cb699abe311b5416dd569a530cc9c8d159dafde1ff6d07836ad62f3342",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/design/ws04a/WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md": {
+      "sha256": "b7222eacad31c3178dfb04f28b453e6342569465fdd9d6c69236251393d03d14",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/design/ws04a/WS04A_DESIGN_REVIEW_CHECKLIST_V1.md": {
+      "sha256": "f1900ff1d920d3e87ad7651869cae11310df841b33cbb7dcd95fe819a346e38b",
+      "mode": 420,
+      "symlink": false
+    },
+    "template/codex/prompts/v2.7-ws04a/iteration18-ws04a-methods-design-plan.md": {
+      "sha256": "8998add8addaaa8a30b0f204b19931d5adbcbfaef74b85c2c2ce085cead551b0",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "unexpectedFiles": [],
+  "productBuildsAndTests": "NOT_RUN: no product/code changes; prior 757 tests not rerun",
+  "limitations": "Presence/link/hash checks are not semantic or independent design acceptance. Historical sources do not prove current rights/visual/product PASS. No Safari evidence obtained.",
+  "errors": [],
+  "status": "PASS"
+}

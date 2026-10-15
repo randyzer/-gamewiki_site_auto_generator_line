@@ -1,0 +1,16 @@
+--- accepted-preimage/CodexMasterPrompt_v2.7Candidate.md
++++ ws06a/CodexMasterPrompt_v2.7Candidate.md
+@@ -1336,3 +1336,13 @@
+ 
+ # END
+ # CodexMasterPrompt_v2.7Candidate
++
++## V2.7 WS-06A — Phase 0 / Phase 4 browser enforcement
++
++Phase 0 must inspect the selected Starter's actual package.json and browser evidence implementation. Missing check:browser, exact dev dependency or required Chromium/Firefox/WebKit = HARD STOP; never invent a command from roadmap text. Check the real supported canonical Contract input verification mode and exact identity.
++
++Phase 4 retains root check, unadopted-final rejection and adopted-final gates, then runs the actual check:browser command. Require47/47 same-source/build PASS,0 skipped/FAIL/NOT_RUN and complete required assertions:27 baseline,3 no-JS,12 boundaries,4 reduced-motion,1 live focus migration. Bind uncommitted source manifest plus HEAD, fixture/final build, launched engine versions and installed revisions, viewport/JS/motion, true404, long-table local scroll and cleanup. Preserve failed runs.
++
++Core browser technical PASS does not mean06B assembled PASS, WS-07 real-project PASS, REF suite PASS or V2.7 release PASS. Automated outline/target checks do not sign off human visible focus/contrast. Browser row statuses are separate from Contract §W capability outcomes; do not replace the WS-01 baseline or promote null outcomes. Runtime fixes need a finite scope amendment, not a test-only exemption or silent oracle relaxation. CONTRACT_REFERENCE.json and canonical Requirements remain unchanged.
++
++Contract evidence mode: default FILE_SHA256 requires the real accepted SOP Contract file and exact observed hash; missing/mismatched file fails without automatic fallback. Standalone Core CI explicitly uses PINNED_REFERENCE with null filePath/observedSha256 and does not verify SOP bytes or triad compatibility. A cross-artifact/independent V2.7 acceptance gate requires FILE_SHA256; reference-only evidence is insufficient and must HARD STOP there.

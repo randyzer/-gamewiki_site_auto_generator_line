@@ -1,0 +1,274 @@
+{
+  "home": "Home",
+  "guide": "Guide",
+  "complete": "Complete Guide",
+  "beginner": "Beginner Guide",
+  "nav": [
+    "Guide",
+    "Online Fix",
+    "Mods",
+    "Strategy",
+    "Items",
+    "Achievements",
+    "Games",
+    "Platforms"
+  ],
+  "steam": "Get on Steam",
+  "viewSteam": "View on Steam →",
+  "buySteam": "Buy on Steam →",
+  "preview": "Preview",
+  "read": "Read guide →",
+  "open": "Open guide →",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "navLabel": "Main navigation",
+  "heroBadge": "A co-op field guide · Learn the bank, then the tables",
+  "heroTitle": "Gamble With Your Friends",
+  "heroHighlight": "Complete Guide",
+  "heroDescription": "Your starting point for shared-bank play, team planning, casino tables, items and a calmer first run. Learn the loop. Make a plan. Keep the crew together.",
+  "heroButton": "Open the Complete Guide",
+  "fixButton": "Online Co-op Help",
+  "stats": [
+    "Games of Chance",
+    "Achievements",
+    "Floors",
+    "Endings"
+  ],
+  "aboutTitle": "What is Gamble With Your Friends?",
+  "about": [
+    "Gamble With Your Friends brings a crew into a fictional casino with a shared bank. Every decision affects the whole group, so communication matters as much as knowing the next table.",
+    "The familiar rhythm is preparation, a timed casino visit, and a review before the next day. Rising targets make it useful to choose a table, agree on a spending rule and assign someone to watch the clock.",
+    "This original fan guide introduces that rhythm without claiming guaranteed results. Start with the beginner article, then use the topic previews to see what a larger guide library could cover."
+  ],
+  "features": [
+    [
+      "1–6 Players",
+      "Together or solo"
+    ],
+    [
+      "Shared Bank",
+      "One team balance"
+    ],
+    [
+      "Timed Days",
+      "Watch the clock"
+    ],
+    [
+      "Daily Quota",
+      "Plan for the target"
+    ],
+    [
+      "Casino Tables",
+      "Learn each game"
+    ],
+    [
+      "Run Review",
+      "Discuss each day"
+    ]
+  ],
+  "allTitle": "All Guides",
+  "allDescription": "A clear starting route, with previews of the subjects a complete co-op guide could cover.",
+  "cardTitles": [
+    "Wiki Overview",
+    "Complete Guide",
+    "Beginner Guide",
+    "Team Strategy Guide",
+    "Tips & Run Planning",
+    "Achievements & Endings",
+    "Achievement Checklist",
+    "Accessories Guide",
+    "Casino Game Overview",
+    "Items & Timing Guide",
+    "Camera Item Notes",
+    "Mod Compatibility",
+    "Platform Overview",
+    "Online Co-op Help"
+  ],
+  "cardTags": [
+    "Index",
+    "Start Here",
+    "Basics",
+    "Tactics",
+    "Popular",
+    "Completion",
+    "Checklist",
+    "Cosmetics",
+    "Game Rules",
+    "Item Notes",
+    "Timing",
+    "Community",
+    "PC",
+    "Co-op"
+  ],
+  "cardDescriptions": [
+    "Explore the library structure for table rules, items, team preparation, and longer completion goals.",
+    "Find your starting route through shared money, table choices, item preparation, and the first-day checklist.",
+    "Build a common plan before the first casino visit and understand how one shared balance changes team play.",
+    "A preview of role assignments, spending limits, and ways to keep risky decisions visible to everyone.",
+    "Practical planning topics for repeat runs: review mistakes, agree on a stop rule, and learn unfamiliar tables.",
+    "A future completion route connecting achievement tracking, group objectives, and separate ending attempts.",
+    "A preview of a readable achievement tracker that separates ordinary play from dedicated challenge runs.",
+    "A future overview of cosmetic choices and how to keep outfit shopping separate from a focused team run.",
+    "Table names, rules to learn, and the questions to ask before committing the shared bankroll to a new game.",
+    "A preview of item selection, who carries each tool, and how to coordinate its activation with a planned bet.",
+    "A future closer look at camera timing, team communication, and what to check before building a combo.",
+    "A preview of version matching and the questions a group should resolve before adding community mods.",
+    "A future platform summary explaining where to check current official support and compatibility details.",
+    "A preview of a practical lobby checklist: game versions, invitations, Steam connectivity, and matching mods."
+  ],
+  "gamesTitle": "Casino Game Guides",
+  "gamesDescription": "A preview of table topics. These entries show the intended library structure; individual table articles are not published yet.",
+  "gamesButton": "View Game Guide Previews",
+  "tipsTitle": "Top Tips for New Players",
+  "tipsDescription": "Six habits to agree on before your first visit to the casino.",
+  "tipsButton": "Open the Beginner Guide",
+  "tips": [
+    [
+      "Agree on a Bank Rule",
+      "Everyone uses the same balance. Decide who may make a large play, set a reserve, and say the amount aloud before placing the bet."
+    ],
+    [
+      "Protect a Safe Result",
+      "When the target is covered, ask whether another bet serves the run. A small optional gain is rarely worth an unplanned team risk."
+    ],
+    [
+      "Learn Before You Repeat",
+      "Use a small test to understand an unfamiliar table. Review the result together instead of repeating a mistake at a higher stake."
+    ],
+    [
+      "Give Every Item a Job",
+      "Choose a carrier and a specific moment for each tool. Buying something useful is only the first half of an effective item plan."
+    ],
+    [
+      "Discuss Emergency Trades",
+      "Some recovery options affect the next day as well as the current one. Talk through the cost and get the affected player’s agreement."
+    ],
+    [
+      "Review the Run Together",
+      "Use the end-of-day result to change roles and improve the next plan. A teammate’s loss is feedback, not a reason to chase a personal comeback."
+    ]
+  ],
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    [
+      "What is this Co-op Fieldnotes guide?",
+      "An independent template for an original co-op game guide. The beginner article is available; other topic cards are clearly marked as previews."
+    ],
+    [
+      "Which game does this guide introduce?",
+      "Gamble With Your Friends, a video game with fictional casino tables and a shared team bank. Use the linked Steam page for current official information."
+    ],
+    [
+      "Is this an official game wiki?",
+      "No. This is an independent fan guide and is not affiliated with the game’s developers or publisher."
+    ],
+    [
+      "Does a guide guarantee a successful run?",
+      "No. A plan can improve coordination, but chance, player decisions and game updates can all change the outcome."
+    ],
+    [
+      "Where should a new group start?",
+      "Open the complete guide, then read the beginner article together. Agree on the bank rule before learning individual tables."
+    ],
+    [
+      "Where can I check platform support?",
+      "Check the official Steam listing and developer announcements. The platform card is a preview, not a current compatibility claim."
+    ],
+    [
+      "How should we prepare an online session?",
+      "Compare game versions, check Steam connectivity and decide whether the group is using any mods before sending an invitation."
+    ],
+    [
+      "Where should I look for community advice?",
+      "Use communities linked by the official developer or Steam listing. This template does not pretend to host an official community."
+    ],
+    [
+      "What if an online lobby will not connect?",
+      "Begin with version matching and Steam status, then try a fresh invitation. Dedicated troubleshooting content is not yet published here."
+    ],
+    [
+      "Can I browse achievement guides here?",
+      "The achievement cards are previews. Only the beginner article is published in this minimal template."
+    ],
+    [
+      "Are the illustrations actual game screenshots?",
+      "No. The background and diagrams are original illustrative replacements, and article captions identify them as illustrations."
+    ],
+    [
+      "Are the mod guides available?",
+      "Not yet. Mod-related cards preserve the reference layout but remain explicitly unavailable previews."
+    ]
+  ],
+  "ctaTitle": "Ready to Plan Your First Run?",
+  "ctaDescription": "Start with the guide route, then read the beginner article with your crew before choosing a table.",
+  "ctaSecondary": "Beginner Guide",
+  "footerDescription": "Independent notes for playing together: shared-bank basics, team preparation, items, and a more coordinated first run.",
+  "footerDisclaimer": "Fan-made template. Not affiliated with the developers. Illustrations are original placeholders.",
+  "footerGuides": "GUIDES",
+  "footerInfo": "GAME INFO",
+  "footerCopyright": "© 2026 Co-op Fieldnotes — Independent fan guide.",
+  "footerCredit": "Game names belong to their respective owners. Original template artwork.",
+  "guideTitle": "Gamble With Your Friends Guide",
+  "guideDescription": "A practical starting route for a co-op crew: understand the shared balance, choose a first table, prepare items, and agree on a stop rule before the next timed casino visit. Start small and review each day together.",
+  "quickTitle": "Quick Start",
+  "quickDescription": "Make the shared bank your first team discussion. Decide on one table, one item plan, and a clear reserve. Choose who places the larger bets and who watches the clock. When the target is covered, pause and agree before risking the balance again.",
+  "strategyButton": "Strategy Route",
+  "figureCaption": "Original casino illustration: a shared plan starts before anyone sits at a table.",
+  "mainGuides": "Main Guide Pages",
+  "checklistTitle": "First Run Checklist",
+  "checklist": [
+    [
+      "Set a shared spending rule",
+      "Agree on who may commit the bankroll to a larger play and how much money the group wants to keep in reserve."
+    ],
+    [
+      "Choose a familiar first table",
+      "Select one game someone can explain clearly. A known table gives the group a common starting point before exploring."
+    ],
+    [
+      "Prepare items before leaving",
+      "Pick a carrier and discuss what each tool is meant to do. Check that the item is actually ready before the casino timer begins."
+    ],
+    [
+      "Pause once the target is safe",
+      "Review the balance together before making another play. Protecting a completed objective is part of the team plan."
+    ]
+  ],
+  "answersTitle": "Common Search Answers",
+  "answers": [
+    [
+      "Is this real-money gambling?",
+      "No. This guide discusses a video game and fictional in-game money. It does not provide real-money gambling services."
+    ],
+    [
+      "Where do we check supported platforms?",
+      "Use the game’s official store listing for current requirements and developer announcements for new platform information."
+    ],
+    [
+      "What makes a good beginner plan?",
+      "Use one shared spending rule, pick a familiar table, prepare the item carrier, and communicate before a large bet."
+    ],
+    [
+      "Can we assume the same result every time?",
+      "No. Treat observations as something to test in your current game version, and avoid presenting a run plan as a guaranteed outcome."
+    ]
+  ],
+  "moreHelp": "More Help",
+  "moreRows": [
+    "Platform support and official system requirements",
+    "Community mods and matching versions",
+    "Repeat runs and learning from the result",
+    "Camera item planning and team timing",
+    "Cosmetic choices and a separate shopping session",
+    "A library overview for future guide topics"
+  ],
+  "articleBadge": "Start Here",
+  "articleGame": "Gamble With Your Friends",
+  "articleTitle": "Beginner Guide",
+  "articleMeta": "Original starter notes · Team play · Illustrated template",
+  "articleMore": "Ready for More?",
+  "articleMoreDescription": "Return to the guide route or revisit the first-run checklist with your group.",
+  "notFound": "Page not found",
+  "notFoundText": "This article is not published. Return to the guide to browse available content.",
+  "footerEnding": "Endings Guide"
+}

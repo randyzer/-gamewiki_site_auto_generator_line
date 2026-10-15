@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://war-of-genesis.wiki/sitemap-index.xml

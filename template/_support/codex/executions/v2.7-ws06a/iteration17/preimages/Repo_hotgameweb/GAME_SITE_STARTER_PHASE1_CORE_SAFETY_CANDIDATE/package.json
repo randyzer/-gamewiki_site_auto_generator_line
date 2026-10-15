@@ -1,0 +1,46 @@
+{
+  "name": "game-site-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0 <23"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "validate": "tsx scripts/validate-site.ts",
+    "verify:unadopted-final": "tsx scripts/verify-adoption.ts unadopted",
+    "verify:adopted-final": "tsx scripts/verify-adoption.ts adopted",
+    "check": "astro check && vitest run",
+    "check:browser": "tsx scripts/run-core-browser-evidence.ts",
+    "build": "tsx scripts/build-site.ts final",
+    "build:evidence": "tsx scripts/build-site.ts evidence",
+    "deploy:dry-run": "npm run build && wrangler deploy --dry-run",
+    "patch:impact": "tsx scripts/patch-impact.ts",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "8.0.0",
+    "@astrojs/react": "6.0.5",
+    "@astrojs/sitemap": "3.7.4",
+    "astro": "7.2.10",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "pagefind": "1.5.2",
+    "playwright": "1.63.0",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.13",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11",
+    "wrangler": "4.127.1"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "command": "ffmpeg lavfi synthetic color 800x600 H264 yuv420p 0.5s",
+  "exitCode": 0,
+  "stderr": "",
+  "synthetic": true
+}

@@ -1,0 +1,29 @@
+{
+  "status": "PAUSED_UNFINISHED_NOT_ACCEPTANCE_EVIDENCE",
+  "source_head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+  "reason": "User paused A4 and requested triad/directory audit before blueprint and roadmap",
+  "restore_paths": {
+    "dependencies.patch": [
+      "package.json",
+      "package-lock.json"
+    ],
+    "coverage.test.ts": "tests/core-browser/coverage.test.ts"
+  },
+  "files": [
+    {
+      "name": "coverage.test.ts",
+      "sha256": "06be3a171b689dad8ab4c862a0770254969c84835622cecbe03ff19ea33beaad",
+      "bytes": 1470
+    },
+    {
+      "name": "dependencies.patch",
+      "sha256": "47fe5b6dcdbebd25eb17d24b1f1e05986ac4f2943b9d2b5bd67f02c0b2d7047d",
+      "bytes": 2621
+    },
+    {
+      "name": "red.log",
+      "sha256": "53eccbcace734cbb673fe6a9773c5d27133c668995461f88857cd4d6a0133a3d",
+      "bytes": 1030
+    }
+  ]
+}

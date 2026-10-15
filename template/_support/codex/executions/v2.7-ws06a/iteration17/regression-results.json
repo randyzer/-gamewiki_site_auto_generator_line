@@ -1,0 +1,32 @@
+[
+  {
+    "name": "manual-source-binding-green",
+    "command": "npm run test -- tests/ws06a-browser-closure.test.ts tests/core-browser-evidence.test.ts",
+    "exitCode": 0,
+    "log": "manual-source-binding-green.log"
+  },
+  {
+    "name": "root-check",
+    "command": "npm run check",
+    "exitCode": 0,
+    "log": "root-check.log"
+  },
+  {
+    "name": "unadopted-final",
+    "command": "npm run verify:unadopted-final",
+    "exitCode": 0,
+    "log": "unadopted-final.log"
+  },
+  {
+    "name": "adopted-final",
+    "command": "npm run verify:adopted-final",
+    "exitCode": 0,
+    "log": "adopted-final.log"
+  },
+  {
+    "name": "git-diff-check",
+    "command": "git diff --check",
+    "exitCode": 0,
+    "log": "git-diff-check.log"
+  }
+]

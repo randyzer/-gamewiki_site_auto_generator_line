@@ -1,0 +1,31 @@
+/*
+ * Starter fallback theme.
+ * Replace these values with the real game's visual identity before release.
+ * The theme mechanism is Stable Core; each game-specific palette belongs to
+ * the Flexible Edge.
+ */
+:root {
+  --color-background: #f6f5f1;
+  --color-surface: #e7e4dc;
+  --color-text: #1f2426;
+  --color-text-muted: #697174;
+  --color-primary: #2f4c54;
+  --color-accent: #4f6f78;
+  --color-accent-strong: #31535d;
+  --color-guides: var(--color-accent);
+  --color-heroes: var(--color-accent);
+  --color-weapons: var(--color-accent);
+  --color-items: var(--color-accent);
+  --color-maps: var(--color-accent);
+  --color-updates: var(--color-accent);
+  --color-meta: var(--color-accent);
+  --color-tools: var(--color-accent);
+  --color-border: color-mix(in srgb, var(--color-text) 24%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--color-text) 72%, transparent);
+  --color-footer-background: color-mix(in srgb, var(--color-surface) 72%, var(--color-background));
+  --color-footer-text: var(--color-text);
+  --color-footer-muted: var(--color-text-muted);
+  --color-footer-border: var(--color-border-strong);
+  --color-on-primary: #f4f7f5;
+  --color-on-accent: #f8fbfa;
+}

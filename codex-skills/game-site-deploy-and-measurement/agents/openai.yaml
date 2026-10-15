@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Site Deploy and Measurement"
+  short_description: "Sync approved code, deploy game sites, and verify GSC and GA4"
+  default_prompt: "Use $game-site-deploy-and-measurement to inspect a game site, propose a GitHub and deployment plan, then proceed after I confirm."

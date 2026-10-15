@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "originalAssertionLines": 9,
+  "allOriginalCheckLinesByteIdentical": true,
+  "mediaAssetsAndViewportsUnchanged": true,
+  "semanticDelta": "Native resource readiness precondition only; read-only request/response observation",
+  "original": "iteration28/browser-media-contract.ts",
+  "qualificationAttemptsMax": 1,
+  "retryCount": 0
+}

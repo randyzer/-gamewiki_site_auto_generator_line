@@ -1,0 +1,229 @@
+{
+  "observedOn": "2026-10-01",
+  "timeZone": "Asia/Taipei",
+  "method": "User Chrome session, local web-access CDP proxy, agent-created background tabs, DOM inspection and rendered screenshot. No search-engine or third-party fallback.",
+  "boundary": "These are observed product patterns, not claims about audience, SEO rank, revenue or commercial success. Game mechanics are site assertions and were not independently checked in game.",
+  "cases": [
+    {
+      "id": "farever",
+      "requestedUrl": "https://farevergame.wiki",
+      "status": "blocked",
+      "failure": {
+        "stage": "Chrome navigation to original site",
+        "code": "ERR_CONNECTION_CLOSED",
+        "pageTitle": "farevergame.wiki",
+        "observedPage": "chrome-error://chromewebdata/",
+        "diagnosis": "Local proxy created and inspected the tab successfully. Chrome reported that the original site unexpectedly closed the connection. Origin server versus network filtering cause was not determined; no login wall or CAPTCHA was present.",
+        "fallbackUsed": false
+      },
+      "pages": [],
+      "conclusion": "站内数据未取得，不能下市场判断",
+      "unverified": [
+        "Home structure",
+        "Directory and article content",
+        "Media",
+        "Monetization",
+        "SEO metadata",
+        "Navigation"
+      ]
+    },
+    {
+      "id": "gamble-with-your-friends",
+      "requestedUrl": "https://gamblewithyourfriends.net",
+      "status": "observed",
+      "pages": [
+        {
+          "kind": "home",
+          "url": "https://gamblewithyourfriends.net/",
+          "title": "Gamble With Your Friends Wiki: Guide, Online Fix, Mods & Achievements",
+          "discovery": "Provided root URL, then internal navigation",
+          "modules": [
+            "Persistent top navigation with 8 topic links and Steam CTA",
+            "Hero with version-status label, primary complete-guide CTA and co-op troubleshooting CTA",
+            "Four compact game-stat blocks",
+            "Game introduction with six game-specific feature cards",
+            "14 intent-based guide cards",
+            "Casino game shortcuts",
+            "Six numbered beginner tips",
+            "12 native FAQ details sections",
+            "Final route choices and grouped guide/info footer"
+          ],
+          "media": [
+            {
+              "url": "https://gamblewithyourfriends.net/images/hero.jpg",
+              "kind": "Game scene hero",
+              "loaded": true,
+              "width": 1920,
+              "height": 1080,
+              "alt": "Descriptive casino-floor scene alt text present"
+            },
+            {
+              "url": "https://gamblewithyourfriends.net/images/logo.jpeg",
+              "kind": "Brand game image",
+              "loaded": true,
+              "width": 616,
+              "height": 353
+            }
+          ],
+          "freshness": {
+            "visibleLabel": "Updated for v1.0.4 — 55 Achievements Tracked",
+            "visibleDate": false,
+            "timeElements": 0
+          },
+          "popularity": {
+            "visibleLabels": [
+              "Popular on Tips & Cheats",
+              "Rising on Camera Item"
+            ],
+            "measurementEvidence": false,
+            "interpretation": "Observed editorial labels only; no counts, analytics, traffic or ranking evidence supplied"
+          },
+          "interaction": {
+            "faq": "First native details/summary clicked; open changed false to true and answer area expanded",
+            "gameDirectory": "Clicked header Games link and reached /games/",
+            "mobileMenu": "aria-label Toggle mobile menu and initial aria-expanded=false observed; mobile viewport was not tested"
+          },
+          "seo": {
+            "title": true,
+            "description": true,
+            "canonical": "https://gamblewithyourfriends.net/",
+            "openGraph": true,
+            "twitterLargeImage": true,
+            "jsonLdTypes": [
+              "Organization",
+              "WebSite",
+              "VideoGame",
+              "FAQPage"
+            ]
+          },
+          "monetization": {
+            "steamCta": true,
+            "adsenseElementsPresent": true,
+            "adFillStatus": "unfilled",
+            "adRenderedSize": [
+              0,
+              0
+            ],
+            "visibleFilledAd": false,
+            "affiliateOrRevenueEvidence": false
+          },
+          "provenance": "Footer identifies a fan site and disclaims affiliation."
+        },
+        {
+          "kind": "directory",
+          "url": "https://gamblewithyourfriends.net/games/",
+          "title": "Gamble With Your Friends — Casino Games Guide",
+          "discovery": "Home header Games link",
+          "modules": [
+            "Game-count/category introduction",
+            "14 linked guide cards, each with title, Floor classification, short explanation and guide CTA",
+            "Shared top navigation and grouped footer"
+          ],
+          "cardCount": 14,
+          "classificationLabels": [
+            "Floor 1",
+            "Floor 2",
+            "Floor 3"
+          ],
+          "visibleSearchOrFilters": false,
+          "contentBoundary": "Page states 17 total games while showing 14 covered guides; coverage is expressly described as expanding as data is confirmed.",
+          "media": {
+            "bodyImagesObserved": 0,
+            "sharedLogo": true
+          },
+          "freshness": {
+            "visiblePublicationDate": false
+          },
+          "seo": {
+            "description": true,
+            "canonical": "https://gamblewithyourfriends.net/games",
+            "openGraph": true,
+            "twitterLargeImage": true,
+            "jsonLdTypes": []
+          },
+          "interaction": "Clicked first Blackjack card and reached /games/blackjack/."
+        },
+        {
+          "kind": "article",
+          "url": "https://gamblewithyourfriends.net/games/blackjack/",
+          "title": "Blackjack Guide — Gamble With Your Friends",
+          "discovery": "Games directory first card",
+          "modules": [
+            "Home > Games > Blackjack breadcrumb",
+            "Floor 1 and A-Tier metadata badges",
+            "Summary",
+            "Rules",
+            "Strategy callout/list",
+            "Strategy cheat-sheet image linked to original asset",
+            "Achievement cards",
+            "Caution notes",
+            "Three visible FAQ answer sections",
+            "All Games and Achievements follow-up CTAs"
+          ],
+          "tools": {
+            "breadcrumb": true,
+            "linkedCheatSheet": true,
+            "copyButtonObserved": false,
+            "tocObserved": false,
+            "tableCount": 0,
+            "searchOrFiltersObserved": false
+          },
+          "media": [
+            {
+              "url": "https://gamblewithyourfriends.net/images/guides/blackjack-cheat-sheet.png",
+              "kind": "Strategy reference chart",
+              "loading": "lazy",
+              "loaded": true,
+              "width": 2940,
+              "alt": "Descriptive hit/stand/double/split alt text"
+            }
+          ],
+          "freshness": {
+            "visibleDate": false,
+            "timeElements": 0,
+            "jsonLdDatePublished": false,
+            "jsonLdDateModified": false
+          },
+          "seo": {
+            "description": true,
+            "canonical": "https://gamblewithyourfriends.net/games/blackjack",
+            "openGraphType": "website",
+            "twitterLargeImage": true,
+            "jsonLdTypes": [
+              "Article"
+            ],
+            "author": "Gamble With Your Friends Guide"
+          },
+          "monetization": {
+            "adsenseElementsPresent": true,
+            "adFillStatus": "unfilled",
+            "adRenderedSize": [
+              0,
+              0
+            ],
+            "visibleFilledAd": false
+          }
+        }
+      ],
+      "takeaways": [
+        "Organize home discovery by player intent: start, learn, troubleshoot, finish, customize.",
+        "Keep the same topic taxonomy through home cards, header navigation, directory and breadcrumbs.",
+        "Use loaded, descriptive game media on the home page and a functional reference asset in the article.",
+        "Expose coverage limits instead of presenting the official total as the number of published guides.",
+        "Do not inherit Popular/Rising labels as measured popularity without a supplied evidence model.",
+        "Starter should make dates and update provenance explicit; observed reference article has neither visible dates nor schema dates.",
+        "Ad integration presence and zero-sized unfilled elements are distinct from visible advertising or monetization success."
+      ],
+      "unverified": [
+        "Mobile rendering and menu interaction",
+        "Actual game-mechanic accuracy",
+        "Media licensing/permissions",
+        "Real advertising fill",
+        "Traffic, ranking and revenue",
+        "Steam affiliate tracking",
+        "Core Web Vitals",
+        "Accessibility beyond basic DOM semantics"
+      ]
+    }
+  ]
+}

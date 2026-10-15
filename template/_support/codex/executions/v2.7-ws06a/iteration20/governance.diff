@@ -1,0 +1,211 @@
+--- before/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md
++++ after/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md
+@@ -25,6 +25,8 @@
+ SOP 内的拟议唯一规范路径为 `docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md`，同时持有 Contract 与 Registry。WS-01 独立接受并纳入包清单后才承接 V2.7 规范权威。当前 `template/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V0.2.md` 保留原文/哈希作为前代输入。所有候选路径、分支、规范文件和最终交付目录目前均只是约定；本轮没有创建它们。
+ 
+ ## 3. 依赖 DAG 与阶段门槛
++
++下图是正式验收/发布 DAG。第20轮的有限开发入口见 §3.1；只在该治理修订独立接受后生效，不能替代图中的正式依赖。
+ 
+ ```mermaid
+ flowchart TD
+@@ -43,11 +45,34 @@
+     W7 --> W8["WS-08 跨版与三件套交付"]
+ ```
+ 
+-硬前置：WS-02 依赖 WS-01；WS-06A 依赖 WS-02；WS-03 各实现切片依赖 WS-02/06A；WS-04A 可以在 WS-01 后设计方法模板，但契约 Gate 依赖 WS-03 接口接受；WS-05 每种组合依赖其 WS-03/04A 输入接受；WS-04B 在 WS-05 后完成实例验证；WS-06B 依赖 04B、组合与 06A；WS-07 完整采用验收依赖 06B；WS-08 依赖全部前置接受。
++正式硬前置：WS-02 依赖 WS-01；WS-06A 依赖 WS-02；WS-03 正式实施/退出路径依赖 WS-02/06A ACCEPT，有限候选开发另须满足 §3.1；WS-04A 可以在 WS-01 后设计方法模板，但契约 Gate 依赖 WS-03 接口接受；WS-05 每种组合依赖其 WS-03/04A 输入接受；WS-04B 在 WS-05 后完成实例验证；WS-06B 依赖 04B、组合与 06A；WS-07 完整采用验收依赖 06B；WS-08 依赖全部前置接受。
+ 
+ 可并行的是设计/研究或输入已接受后的有限切片，不是绕过 Gate：WS-04 的术语/主题证据模板可与 06A/03 设计并行；WS-03 已冻结接口对应的 WS-04 集成、WS-05 模块可先准备，但 workstream 退出必须等待其完整前置。WS-07 第一手事实/媒体权利准备可提前，完整结果必须绑定最终接受的组合和准确构建。
+ 
+ 所有 Gate 要求：受影响 capability 与三件套增量明确；meaningful 技术/产物证据通过；该阶段适用浏览器/人工证据齐全；既有能力无未授权回归；独立 ACCEPT；下一阶段输入准确冻结。计划中的 PASS 不是已执行的 PASS。步骤不得以“先实现后补 SOP/Prompt”退出。
++
++### 3.1 有限开发准入与正式验收分离 — 第20轮治理修订
++
++依据[实际 PLAN20](../codex/prompts/v2.7-ws06a/iteration20-development-readiness-governance-amendment-plan.md)实施；仅在[本轮独立审查/结果](../codex/executions/v2.7-ws06a/iteration20/result.md)实际 ACCEPT 后成为有效治理。第19轮提案和历史证据保留原字节。该修订不增加主任务、capability、生产 schema 或 checker；八个 workstream 和41规范 ID 不变。
++
++`WS06A_DEVELOPMENT_READINESS` 是治理流程状态，取值 NOT_EVALUATED、BLOCKED、ACCEPTED_FOR_BOUNDED_DEVELOPMENT、STALE；不是 Contract/Registry 字段、§W verifiedOutcome、PASS、EXCEPTION、NOT_APPLICABLE、NOT_SELECTED 或 WAIVED。修订接受只激活流程，当前源码的 readiness 仍为 NOT_EVALUATED，WS-06A BLOCKED、Safari proof0、WS-03代码未开始，主任务关闭数仍2/8。
++
++```mermaid
++flowchart TD
++    Core["WS-02 ACCEPT"] --> Audit["当前源码准入审计＋独立接受"]
++    Audit --> Slice["一个有限 WS-03 候选切片"]
++    Slice --> Evidence["新源回归＋fresh47＋新增表面证据"]
++    Evidence --> Review["独立续行决定"]
++    Review --> Next["明确的下一 WS-03 候选切片"]
++```
++
++先独立接受治理修订，再审计当前源并独立签署准入，才可执行一个有限候选计划。建议03A→03B→03C→03D-search→03D-freshness；03C仍须03B实际接口独立接受，03D两部分分别计划/验证。首阶段仅WS-03、一片一次；不能自动解锁WS-03正式Gate、04A契约/集成、05、04B、06B实施/验收、07、08或release。
++
++准入要求完整未改47矩阵、0 skip/NOT_RUN/漏测、非WebKit全部PASS、无未知基础设施错误。历史初始比较输入为10个WebKit失败病例/40断言（37 ENVIRONMENT_PROFILE_BLOCKED、3 PRODUCT_EVIDENCE_UNRESOLVED），见[冻结定位证据](../codex/executions/v2.7-ws06a/iteration19/residual-set-v1.json)。它不是永久产品要求或PASS白名单；当时失败须属于独立接受的准确集合、原detail/控制仍符合有效policy，后续只能减少为其子集。新增位置/断言失败即STOP，数量降低也不能隐藏新失败。每条当前残留必须有同category/role/route/viewport/JS/motion/assertion的当前Chromium及Firefox PASS；cross-engine corroboration不是Safari证明、WebKit等价或多数票PASS。raw FAIL与命令非零退出如实保留，严格browser/CI/closure入口不改。
++
++绑定三件套身份、Starter branch/HEAD/working-tree manifest、Contract/matrix/runner/closure/policy/control/raw/native/独立expected SHA、fixture source/dist、Playwright及三个engine版本/revision、host/platform/arch、采集/审核日期、reviewer、期限/复查触发和下一切片。相关源、配置、构建、验证身份或工具/host变化即STALE；旧签署不能连续授权全部切片。每片按[SOP方法](../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness)做正负例、定向检查、root check、默认final拒绝、adopted validate/check/build、fresh未改47、额外新功能浏览器证据、残留/对应核对、正常清理与独立续行。基础47不证明新表面，新表面失败不能加入旧集合；缺证据、未知失败、弱化断言、身份不符或清理失败均STOP。`IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION`仅准许明确下一片，不关闭正式Gate或提升能力。
++
++Safari缺证据且完整06A未接受期间，AX-01/02/03与PA-01不提升，human focus/contrast仍另需审查，WS-03正式Gate保持开放，06B/07/08及组装发布保持阻塞；开发准入不授权commit/push/tag/merge/部署/发布。源稳定后：冻结准确构建→fresh47与新增表面→核对当前policy/control→允许通道上的真实Safari证据→实际verify:browser-closure→独立完整06A审查→逐片复验/重跑stale证据→独立恢复正式WS-03 Gate及原DAG。真实Safari FAIL须产品修复并重验，不能因已投入开发豁免P0/P1。严格47全PASS分支仍由原closure处理，商业发布的代表性真实Safari检查义务不删除。不得用其他工具绕过访问拒绝或伪造按键、focus、scroll、键盘偏好。
+ 
+ ## 4. 八个 workstream
+ 
+@@ -78,11 +103,11 @@
+ - **目标/能力**：VF-01/02、MC-01/03/05、SEO-02、IA-03、FR-01；扩展既有接口，不扩大页面范围。
+ - **依据**：蓝图契约、[V2.6.5 缺口审计](../GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md)、War of Genesis OG/识别、Bomb Farm 媒体增补。
+ - **工件/主 owner**：Starter schema/adapter/render/审计；SOP 定义角色与媒体/搜索/时效选择；Prompt 同步命令、采用迁移和 HARD STOP。各切片按 ALL_THREE 或准确责任细分审查，不复制规范。
+-- **前置**：WS-02、WS-06A ACCEPT；接口设计可提前，技术完成后才供集成。
++- **前置**：正式路径要求WS-02、WS-06A ACCEPT；有限候选开发可走§3.1的治理修订接受＋当前源独立准入路径。接口设计可提前；开发续行接受不作为04A/05正式集成输入。
+ - **有限切片**：03A 语义字体/密度/形状/状态角色；03B 资产尺寸/比例、rights/credit 引用、video accessible equivalent 与统一 adapter/fallback；03C 分享图以同一 media authority 解析与生成产物审计，依赖 03B；03D 搜索查询/结果状态边界＋现有 Pagefind、日期与 patch/验证语义。03D 的两部分独立提交/验证，避免耦合重构。
+ - **排除**：不加新 provider、CMS/DAM、远程资产平台、运行时统计；不改变路由/发布真相，不把字段合法性当权利批准。
+ - **测试/证据**：每切片 schema 正/负例、实际组件/输出、相关浏览器状态及继承回归；媒体有效/缺失/失败/无媒体、视频/等价说明、share fallback；搜索启用/关闭/无结果/错误、安全 URL/预算；published 不冒充 updated。
+-- **独立 Gate/退出**：四切片分别 ACCEPT；既有字段的兼容/迁移规则明确且经验证，legacy 无证据字段不能用默认值自动批准；required share/媒体缺失按契约阻塞；Core 无回归，三个工件要求/执行/实现一致。
++- **独立 Gate/退出**：四切片分别正式 ACCEPT；候选 IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION 不关闭本Gate，须完整06A接受及逐片复验后恢复正式裁定。既有字段的兼容/迁移规则明确且经验证，legacy 无证据字段不能用默认值自动批准；required share/媒体缺失按契约阻塞；Core 无回归，三个工件要求/执行/实现一致。
+ - **回归/真实采用义务**：03A 支持 WoG/Bomb Farm 两种主题而不硬编码；03B/C 能承接 Bomb Farm 现有 local assets/video 与 WoG 的 share-media 缺口；03D 保留原 corpus 与 Pagefind 安全，项目启用选择在 WS-04/07验收。
+ 
+ ### WS-04 — Game Adaptation 契约与采用流程
+@@ -113,7 +138,7 @@
+ - **目标/能力**：AX-01/02/03、PA-01/02；并执行 TL-01/02/03、GI-02、MC-*、CU/DS、MR-* 的适用验收。Requirement 含义继续由 SOP 规范持有。
+ - **依据**：WoG build PASS 但不上线、Bomb Farm 人审/rights/provider 状态及 A3 尚未证明的浏览器行为。
+ - **工件/主 owner**：Starter 的 dev-only browser runner、结果/fixture hooks；SOP 的支持范围、人工/例外方法；Prompt 的逐项执行/停止与证据身份。primary verification owner 是独立 Acceptance，实施者不能代填人审。
+-- **前置/切片**：06A 在 WS-02 后建立 Core 浏览器/证据基础并供 WS-03 使用；06B 在 WS-03/04/05 接受后扩展到组装页面。不是恢复旧 A4；旧 patch/缺失 matrix 的 RED 仅是失败输入。
++- **前置/切片**：06A 在 WS-02 后建立 Core 浏览器/证据基础并供 WS-03 使用；§3.1有限开发准入是独立流程，不关闭06A。06B仍在WS-03/04/05正式接受及完整06A接受后扩展到组装页面，不由开发准入解锁。不是恢复旧 A4；旧 patch/缺失 matrix 的 RED 仅是失败输入。
+ - **实施边界/排除**：最小锁定 dev-only 浏览器依赖，实际 Core 的 shell/nav、content/detail、recovery/404 三角色；不得复制 Core、加 runtime browser 包或测试 SaaS/截图平台。命令需实施后才成为真实可调用项，不把本路线拟议 runner 当现有命令。
+ - **06A 证据矩阵**：Chromium/Firefox/WebKit × 390×844、768×1024、1280×800 × 三角色；Chromium 899/900/901 导航、619/620/621 布局边界、live resize；mobile/desktop reduced-motion；三 engine no-JS mobile。记录真实 engine/revision、source/build、视口、JS/motion、断言与结果；必需条目缺失/skip 即失败。
+ - **断言**：document overflow ≤1 CSS px，长表局部滚动；skip link/Tab/Shift+Tab/Enter/Space/Escape、nested cleanup、可见 focus/恢复与 resize、末尾链接可达、44×44 控件目标意图、no-JS/reduced-motion、真实404恢复。视觉 focus/对比度与不能自动证明的内容项明确交给人工。
+
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -19,6 +19,38 @@
+ Media need decisions do not grant rights or replace exact media lifecycle/human approval. Visual Evidence status has its own namespace, distinct from capability evidenceStatus. Do not reinterpret NO MEDIA NEEDED as permission to hide unresolved rights. Keep the existing Page Inventory, route, final/evidence, ads zero-output and human release responsibilities intact.
+ 
+ If the preferred tool chain fails, diagnose tool/version/connection/profile/current-process credentials/auth/captcha/network and preserve the failed attempt. An alternative transport requires explicit Human authorization when the task's instructions require it; elapsed time is not consent. Tool failure does not establish evidence failure or account logout. Required inaccessible evidence remains unresolved; do not bypass a gate.
++
++## Bounded Development Readiness
++
++This finite V2.7 candidate governance amendment becomes effective only after its independent acceptance, recorded in the [iteration20 result](../../../template/codex/executions/v2.7-ws06a/iteration20/result.md). Method authority remains this SOP; the [evolution roadmap](../../../template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) holds workstream dependencies. Historical design proposals/evidence are preserved inputs, not a second Contract. The amendment defines a development entrance; it does not grant current-source readiness.
++
++Full WS-06A acceptance continues through the existing strict raw qualification or accepted separate closure policy, required real-browser evidence and independent review. Strict `check:browser`, CI and closure validation do not change. Bounded Development Readiness instead supports one candidate WS-03 slice under unresolved Safari evidence. It never closes WS-06A or supplies capability PASS, EXCEPTION, NOT_APPLICABLE, NOT_SELECTED, WAIVED or a non-null verifiedOutcome. P0/P1 requirements, applicability, severity, human review and release obligations remain unchanged.
++
++`WS06A_DEVELOPMENT_READINESS` is a governance workflow record with NOT_EVALUATED, BLOCKED, ACCEPTED_FOR_BOUNDED_DEVELOPMENT or STALE, not a Registry field, Contract ID, §W outcome or production schema. Governance acceptance activates this method only. Current readiness is NOT_EVALUATED; WS-06A remains BLOCKED, Safari proof0, and no WS-03 code has started. Eight workstreams and41 capability IDs remain unchanged; this amendment closes no additional workstream.
++
++### Current-source audit and exact residual evidence
++
++After governance acceptance, independently audit the current source before signing a finite readiness record. Execute all47 unchanged planned cases and required assertions, no skip/NOT_RUN/missing row; require every non-WebKit row/assertion PASS, repaired live-resize PASS and zero unknown infrastructure failures. Preserve actual raw FAIL and command exit; development eligibility is a separate reviewer decision, not a browser command PASS.
++
++Use the independently accepted exact residual evidence as frozen comparison input. The historical initial input is10 WebKit failed rows/40 assertions:37 ENVIRONMENT_PROFILE_BLOCKED and3 PRODUCT_EVIDENCE_UNRESOLVED, with80 dual-engine PASS counterparts. These counts describe evidence, not a permanent product standard. Failure identity includes caseId/category/role/route/CSS viewport/JavaScript/motion/assertion/disposition; current raw details and native/control evidence must still satisfy the exact applicable policy. Later failed sets may only be subsets. New locations or assertions STOP even if total failures decrease; same-name assertions or similar Tab issues cannot be added automatically. Residual evidence is not a PASS allowlist.
++
++Each remaining residual requires a current Chromium row+assertion PASS and Firefox row+assertion PASS at the same category/role/route/viewport/JS/motion/assertion, with no duplicate or missing match. This is cross-engine corroboration, not Safari proof, WebKit equivalence or majority-vote PASS. Historical counts, old builds and synthetic unit positives do not establish a fresh run.
++
++Bind exact SOP/Prompt/Starter identities and changes; Starter branch/HEAD/working-tree manifest; canonical Contract SHA; matrix/runner/closure verifier SHA; policy/control/raw/native/independently captured expected identity SHA; fixture source/final-dist SHA; Playwright version; all3 engine versions/revisions; host/platform/arch; collection/review dates; reviewer; next slice; expiry and review triggers. Raw self-reported identity alone is not an independent oracle. Related source/config/fixture/dist/verification/tool/host changes make readiness STALE; governance changes require comparability review, not inherited signature. A readiness decision is valid only for its named next slice and cannot authorize all WS-03 work indefinitely.
++
++### One-slice continuation
++
++Require WS-02 acceptance, independently accepted governance and independently accepted current-source readiness before the first finite WS-03 candidate. First scope is WS-03 only:03A,03B,03C,03D-search,03D-freshness one at a time;03C still requires independently accepted actual03B interface input, and03D parts remain separate. No guessed API or evidence-free migration default is approved.
++
++For every slice, record changed files/capabilities, exact pre/post source, interface/compatibility/migration decisions and build output. Source mutation makes old readiness STALE. Run meaningful targeted positive/negative checks first, then root `npm run check`, actual default-final rejection and adopted validate/check/build gates, fresh unchanged47, and additional slice-specific rendered/browser evidence. Theme/state/readability, media valid/missing/failure/no-media/video equivalent/fallback, generated share output, search states and freshness/date semantics need their own applicable evidence; base47 regression does not prove new capability surfaces. Record real per-engine results; new-surface failure cannot enter the old residual set.
++
++Require no non-WebKit regression, exact residual subset with valid current policy/control, complete current dual-engine PASS counterparts, no unknown failure, exact source/build identities, normal preview stop with independent PID-gone confirmation and deletion of only the owned fixture. Missing evidence, new failure, weakened assertion, changed matrix/runner, fake key/focus/scroll, modifier/preference workaround, identity mismatch or cleanup failure blocks continuation. Keep failed runs. Independent `IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION` may authorize only a named next candidate slice; it is not formal WS-03 ACCEPT or capability promotion. See [QA](QA_CHECKLIST.md#bounded-development-readiness-audit) and [execution order](EXECUTION_PROMPT.md#bounded-development-readiness-execution).
++
++### Release hold and reconciliation
++
++Development readiness cannot unlock the WS-03 formal Gate,04A contract/integration,05,04B,06B implementation/acceptance,07,08 or release. While Safari evidence is missing and full06A remains blocked, AX-01/02/03 andPA-01 are not promoted; visual focus/contrast needs separate human review. Development acceptance grants no commit/push/tag/merge/deployment/release action and cannot bypass tool access denial. Commercial representative Safari checks remain required even if the strict raw47 branch later passes.
++
++When source stabilizes: freeze exact current source/build → fresh47 and new surfaces → validate current policy/control → obtain genuine current Safari evidence through an allowed trusted channel → run the actual `verify:browser-closure` → independent full06A review → reconcile every provisional slice against current interfaces/source and rerun stale evidence → independently restore formal WS-03 decisions and the original formal DAG. The existing closure command determines eligibility only, not acceptance. Genuine Safari FAIL keeps06A BLOCKED, requires product repair, makes impacted slice evidence STALE and requires fresh regression/reproof. Engineering investment never waives P0/P1 or the remaining REF, real-adoption, rights, visual and release gates.
+ 
+ ## Inherited V2.6.5 production method
+ 
+
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -28,6 +28,34 @@
+ - [ ] `npm run verify:adopted-final` provides exact source/build-scoped child results: validate=0, check=0, final build=0, evidence marker absent and unapproved privacy/terms absent; disposable copies cleaned up.
+ - [ ] Synthetic Field Notes proof is distinct from real-project, human, browser, media-rights and legal approval. Real projects still run their own canonical final pipeline.
+ - [ ] CI uses those same gates; production Core/dependencies/lockfile remain unchanged for WS-02. AX-01 browser evidence stays pending WS-06A.
++
++## Bounded Development Readiness audit
++
++This is a separate development checklist under the [SOP method](NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness), not a replacement release gate. The [iteration20 governance amendment](../../../template/codex/executions/v2.7-ws06a/iteration20/result.md) must first receive actual independent ACCEPT; current-source readiness remains NOT_EVALUATED until a separate audit/review. WS06A_DEVELOPMENT_READINESS is a workflow record (NOT_EVALUATED/BLOCKED/ACCEPTED_FOR_BOUNDED_DEVELOPMENT/STALE), not capability PASS, a Contract/Registry field or §W outcome. P0/P1 is not waived.
++
++- [ ] WS-02 and governance amendment independently accepted; next candidate scope is one WS-03 slice only.
++- [ ] Full unchanged47 and all required assertions actually executed,0 NOT_RUN/skip/missing/duplicate; raw FAIL and actual command exit retained.
++- [ ] All non-WebKit rows/assertions and repaired live-resize PASS; unknown infrastructure errors0.
++- [ ] Current WebKit failed identities/details/dispositions satisfy the accepted policy and are an exact subset of independently accepted residual evidence; no new position/assertion even when totals decrease.
++- [ ] Historical initial10 failed rows/40 assertions (37 ENVIRONMENT_PROFILE_BLOCKED,3 PRODUCT_EVIDENCE_UNRESOLVED) remain accurately labelled comparison input, not a permanent product count or PASS allowlist.
++- [ ] Each current residual has exact same category/role/route/viewport/JS/motion/assertion Chromium row+assertion PASS and Firefox row+assertion PASS, no duplicate/missing counterpart; cross-engine corroboration is not Safari proof or WebKit equivalence.
++- [ ] SOP/Prompt/Starter, branch/HEAD/working-tree manifest, Contract/matrix/runner/closure/policy/control/raw/native/independent expected SHA, fixture source/final-dist, Playwright/all3 engine versions/revisions, host/platform/arch match actual evidence.
++- [ ] Dates/reviewer, named next slice, expiry/review triggers recorded; relevant source/config/build/verification/tool/host change makes readiness STALE, not inherited.
++- [ ] Normal preview stop, independent PID-gone confirmation and owned-fixture removal verified; no signal fallback or false cleanup claim.
++- [ ] Safari proof absence explicit, fullWS-06A BLOCKED and formalWS-03 Gate open; no AX-01/02/03 orPA-01 promotion, no04A/05/04B/06B/07/08 or release unlock.
++- [ ] Independent current-source readiness review actually accepts ACCEPTED_FOR_BOUNDED_DEVELOPMENT; governance-only acceptance cannot fill this box.
++
++### Per-slice continuation
++
++- [ ] One finite slice only; changed files, touched capabilities, actual interfaces/migration, pre/post source and final build recorded.03C requires actual independently accepted03B input;03D-search/freshness stay separate.
++- [ ] Meaningful targeted positive and negative checks pass; root `npm run check`, default-final expected rejection and adopted validate/check/build gates actually run and pass.
++- [ ] Source change marks old readiness STALE; fresh unchanged47 records exact new source/build, all required assertions and actual raw result.
++- [ ] Additional slice-specific rendered/browser evidence covers03A font/density/shape/state/focus/readability;03B valid/missing/failing/no-media/video equivalent/fallback;03C generated share/fallback/required-input rejection;03D enabled/disabled/results/no-results/error/safeURL or published/updated/patch/unknown freshness, as applicable. Base47 does not prove these new surfaces.
++- [ ] Non-WebKit regressions0; current residual exact subset, policy/native/control valid and current dual-engine PASS counterparts complete; new surface failures are not appended to old residual evidence.
++- [ ] Missing new-surface evidence, new failure, unknown infrastructure, weak assertions/changed matrix or runner, synthetic key/focus/scroll, Option/Alt/preference workaround, identity mismatch or cleanup failure causes HARD STOP / continuation BLOCKED.
++- [ ] Normal cleanup verified and all failure evidence preserved; independent IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION binds exact new source/build and named next slice only. This is not formalWS-03 ACCEPT or capability PASS.
++- [ ] Release hold retained: Safari proof0/full06A unresolved does not unlock06B/07/08 or commit/push/tag/merge/deploy/release; visual focus/contrast remains separately human-reviewed.
++- [ ] Final reconciliation planned: stable exact source → fresh47/new surfaces → current policy/control → realSafari → actualclosure eligibility → independent06A → every provisional slice rechecked/stale evidence rerun → formalWS-03 and originalDAG. RealSafari FAIL requires repair/reproof, never a P0/P1 exception.
+ 
+ ## Content Reliability QA
+ 
+
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -401,6 +401,8 @@
+ 
+ ## V2.7 WS-06A command and evidence enforcement
+ 
++For finite candidate evolution, the separate [bounded development execution](#bounded-development-readiness-execution) below governs development continuation only; the strict raw/full acceptance and production rules in this section remain intact.
++
+ Read selected Starter package.json first. If check:browser is absent, HARD STOP; do not infer it from this document or the roadmap. Verify its exact pinned development dependency and all three engines before running. Preserve npm run check and both WS-02 adoption gates. Run npm run check:browser only with the actual supported canonical Contract input and a fresh CORE_BROWSER_EVIDENCE_DIR for audited results.
+ 
+ Require47 planned/executed/PASS,0 FAIL/NOT_RUN/skip, every required assertion and matching source/build/engine/revision. Record uncommitted source plus HEAD, real HTTP404, local .table-scroll, breakpoints, live focus migration, no-JS/reduced-motion and successful cleanup. Missing engine, incomplete evidence, build/server failure or unavailable identity blocks. Machine checks cannot fill human focus/contrast approval. Core proof does not complete composed-site, real-game, REF or release acceptance; do not promote capability outcomes. Runtime bugs require a narrowly reviewed plan amendment.
+@@ -418,3 +420,20 @@
+ Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
+ 
+ Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
++
++## Bounded Development Readiness execution
++
++Use the [SOP method](NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness), [development QA](QA_CHECKLIST.md#bounded-development-readiness-audit) and [formal/development roadmap](../../../template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md). The [iteration20 result](../../../template/codex/executions/v2.7-ws06a/iteration20/result.md) must show actual independent governance ACCEPT before this entrance is effective. Governance acceptance does not grant source readiness: current WS06A_DEVELOPMENT_READINESS is NOT_EVALUATED, WS-06A BLOCKED, Safari proof0, WS-03 not started. This workflow record is not a Contract/Registry field, verifiedOutcome, PASS or P0/P1 exception.
++
++1. Verify WS-02 and independent governance acceptance, exact triad/source/build/Contract identity and real commands in the selected Starter. Do not invent a readiness command/checker or reuse raw self-declared identity as an independent expected oracle.
++2. Audit current-source readiness under SOP/QA: complete unchanged47 with0 skip/NOT_RUN, all non-WebKit PASS, exact accepted residual subset/current policy/native/control, each residual's same category/role/route/viewport/JS/motion/assertion Chromium+Firefox PASS, source/tool freshness and verified cleanup. Historical initial40 residual/80 counterpart counts are inputs, not fresh proof or a permanent product rule. Cross-engine corroboration is not Safari proof, WebKit equivalence or a PASS allowlist.
++3. Submit a separate independent readiness decision, recording reviewer/date, expiry/triggers and exactly one nextWS-03 slice. Before any candidate code, HARD STOP unless readiness is current ACCEPTED_FOR_BOUNDED_DEVELOPMENT; NOT_EVALUATED/BLOCKED/STALE is insufficient. FullWS-06A acceptance remains a separate formal path.
++4. Plan one finite candidate slice only, beginning03A;03C still depends on independently accepted actual03B interfaces,03D-search and03D-freshness remain separately planned/tested. No04A/05/04B/06B/07/08 development or formal Gate unlock is inferred.
++5. Record pre-source, exact files/capabilities/interfaces and meaningful positive/negative evidence. Product source/config/build/verification/tool/host change makes the old readiness STALE immediately; the prior signature permits only starting that one slice, not perpetual continuation.
++6. Run fastest targeted checks, then root `npm run check`, actual unadopted-final rejection and adopted validate/check/build. Run fresh unchanged `npm run check:browser` for the new source with exact independent expected/fixture/dist/engine/Contract identity. If raw qualification still returns FAIL/exit1, record it as such; expected residual does not mean browser tests PASS and no command exit is rewritten.
++7. Add new slice-specific rendered/browser evidence as QA requires; base47 does not prove new theme/media/share/search/freshness surfaces. Recompute precise residual subset and current dual-engine counterparts. New location/assertion/surface failure, non-WebKit failure, unknown infrastructure, missing evidence, changed matrix/runner or weakened assertions causes HARD STOP; do not fold new failures into the old policy. Never manufacture proof with fake keys/focus/scroll, modifier/preference changes or tools bypassing an access refusal.
++8. Normally stop preview, independently verify owned PID gone, then remove only the owned fixture; preserve evidence/failed runs. Cleanup failure blocks continuation. Submit actual new-source evidence for independent IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION; without that verdict and current identities, HARD STOP before any next slice. The decision names that next slice only, not formalWS-03 ACCEPT or capability promotion.
++
++Keep WS06A full acceptance, Development Readiness and slice continuation separately recorded. Raw FAIL, absent Safari and null capability outcomes remain visible; no EXCEPTION/N/A/NOT_SELECTED/WAIVED is generated. Current-source records bind SOP/Prompt/Starter/branch/HEAD/manifest, Contract/matrix/runner/closure/policy/control/raw/native/expected SHA, fixture source/dist, Playwright/all3 engines/revisions, host/platform/arch and dates/reviewer/expiry/next scope. Any relevant change requires new-source evidence and independent continuation, not old iteration17/19 signatures.
++
++Safari absence/full06A unresolved retains formalWS-03 Gate open and04A integration/05/04B/06B/07/08/release hold; no AX-01/02/03 orPA-01 promotion, no commit/push/tag/merge/deploy/release authorization. Once stable: freeze exact source/build, fresh47/new surfaces, validate current policy/control, obtain current realSafari through an allowed trusted channel, run actualclosure, independently review full06A, reconcile every provisional slice and rerun stale evidence, then independently restore formal decisions/originalDAG. Genuine Safari FAIL requires product repair/regression/reproof; invested effort never waives P0/P1 or Human/rights/release duties. Commercial realSafari checks remain required even if strict raw qualification later passes.
+
+--- before/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ after/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -1339,6 +1339,8 @@
+ 
+ ## V2.7 WS-06A — Phase 0 / Phase 4 browser enforcement
+ 
++Bounded candidate evolution may use the separately governed development entrance below; this does not relax Phase4 strict raw qualification, formal acceptance or production release.
++
+ Phase 0 must inspect the selected Starter's actual package.json and browser evidence implementation. Missing check:browser, exact dev dependency or required Chromium/Firefox/WebKit = HARD STOP; never invent a command from roadmap text. Check the real supported canonical Contract input verification mode and exact identity.
+ 
+ Phase 4 retains root check, unadopted-final rejection and adopted-final gates, then runs the actual check:browser command. Require47/47 same-source/build PASS,0 skipped/FAIL/NOT_RUN and complete required assertions:27 baseline,3 no-JS,12 boundaries,4 reduced-motion,1 live focus migration. Bind uncommitted source manifest plus HEAD, fixture/final build, launched engine versions and installed revisions, viewport/JS/motion, true404, long-table local scroll and cleanup. Preserve failed runs.
+@@ -1358,3 +1360,15 @@
+ Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
+ 
+ Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
++
++## WS-06A Development Readiness — bounded candidate control
++
++Read the actual [SOP method](../GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness), [QA](../GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md#bounded-development-readiness-audit), [Execution Prompt](../GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md#bounded-development-readiness-execution) and [Roadmap](../../template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md). Methodology belongs to SOP, dependencies to Roadmap, durable requirements/Registry to the sole Contract; do not copy Registry rows or invent a readiness API/schema/checker.
++
++Before using the entrance, independently accepted governance must be evidenced in the [iteration20 result](../../template/codex/executions/v2.7-ws06a/iteration20/result.md). Governance ACCEPT activates the process only; current WS06A_DEVELOPMENT_READINESS remains NOT_EVALUATED, fullWS-06A BLOCKED, Safari proof0, WS-03 code not started. Distinguish full acceptance, Development Readiness (NOT_EVALUATED/BLOCKED/ACCEPTED_FOR_BOUNDED_DEVELOPMENT/STALE) and slice IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION. These are workflow records, not Contract/Registry fields, §W outcomes, capability PASS or P0/P1 waiver.
++
++Enforce governance acceptance → separate current-source audit/independent readiness → one finite WS-03 slice → targeted positive/negative checks → full regression/adoption → fresh unchanged47 → additional new-surface browser evidence → exact residual/current-counterpart audit → normal verified cleanup → independent continuation. First lane is WS-03 only and one slice at a time;03C requires accepted actual03B input,03D-search/freshness stay separate. No formalWS-03 or04A/05/04B/06B/07/08 Gate is unlocked by development acceptance.
++
++HARD STOP on missing governance/readiness acceptance, STALE/expired/source-mismatched readiness, incomplete47, non-WebKit failure, new WebKit position/assertion, unknown infrastructure, invalid policy/control, missing current Chromium orFirefox PASS counterpart, missing new-surface evidence, weakened assertion, cleanup failure or prior slice lacking continuation acceptance. Historical initial40 residuals/80 counterparts describe comparison input only; current failures must be its exact subset. Cross-engine corroboration is not Safari proof, WebKit equivalence, majority-vote PASS or a PASS allowlist. A lower failure count cannot hide a new failure. Source changes make readiness STALE immediately and require fresh identities/evidence, as defined by SOP; old readiness cannot authorize every slice. Record actual raw FAIL/exit1 without calling browser qualification PASS; preserve strictCI/browser/closure logic and historical evidence. Never fake focus/scroll/keys, use modifier/preference workarounds or bypass tool access refusal.
++
++Release hold persists with absent Safari/full06A unresolved: formalWS-03 Gate stays open,04A integration/05/04B/06B/07/08/release remain blocked, AX-01/02/03 andPA-01 are not promoted, and visual focus/contrast remains separately human-reviewed. No commit/push/tag/merge/deploy/release permission comes from this entrance. Final sequence is stable exact source/build → fresh47/new surfaces → current policy/control validation → allowed realSafari proof → actualclosure eligibility → independent full06A → every provisional slice reconciled/stale evidence rerun → independently restored formalWS-03 and originalDAG. RealSafari FAIL requires repair/reproof and keeps06A BLOCKED; it never permits a P0/P1 exception. All real-adoption/REF/rights/Human/release duties and commercial representative Safari checks remain required.

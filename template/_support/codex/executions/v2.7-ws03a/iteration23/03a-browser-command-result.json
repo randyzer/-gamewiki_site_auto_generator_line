@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "command": "tsx iteration23/browser-new-roles.ts",
+  "targetedAttempts": 1,
+  "childPid": 95495,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c23a.NkYNzj"
+}

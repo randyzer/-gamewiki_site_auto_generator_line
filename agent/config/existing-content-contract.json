@@ -1,0 +1,28 @@
+{
+  "id": "EXISTING_PROJECT_CONTENT_ADAPTER_V1",
+  "schemaVersion": 1,
+  "nativeSkill": "game-site-content-integrator",
+  "nativeContractVersion": 1,
+  "snapshotPolicyVersion": 1,
+  "framework": "Astro",
+  "substitutions": [
+    {
+      "nativeRequirement": "copied-template selection report and copy manifest",
+      "existingProjectEvidence": ["verified source baseline", "snapshot policy", "source HEAD and status digest", "raw keyword digest", "isolated Astro candidate", "current native skill tree lock"],
+      "record": "docs/EXISTING_PROJECT_ADOPTION.json"
+    },
+    {
+      "nativeRequirement": "dirty target Git confirmation",
+      "existingProjectEvidence": ["host-authorized write-candidate scope", "immutable source dirty status in baseline", "source-free snapshot excluding Git and credentials", "review-required promotion"],
+      "record": "docs/EXISTING_PROJECT_ADOPTION_REPORT.md"
+    }
+  ],
+  "retainedRequirements": ["unique upstream research paths and exact hashes", "native homepage Markdown", "safe complete favicon ZIP", "unique final keywords and per-keyword materials", "keyword processing record and summary", "material status and source version context", "existing content and route model", "four native content documents", "published-only discovery", "confirmed canonical origin", "robots and sitemap validation", "source and template integrity"],
+  "requiredOutputs": ["CONTENT_INTEGRATION_REPORT.md", "CONTENT_PAGE_MANIFEST.json", "CONTENT_PROVENANCE.md", "CONTENT_GAPS.md"],
+  "forbiddenSyntheticEvidence": ["TEMPLATE_SELECTION_REPORT.md", "template-copy-manifest.json", "TEMPLATE_RESIDUE_SCAN.json"],
+  "unsupported": ["unknown native contract or skill tree version", "framework other than Astro", "source or keyword baseline drift", "unconfirmed canonical origin", "unverifiable generated SEO without rendered static output", "unsafe public draft mechanism"],
+  "nativeCopiedTemplatePreflightPassed": false,
+  "sourceWrites": false,
+  "releaseAuthorized": false,
+  "advertisingScripts": false
+}

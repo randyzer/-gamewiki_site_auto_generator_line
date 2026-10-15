@@ -1,0 +1,261 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 20,
+  "status": "PASS",
+  "governanceFilesChanged": 5,
+  "changedFiles": [
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md"
+  ],
+  "protectedFilesVerified": 5790,
+  "postimages": {
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md": {
+      "sha256": "c94dcf215ba3526f01b9e22aeaf495c19d7bc25ab5e861a26fe9753ba64765a8",
+      "mode": 420,
+      "symlink": false
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md": {
+      "sha256": "6536052959bdfe39fefa30d13eacb7cb7e67e3c1ea29daf50cc4a0e0fc7dc46c",
+      "mode": 420,
+      "symlink": false
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md": {
+      "sha256": "42ab533b5274f710c69da0c3680e9cca58ad168db6d2810e484dca6b271484c5",
+      "mode": 420,
+      "symlink": false
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md": {
+      "sha256": "e5d53ffc6bef2bbbf4e6061aaa979800ea20fc264d44642e9c39d43003ff1300",
+      "mode": 420,
+      "symlink": false
+    },
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md": {
+      "sha256": "3222fb64497a952ef476d63d63ba5a87124f59fca0016f2b0b32bc750d824b3f",
+      "mode": 420,
+      "symlink": false
+    }
+  },
+  "contractSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+  "registryIds": 41,
+  "formalDagGraphUnchanged": true,
+  "addedLocalLinksChecked": 28,
+  "links": [
+    {
+      "from": "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "target": "../codex/prompts/v2.7-ws06a/iteration20-development-readiness-governance-amendment-plan.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration20/result.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration19/residual-set-v1.json",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "target": "../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "target": "../../../template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "target": "../../../template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "target": "QA_CHECKLIST.md#bounded-development-readiness-audit",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "target": "EXECUTION_PROMPT.md#bounded-development-readiness-execution",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+      "target": "NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+      "target": "../../../template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "target": "#bounded-development-readiness-execution",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "target": "NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "target": "QA_CHECKLIST.md#bounded-development-readiness-audit",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "target": "../../../template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "target": "../../../template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "target": "../GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md#bounded-development-readiness",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "target": "../GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md#bounded-development-readiness-audit",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "target": "../GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md#bounded-development-readiness-execution",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "target": "../../template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "target": "../../template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "../../../prompts/v2.7-ws06a/iteration20-development-readiness-governance-amendment-plan.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "preflight.json",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "governance.diff",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "../../../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "../../../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "../../../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "../../../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+      "existsAndAnchor": true
+    },
+    {
+      "from": "template/codex/executions/v2.7-ws06a/iteration20/result.md",
+      "target": "../../../../../Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+      "existsAndAnchor": true
+    }
+  ],
+  "semanticPresenceChecks": {
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md": {
+      "readiness_not_granted": true,
+      "stale_on_change": true,
+      "one_slice": true,
+      "ws03_only": true,
+      "exact_residual_subset": true,
+      "current_dual_engine": true,
+      "not_safari_equivalence": true,
+      "new_surface": true,
+      "new_failure_stop": true,
+      "release_hold": true,
+      "independent_review": true
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md": {
+      "readiness_not_granted": true,
+      "stale_on_change": true,
+      "one_slice": true,
+      "ws03_only": true,
+      "exact_residual_subset": true,
+      "current_dual_engine": true,
+      "not_safari_equivalence": true,
+      "new_surface": true,
+      "new_failure_stop": true,
+      "release_hold": true,
+      "independent_review": true
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md": {
+      "readiness_not_granted": true,
+      "stale_on_change": true,
+      "one_slice": true,
+      "ws03_only": true,
+      "exact_residual_subset": true,
+      "current_dual_engine": true,
+      "not_safari_equivalence": true,
+      "new_surface": true,
+      "new_failure_stop": true,
+      "release_hold": true,
+      "independent_review": true
+    },
+    "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md": {
+      "readiness_not_granted": true,
+      "stale_on_change": true,
+      "one_slice": true,
+      "ws03_only": true,
+      "exact_residual_subset": true,
+      "current_dual_engine": true,
+      "not_safari_equivalence": true,
+      "new_surface": true,
+      "new_failure_stop": true,
+      "release_hold": true,
+      "independent_review": true
+    },
+    "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md": {
+      "readiness_not_granted": true,
+      "stale_on_change": true,
+      "one_slice": true,
+      "ws03_only": true,
+      "exact_residual_subset": true,
+      "current_dual_engine": true,
+      "not_safari_equivalence": true,
+      "new_surface": true,
+      "new_failure_stop": true,
+      "release_hold": true,
+      "independent_review": true
+    }
+  },
+  "unexpectedFiles": [],
+  "errors": [],
+  "readiness": "NOT_EVALUATED",
+  "productDelta": 0,
+  "capabilityPromotion": "NONE",
+  "productTestsBuildBrowserMatrix": "NOT_RUN",
+  "limitations": "Presence/link/integrity checks are not independent semantic acceptance; actual separate review is required."
+}

@@ -1,0 +1,63 @@
+# Actual independent REVIEW27
+
+Observed: 2026-10-07T23:20:54.796Z
+Source: https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 27"
+      - text: "WORKSTREAM: WS03A semantic visual roles"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03A IMPLEMENTATION FOR CONTINUATION
+    - paragraph: 我独立重算了 iteration27 的关键证据，结果与 candidate 一致。
+    - paragraph: 最关键的数据是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "Phase A settled geometry: 6 rows 96 / 96 post-settlement samples DOMRect.height = 44px strictly computed/min/used height = 44px offsetHeight = 44 boundingBox.height = 44 oracle delta = 0 product delta = 0 Phase B targeted: 6 / 6 rows PASS 63 / 63 assertions PASS 1 qualification attempt 0 retry 0 unexpected error Phase C fresh47: 47 / 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN 0 non-WebKit regression failed assertions = 40 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED"
+    - paragraph: 我从 fresh raw 与 iteration19 frozen residual40 重新做了集合比较：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: current residuals = 40 outside frozen40 = 0 missing from frozen40 = 0 Chromium counterparts = 40 / 40 PASS Firefox counterparts = 40 / 40 PASS
+    - paragraph:
+      - text: 也就是说，这一轮 frozen40
+      - strong: 全部出现
+      - text: 。相对于 iteration22，唯一变化是此前暂时消失的：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: baseline:webkit:content-detail:390x844 table-local-scroll
+    - paragraph: 重新出现。
+    - paragraph: 它仍属于既有 frozen40，仍分类：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: PRODUCT_EVIDENCE_UNRESOLVED
+    - paragraph: 所以不能把它解释成新的03A回归，但也不能宣称被03A解决。
+    - paragraph: Closure 仍然：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "exit = 1 decision = BLOCKED sole error: missing/invalid real Safari keyboard evidence"
+    - paragraph: 这正是当前治理预期。
+    - paragraph: 关于最后的 integrity correction，我也接受这次修正：initial FAIL 唯一报错是 actual PLAN27 在 preflight namespace 中被保护、但 final auditor 错误地把它排除，造成“missing file = governance mutation”的假阳性。实际 PLAN SHA preflight/current 完全一致，corrected comparison 对同一个 preflight namespace 得到：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 6145 protected files unchanged product delta = 0 governance delta = 0 verification infrastructure delta = 0 exact13 = true history23–26 unchanged Contract = 41 unique IDs
+    - paragraph: 且没有重跑 browser qualification 或 closure 来“刷绿”。
+    - paragraph: 因此正式状态为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03A CANDIDATE: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03A FORMAL GATE: NOT CLOSED WS03 FORMAL GATE: NOT ACCEPTED WS06A FULL: BLOCKED Safari proof: 0 Capability promotion: NONE Release hold: ACTIVE"
+    - paragraph:
+      - text: 现在可以进入
+      - strong: WS03B
+      - text: ，但仍然只是一片。
+    - paragraph: 下面是 iteration28 的有限计划。
+

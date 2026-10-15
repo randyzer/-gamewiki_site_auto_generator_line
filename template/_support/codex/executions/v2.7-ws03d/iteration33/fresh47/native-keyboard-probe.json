@@ -1,0 +1,197 @@
+{
+  "chromium": {
+    "sequence": [
+      {
+        "key": "Tab",
+        "tag": "A",
+        "text": "link"
+      },
+      {
+        "key": "Tab",
+        "tag": "BUTTON",
+        "text": "button"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "A",
+        "text": "link"
+      },
+      {
+        "key": "Tab",
+        "tag": "BUTTON",
+        "text": "button"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BUTTON",
+        "text": "button"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "A",
+        "text": "link"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      }
+    ],
+    "plainTabReachesLink": true
+  },
+  "firefox": {
+    "sequence": [
+      {
+        "key": "Tab",
+        "tag": "A",
+        "text": "link"
+      },
+      {
+        "key": "Tab",
+        "tag": "BUTTON",
+        "text": "button"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BUTTON",
+        "text": "button"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "A",
+        "text": "link"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "A",
+        "text": "link"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "A",
+        "text": "link"
+      }
+    ],
+    "plainTabReachesLink": true
+  },
+  "webkit": {
+    "sequence": [
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "INPUT",
+        "text": ""
+      },
+      {
+        "key": "Shift+Tab",
+        "tag": "BODY",
+        "text": "linkbutton"
+      }
+    ],
+    "plainTabReachesLink": false
+  }
+}

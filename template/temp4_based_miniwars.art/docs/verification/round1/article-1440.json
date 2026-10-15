@@ -1,0 +1,129 @@
+{
+  "height": 5188,
+  "width": 1440,
+  "overflow": false,
+  "sections": [
+    {
+      "tag": "HEADER",
+      "x": 0,
+      "y": 0,
+      "w": 1425,
+      "h": 90.5,
+      "text": "SIGNAL · DEMO　//　 COUNTRY OPS · SANDBOX\nCONCEPT BUILD　//　ORIGINAL DEMO CODEX\nFRO"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 90.5,
+      "w": 1425,
+      "h": 475,
+      "text": "← BACK TO GUIDES\nFIELD REPORT // BEGINNER\nOPENING BRIEFING: YOUR FIRST TEN MINUT"
+    },
+    {
+      "tag": "ARTICLE",
+      "x": 328.5,
+      "y": 565.5,
+      "w": 768,
+      "h": 3767.5,
+      "text": "WELCOME TO THE FRONTIER\n\nA new settlement begins with more choices than resource"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 4333,
+      "w": 1425,
+      "h": 449,
+      "text": "CONTINUE READING\nMORE FRONTIER OPS GUIDES\nALL GUIDES\nECONOMY\nSEP 28, 2026\nPREVIE"
+    },
+    {
+      "tag": "FOOTER",
+      "x": 0,
+      "y": 4878,
+      "w": 1425,
+      "h": 310,
+      "text": "FRONTIER OPS\nFIELD CODEX\n\nAn original strategy reference for Frontier Ops, a fic"
+    }
+  ],
+  "heads": [
+    {
+      "text": "OPENING BRIEFING: YOUR FIRST TEN MINUTES ON THE FRONTIER",
+      "x": 280.5,
+      "y": 231.5,
+      "w": 864,
+      "h": 120,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "WELCOME TO THE FRONTIER",
+      "x": 385.5,
+      "y": 686.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "THE OPENING RULE THAT PROTECTS THE PLAN",
+      "x": 385.5,
+      "y": 1026.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "THE FIRST TEN MINUTES, ONE DECISION AT A TIME",
+      "x": 385.5,
+      "y": 1392.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "THREE HABITS THAT MAKE THE OPENING REPEATABLE",
+      "x": 385.5,
+      "y": 2174.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "WHAT TO AVOID IN THE FIRST ROUND",
+      "x": 385.5,
+      "y": 3070.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "WHEN THE SETTLEMENT IS READY TO GROW",
+      "x": 385.5,
+      "y": 3384.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "ONE LAST CHECK BEFORE LEAVING BASE",
+      "x": 385.5,
+      "y": 3672.5,
+      "w": 654,
+      "h": 32,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "APPLY THIS FRONTIER OPS GUIDE WITH",
+      "x": 377.5,
+      "y": 4044.5,
+      "w": 670,
+      "h": 28,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "MORE FRONTIER OPS GUIDES",
+      "x": 88.5,
+      "y": 4414,
+      "w": 363.328125,
+      "h": 36,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    }
+  ]
+}

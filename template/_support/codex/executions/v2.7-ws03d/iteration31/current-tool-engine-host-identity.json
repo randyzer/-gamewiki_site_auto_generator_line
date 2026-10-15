@@ -1,0 +1,36 @@
+{
+  "capturedAt": "2026-10-08T01:36:47.067Z",
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.22.0"
+  },
+  "playwright": {
+    "packageVersion": "1.63.0"
+  },
+  "engines": {
+    "chromium": {
+      "browserName": "chromium",
+      "version": "153.0.8010.12",
+      "revision": "1243"
+    },
+    "firefox": {
+      "browserName": "firefox",
+      "version": "155.0",
+      "revision": "1543"
+    },
+    "webkit": {
+      "browserName": "webkit",
+      "version": "26.6",
+      "revision": "2359"
+    }
+  },
+  "verificationFileHashes": {
+    "scripts/core-browser-matrix.ts": "000b8edd53f4eb99e569f81997dbefa2acbb304d38af61e4d9f9a05addf84371",
+    "scripts/run-core-browser-evidence.ts": "93b0200d5cec806091fd55ad5f4fd5da7dd835cba6aeefc5517efa76ec31d33c",
+    "scripts/core-browser-evidence.ts": "5e980707948d1783462bd3b3426bc18950483a4a747c45c173ffe8fb4ec284dd",
+    "scripts/verify-ws06a-browser-closure.ts": "e8a1f8ec963cbac9606b1d8cdc273110ad698fb3eb468da169a3a2d81fbf6c80",
+    "package.json": "9f45e85bfa007fa00f82374fc53ac0e97348d9956779d1da8e6caf4053b83e05",
+    "package-lock.json": "d87e14d1afb4e155bc03c0a40620cf346831843697d55769f693462f3fb9d616"
+  }
+}

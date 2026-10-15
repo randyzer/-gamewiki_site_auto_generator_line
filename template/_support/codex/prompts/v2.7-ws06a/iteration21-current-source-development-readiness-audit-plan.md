@@ -1,0 +1,455 @@
+# Actual PLAN21
+
+Captured from original ChatGPT conversation, 2026-10-07T15:18:07.923Z
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: 已核对 ACCEPT20 治理、当前 runner/closure、iteration19 residual set、iteration14 ArrowRight control，以及 iteration17 实际 native probe/session。下面的 PLAN21 可以直接交给 Codex 执行；它只做
+      - strong: 当前源码准入审计
+      - text: ，不改任何产品或规范文件。
+    - button "添加到资料库":
+      - generic: PLAN21 — Current-Source Development Readiness Audit
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 21"
+        - text: "WORKSTREAM: Current-source Development Readiness audit"
+        - text: "PLAN_STATUS: READY FOR AUTONOMOUS EXECUTION"
+        - text: "GOVERNANCE: ITERATION20 ACCEPTED / PROCESS ACTIVE"
+        - text: "CURRENT_READINESS: NOT_EVALUATED"
+        - text: "WS06A: BLOCKED"
+        - text: "SAFARI_PROOF: 0"
+        - text: "NEXT_SCOPE_IF_ACCEPTED: WS03A ONLY"
+      - heading "1. 本轮唯一目标" [level=2]
+      - paragraph:
+        - text: 针对
+        - strong: 当前实际 triad + 当前 Starter source + 当前 browser/tool/host
+        - text: 重新取得一套 fresh evidence，并独立判断：
+      - code: WS06A_DEVELOPMENT_READINESS = ACCEPTED_FOR_BOUNDED_DEVELOPMENT
+      - paragraph: 或者：
+      - code: BLOCKED
+      - paragraph: 本轮不实现任何 WS03A 代码。
+      - paragraph: Audit ACCEPT 只允许下一步进入：
+      - code: WS03A finite planning
+      - paragraph: 不允许直接推导：
+      - code: WS06A ACCEPT formal WS03 ACCEPT 04A / 05 / 04B / 06B / 07 / 08 unlock AX / PA promotion commit / push / merge / release
+      - separator
+      - heading "2. 修改范围" [level=1]
+      - heading "Product / authority files" [level=2]
+      - code: ZERO CHANGES
+      - paragraph: 严禁修改：
+      - code: Starter src/** Starter tests/** Starter scripts/** Starter schema/** package.json package-lock.json CI Canonical Contract Registry CONTRACT_REFERENCE PACKAGE_MANIFEST Roadmap SOP QA Execution Prompt Master Prompt browser matrix runner evidence validator closure verifier iteration14/17/19/20 historical evidence
+      - paragraph: 本轮只允许新增：
+      - code: template/codex/prompts/v2.7-ws06a/ iteration21-current-source-development-readiness-audit-plan.md template/codex/executions/v2.7-ws06a/iteration21/**
+      - paragraph: 其中脚本只能是：
+      - code: one-off audit / capture / cleanup helpers
+      - paragraph: 不是产品 checker、不是新 normative mechanism。
+      - separator
+      - heading "3. 保存 Actual PLAN" [level=1]
+      - paragraph: 保存本 PLAN 到：
+      - code: template/codex/prompts/v2.7-ws06a/ iteration21-current-source-development-readiness-audit-plan.md
+      - paragraph: 必须记录：
+      - code: exact scope commands evidence paths STOP conditions expiry next authorized slice = WS03A only
+      - separator
+      - heading "4. Execution evidence目录" [level=1]
+      - paragraph: 建立：
+      - code: template/codex/executions/v2.7-ws06a/iteration21/
+      - paragraph: 建议最终至少包含：
+      - code: preflight.json current-triad-identity.json current-tool-engine-host-identity.json old-iteration17-manual-cleanup.json old-iteration17-manual-cleanup.log root-check.log unadopted-final.log adopted-final.log git-diff-check.log browser-run.log browser-command-result.json independent-expected-identity.json independent-fixture-capture.json browser-evidence/ core-browser-evidence.json native-keyboard-probe.json preview-cleanup-audit.json ... bound-native-keyboard-probe.json closure-recheck.json closure-recheck.log residual-comparison.json dual-engine-counterpart-audit.json policy-control-validity.json readiness-audit.json integrity-check.json result.md
+      - paragraph: 独立 review 后再允许：
+      - code: chatgpt-independent-review.md
+      - separator
+      - heading "5. Step 0 — Preflight：先证明没有偷偷改东西" [level=1]
+      - paragraph: 执行前捕获当前所有治理和产品身份。
+      - heading "Triad" [level=2]
+      - paragraph: 分别记录：
+      - code: GAME_SOP V2.7 candidate GAME_CODEX_MASTER_PROMPT V2.7 candidate Starter v2.7/evolution
+      - paragraph: 每个至少记录：
+      - code: root branch HEAD working-tree manifest SHA256
+      - paragraph: 因为当前候选存在已接受但未提交的 delta：
+      - code: HEAD alone is insufficient
+      - separator
+      - heading "Canonical" [level=2]
+      - paragraph: 必须仍然：
+      - code: Contract SHA256 = 1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c Registry IDs = 41
+      - paragraph: 否则：
+      - code: STOP
+      - separator
+      - heading "Browser verification infrastructure" [level=2]
+      - paragraph: 独立记录 SHA：
+      - code: core-browser-matrix.ts run-core-browser-evidence.ts core-browser-evidence.ts verify-ws06a-browser-closure.ts package.json package-lock.json
+      - paragraph: 不得发生 iteration21 delta。
+      - separator
+      - heading "6. 独立捕获当前 tool / engine / host" [level=1]
+      - paragraph: 在 fresh47 之前单独捕获：
+      - code: "Node version platform arch Playwright version Chromium: actual version installed revision Firefox: actual version installed revision WebKit: actual version installed revision"
+      - paragraph: 用实际安装的 Playwright engines启动后读取真实版本，然后正常 close。
+      - paragraph: 当前历史 control identity是：
+      - code: Playwright 1.63.0 Chromium 153.0.8010.12 / rev1243 Firefox 155.0 / rev1543 WebKit 26.6 / rev2359 host darwin / arm64
+      - paragraph:
+        - text: 但 PLAN21
+        - strong: 不能假定它们仍然成立
+        - text: 。
+      - paragraph: 必须现场重新读取。
+      - separator
+      - heading "7. Policy / control preflight" [level=1]
+      - paragraph: 核验实际 bytes。
+      - paragraph: Policy：
+      - code: template/codex/executions/v2.7-ws06a/iteration14/ WEBKIT_VERIFICATION_POLICY_PROPOSAL_V1.md
+      - paragraph: 必须仍匹配 accepted：
+      - code: 2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917
+      - paragraph: Arrow control：
+      - code: template/codex/executions/v2.7-ws06a/iteration14/ arrowright-repeatability.json
+      - paragraph: 必须仍匹配：
+      - code: 1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344
+      - paragraph: 若 fresh WebKit engine/revision或 host不再是该 accepted control绑定的：
+      - code: 26.6 / rev2359 / darwin-arm64
+      - paragraph: 且 fresh raw仍需要 residual policy：
+      - code: READINESS = BLOCKED
+      - paragraph: 本轮不能顺手扩充 policy。
+      - separator
+      - heading "8. Step 1 — 先正常关闭 iteration17 老 manual preview" [level=1]
+      - paragraph: 当前历史 session仍记录：
+      - code: "fixtureRoot: /var/folders/.../T/starter-adoption-verification-CgRiFy previewPid: 89278 state: READY_FOR_REAL_KEYBOARD cleanupRequired: true"
+      - paragraph:
+        - text: 这个历史 JSON
+        - strong: 不得修改
+        - text: 。
+      - paragraph: 创建 one-off：
+      - code: iteration21/cleanup-iteration17-manual-session.ts
+      - paragraph: 只负责真实清理并把结果写进 iteration21。
+      - separator
+      - heading "9. 老 preview cleanup 安全规则" [level=1]
+      - paragraph: 先检查：
+      - code: fixtureRoot == iteration17 recorded path PID == recorded PID
+      - paragraph: 若 PID仍 alive：
+      - list:
+        - paragraph: fixture必须存在；
+        - paragraph: fixture source hash必须仍等于 session记录；
+        - paragraph: dist hash必须仍等于 session记录；
+        - paragraph: 从该 fixture执行：
+        - code: npm run preview -- stop
+        - paragraph: 要求：
+        - code: exit 0 PID alive before = true PID alive after = false fallback signal = false
+      - paragraph: 禁止：
+      - code: SIGTERM fallback SIGKILL fallback kill arbitrary process
+      - separator
+      - paragraph: 如果 PID已经不存在：
+      - paragraph: 如实记录：
+      - code: pidAliveBefore = false stopAttempted = false
+      - paragraph: 不能伪造：
+      - code: standard stop succeeded
+      - separator
+      - paragraph: 如果 fixture仍存在：
+      - paragraph: 只有以下全部成立才删除：
+      - code: recorded owned path not symlink expected temp prefix fixture source SHA matches dist SHA matches
+      - paragraph: 然后仅删除这个 owned fixture。
+      - paragraph: 如果身份不匹配：
+      - code: STOP DO NOT DELETE
+      - separator
+      - heading "10. Step 2 — Current product health" [level=1]
+      - paragraph: 在 Starter root：
+      - code: cd /Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE PATH=/Users/randyz/.nvm/versions/node/v22.22.0/bin:$PATH npm run check
+      - paragraph: 要求：
+      - code: exit 0
+      - paragraph: 然后：
+      - code: PATH=/Users/randyz/.nvm/versions/node/v22.22.0/bin:$PATH npm run verify:unadopted-final
+      - paragraph: 要求 meta verifier：
+      - code: exit 0
+      - paragraph: 且内部仍真实证明：
+      - code: validate → expected PP-02 rejection final build → expected PP-02 rejection
+      - paragraph: 不能仅看最外层 exit。
+      - paragraph: 然后：
+      - code: PATH=/Users/randyz/.nvm/versions/node/v22.22.0/bin:$PATH npm run verify:adopted-final
+      - paragraph: 要求：
+      - code: validate 0 check 0 final build 0
+      - paragraph: 最后：
+      - code: git diff --check
+      - paragraph: 要求：
+      - code: exit 0
+      - paragraph: 这些是 supporting product-health evidence，不代替 fresh47。
+      - separator
+      - heading "11. Step 3 — Fresh47 前先冻结 independent expected identity" [level=1]
+      - paragraph: 不能：
+      - code: raw report → 抄 raw.identity → 写成 expected identity
+      - paragraph: 要先独立捕获：
+      - code: Starter branch Starter HEAD Starter working-tree manifest Contract file/path/hash Playwright host three actual engines/revisions
+      - paragraph: 保存：
+      - code: current-triad-identity.json current-tool-engine-host-identity.json
+      - separator
+      - heading "12. Fixture/build 独立捕获方法" [level=1]
+      - paragraph: 这里不能修改 runner。
+      - paragraph: 允许在 execution metadata新增一个 one-off observer：
+      - code: run-fresh-readiness-browser-audit.ts
+      - paragraph: 它只能：
+      - list:
+        - paragraph: 启动原始：
+        - code: npm run check:browser
+        - paragraph: 不改变 runner args/assertions；
+        - paragraph: 使用独立 fresh evidence directory；
+        - paragraph: 使用独立 TMPDIR；
+        - paragraph:
+          - text: 观察该 runner创建的
+          - strong: 唯一 owned disposable fixture
+          - text: ；
+        - paragraph: 当 final build完成、preview启动后，在 runner cleanup前独立计算：
+        - code: fixture source manifest SHA dist manifest SHA
+        - paragraph: 保存为：
+        - code: independent-fixture-capture.json
+        - paragraph: 不修改 fixture内容；
+        - paragraph: 不阻止原 runner标准 cleanup。
+      - paragraph: 因此：
+      - code: raw build identity
+      - paragraph: 不再只由 raw自报。
+      - separator
+      - heading "13. Fresh browser exact command" [level=1]
+      - paragraph: 使用：
+      - code: cd /Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE CORE_BROWSER_CONTRACT_MODE=FILE_SHA256 \ CORE_BROWSER_CONTRACT_PATH=/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md \ CORE_BROWSER_EVIDENCE_DIR=/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration21/browser-evidence \ PATH=/Users/randyz/.nvm/versions/node/v22.22.0/bin:$PATH \ ./node_modules/.bin/tsx \ ../../template/codex/executions/v2.7-ws06a/iteration21/run-fresh-readiness-browser-audit.ts
+      - paragraph:
+        - text: 该 observer内部必须运行
+        - strong: 原始未修改
+        - text: ：
+      - code: npm run check:browser
+      - paragraph: 没有：
+      - code: retry-until-pass timeout inflation matrix filtering engine filtering assertion filtering
+      - separator
+      - heading "14. Fresh47 的 raw结果必须按真实结果记录" [level=1]
+      - paragraph: 最可能仍是：
+      - code: 37 PASS / 10 FAIL
+      - paragraph: 但这只是历史预期。
+      - paragraph: 实际可以是：
+      - code: 47 / 0 37 / 10 38 / 9 ...
+      - paragraph: 必须以 fresh结果为准。
+      - paragraph: 任何：
+      - code: NOT_RUN skip missing row missing assertion
+      - paragraph: 直接：
+      - code: READINESS = BLOCKED
+      - separator
+      - heading "15. Fresh runner cleanup Gate" [level=1]
+      - paragraph: 必须读取：
+      - code: iteration21/browser-evidence/ preview-cleanup-audit.json
+      - paragraph: Development Readiness只接受：
+      - code: astroStopExit = 0 pidAliveBeforeStop = true pidAliveAfterStop = false fallbackSignalUsed = false fixtureRemoved = true
+      - paragraph: 如果 runner进入自身 fallback signal路径：
+      - paragraph: 即使最终 PID死掉：
+      - code: READINESS = BLOCKED
+      - paragraph: 因为治理要求 normal cleanup。
+      - separator
+      - heading "16. Step 4 — 构建 fresh independent expected identity" [level=1]
+      - paragraph: Fresh run结束后，把：
+      - code: pre-run independent source/tool/engine identity + observer捕获的 actual disposable fixture source/dist
+      - paragraph: 组合成：
+      - code: independent-expected-identity.json
+      - paragraph: 然后要求它与 raw report 中对应 identity完全一致。
+      - paragraph: 如不一致：
+      - code: STOP
+      - paragraph: 不得修改 expected文件迎合 raw。
+      - separator
+      - heading "17. Step 5 — Fresh native probe binding" [level=1]
+      - paragraph: 原 runner将自动生成：
+      - code: browser-evidence/native-keyboard-probe.json
+      - paragraph: 这是 fresh probe，但尚未绑定 raw digest。
+      - paragraph: 机械生成：
+      - code: bound-native-keyboard-probe.json
+      - paragraph: 字段严格来自：
+      - code: fresh native probe fresh raw SHA independent host identity independent WebKit identity
+      - paragraph: 不得编辑 sequence。
+      - paragraph: 如果 residual policy路径仍存在，必须满足：
+      - code: WebKit plainTabReachesLink = false
+      - paragraph: 才能继续使用：
+      - code: ENVIRONMENT_PROFILE_BLOCKED
+      - paragraph: 如果实际变成：
+      - code: "true"
+      - paragraph: 而 raw仍出现旧 plain-Tab residual：
+      - code: READINESS = BLOCKED
+      - paragraph: 需要新诊断，不能继续套旧 policy。
+      - separator
+      - heading "18. Step 6 — 使用现有 closure verifier做 policy recheck" [level=1]
+      - paragraph: 不传任何 Safari evidence。
+      - paragraph: 运行：
+      - code: WS06A_BROWSER_EVIDENCE=/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration21/browser-evidence/core-browser-evidence.json \ WS06A_EXPECTED_IDENTITY=/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration21/independent-expected-identity.json \ WS06A_NATIVE_PROBE=/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration21/bound-native-keyboard-probe.json \ WS06A_POLICY_PROPOSAL=/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration14/WEBKIT_VERIFICATION_POLICY_PROPOSAL_V1.md \ WS06A_ARROW_CONTROL=/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration14/arrowright-repeatability.json \ PATH=/Users/randyz/.nvm/versions/node/v22.22.0/bin:$PATH \ npm run verify:browser-closure
+      - paragraph: 明确：
+      - code: WS06A_REAL_KEYBOARD_EVIDENCE
+      - paragraph: 不设置。
+      - separator
+      - heading "19. Closure recheck允许的两个结果" [level=1]
+      - heading "Case A — fresh raw仍有 accepted residual" [level=2]
+      - paragraph: 期望：
+      - code: exit 1 decision = BLOCKED errors = ["missing/invalid real Safari keyboard evidence"]
+      - paragraph: 而且：
+      - code: 所有 fresh failed assertions 均成功被 current policy分类
+      - paragraph: 只有这一个 Safari error才可进入 Development Readiness评估。
+      - paragraph: 如果出现：
+      - code: unknown failure failure outside policy native probe mismatch engine/control mismatch identity mismatch unknown infrastructure
+      - paragraph: 任何一个：
+      - code: READINESS = BLOCKED
+      - separator
+      - heading "Case B — fresh raw变成 47/47 PASS" [level=2]
+      - paragraph: 原 closure允许：
+      - code: RAW_QUALIFICATION_COMPLETE exit 0
+      - paragraph: Development Readiness可以继续评估。
+      - paragraph: 但即便如此：
+      - code: Safari proof = 0 WS06A full/release hold = unchanged
+      - paragraph: 商业 representative Safari义务仍存在。
+      - separator
+      - heading "20. Step 7 — Exact residual subset comparison" [level=1]
+      - paragraph: 从 fresh raw重新生成：
+      - code: residual-comparison.json
+      - paragraph: 每项 identity必须包含：
+      - code: caseId category role route viewport javascript reducedMotion assertion disposition detail
+      - paragraph: 与：
+      - code: iteration19/residual-set-v1.json
+      - paragraph: 比较。
+      - paragraph: 必须：
+      - code: fresh residual set ⊆ accepted iteration19 residual set
+      - separator
+      - paragraph: 以下一律 BLOCK：
+      - code: new case new assertion new viewport new JS mode new role new route new disposition class same name but changed policy-invalid detail
+      - paragraph: 即：
+      - code: 40 old → 20 old + 1 new
+      - paragraph: 仍是 BLOCK。
+      - separator
+      - heading "21. Step 8 — Fresh Chromium / Firefox counterpart audit" [level=1]
+      - paragraph: 针对 fresh仍失败的每一个 WebKit assertion：
+      - paragraph:
+        - text: 必须在
+        - strong: 同一次 fresh47
+        - text: 里找到：
+      - code: same category same role same route same viewport same JS same motion same assertion
+      - paragraph: 的：
+      - code: Chromium PASS Firefox PASS
+      - paragraph: 保存：
+      - code: dual-engine-counterpart-audit.json
+      - paragraph: 要求：
+      - code: current residual count = N Chromium matches = N Firefox matches = N errors = []
+      - paragraph: 如果某条对应：
+      - code: missing FAIL duplicate identity mismatch
+      - paragraph: 则：
+      - code: READINESS = BLOCKED
+      - paragraph: 不能使用 iteration19 的 80 matches代替 fresh evidence。
+      - separator
+      - heading "22. Step 9 — Final readiness audit" [level=1]
+      - paragraph: 生成：
+      - code: readiness-audit.json
+      - paragraph: 最低检查：
+      - code: governance20 ACCEPTED WS02 ACCEPTED current triad identity exact Contract 41 IDs exact product health PASS fresh47 complete 0 NOT_RUN / skip all non-WebKit PASS fresh residual subset valid 0 new failures 0 unknown infrastructure current policy valid current native probe valid Arrow control valid current Chromium counterparts complete current Firefox counterparts complete fresh normal cleanup PASS Safari proof = 0 WS06A = BLOCKED capability promotion = NONE
+      - separator
+      - heading "23. Readiness candidate结果" [level=1]
+      - paragraph: 如果全部满足：
+      - paragraph: Codex只能输出：
+      - code: "READINESS_CANDIDATE: ELIGIBLE_FOR_INDEPENDENT_READINESS_REVIEW"
+      - paragraph: 不能自己写：
+      - code: ACCEPTED_FOR_BOUNDED_DEVELOPMENT
+      - paragraph: 最终签署仍由 ChatGPT独立 review。
+      - separator
+      - heading "24. Readiness record 的 next scope" [level=1]
+      - paragraph: 若独立 review ACCEPT：
+      - paragraph: 必须绑定：
+      - code: nextAuthorizedSlice = WS03A
+      - paragraph: 只允许：
+      - code: WS03A finite planning / candidate development path
+      - paragraph: 不得绑定：
+      - code: WS03B WS03C WS03D 全部WS03
+      - separator
+      - heading "25. Readiness expiry" [level=1]
+      - paragraph: 本次 readiness若 ACCEPT，单条记录有效期定义为：
+      - code: independentReviewObservedAt + 7 calendar days
+      - paragraph: 但实际有效期取最早触发者：
+      - code: 1. 7-day expiry 2. Starter product/config source change 3. SOP/Prompt relevant governance change 4. Contract change 5. matrix/runner/closure/policy/control change 6. Playwright/browser revision change 7. host/platform change 8. fixture/build verification identity change 9. WS03A first product mutation
+      - paragraph: 其中：
+      - code: WS03A first product mutation → readiness immediately STALE
+      - paragraph: 然后必须走 per-slice continuation的新 source证据。
+      - paragraph: 这个 7-day值只属于本次 readiness record，不修改全局治理规范。
+      - separator
+      - heading "26. 本轮不需要 Safari人工操作" [level=1]
+      - paragraph: PLAN21：
+      - code: NO MANUAL SAFARI NO USER ACTION
+      - paragraph: Safari proof仍：
+      - code: "0"
+      - paragraph: 旧 iteration17 manual preview本轮负责安全关闭，不再保持后台等待人工。
+      - separator
+      - heading "27. Integrity Gate" [level=1]
+      - paragraph: 结束前再次确认：
+      - code: Product files changed = 0 Contract changed = false Registry changed = false 5 governance files changed = false matrix changed = false runner changed = false closure changed = false package/lock changed = false
+      - paragraph: 本轮新增内容只能在：
+      - code: PLAN21 iteration21 execution metadata post-review status/index metadata
+      - separator
+      - heading "28. Audit ACCEPT 所代表的唯一状态" [level=1]
+      - paragraph: 如果独立 review最终 ACCEPT：
+      - code: WS06A_DEVELOPMENT_READINESS = ACCEPTED_FOR_BOUNDED_DEVELOPMENT
+      - paragraph: 同时仍必须是：
+      - code: WS06A FULL = BLOCKED Safari proof = 0 raw browser result = actual fresh truth 可能仍是 FAIL formal WS03 Gate = NOT ACCEPTED 04A / 05 / 04B = not unlocked 06B / 07 / 08 = blocked capability promotion = NONE release = blocked
+      - separator
+      - heading "29. Audit FAIL / REVISE 的处理" [level=1]
+      - paragraph: 出现任一以下情况：
+      - code: new browser failure non-WebKit failure unknown infrastructure residual no longer policy-valid native probe contradicts old profile engine/control identity drift counterpart missing/failing source identity mismatch normal cleanup failure product/adoption regression
+      - paragraph: 则：
+      - code: READINESS = BLOCKED
+      - paragraph: 不能在 iteration21里：
+      - code: repair product change runner extend residual set change policy
+      - paragraph: 必须另开有限修复计划。
+      - separator
+      - heading "30. Independent review" [level=1]
+      - paragraph: Codex执行后发送：
+      - code: "[C2C] STATE: EXECUTED TASK_ID: c2c_a765 ITERATION: 21 WORKSTREAM: Current-source Development Readiness audit"
+      - paragraph: 并要求独立读取至少：
+      - code: result.md preflight.json current-triad-identity.json current-tool-engine-host-identity.json old-iteration17-manual-cleanup.json root/adoption results independent-expected-identity.json independent-fixture-capture.json browser-evidence/core-browser-evidence.json browser-evidence/native-keyboard-probe.json browser-evidence/preview-cleanup-audit.json bound-native-keyboard-probe.json closure-recheck.json residual-comparison.json dual-engine-counterpart-audit.json readiness-audit.json integrity-check.json
+      - paragraph: 独立 verdict只能：
+      - code: ACCEPT — CURRENT-SOURCE DEVELOPMENT READINESS
+      - paragraph: 或者：
+      - code: REVISE / BLOCKED
+      - separator
+      - heading "31. Post-review status" [level=1]
+      - paragraph: 如果 ACCEPT：
+      - paragraph: 允许记录：
+      - code: "WS06A_DEVELOPMENT_READINESS: ACCEPTED_FOR_BOUNDED_DEVELOPMENT next: WS03A expiry: <review time + 7 days> WS06A: BLOCKED Safari: 0"
+      - paragraph: 任何 progress-index更新仍只能是状态/指针，不承载新规则。
+      - separator
+      - heading "32. Standing authorization 后续行为" [level=1]
+      - paragraph: 用户已经明确授权：
+      - code: accepted finite plans may continue autonomously without routine per-round permission
+      - paragraph: 因此 iteration21 独立 ACCEPT 后：
+      - code: 无需再向用户索要授权
+      - paragraph: 下一动作直接进入：
+      - code: PLAN22 WS03A finite implementation planning
+      - paragraph: 但不能把 iteration21 ACCEPT 本身当作 WS03A实现计划。
+      - separator
+      - heading "33. PLAN21 Exit Gate" [level=1]
+      - code: "iteration21: product_delta: 0 schema_delta: 0 contract_delta: 0 registry_delta: 0 governance_delta: 0 runner_delta: 0 closure_delta: 0 old_manual_session: truthfully_audited: true owned_preview_alive_after: false owned_fixture_remaining: false fallback_signal_used: false product_health: root_check: PASS unadopted_final: EXPECTED_REJECTION_CONFIRMED adopted_final: PASS git_diff_check: PASS fresh_browser: planned: 47 executed: 47 not_run: 0 skip: 0 non_webkit: failures: 0 residual: exact_subset: true new_failures: 0 unknown_failures: 0 counterpart: chromium_complete: true firefox_complete: true policy: proposal_exact: true arrow_control_exact: true native_probe_current: true engine_host_valid: true identity: independently_captured: true starter_exact: true fixture_source_exact: true dist_exact: true tool_engine_host_exact: true fresh_cleanup: normal_stop: true fallback_signal: false pid_gone: true fixture_removed: true release_hold: safari_proof: 0 ws06a: BLOCKED capability_promotion: NONE readiness: candidate_only_before_review: true next_slice: WS03A expiry_days: 7 independent_review: required: true"
+      - heading "本轮正确终点" [level=2]
+      - paragraph: 最好的可能结果也只是：
+      - code: "CURRENT-SOURCE DEVELOPMENT READINESS: ACCEPTED_FOR_BOUNDED_DEVELOPMENT NEXT: WS03A finite planning WS06A: BLOCKED SAFARI: 0 FORMAL DAG / RELEASE: UNCHANGED"
+    - paragraph:
+      - text: 这一轮不需要你做任何 Safari 操作。真正需要重点盯的是两件事：
+      - strong: fresh47 必须重新跑，不能继承 iteration17；以及旧 manual preview 必须先按真实状态安全收尾，不能继续长期悬挂。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

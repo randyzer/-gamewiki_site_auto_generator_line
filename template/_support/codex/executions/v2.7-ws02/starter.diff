@@ -1,0 +1,408 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 586b976..78fa834 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -28,5 +28,8 @@ jobs:
+       - name: Check types and tests
+         run: npm run check
+ 
+-      - name: Build and audit static output
+-        run: npm run build
++      - name: Assert unadopted final rejection
++        run: npm run verify:unadopted-final
++
++      - name: Validate, check and build neutral adoption
++        run: npm run verify:adopted-final
+diff --git a/README.md b/README.md
+index 378d6f4..5be2f9b 100644
+--- a/README.md
++++ b/README.md
+@@ -54,6 +54,39 @@ The current package carries forward the approved Starter v2.5.0 scope in
+ while preserving the Starter 2.0 architecture baseline recorded in
+ [`docs/STARTER_2.0_ARCHITECTURE_PROPOSAL.md`](docs/STARTER_2.0_ARCHITECTURE_PROPOSAL.md).
+ 
++## V2.7 WS-02 development lineage
++
++This working-tree candidate is not a V2.7 release. Development branch
++`v2.7/evolution` inherits accepted A3 commit
++`b067e8d4050478072f25a1dc78a8526cdd128cfd`, tree
++`1df0ade30b1eaf51a76820c8d8b83337786f0dc1`, preserving S1/A1/A2/A3.
++The historical release provenance above remains intact. The V2.7 Product Contract
++is owned by GAME_SOP at `docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md`,
++SHA-256 `1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c`.
++Changed working-tree files need exact hashes alongside the inherited HEAD.
++
++Game Atlas is an intentionally unadopted example. Local reusable-Core verification:
++
++```bash
++npm run check
++npm run verify:unadopted-final
++npm run verify:adopted-final
++```
++
++The first verifier asserts that isolated default validation and final build fail
++specifically because of PP-02. Its success proves expected rejection. The second
++uses the existing Field Notes neutral adoption in a disposable complete project,
++running actual `npm run validate`, `npm run check` and `npm run build`; it verifies
++no evidence marker or unapproved legal routes. Both clean up their copies and
++leave the canonical source untouched. This is synthetic technical evidence,
++not real-game, human, media-rights or legal approval. AX-01 browser evidence
++remains pending WS-06A; WS-03D search obligations and REF/project adoption remain
++separate. CI runs the same two gates after the root check.
++
++Real projects still require their own adopted `validate`, `check`, canonical
++final `build` and applicable independent human/browser gates. `build:evidence`
++cannot satisfy final acceptance. No new dependency is introduced by these tools.
++
+ ## Requirements and first build
+ 
+ This Phase A candidate adds PP-02 production residue safety. The unadopted
+diff --git a/docs/PP02_PRODUCTION_RESIDUE.md b/docs/PP02_PRODUCTION_RESIDUE.md
+index 9bad406..862f6df 100644
+--- a/docs/PP02_PRODUCTION_RESIDUE.md
++++ b/docs/PP02_PRODUCTION_RESIDUE.md
+@@ -65,7 +65,24 @@ Unknown format/version, corrupt bytes, missing declared files or incomplete
+ route/document/asset/search coverage fails closed. Upgrading Pagefind requires
+ review of this adapter as well as the existing artifact contract.
+ 
+-## Evidence mode
++## Dual CI adoption contract
++
++After the root `npm run check`, CI runs `npm run verify:unadopted-final` and
++`npm run verify:adopted-final`. Both operate in disposable complete project copies.
++The unadopted gate requires both validate and final build to fail specifically
++with PP-02; unexpected success, unrelated failure or an incomplete child command
++fails the verifier. Expected failure is asserted, never ignored.
++
++The adopted gate reuses synthetic Field Notes branding and the existing neutral
++content mutation, then runs actual validate/check/final build. All must succeed;
++the final evidence marker and unapproved privacy/terms routes must be absent.
++This portable pipeline proof does not approve a real game's content, identity,
++legal policy, media rights or human/browser quality. `STARTER_ADOPTION_FIXTURE`
++only selects a test expectation in the disposable adopted check; production
++validation/audit never reads it. Existing PP-02 negative tests remain active.
++`build:evidence` cannot satisfy canonical final acceptance.
++
++## Evidence mode behavior
+ 
+ The build orchestrator explicitly passes `--purpose final|evidence` to the same
+ last audit stage. Standalone audit defaults to final. Evidence mode downgrades
+diff --git a/docs/QA_CHECKLIST.md b/docs/QA_CHECKLIST.md
+index 0bab0a2..b132e89 100644
+--- a/docs/QA_CHECKLIST.md
++++ b/docs/QA_CHECKLIST.md
+@@ -243,6 +243,16 @@ Inventory merely to manufacture a state.
+ 
+ ## Starter adoption smoke test
+ 
++- [ ] Root `npm run check` passes every existing test file without skips.
++- [ ] `npm run verify:unadopted-final` proves validate and final build reject the
++      shipped example specifically with PP-02, in a disposable full copy.
++- [ ] `npm run verify:adopted-final` runs real validate/check/build on the neutral
++      Field Notes full copy; all return zero, with no final evidence marker or
++      unapproved privacy/terms routes. The copy is cleaned up.
++- [ ] CI uses the same gates; package-lock and production Core stay unchanged.
++- [ ] These synthetic results do not replace real-project/human adoption QA.
++      AX-01 actual browser evidence remains pending WS-06A.
++
+ Use a disposable isolated copy, never the canonical working tree:
+ 
+ - [ ] Copy the Starter at the candidate baseline commit.
+diff --git a/package.json b/package.json
+index 88cc805..a06c213 100644
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,8 @@
+   "scripts": {
+     "dev": "astro dev",
+     "validate": "tsx scripts/validate-site.ts",
++    "verify:unadopted-final": "tsx scripts/verify-adoption.ts unadopted",
++    "verify:adopted-final": "tsx scripts/verify-adoption.ts adopted",
+     "check": "astro check && vitest run",
+     "build": "tsx scripts/build-site.ts final",
+     "build:evidence": "tsx scripts/build-site.ts evidence",
+diff --git a/tests/core-safety-sentinels.test.ts b/tests/core-safety-sentinels.test.ts
+index 8414859..50b454f 100644
+--- a/tests/core-safety-sentinels.test.ts
++++ b/tests/core-safety-sentinels.test.ts
+@@ -11,15 +11,21 @@ import { collectCopiedTextResidueSignals, projectPagefindResidueSurfaces } from
+ import { adoptFixtureConfig, createCoreBuildFixture, cleanupCoreBuildFixture } from "./helpers/core-build-fixture";
+ 
+ describe("PP-02 adoption boundary", () => {
+-  it("rejects the unadopted shipped example in final validation", () => {
++  it("validates the explicit shipped or adopted project state without bypassing PP-02", () => {
+     const result = spawnSync("npm", ["run", "validate"], {
+       encoding: "utf8",
+       env: { ...process.env, NODE_ENV: "production" },
+       timeout: 30_000,
+     });
+     expect(result.error).toBeUndefined();
+-    expect(result.status, `${result.stdout}\n${result.stderr}`).not.toBe(0);
+-    expect(`${result.stdout}\n${result.stderr}`).toMatch(/PP-02/);
++    if (process.env.STARTER_ADOPTION_FIXTURE === "1") {
++      expect(gameConfig.brand.name).toBe("Field Notes");
++      expect(gameConfig.site.url).toBe("https://field-notes.example");
++      expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
++    } else {
++      expect(result.status, `${result.stdout}\n${result.stderr}`).not.toBe(0);
++      expect(`${result.stdout}\n${result.stderr}`).toMatch(/PP-02/);
++    }
+   });
+ 
+   it("accepts only additive literals in predefined scopes", () => {
+diff --git a/tests/helpers/core-build-fixture.ts b/tests/helpers/core-build-fixture.ts
+index b2275c8..b5ec2f4 100644
+--- a/tests/helpers/core-build-fixture.ts
++++ b/tests/helpers/core-build-fixture.ts
+@@ -25,30 +25,64 @@ const copiedEntries = [
+ ] as const;
+ 
+ export function createCoreBuildFixture(prefix = "starter-core-safety-"): string {
++  const fixtureRoot = createProjectCopy(copiedEntries, prefix);
++  adoptCoreBuildFixture(fixtureRoot);
++  return fixtureRoot;
++}
++
++export function createFullProjectFixture(adopted: boolean): string {
++  const fixtureRoot = createProjectCopy([
++    ...copiedEntries, "tests", "docs", ".github", ".nvmrc", "README.md",
++    "vitest.config.ts", "wrangler.jsonc",
++  ], "starter-adoption-verification-");
++  if (adopted) adoptCoreBuildFixture(fixtureRoot);
++  return fixtureRoot;
++}
++
++function createProjectCopy(entries: readonly string[], prefix: string): string {
+   const projectRoot = process.cwd();
+   const fixtureRoot = mkdtempSync(join(tmpdir(), prefix));
+-  for (const entry of copiedEntries) {
+-    cpSync(resolve(projectRoot, entry), join(fixtureRoot, entry), { recursive: true });
++  try {
++    for (const entry of entries) {
++      cpSync(resolve(projectRoot, entry), join(fixtureRoot, entry), { recursive: true });
++    }
++    symlinkSync(resolve(projectRoot, "node_modules"), join(fixtureRoot, "node_modules"), "dir");
++    const astroConfigPath = join(fixtureRoot, "astro.config.ts");
++    writeFileSync(
++      astroConfigPath,
++      readFileSync(astroConfigPath, "utf8").replace(
++        'output: "static",',
++        'cacheDir: "./.astro-cache",\n  output: "static",',
++      ),
++    );
++    const isolatedConfig = readFileSync(astroConfigPath, "utf8").replace('vite: {', 'vite: {\n    cacheDir: "./.vite-cache",');
++    writeFileSync(astroConfigPath, isolatedConfig);
++    if (entries.includes("vitest.config.ts")) {
++      const vitestPath = join(fixtureRoot, "vitest.config.ts");
++      writeFileSync(vitestPath, readFileSync(vitestPath, "utf8").replace(
++        "oxc:", 'cacheDir: "./.vitest-cache",\n    oxc:',
++      ));
++    }
++    return fixtureRoot;
++  } catch (error) {
++    cleanupCoreBuildFixture(fixtureRoot);
++    throw error;
++  }
++}
++
++function adoptCoreBuildFixture(fixtureRoot: string): void {
++  try {
++    writeFixtureGameConfig(fixtureRoot, adoptFixtureConfig(gameConfig));
++    adoptFixtureInventory(fixtureRoot);
++    writeFileSync(join(fixtureRoot, "src/content/guides/getting-started.mdx"), "---\npageId: guide.getting-started\n---\n\nChoose a route and compare the available options before your next session.\n\n## First route\n\nReview the tested choices and use the source notes to check what changed.\n");
++    const aboutPath = join(fixtureRoot, "src/core/static-page-copy.ts");
++    writeFileSync(aboutPath, readFileSync(aboutPath, "utf8").replace("Game Atlas is a reusable editorial system for answering game questions with less noise and clearer evidence.", "Field Notes publishes independent reference articles with documented sources and corrections."));
++    const logoPath = join(fixtureRoot, "public/logo.svg");
++    writeFileSync(logoPath, readFileSync(logoPath, "utf8").replace("Game Atlas logo", "Field Notes logo"));
++  } catch (error) {
++    cleanupCoreBuildFixture(fixtureRoot);
++    throw error;
+   }
+-  symlinkSync(resolve(projectRoot, "node_modules"), join(fixtureRoot, "node_modules"), "dir");
+-  const astroConfigPath = join(fixtureRoot, "astro.config.ts");
+-  writeFileSync(
+-    astroConfigPath,
+-    readFileSync(astroConfigPath, "utf8").replace(
+-      'output: "static",',
+-      'cacheDir: "./.astro-cache",\n  output: "static",',
+-    ),
+-  );
+-  const isolatedConfig = readFileSync(astroConfigPath, "utf8").replace('vite: {', 'vite: {\n    cacheDir: "./.vite-cache",');
+-  writeFileSync(astroConfigPath, isolatedConfig);
+-  writeFixtureGameConfig(fixtureRoot, adoptFixtureConfig(gameConfig));
+-  adoptFixtureInventory(fixtureRoot);
+-  writeFileSync(join(fixtureRoot, "src/content/guides/getting-started.mdx"), "---\npageId: guide.getting-started\n---\n\nChoose a route and compare the available options before your next session.\n\n## First route\n\nReview the tested choices and use the source notes to check what changed.\n");
+-  const aboutPath = join(fixtureRoot, "src/core/static-page-copy.ts");
+-  writeFileSync(aboutPath, readFileSync(aboutPath, "utf8").replace("Game Atlas is a reusable editorial system for answering game questions with less noise and clearer evidence.", "Field Notes publishes independent reference articles with documented sources and corrections."));
+-  const logoPath = join(fixtureRoot, "public/logo.svg");
+-  writeFileSync(logoPath, readFileSync(logoPath, "utf8").replace("Game Atlas logo", "Field Notes logo"));
+-  return fixtureRoot;
+ }
+ 
+ export function writeFixtureGameConfig(fixtureRoot: string, config: GameConfig): void {
+diff --git a/tests/release-identity.test.ts b/tests/release-identity.test.ts
+index 9b00b2d..7c836c1 100644
+--- a/tests/release-identity.test.ts
++++ b/tests/release-identity.test.ts
+@@ -20,6 +20,15 @@ function read(path: string): string {
+ }
+ 
+ describe("release identity", () => {
++  it("records V2.7 development lineage separately from preserved historical releases", () => {
++    const source = read("../README.md");
++    expect(source).toContain("V2.7 WS-02 development lineage");
++    expect(source).toContain("b067e8d4050478072f25a1dc78a8526cdd128cfd");
++    expect(source).toContain("v2.7/evolution");
++    expect(source).toContain("1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c");
++    expect(source).toContain("working-tree candidate is not a V2.7 release");
++    expect(source).toContain("synthetic technical evidence");
++  });
+   it("uses the exact V2.6.5 patch-line identity without mutable lifecycle claims", () => {
+     for (const path of currentPatchFiles) {
+       const source = read(path);
+diff --git a/tests/residue-build.test.ts b/tests/residue-build.test.ts
+index 858f036..5f71711 100644
+--- a/tests/residue-build.test.ts
++++ b/tests/residue-build.test.ts
+@@ -102,7 +102,13 @@ describe("PP-02 real generated output", () => {
+     mkdirSync(join(root, "docs"), { recursive: true });
+     writeFileSync(join(root, "docs/private-notes.md"), instruction);
+     try {
+-      writeFixtureGameConfigSource(root, JSON.stringify(gameConfig));
++      writeFixtureGameConfigSource(root, JSON.stringify({
++        ...gameConfig,
++        brand: { ...gameConfig.brand, name: "Game Atlas", shortName: "Atlas", mark: "GA" },
++        site: { ...gameConfig.site, url: "https://gameatlas.example" },
++        seo: { ...gameConfig.seo, defaultTitle: "Game Atlas — Guides, Builds & Game Data", titleTemplate: "%s | Game Atlas" },
++        social: { ...gameConfig.social, xHandle: "@gameatlas" },
++      }));
+       expect(runFixtureNpm(root, "validate").status).not.toBe(0);
+       const evidence = runFixtureNpm(root, "build:evidence");
+       expect(evidence.status, `${evidence.stdout}\n${evidence.stderr}`).toBe(0);
+diff --git a/tests/runtime-contract.test.ts b/tests/runtime-contract.test.ts
+index c50d852..808a51b 100644
+--- a/tests/runtime-contract.test.ts
++++ b/tests/runtime-contract.test.ts
+@@ -1,6 +1,8 @@
+ import { existsSync, readFileSync } from "node:fs";
++import type { SpawnSyncReturns } from "node:child_process";
+ 
+ import { describe, expect, it } from "vitest";
++import { assertVerificationResult } from "../scripts/verify-adoption";
+ 
+ const activeDocs = [
+   "../README.md",
+@@ -17,6 +19,35 @@ function read(path: string): string {
+ }
+ 
+ describe("Node runtime contract", () => {
++  it("keeps CI gates explicit and leaves the canonical final build unchanged", () => {
++    const ci = read("../.github/workflows/ci.yml");
++    const pkg = JSON.parse(read("../package.json"));
++    expect(ci).toContain("run: npm run check");
++    expect(ci).toContain("run: npm run verify:unadopted-final");
++    expect(ci).toContain("run: npm run verify:adopted-final");
++    expect(ci).not.toMatch(/^\s*run: npm run build\s*$/m);
++    expect(pkg.scripts.build).toBe("tsx scripts/build-site.ts final");
++    expect(pkg.scripts["build:evidence"]).toBe("tsx scripts/build-site.ts evidence");
++    expect(pkg.scripts["verify:unadopted-final"]).toBe("tsx scripts/verify-adoption.ts unadopted");
++    expect(pkg.scripts["verify:adopted-final"]).toBe("tsx scripts/verify-adoption.ts adopted");
++    for (const file of ["../scripts/validate-site.ts", "../scripts/core-safety-sentinels.ts", "../scripts/audit-build.ts"]) {
++      expect(read(file)).not.toContain("STARTER_ADOPTION_FIXTURE");
++    }
++  });
++
++  it("rejects unrelated failures, unexpected success and incomplete child commands", () => {
++    const result = (status: number | null, stderr = "", extra = {}): SpawnSyncReturns<string> =>
++      ({ status, stderr, stdout: "", signal: null, ...extra } as SpawnSyncReturns<string>);
++    expect(() => assertVerificationResult(result(1, "- PP-02 core.brand residue on branding."), "pp02-rejection")).not.toThrow();
++    expect(() => assertVerificationResult(result(0), "success")).not.toThrow();
++    for (const failure of [result(0, "- PP-02 core.brand residue"), result(1, "Cannot find module"),
++      result(null, "- PP-02 core.brand residue"), result(1, "- PP-02 core.brand residue", { error: new Error("ENOENT") }),
++      result(1, "- PP-02 core.brand residue", { signal: "SIGTERM" })]) {
++      expect(() => assertVerificationResult(failure, "pp02-rejection")).toThrow();
++    }
++    expect(() => assertVerificationResult(result(1), "success")).toThrow();
++  });
++
+   it("pins the intended runtime to Node 22.22.0 and constrains engines to Node 22 only", () => {
+     const packageJson = JSON.parse(read("../package.json")) as {
+       engines?: { node?: string };
+diff --git a/tests/seo.test.ts b/tests/seo.test.ts
+index bf1c0bc..4a60e8b 100644
+--- a/tests/seo.test.ts
++++ b/tests/seo.test.ts
+@@ -179,7 +179,8 @@ describe("technical SEO helpers", () => {
+     const injected = structuredClone(valid);
+     (injected["@graph"] as unknown[]).push({ "@type": "Person", "@id": "https://gameatlas.example/#identity-unapproved", name: "Injected" });
+     expect(collectStructuredIdentityErrors(config, guidePage, [injected]).join("\n")).toMatch(/unconfigured controlled identity/i);
+-    expect(collectStructuredIdentityErrors(siteConfig, guidePage, [{ "@id": "https://gameatlas.example/#organization" }]).join("\n")).toMatch(/dangling|legacy/i);
++    const legacyOrganizationId = `${buildCanonicalUrl(siteConfig, "/")}#organization`;
++    expect(collectStructuredIdentityErrors(siteConfig, guidePage, [{ "@id": legacyOrganizationId }]).join("\n")).toMatch(/dangling|legacy/i);
+   });
+ 
+   it("deduplicates explicitly identical identities and keeps entity IDs independent from role evidence", () => {
+diff --git a/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/verify-adoption.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/verify-adoption.ts
+new file mode 100644
+index 0000000..47a98d9
+--- /dev/null
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/verify-adoption.ts
+@@ -0,0 +1,58 @@
++import { spawnSync, type SpawnSyncReturns } from "node:child_process";
++import { existsSync } from "node:fs";
++import { join, resolve } from "node:path";
++import { fileURLToPath } from "node:url";
++
++import { cleanupCoreBuildFixture, createFullProjectFixture } from "../tests/helpers/core-build-fixture";
++
++export function assertVerificationResult(result: SpawnSyncReturns<string>, expected: "success" | "pp02-rejection"): void {
++  if (result.error || result.signal || result.status === null) {
++    throw new Error(`Child command did not complete: ${result.error?.message ?? result.signal ?? "no exit status"}`);
++  }
++  if (expected === "success" ? result.status !== 0 : result.status === 0 || !/(?:^|\n)- PP-02 /m.test(`${result.stdout}\n${result.stderr}`)) {
++    throw new Error(`Expected ${expected}; received exit ${result.status}.`);
++  }
++}
++
++export function verifyAdoption(mode: "unadopted" | "adopted"): void {
++  const fixtureRoot = createFullProjectFixture(mode === "adopted");
++  try {
++    const commands = mode === "adopted" ? ["validate", "check", "build"] : ["validate", "build"];
++    for (const script of commands) {
++      console.log(`ADOPTION ${mode}: npm run ${script}`);
++      const result = spawnSync("npm", ["run", script], {
++        cwd: fixtureRoot,
++        encoding: "utf8",
++        timeout: script === "check" ? 300_000 : 60_000,
++        maxBuffer: 10 * 1024 * 1024,
++        env: { ...process.env, STARTER_ADOPTION_FIXTURE: mode === "adopted" ? "1" : "0" },
++      });
++      process.stdout.write(result.stdout ?? "");
++      process.stderr.write(result.stderr ?? "");
++      assertVerificationResult(result, mode === "adopted" ? "success" : "pp02-rejection");
++      console.log(`ADOPTION ${mode}: ${script} exit=${result.status}; ${mode === "adopted" ? "PASS" : "EXPECTED_PP02_REJECTION"}`);
++    }
++    if (mode === "adopted") {
++      for (const path of ["EVIDENCE_BUILD_NOT_FINAL.json", "privacy/index.html", "terms/index.html"]) {
++        if (existsSync(join(fixtureRoot, "dist", path))) throw new Error(`Unexpected final artifact: ${path}`);
++      }
++      console.log("ADOPTION adopted: final marker and unapproved legal routes ABSENT; synthetic technical proof only.");
++    }
++  } finally {
++    cleanupCoreBuildFixture(fixtureRoot);
++  }
++}
++
++if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
++  const mode = process.argv[2];
++  if (mode !== "unadopted" && mode !== "adopted") {
++    console.error("Usage: verify-adoption.ts unadopted|adopted");
++    process.exitCode = 1;
++  } else {
++    try { verifyAdoption(mode); }
++    catch (error) {
++      console.error(error instanceof Error ? error.message : String(error));
++      process.exitCode = 1;
++    }
++  }
++}

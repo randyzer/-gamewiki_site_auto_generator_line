@@ -1,0 +1,13 @@
+{
+  "state": "PREFLIGHT_SCOPE_REPLAN",
+  "iteration": 30,
+  "originalLimit": 17,
+  "requestedLimit": 18,
+  "newFile": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-sentinels.test.ts",
+  "reason": "Existing positive registered-media-quotation test omits the new helper-authored registered default share SVG from its explicit mediaAssets list. Actual diagnostic FAIL preserves PP02 enforcement.",
+  "proposedChange": "Import readFileSync; include current fixture manifest assets in this single positive quotation-test mediaAssets input; preserve all existing assertions and negative cases.",
+  "outsideScopeMutations": 0,
+  "qualificationAttempts": 0,
+  "additionalInScopeFixtureFix": "No-share negative must retain registered assets and clear only pages/defaultShare, to reach the actual SEO02 missing-share final error rather than PP02 unregistered-file rejection.",
+  "notAllowed": "No residue policy/sentinel/runner assertion weakening; no unrelated test migration."
+}

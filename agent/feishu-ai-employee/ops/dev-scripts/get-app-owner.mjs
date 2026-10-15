@@ -1,0 +1,4 @@
+import 'dotenv/config';
+const t=await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({app_id:process.env.FEISHU_APP_ID,app_secret:process.env.FEISHU_APP_SECRET})});const a=await t.json();if(a.code!==0)throw Error('Invalid token');
+const r=await fetch('https://open.feishu.cn/open-apis/application/v6/applications/'+process.env.FEISHU_APP_ID+'/collaborators?user_id_type=open_id',{headers:{Authorization:'Bearer '+a.tenant_access_token}});const v=await r.json();
+console.log(JSON.stringify({http:r.status,code:v.code,collaborators:(v.data?.collaborators||[]).map(x=>({role:x.type,open_id:x.user_id}))},null,2));

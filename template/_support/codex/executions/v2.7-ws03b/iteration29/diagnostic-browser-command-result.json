@@ -1,0 +1,10 @@
+{
+  "exitCode": 0,
+  "command": "tsx iteration29/diagnose-lazy-image.ts",
+  "targetedAttempts": 0,
+  "diagnosticSessions": 1,
+  "retryCount": 0,
+  "childPid": 21338,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c29a.Clzh7Q"
+}

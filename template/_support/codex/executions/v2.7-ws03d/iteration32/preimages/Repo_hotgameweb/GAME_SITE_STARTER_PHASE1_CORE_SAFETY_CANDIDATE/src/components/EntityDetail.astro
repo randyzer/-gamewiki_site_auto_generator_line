@@ -1,0 +1,109 @@
+---
+import QuickFacts from "./wiki/QuickFacts.astro";
+import RelatedPages from "./wiki/RelatedPages.astro";
+import Sources from "./wiki/Sources.astro";
+import GameMedia from "./media/GameMedia.astro";
+import ScreenshotGallery from "./media/ScreenshotGallery.astro";
+import { mediaCatalog } from "../data/media/catalog";
+import type { ImageAsset, VideoAsset } from "../data/schemas/media";
+import { enabledPageCatalog, getRelatedPages, siteConfig } from "../core/site-data";
+import {
+  buildBreadcrumbSchema,
+  buildBreadcrumbTrail,
+  buildCanonicalUrl,
+} from "../core/seo";
+import type { Provenance } from "../data/schemas/provenance";
+import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  page: PageInventoryEntry;
+  fact: {
+    id: string;
+    name: string;
+    summary: string;
+    patch: string;
+    updatedAt: string;
+    confidence: "high" | "medium" | "low";
+    sources: Provenance[];
+  };
+  fields: Array<{ label: string; value: string }>;
+  entityLabel: string;
+  heroMedia?: ImageAsset;
+  galleryMedia?: ImageAsset[];
+  trailerMedia?: VideoAsset;
+}
+
+const { page, fact, fields, entityLabel } = Astro.props;
+const mappedMedia = mediaCatalog.getPageMedia(page.pageId);
+const {
+  heroMedia = mappedMedia.heroMedia,
+  galleryMedia = mappedMedia.galleryMedia,
+  trailerMedia = mappedMedia.trailerMedia,
+} = Astro.props;
+const relatedPages = getRelatedPages(page);
+const quickFacts = [
+  { label: "Patch", value: fact.patch },
+  { label: "Last updated", value: fact.updatedAt },
+  ...fields.filter((field) => field.label.toLocaleLowerCase("en") !== "patch"),
+];
+const canonical = buildCanonicalUrl(siteConfig, page.route);
+const breadcrumbTrail = buildBreadcrumbTrail(
+  siteConfig,
+  page,
+  enabledPageCatalog,
+);
+---
+
+<BaseLayout
+  page={page}
+  structuredData={buildBreadcrumbSchema(canonical, breadcrumbTrail)}
+>
+  <main
+    id="main-content"
+    class="entity-page shell"
+    data-pagefind-body={page.indexability === "index" ? true : undefined}
+  >
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        {breadcrumbTrail.map((item, index) => (
+          <li aria-current={index === breadcrumbTrail.length - 1 ? "page" : undefined}>
+            {index === breadcrumbTrail.length - 1 ? item.name : <a href={item.url}>{item.name}</a>}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <header class="entity-page__header reveal reveal--1">
+      <div>
+        <p class="eyebrow">{entityLabel} guide</p>
+        <h1 data-pagefind-meta="title">{fact.name}</h1>
+        <p data-pagefind-meta="description">{fact.summary}</p>
+      </div>
+      <div class="entity-page__status" aria-label={`Current patch ${fact.patch}`}>
+        <span>Current version</span>
+        <strong>Patch {fact.patch}</strong>
+        <small>Updated {fact.updatedAt}</small>
+      </div>
+    </header>
+
+    {heroMedia && (
+      <div class="page-media" data-media-placement="hero">
+        <GameMedia asset={heroMedia} eager />
+      </div>
+    )}
+    <QuickFacts items={quickFacts} title={`${entityLabel} facts`} />
+    {galleryMedia.length > 0 && (
+      <div class="page-media" data-media-placement="gallery">
+        <ScreenshotGallery assets={galleryMedia} />
+      </div>
+    )}
+    {trailerMedia && (
+      <div class="page-media" data-media-placement="trailer">
+        <GameMedia asset={trailerMedia} />
+      </div>
+    )}
+    <RelatedPages pages={relatedPages} />
+    <Sources sources={fact.sources} />
+  </main>
+</BaseLayout>

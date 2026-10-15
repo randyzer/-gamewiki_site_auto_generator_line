@@ -1,0 +1,1601 @@
+{
+  "kind": "WS03D_SYNTHETIC_FRESHNESS_DATES",
+  "qualificationAttempts": 1,
+  "retryCount": 0,
+  "rows": [
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/guides/getting-started/",
+      "assertions": [
+        {
+          "name": "guide-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "date-Published",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "text": "2026-08-10",
+              "times": [
+                {
+                  "datetime": "2026-08-10",
+                  "text": "2026-08-10"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Last updated",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Last updated",
+              "text": "2026-09-20",
+              "times": [
+                {
+                  "datetime": "2026-09-20",
+                  "text": "2026-09-20"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Sources checked",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Sources checked",
+              "text": "2026-09-21",
+              "times": [
+                {
+                  "datetime": "2026-09-21",
+                  "text": "2026-09-21"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Live status",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-observation-wording",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-source-href-exact",
+          "passed": true,
+          "detail": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        },
+        {
+          "name": "no-false-verification-label",
+          "passed": true,
+          "detail": {
+            "oldLabelPresent": false
+          }
+        },
+        {
+          "name": "private-observation-note-not-rendered",
+          "passed": true,
+          "detail": {
+            "privateMarkerPresent": false,
+            "privateFieldPresent": false
+          }
+        },
+        {
+          "name": "four-dates-remain-distinct",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "value": "2026-08-10"
+            },
+            {
+              "label": "Last updated",
+              "value": "2026-09-20"
+            },
+            {
+              "label": "Sources checked",
+              "value": "2026-09-21"
+            },
+            {
+              "label": "Live status",
+              "value": "2026-09-22"
+            }
+          ]
+        },
+        {
+          "name": "jsonld-parse-valid",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "article-datePublished-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        },
+        {
+          "name": "article-dateModified-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        }
+      ],
+      "observedMetadata": [
+        {
+          "label": "Published",
+          "text": "2026-08-10",
+          "times": [
+            {
+              "datetime": "2026-08-10",
+              "text": "2026-08-10"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Last updated",
+          "text": "2026-09-20",
+          "times": [
+            {
+              "datetime": "2026-09-20",
+              "text": "2026-09-20"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Sources checked",
+          "text": "2026-09-21",
+          "times": [
+            {
+              "datetime": "2026-09-21",
+              "text": "2026-09-21"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Live status",
+          "text": "Observed live 2026-09-22 Status source",
+          "times": [
+            {
+              "datetime": "2026-09-22",
+              "text": "2026-09-22"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        }
+      ],
+      "observedArticles": [
+        {
+          "@type": "Article",
+          "@id": "https://field-notes.example/guides/getting-started/#article",
+          "headline": "Getting Started with Field Notes",
+          "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+          "datePublished": "2026-08-10",
+          "dateModified": "2026-09-20",
+          "inLanguage": "en",
+          "mainEntityOfPage": {
+            "@id": "https://field-notes.example/guides/getting-started/#webpage"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/guides/getting-started/",
+      "assertions": [
+        {
+          "name": "guide-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "date-Published",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "text": "2026-08-10",
+              "times": [
+                {
+                  "datetime": "2026-08-10",
+                  "text": "2026-08-10"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Last updated",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Last updated",
+              "text": "2026-09-20",
+              "times": [
+                {
+                  "datetime": "2026-09-20",
+                  "text": "2026-09-20"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Sources checked",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Sources checked",
+              "text": "2026-09-21",
+              "times": [
+                {
+                  "datetime": "2026-09-21",
+                  "text": "2026-09-21"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Live status",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-observation-wording",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-source-href-exact",
+          "passed": true,
+          "detail": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        },
+        {
+          "name": "no-false-verification-label",
+          "passed": true,
+          "detail": {
+            "oldLabelPresent": false
+          }
+        },
+        {
+          "name": "private-observation-note-not-rendered",
+          "passed": true,
+          "detail": {
+            "privateMarkerPresent": false,
+            "privateFieldPresent": false
+          }
+        },
+        {
+          "name": "four-dates-remain-distinct",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "value": "2026-08-10"
+            },
+            {
+              "label": "Last updated",
+              "value": "2026-09-20"
+            },
+            {
+              "label": "Sources checked",
+              "value": "2026-09-21"
+            },
+            {
+              "label": "Live status",
+              "value": "2026-09-22"
+            }
+          ]
+        },
+        {
+          "name": "jsonld-parse-valid",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "article-datePublished-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        },
+        {
+          "name": "article-dateModified-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        }
+      ],
+      "observedMetadata": [
+        {
+          "label": "Published",
+          "text": "2026-08-10",
+          "times": [
+            {
+              "datetime": "2026-08-10",
+              "text": "2026-08-10"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Last updated",
+          "text": "2026-09-20",
+          "times": [
+            {
+              "datetime": "2026-09-20",
+              "text": "2026-09-20"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Sources checked",
+          "text": "2026-09-21",
+          "times": [
+            {
+              "datetime": "2026-09-21",
+              "text": "2026-09-21"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Live status",
+          "text": "Observed live 2026-09-22 Status source",
+          "times": [
+            {
+              "datetime": "2026-09-22",
+              "text": "2026-09-22"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        }
+      ],
+      "observedArticles": [
+        {
+          "@type": "Article",
+          "@id": "https://field-notes.example/guides/getting-started/#article",
+          "headline": "Getting Started with Field Notes",
+          "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+          "datePublished": "2026-08-10",
+          "dateModified": "2026-09-20",
+          "inLanguage": "en",
+          "mainEntityOfPage": {
+            "@id": "https://field-notes.example/guides/getting-started/#webpage"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/guides/getting-started/",
+      "assertions": [
+        {
+          "name": "guide-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "date-Published",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "text": "2026-08-10",
+              "times": [
+                {
+                  "datetime": "2026-08-10",
+                  "text": "2026-08-10"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Last updated",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Last updated",
+              "text": "2026-09-20",
+              "times": [
+                {
+                  "datetime": "2026-09-20",
+                  "text": "2026-09-20"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Sources checked",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Sources checked",
+              "text": "2026-09-21",
+              "times": [
+                {
+                  "datetime": "2026-09-21",
+                  "text": "2026-09-21"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Live status",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-observation-wording",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-source-href-exact",
+          "passed": true,
+          "detail": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        },
+        {
+          "name": "no-false-verification-label",
+          "passed": true,
+          "detail": {
+            "oldLabelPresent": false
+          }
+        },
+        {
+          "name": "private-observation-note-not-rendered",
+          "passed": true,
+          "detail": {
+            "privateMarkerPresent": false,
+            "privateFieldPresent": false
+          }
+        },
+        {
+          "name": "four-dates-remain-distinct",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "value": "2026-08-10"
+            },
+            {
+              "label": "Last updated",
+              "value": "2026-09-20"
+            },
+            {
+              "label": "Sources checked",
+              "value": "2026-09-21"
+            },
+            {
+              "label": "Live status",
+              "value": "2026-09-22"
+            }
+          ]
+        },
+        {
+          "name": "jsonld-parse-valid",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "article-datePublished-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        },
+        {
+          "name": "article-dateModified-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        }
+      ],
+      "observedMetadata": [
+        {
+          "label": "Published",
+          "text": "2026-08-10",
+          "times": [
+            {
+              "datetime": "2026-08-10",
+              "text": "2026-08-10"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Last updated",
+          "text": "2026-09-20",
+          "times": [
+            {
+              "datetime": "2026-09-20",
+              "text": "2026-09-20"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Sources checked",
+          "text": "2026-09-21",
+          "times": [
+            {
+              "datetime": "2026-09-21",
+              "text": "2026-09-21"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Live status",
+          "text": "Observed live 2026-09-22 Status source",
+          "times": [
+            {
+              "datetime": "2026-09-22",
+              "text": "2026-09-22"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        }
+      ],
+      "observedArticles": [
+        {
+          "@type": "Article",
+          "@id": "https://field-notes.example/guides/getting-started/#article",
+          "headline": "Getting Started with Field Notes",
+          "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+          "datePublished": "2026-08-10",
+          "dateModified": "2026-09-20",
+          "inLanguage": "en",
+          "mainEntityOfPage": {
+            "@id": "https://field-notes.example/guides/getting-started/#webpage"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/guides/getting-started/",
+      "assertions": [
+        {
+          "name": "guide-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "date-Published",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "text": "2026-08-10",
+              "times": [
+                {
+                  "datetime": "2026-08-10",
+                  "text": "2026-08-10"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Last updated",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Last updated",
+              "text": "2026-09-20",
+              "times": [
+                {
+                  "datetime": "2026-09-20",
+                  "text": "2026-09-20"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Sources checked",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Sources checked",
+              "text": "2026-09-21",
+              "times": [
+                {
+                  "datetime": "2026-09-21",
+                  "text": "2026-09-21"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Live status",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-observation-wording",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-source-href-exact",
+          "passed": true,
+          "detail": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        },
+        {
+          "name": "no-false-verification-label",
+          "passed": true,
+          "detail": {
+            "oldLabelPresent": false
+          }
+        },
+        {
+          "name": "private-observation-note-not-rendered",
+          "passed": true,
+          "detail": {
+            "privateMarkerPresent": false,
+            "privateFieldPresent": false
+          }
+        },
+        {
+          "name": "four-dates-remain-distinct",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "value": "2026-08-10"
+            },
+            {
+              "label": "Last updated",
+              "value": "2026-09-20"
+            },
+            {
+              "label": "Sources checked",
+              "value": "2026-09-21"
+            },
+            {
+              "label": "Live status",
+              "value": "2026-09-22"
+            }
+          ]
+        },
+        {
+          "name": "jsonld-parse-valid",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "article-datePublished-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        },
+        {
+          "name": "article-dateModified-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        }
+      ],
+      "observedMetadata": [
+        {
+          "label": "Published",
+          "text": "2026-08-10",
+          "times": [
+            {
+              "datetime": "2026-08-10",
+              "text": "2026-08-10"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Last updated",
+          "text": "2026-09-20",
+          "times": [
+            {
+              "datetime": "2026-09-20",
+              "text": "2026-09-20"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Sources checked",
+          "text": "2026-09-21",
+          "times": [
+            {
+              "datetime": "2026-09-21",
+              "text": "2026-09-21"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Live status",
+          "text": "Observed live 2026-09-22 Status source",
+          "times": [
+            {
+              "datetime": "2026-09-22",
+              "text": "2026-09-22"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        }
+      ],
+      "observedArticles": [
+        {
+          "@type": "Article",
+          "@id": "https://field-notes.example/guides/getting-started/#article",
+          "headline": "Getting Started with Field Notes",
+          "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+          "datePublished": "2026-08-10",
+          "dateModified": "2026-09-20",
+          "inLanguage": "en",
+          "mainEntityOfPage": {
+            "@id": "https://field-notes.example/guides/getting-started/#webpage"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "route": "/guides/getting-started/",
+      "assertions": [
+        {
+          "name": "guide-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "date-Published",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "text": "2026-08-10",
+              "times": [
+                {
+                  "datetime": "2026-08-10",
+                  "text": "2026-08-10"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Last updated",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Last updated",
+              "text": "2026-09-20",
+              "times": [
+                {
+                  "datetime": "2026-09-20",
+                  "text": "2026-09-20"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Sources checked",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Sources checked",
+              "text": "2026-09-21",
+              "times": [
+                {
+                  "datetime": "2026-09-21",
+                  "text": "2026-09-21"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Live status",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-observation-wording",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-source-href-exact",
+          "passed": true,
+          "detail": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        },
+        {
+          "name": "no-false-verification-label",
+          "passed": true,
+          "detail": {
+            "oldLabelPresent": false
+          }
+        },
+        {
+          "name": "private-observation-note-not-rendered",
+          "passed": true,
+          "detail": {
+            "privateMarkerPresent": false,
+            "privateFieldPresent": false
+          }
+        },
+        {
+          "name": "four-dates-remain-distinct",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "value": "2026-08-10"
+            },
+            {
+              "label": "Last updated",
+              "value": "2026-09-20"
+            },
+            {
+              "label": "Sources checked",
+              "value": "2026-09-21"
+            },
+            {
+              "label": "Live status",
+              "value": "2026-09-22"
+            }
+          ]
+        },
+        {
+          "name": "jsonld-parse-valid",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "article-datePublished-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        },
+        {
+          "name": "article-dateModified-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        }
+      ],
+      "observedMetadata": [
+        {
+          "label": "Published",
+          "text": "2026-08-10",
+          "times": [
+            {
+              "datetime": "2026-08-10",
+              "text": "2026-08-10"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Last updated",
+          "text": "2026-09-20",
+          "times": [
+            {
+              "datetime": "2026-09-20",
+              "text": "2026-09-20"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Sources checked",
+          "text": "2026-09-21",
+          "times": [
+            {
+              "datetime": "2026-09-21",
+              "text": "2026-09-21"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Live status",
+          "text": "Observed live 2026-09-22 Status source",
+          "times": [
+            {
+              "datetime": "2026-09-22",
+              "text": "2026-09-22"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        }
+      ],
+      "observedArticles": [
+        {
+          "@type": "Article",
+          "@id": "https://field-notes.example/guides/getting-started/#article",
+          "headline": "Getting Started with Field Notes",
+          "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+          "datePublished": "2026-08-10",
+          "dateModified": "2026-09-20",
+          "inLanguage": "en",
+          "mainEntityOfPage": {
+            "@id": "https://field-notes.example/guides/getting-started/#webpage"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/guides/getting-started/",
+      "assertions": [
+        {
+          "name": "guide-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "date-Published",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "text": "2026-08-10",
+              "times": [
+                {
+                  "datetime": "2026-08-10",
+                  "text": "2026-08-10"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Last updated",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Last updated",
+              "text": "2026-09-20",
+              "times": [
+                {
+                  "datetime": "2026-09-20",
+                  "text": "2026-09-20"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Sources checked",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Sources checked",
+              "text": "2026-09-21",
+              "times": [
+                {
+                  "datetime": "2026-09-21",
+                  "text": "2026-09-21"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
+          "name": "date-Live status",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-observation-wording",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Live status",
+              "text": "Observed live 2026-09-22 Status source",
+              "times": [
+                {
+                  "datetime": "2026-09-22",
+                  "text": "2026-09-22"
+                }
+              ],
+              "links": [
+                {
+                  "href": "https://example.com/qa-live-status",
+                  "text": "Status source"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "live-source-href-exact",
+          "passed": true,
+          "detail": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        },
+        {
+          "name": "no-false-verification-label",
+          "passed": true,
+          "detail": {
+            "oldLabelPresent": false
+          }
+        },
+        {
+          "name": "private-observation-note-not-rendered",
+          "passed": true,
+          "detail": {
+            "privateMarkerPresent": false,
+            "privateFieldPresent": false
+          }
+        },
+        {
+          "name": "four-dates-remain-distinct",
+          "passed": true,
+          "detail": [
+            {
+              "label": "Published",
+              "value": "2026-08-10"
+            },
+            {
+              "label": "Last updated",
+              "value": "2026-09-20"
+            },
+            {
+              "label": "Sources checked",
+              "value": "2026-09-21"
+            },
+            {
+              "label": "Live status",
+              "value": "2026-09-22"
+            }
+          ]
+        },
+        {
+          "name": "jsonld-parse-valid",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "article-datePublished-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        },
+        {
+          "name": "article-dateModified-original-authority",
+          "passed": true,
+          "detail": [
+            {
+              "@type": "Article",
+              "@id": "https://field-notes.example/guides/getting-started/#article",
+              "headline": "Getting Started with Field Notes",
+              "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "datePublished": "2026-08-10",
+              "dateModified": "2026-09-20",
+              "inLanguage": "en",
+              "mainEntityOfPage": {
+                "@id": "https://field-notes.example/guides/getting-started/#webpage"
+              }
+            }
+          ]
+        }
+      ],
+      "observedMetadata": [
+        {
+          "label": "Published",
+          "text": "2026-08-10",
+          "times": [
+            {
+              "datetime": "2026-08-10",
+              "text": "2026-08-10"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Last updated",
+          "text": "2026-09-20",
+          "times": [
+            {
+              "datetime": "2026-09-20",
+              "text": "2026-09-20"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Sources checked",
+          "text": "2026-09-21",
+          "times": [
+            {
+              "datetime": "2026-09-21",
+              "text": "2026-09-21"
+            }
+          ],
+          "links": []
+        },
+        {
+          "label": "Live status",
+          "text": "Observed live 2026-09-22 Status source",
+          "times": [
+            {
+              "datetime": "2026-09-22",
+              "text": "2026-09-22"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://example.com/qa-live-status",
+              "text": "Status source"
+            }
+          ]
+        }
+      ],
+      "observedArticles": [
+        {
+          "@type": "Article",
+          "@id": "https://field-notes.example/guides/getting-started/#article",
+          "headline": "Getting Started with Field Notes",
+          "description": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+          "datePublished": "2026-08-10",
+          "dateModified": "2026-09-20",
+          "inLanguage": "en",
+          "mainEntityOfPage": {
+            "@id": "https://field-notes.example/guides/getting-started/#webpage"
+          }
+        }
+      ],
+      "overall": "PASS"
+    }
+  ],
+  "overall": "PASS",
+  "errors": [],
+  "safariProof": 0,
+  "capabilityPromotion": "NONE"
+}

@@ -1,0 +1,13 @@
+import {base,root,files,sourceManifest,hash,read} from '../../v2.7-ws06a/iteration22/finalize-readiness-audit.mjs';
+import {join} from 'node:path';import {existsSync,writeFileSync} from 'node:fs';
+const out=join(base,'template/codex/executions/v2.7-ws03d/iteration33'),old=join(out,'../iteration32');
+const identity=read(join(old,'triad-blocked-identity.json')),post=read(join(old,'postimages.json')),errors=[];
+for(const [n,v] of Object.entries(identity.triad))if(sourceManifest(v.root)!==v.workingTreeSha256)errors.push(n+' source');
+if(identity.triad.GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE.workingTreeSha256!=='bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1')errors.push('PLAN source');
+for(const [p,v] of Object.entries(post))if(hash(join(base,p))!==v.sha256)errors.push(p);
+const allowed=['codex/executions/v2.7-ws03d/iteration33','codex/prompts/v2.7-ws03d/iteration33-observer-serialization-repair-plan.md'];
+const protectedFiles={};for(const n of ['template','Repo_hotgameweb','gameweb'])if(existsSync(join(base,n)))for(const {path,...v} of files(join(base,n),n==='template'?allowed:[]))protectedFiles[n+'/'+path]=v;
+const save=(n,v)=>writeFileSync(join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
+save('preflight.json',{capturedAt:new Date().toISOString(),allowed,protected:protectedFiles,protectedCount:Object.keys(protectedFiles).length,triad:identity.triad,canonicalInventorySha256:hash(join(root,'src/data/page-inventory.json')),iteration32IdentitySha256:hash(join(old,'triad-blocked-identity.json')),errors});
+save('retained-iteration32-health-binding.json',{status:errors.length?'INVALID':'PASS',exactTriadSource:true,postimagesExact:true,triad:identity.triad,iteration32HealthSha256:hash(join(old,'product-health-command-results.json')),rootTests:859,rootFiles:48,astroClean:true,commands:read(join(old,'product-health-command-results.json')),errors});
+console.log(JSON.stringify({status:errors.length?'FAIL':'PASS',protected:Object.keys(protectedFiles).length,productDelta:0,errors}));if(errors.length)throw Error('Preflight STOP');

@@ -1,0 +1,91 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { siteConfig } from "../core/site-data";
+import { resolveVisualRoles } from "../core/theme-roles";
+import {
+  buildBaseSeoGraph,
+  buildCanonicalUrl,
+  collectStructuredIdentityErrors,
+  serializeJsonLd,
+  type StructuredDataNode,
+} from "../core/seo";
+import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+import "../styles/global.css";
+
+interface Props {
+  page: PageInventoryEntry;
+  structuredData?: StructuredDataNode | StructuredDataNode[];
+}
+
+const { page, structuredData } = Astro.props;
+const roles = resolveVisualRoles(siteConfig.visualRoles);
+const canonical = buildCanonicalUrl(siteConfig, page.route);
+const robots =
+  page.indexability === "index"
+    ? "index, follow, max-image-preview:large"
+    : "noindex, nofollow";
+const graph = [
+  ...buildBaseSeoGraph(siteConfig, page),
+  ...(Array.isArray(structuredData)
+    ? structuredData
+    : structuredData
+      ? [structuredData]
+      : []),
+];
+const jsonLdDocument = {
+  "@context": "https://schema.org",
+  "@graph": graph,
+};
+const identityErrors = collectStructuredIdentityErrors(siteConfig, page, [jsonLdDocument]);
+if (identityErrors.length > 0) {
+  throw new Error(
+    `Structured identity safety failed for "${page.pageId}": ${identityErrors.join(" ")}`,
+  );
+}
+---
+
+<!doctype html>
+<html
+  lang={siteConfig.site.locale}
+  data-theme-font={roles.font}
+  data-theme-density={roles.density}
+  data-theme-shape={roles.shape}
+  data-theme-state={roles.state}
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content={robots} />
+    <title>{page.title}</title>
+    <meta name="description" content={page.description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.brand.name} />
+    <meta property="og:locale" content={siteConfig.site.locale} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={page.title} />
+    <meta property="og:description" content={page.description} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={page.title} />
+    <meta name="twitter:description" content={page.description} />
+    {siteConfig.social.xHandle && (
+      <meta name="twitter:site" content={siteConfig.social.xHandle} />
+    )}
+
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={serializeJsonLd(jsonLdDocument)}
+    />
+  </head>
+  <body id="top" data-page-family={page.module}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header currentRoute={page.route} />
+    <slot />
+    <Footer />
+  </body>
+</html>

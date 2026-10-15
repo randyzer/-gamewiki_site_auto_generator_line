@@ -1,0 +1,22 @@
+{
+  "status": "FAIL",
+  "identity": {
+    "source": "6708a8a3d069b586ef4381d4151ae6772c6dfbebc051edcf60d3985e6afbc72f",
+    "engines": {
+      "chromium": {
+        "version": "153.0.8010.12",
+        "executable": "/Users/randyz/Library/Caches/ms-playwright/chromium-1243/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+      },
+      "firefox": {
+        "version": "155.0",
+        "executable": "/Users/randyz/Library/Caches/ms-playwright/firefox-1543/firefox/Nightly.app/Contents/MacOS/firefox"
+      }
+    },
+    "fixtureSource": "3c1d8df3ae271f06347d12d94ed1aa7d1df4a9cf41fb9af3b57aae0292e0373e",
+    "dist": "d3db2b70029eeff8b4661250ce80e228b024f1bc9c795763a5a56a962c348157",
+    "sourceAfter": "6708a8a3d069b586ef4381d4151ae6772c6dfbebc051edcf60d3985e6afbc72f",
+    "scriptSha256": "dbe9c9bf5bbd1002d5332ce388e5514c4e84791368f2e712106aa6301c917246"
+  },
+  "cases": [],
+  "infrastructureError": "Error: page.evaluate: TypeError: window.__captureDiagnostic is not a function\n    at eval (eval at evaluate (:311:30), <anonymous>:1:8)\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:311:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+}

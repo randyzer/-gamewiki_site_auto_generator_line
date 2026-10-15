@@ -1,0 +1,281 @@
+{
+  "nav": [
+    "Home",
+    "Wiki",
+    "Walkthrough",
+    "Ending",
+    "Guides",
+    "Beginner Guide"
+  ],
+  "homeTitle": "Midnight Evidence",
+  "homeDescription": "Follow a missing hour through the rain-soaked streets of 1980s Blackwater City as detective Mara Vale and a cast of other playable characters. Investigate crime scenes, unravel unsettling puzzles, survive ordinary shifts gone wrong, and trace the anonymous audio recordings left behind by the Signal Keeper.",
+  "badge": "Fan-Made Analog Horror Wiki",
+  "buttons": [
+    "Start Beginner Guide",
+    "Browse Characters",
+    "Explore All Guides"
+  ],
+  "trailer": "▶ Explore the Project Notes",
+  "stats": [
+    "14 Story Chapters",
+    "4 Playable Perspectives",
+    "12 Hidden Recordings",
+    "16 Case Files",
+    "Single-Player Horror"
+  ],
+  "start": [
+    "Start here",
+    "Your Blackwater City Journey"
+  ],
+  "mechanicsHeading": [
+    "Inside the investigation",
+    "Core Mechanics"
+  ],
+  "mechanicsIntro": "Four systems define a run through Blackwater City: evidence-based crime-scene investigation, anonymous audio recordings, multiple playable perspectives, and an analog-horror presentation built on low-poly spaces and uneasy late-night routines.",
+  "mechanics": [
+    {
+      "title": "Crime-Scene Investigation",
+      "description": "Explore quiet rooms, compare witness accounts and follow the evidence through Blackwater City."
+    },
+    {
+      "title": "Anonymous Audio Recordings",
+      "description": "Listen beyond the voice. Background sounds connect each recording to a place and a missing hour."
+    },
+    {
+      "title": "Multiple Playable Perspectives",
+      "description": "Leave the detective's desk to experience the same night through the city's overlooked workers."
+    },
+    {
+      "title": "Analog Horror Presentation",
+      "description": "Low-poly spaces, late-night broadcasts and uneasy silences give every chapter its own identity."
+    }
+  ],
+  "popular": [
+    "Popular guides",
+    "Characters, Cast & Story"
+  ],
+  "aboutTitle": "What is Midnight Evidence?",
+  "about": [
+    "Midnight Evidence is an original fictional horror adventure imagined by Hollow Signal and its publishing partner Lantern House. Set in a fading 1980s Blackwater City, it follows detective Mara Vale and her partner Ellis Reed as they investigate a missing hour in the emergency records. An anonymous sender leaves a trail of recorded voices and background sounds that do not match the official timeline.",
+    "The story concept emphasizes atmosphere, observation and tension. Players compare crime-scene evidence, work through environmental puzzles and switch into other perspectives across diners, cinemas, radio rooms and deserted railway platforms. Familiar spaces become unsettling through changes in routine, restrained dialogue and a deliberately simple low-poly visual language.",
+    "This is a working website demonstration with an original game world, rather than a released commercial game. The archive organizes its fictional material with the same care as a practical guide: beginning routes first, optional story revelations on their own pages, and clear labels for unfinished reference notes. The wiki covers:",
+    "All game information, studio names and illustrations here are original demonstration content. No release, sales figures, user reviews or real-world partnerships are claimed. The case notes share a consistent fictional timeline, with observations kept separate from final revelations. Use the search button in the header or open the guide index when you want the quickest route to a specific case note."
+  ],
+  "aboutList": [
+    "A chapter route with story spoilers kept inside the relevant guides",
+    "Puzzle hints that begin with observation before revealing a solution",
+    "Sixteen case files and the optional witness statements around them",
+    "The final broadcast, with a clearly marked spoiler boundary",
+    "Character roles and the creative outline behind the project"
+  ],
+  "facts": [
+    [
+      "Developer",
+      "Hollow Signal"
+    ],
+    [
+      "Publisher",
+      "Lantern House"
+    ],
+    [
+      "Format",
+      "Fictional Game Concept"
+    ],
+    [
+      "Genre",
+      "Analog Horror Adventure"
+    ],
+    [
+      "Story Chapters",
+      "14"
+    ],
+    [
+      "Case Files",
+      "16"
+    ],
+    [
+      "Audio Recordings",
+      "12"
+    ],
+    [
+      "Archive Languages",
+      "5"
+    ]
+  ],
+  "faqHeading": [
+    "Quick answers",
+    "Frequently Asked Questions"
+  ],
+  "faq": [
+    [
+      "What is Midnight Evidence?",
+      "Midnight Evidence is an original fictional horror adventure for this website demonstration. Detective Mara Vale and other playable characters follow anonymous recordings through Blackwater City."
+    ],
+    [
+      "When was Midnight Evidence released?",
+      "This is a website demonstration, not a commercially released game. Archive dates record when the original case notes were published."
+    ],
+    [
+      "What platforms is Midnight Evidence on?",
+      "The fictional design imagines a Windows PC adventure. No console, mobile, macOS or downloadable build is provided by this demonstration site."
+    ],
+    [
+      "Is Midnight Evidence multiplayer?",
+      "The story concept is single-player. Its multiple perspectives follow different characters through one night, without cooperative or competitive play."
+    ],
+    [
+      "How many case files are in the archive?",
+      "The fictional outline includes sixteen case files, twelve recordings and fourteen chapters. Optional witness statements add detail to the central investigation."
+    ],
+    [
+      "Is there a free Midnight Evidence demo?",
+      "There is no downloadable game demo. The guide website is fully working, with a beginner route, chapter notes and original story references."
+    ]
+  ],
+  "sidebarTitle": "Project Links",
+  "sidebarLinks": [
+    "Project overview",
+    "Studio & production notes",
+    "The chapter route",
+    "Recordings & evidence",
+    "Character profiles"
+  ],
+  "languageNote": [
+    "Game language note",
+    "English game concept; this guide archive supports five languages."
+  ],
+  "cta": [
+    "Ready to Explore Blackwater City?",
+    "Follow the case without losing the trail, and use spoiler-aware help when a crime scene, recording, chapter objective or evidence-room puzzle stops your run. Our guides separate observations from story revelations so you can decide how much of the mystery you want revealed.",
+    "Read the Beginner Guide",
+    "Browse the Case Archive"
+  ],
+  "guidesTitle": "Investigation Guides",
+  "guidesDescription": "Practical routes and reference pages for Midnight Evidence, with spoilers and unfinished details clearly labeled.",
+  "openGuide": "Open guide →",
+  "categories": {
+    "Guide": "Guide",
+    "Release": "Release",
+    "Platforms": "Platforms",
+    "Community": "Community",
+    "Cast": "Cast",
+    "Story": "Story",
+    "Reviewed": "Reviewed",
+    "Draft": "Needs further detail"
+  },
+  "article": {
+    "guide": "Game guide",
+    "spoilers": "Story · spoilers",
+    "note": "Spoilers and unknowns clearly labeled",
+    "caption": "Original Blackwater City concept illustration.",
+    "credit": "Fictional project · Original artwork",
+    "related": "Related guides",
+    "continue": "Continue exploring Blackwater City"
+  },
+  "callout": [
+    "First Case Briefing",
+    "A spoiler-light route through your first night in the city.",
+    "Beginner guide",
+    "Explore the case archive",
+    "Read the opening route, or browse the complete case archive.",
+    "All investigation guides"
+  ],
+  "footerDescription": "Midnight Evidence Wiki is an independent demonstration archive covering walkthroughs, characters, audio recordings, puzzles, case files, chapters and Blackwater City story information. We keep story revelations separate from beginner help and distinguish observations from speculation. The game world, studio names, production history and local illustrations are original fictional content. No affiliation with a real developer or publisher is claimed.",
+  "footerNote": "Original demonstration content; no commercial game, sales figures or downloads are claimed.",
+  "footerGroups": [
+    "Guides",
+    "Project Links",
+    "Legal"
+  ],
+  "footerGuides": [
+    "Wiki Hub",
+    "Characters",
+    "Walkthrough",
+    "Ending",
+    "All Guides",
+    "Beginner Guide"
+  ],
+  "footerProject": [
+    "Overview",
+    "Studio Notes",
+    "Recordings",
+    "Questions & Answers"
+  ],
+  "legal": [
+    "Privacy Policy",
+    "Terms of Service",
+    "About",
+    "Contact"
+  ],
+  "copyright": "Independent demonstration archive.",
+  "credits": "Midnight Evidence, Hollow Signal and Lantern House are fictional project names.",
+  "search": {
+    "label": "Search this wiki",
+    "placeholder": "Search Midnight Evidence Wiki",
+    "popular": "Popular searches",
+    "results": "Matching guides",
+    "empty": "No matching case notes. Try another title or topic.",
+    "keyboard": "↑↓ Navigate · Enter Open",
+    "close": "Close search"
+  },
+  "menuLabel": "Toggle mobile menu",
+  "skip": "Skip to main content",
+  "notFound": [
+    "Case file not found",
+    "This page is not in the archive. Return to the guide index to find an existing case note.",
+    "Browse all guides"
+  ],
+  "previewGuide": "Preview →",
+  "aboutSections": [
+    {
+      "title": "Blackwater City’s story and setting",
+      "paragraphs": [
+        "Mara Vale and her partner Ellis Reed begin with a discrepancy in the emergency records: an entire hour has disappeared. Witnesses remember a train, a radio broadcast and a customer arriving after closing time, yet none of those events appear in the official log. Anonymous recordings bring the detectives back to places that seem ordinary in daylight.",
+        "The story moves between the investigation and the people who were working that night. A receipt, a screening schedule and a station clock become different ways of describing the same missing hour. Each chapter adds context before asking you to decide whether a memory or a written record deserves your trust."
+      ]
+    },
+    {
+      "title": "How the investigation plays",
+      "paragraphs": [
+        "The fictional game combines small locations, conversations and environmental puzzles. Read the current objective, examine objects from more than one angle and compare their details with your notebook. Most puzzles begin with an inconsistency you can see or hear rather than a code hidden without explanation. A changed label can matter as much as a locked door.",
+        "Civilian sections put familiar routines first: finish a diner order, inspect the projection room or complete a railway maintenance round. Those modest tasks establish how a place normally works. When the routine changes, you already understand what is wrong. The concept emphasizes atmosphere and patient observation instead of fighting enemies or managing a large inventory."
+      ]
+    },
+    {
+      "title": "Playable characters and performance notes",
+      "paragraphs": [
+        "Mara follows the case from the precinct, while Ellis checks records against the witnesses’ accounts. Nina Hart remembers the diner through orders and receipts. Cass Rowan recognizes a mislabeled film reel, and Owen Park knows which station equipment should remain switched off overnight. Their practical knowledge reveals details the detectives could otherwise miss.",
+        "The cast notes describe original fictional roles and performance directions. They do not claim that real actors have recorded dialogue or that a commercial game has been produced. Read the character previews for each location and perspective; unfinished profiles stay in the guide index until a full article is available."
+      ]
+    },
+    {
+      "title": "The opening route and complete story concept",
+      "paragraphs": [
+        "The imagined opening covers the precinct, the late-night diner and Blackwater Station. It introduces the notebook, object inspection and the first anonymous recording before the case expands into a cinema and a radio room. The opening is designed to be readable without learning the final explanation for the missing hour.",
+        "Later chapters revisit those locations through other viewpoints. Information that looked like background decoration becomes evidence when it appears in a second account. This website demonstrates the guide structure for that concept; it does not provide a playable demo, a download, a release date or a storefront for an unreleased game."
+      ]
+    },
+    {
+      "title": "Platforms, languages and project materials",
+      "paragraphs": [
+        "The design outline imagines a single-player PC adventure with readable objectives, optional subtitles and simple interaction controls. It is a creative brief rather than a statement of system requirements. No Windows installer, console edition, mobile port or actual language support is claimed by the fictional project.",
+        "The working guide website offers English, German, Brazilian Portuguese, Spanish and Simplified Chinese. Each version shares the same layout and uses its own written content. Illustrations are stored locally as original SVG scenes, and article text comes from MDX files rather than a remote service or copied game assets."
+      ]
+    },
+    {
+      "title": "Help for your first visit",
+      "paragraphs": [
+        "Begin with the journey cards to understand how the archive is organized. When a particular clue interests you, the guide index includes previews for puzzles, recordings, chapter objectives and character profiles. Preview labels mean the full article has not been published; these entries keep their place in the archive without pretending to contain finished answers.",
+        "The developer article is the complete sample case note. It explains the fictional studio, publishing partner and creative ideas behind Blackwater City. Use the header search to find that article or jump to a preview in the index. Observations, invented story details and unfinished material remain clearly separated throughout the archive."
+      ]
+    }
+  ],
+  "menuOpen": "Open menu",
+  "menuClose": "Close menu",
+  "languageLabel": "Language",
+  "headerCommunity": "Notes",
+  "headerAction": "Archive",
+  "overviewBefore": "Our ",
+  "overviewAfter": " overview introduces Blackwater City, the investigation, playable perspectives and the original project concept.",
+  "previewLabel": "Preview"
+}

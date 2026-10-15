@@ -1,0 +1,375 @@
+# 第18轮实际 ChatGPT 独立审查
+
+来源：https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+任务：c2c_a765；iteration18。以下为已完成回复的真实渲染 DOM，非 Codex 重写结论。
+
+```text
+- heading "ChatGPT 说：" [level=4]
+  - paragraph:
+    - text: "[C2C]"
+    - text: "STATE: REVIEW"
+    - text: "TASK_ID: c2c_a765"
+    - text: "ITERATION: 18"
+    - text: "WORKSTREAM: WS04A bounded methods design"
+    - text: "VERDICT:"
+    - strong: ACCEPT — METHODS DESIGN ONLY
+  - paragraph: 我已独立读取并复核：
+  - list:
+    - listitem: template/design/ws04a/ 下全部 5 份设计文档
+    - listitem: 实际保存的 PLAN18 + 两项 clarification
+    - listitem: iteration18/result.md
+    - listitem: preflight.json
+    - listitem: design-checks.json
+    - listitem: design-checks.log
+    - listitem: execution summary / output 74
+    - listitem: 当前真实 gameConfigSchema、Page Inventory、media schema、media-readiness.ts
+    - listitem: canonical Contract 的 MC-04/05、evidence/outcome/exception 边界
+    - listitem: WoG / Bomb Farm 原始历史报告及相关 Inventory
+  - paragraph:
+    - text: 结论：
+    - strong: 这套 WS04A 方法设计可以独立 ACCEPT。
+  - heading "1. Authority 边界通过" [level=2]
+  - paragraph: 设计没有创建第二套 Inventory、media manifest、Registry 或发布数据库。
+  - paragraph: 现在的权威关系表达清楚：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Contract → requirement / applicability / severity / outcome 现有技术权威 → Page ID / route / publication / media assets / config Game Adaptation method → 为什么选、玩家任务、承诺答案、媒体需求、关系理由 Project / Human / Independent Review → 游戏事实、权利、视觉与最终验收
+  - paragraph: 尤其 Worksheet 明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 引用 Inventory ≠ 重新持有 route/publication authority 引用 media decision ≠ 新建另一份 media lifecycle authority
+  - paragraph: 这符合 Roadmap 对 04A 的边界。
+  - separator
+  - heading "2. Player-task 方法通过" [level=2]
+  - paragraph: Worksheet C 已经把最关键的几个概念拆开：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: entry question primary player task promised answer actual supported answer gap decision next useful action desiredPatternIntent
+  - paragraph: 这正好解决 WoG 已出现过的问题：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: “Best Items / Builds” 标题和用户预期 ≠ 当前实际只提供定性框架
+  - paragraph: 设计没有要求用虚构排名、物品、价格去补齐承诺，而是允许：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 收窄承诺 取得事实 或 BLOCK
+  - paragraph: 这一点我接受。
+  - separator
+  - heading "3. Pattern 边界通过" [level=1]
+  - paragraph: 文档只允许：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: desiredPatternIntent
+  - paragraph: 而不是发明：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: patternId Pattern API 新的 Pattern schema
+  - paragraph: 并明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 04A methods → 等 WS03 interface → 04A binding → WS05 implementation → 04B instance validation
+  - paragraph: 没有形成 04A ↔ 05 的循环依赖。
+  - separator
+  - heading "4. Media lifecycle 语义通过" [level=1]
+  - paragraph: 我重新对照了当前实际 media-readiness.ts。
+  - paragraph: 真实 literal仍然包括：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "Rights: VERIFIED UNRESOLVED HUMAN RISK ACCEPTED NOT REQUIRED FOR EMBED Human: APPROVED WAIVED REVISE BLOCK PENDING"
+  - paragraph: PLAN18 文档没有篡改这些语义。
+  - paragraph: 特别是 clarification 后，BF01 的处理已经正确变为：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: source exists ≠ rights approval rights != VERIFIED ≠ 自动 BLOCK HUMAN RISK ACCEPTED / NOT REQUIRED FOR EMBED / WAIVED 可以保留其既有合法语义
+  - paragraph: 但它们必须绑定：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: applicable condition authorized scope decision owner / reviewer reason evidence current project/build
+  - paragraph: 而且文档明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: media lifecycle state ≠ Contract verifiedOutcome ≠ release exception
+  - paragraph: 这与 Contract 当前语义一致。
+  - separator
+  - heading "5. 没有把 WAIVED / risk accepted 变成 P1 豁免" [level=1]
+  - paragraph: 这一项通过。
+  - paragraph: Canonical Contract明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: P0/P1 ordinary failures cannot be waived
+  - paragraph: 设计也明确写出：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: HUMAN RISK ACCEPTED WAIVED 不得推出： rights VERIFIED Contract PASS P0/P1 release exception
+  - paragraph: 因此没有因为沿用旧 media lifecycle 而破坏新 Contract 的严重度/例外规则。
+  - separator
+  - heading "6. Complete no-media 方法通过" [level=1]
+  - paragraph: 这里设计得比较完整。
+  - paragraph: 它明确区分：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: A. 媒体对任务没有实质帮助 B. 媒体其实有帮助，但当前不可获得
+  - paragraph: B 不能伪装成：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: NO MEDIA NEEDED
+  - paragraph: 同时 no-media需要记录：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 任务真实答案 内容层级 步骤/表格/检查单/来源 下一步 完整布局 无空槽 放弃媒体后的能力边界 组合重分类 owner / build / review 复查触发条件
+  - paragraph: 并明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 如果仍有适用 P1 阻塞 → 继续 BLOCK
+  - paragraph: 这与 MC-04 的“verified media or explicit unavailable/non-need rationale + complete no-media pattern”是一致的，没有把“无图”包装成完成。
+  - separator
+  - heading "7. 视频方法与 MC-05 一致" [level=1]
+  - paragraph: 设计不是简单问：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 有没有视频？
+  - paragraph: 而是记录：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 是否有助任务 使用 / 排除理由 source / rights accessible equivalent fallback 不播放时任务是否仍完整
+  - paragraph: 也没有现在发明 provider。
+  - paragraph: 对应的具体：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: rights 尺寸 accessible equivalent fallback
+  - paragraph: 都正确放回 WS03B。
+  - separator
+  - heading "8. WS03 dependency ledger 通过" [level=1]
+  - paragraph: 这是本轮最重要的结构性产物之一。
+  - paragraph: 台账准确区分：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: AVAILABLE_NOW PARTIAL_EXISTING_INTERFACE WAITING_WS03A WAITING_WS03B WAITING_WS03C WAITING_WS03D
+  - paragraph: 并明确这些只是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: design dependency state
+  - paragraph: 不是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Contract PASS / FAIL / N/A
+  - paragraph: 关键依赖均覆盖：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 03A — theme semantics 03B — media rights/dimensions/video equivalent/fallback 03C — share media 03D — search 03D — freshness/date/patch semantics
+  - paragraph: 而且方向严格是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: accepted WS03 interface ↓ read actual schema / adapter / evidence ↓ reconcile assumptions ↓ 04A binding
+  - paragraph: 不是让 WS03 去实现 PLAN18 猜出来的接口。
+  - paragraph: 这一点完全符合 DAG。
+  - separator
+  - heading "9. WoG 历史案例没有被越权使用" [level=1]
+  - paragraph: 我重新核了原报告。
+  - paragraph: WOG-01：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 当时只有 Logo 没有未确认截图/人物图
+  - paragraph: 设计只把它变成：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 游戏识别 / 视觉依据 / MC-04 需要重新判断
+  - paragraph: 没有宣称历史 GI-02 已 FAIL 或当前仍 FAIL。
+  - paragraph: WOG-02：
+  - paragraph: 原报告确实记录：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: OG title/description/url 有 og:image 无
+  - paragraph: 现在只映射为：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: SEO-02 / WS03C dependency
+  - paragraph: 没有提前发明 ogImage schema。
+  - paragraph: WOG-03：
+  - paragraph: 原报告确实记录 Builds / Best Items 的承诺深度风险；当前 WoG Inventory 也确实存在：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: hub.builds market.best-items-to-sell
+  - paragraph: 文档没有把这些页面当前状态重新验收。
+  - paragraph: WOG-04：
+  - paragraph: Privacy/Terms draft、主体/contact不完整的历史边界也保持准确。
+  - separator
+  - heading "10. Bomb Farm 四个例子通过" [level=1]
+  - paragraph: BF-01 正确保留：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 早期 BLOCKED BY MEDIA RIGHTS DO-NOT-USE / RIGHTS-UNCLEAR
+  - paragraph: 同时没有错误推导：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 当前仍永远 BLOCK
+  - paragraph: BF-02 原报告确实是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 22 manifest assets 23 local files
+  - paragraph: 设计正确写成：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: inventory evidence ≠ MC-04 completeness
+  - paragraph: 没有数量 Gate。
+  - paragraph: BF-03 原报告确实列有四项 intentional no-media：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Codes Tools System Requirements FAQ
+  - paragraph: 现在只作为历史“decision-form example”，必须重新绑定：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: current Page ID current source/build current rationale current review
+  - paragraph: 没有继承 APPROVED。
+  - paragraph: BF-04 原 Human Review 文件的实际最终状态仍是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: READY FOR HUMAN VISUAL REVIEW
+  - paragraph: 而不是 PASS。
+  - paragraph: 设计正确保留这个区别：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: screenshots/evidence prepared ≠ human review signed
+  - separator
+  - heading "11. 五案例输入边界通过" [level=1]
+  - paragraph: 设计没有把：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: VV Farever Gamble Mini Wars Bomb Farm reference pattern
+  - paragraph: 当作统一的“成功模板”。
+  - paragraph: 特别保留了：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Farever原站未取得 Bomb Farm TOC历史待复测 CSS art ≠ gameplay media static Popular/Online ≠ live truth 商业布局 ≠ 流量/收入证明
+  - paragraph: 因此没有把案例观察升级为商业事实。
+  - separator
+  - heading "12. Contract / Registry 边界通过" [level=1]
+  - paragraph: 实际检查结果：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: canonical Contract SHA = 1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c canonical capability IDs = 41
+  - paragraph: 本轮设计引用 20 个现有 ID，没有新增：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: GA-01 ADAPT-*
+  - paragraph: 之类虚构 capability。
+  - paragraph: 设计中对：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: NOT_RUN PENDING OBSERVED UNVERIFIED verifiedOutcome
+  - paragraph: 的分离也与 Contract现有 evidence model一致。
+  - separator
+  - heading "13. Scope / integrity 通过" [level=1]
+  - paragraph: execution metadata报告：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 5 design files + saved actual PLAN 5759 protected files unchanged 237 candidate files match iteration17 40 local links valid unexpectedFiles = [] errors = []
+  - paragraph: 产品 build/tests：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: NOT_RUN
+  - paragraph: 这在本轮是正确的，而不是缺失。
+  - paragraph: 因为 iteration18：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 0 runtime delta 0 schema delta 0 product delta
+  - paragraph: 没有理由拿 iteration17 的 757 tests PASS 冒充本轮重新执行。
+  - separator
+  - heading "14. 一个非阻塞观察" [level=1]
+  - paragraph: Worksheet里仍有不少：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 未提供 未评估
+  - paragraph:
+    - text: 这是
+    - strong: 正确的模板状态
+    - text: ，不是需要修复的问题。
+  - paragraph: 这一轮审核的是：
+  - blockquote:
+    - paragraph: 方法是否能正确暴露缺项。
+  - paragraph: 不是要求替 WoG/Bomb Farm 填完实际适配记录。
+  - paragraph: 因此这些空值不能成为 REVISE 理由。
+  - separator
+  - heading "iteration18 verdict" [level=2]
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "ITERATION18_WS04A_METHODS_DESIGN: verdict: ACCEPT scope: methods_documents: 5 product_delta: 0 runtime_delta: 0 schema_delta: 0 contract_delta: 0 registry_delta: 0 authority_model: PASS player_task_method: PASS media_rights_boundary: PASS media_lifecycle_preservation: PASS no_media_method: PASS history_traceability: PASS ws03_dependency_direction: PASS product_tests: status: NOT_RUN appropriate: true schema_frozen: false ws04a_gate_closed: false ws06a_changed: false capability_promotion: NONE"
+  - paragraph: 正式状态：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "[C2C] STATE: REVIEW TASK_ID: c2c_a765 ITERATION: 18 WORKSTREAM: WS04A bounded methods design VERDICT: ACCEPT WS04A METHODS DESIGN: ACCEPTED WS04A GATE: OPEN ADAPTATION SCHEMA: NOT FROZEN WS03 INTERFACES: NOT ACCEPTED WS06A: STILL BLOCKED PRODUCT / CAPABILITY PASS: NONE"
+  - paragraph:
+    - text: 按照你前一轮已确认的 clarification，
+    - strong: 现在可以更新那 3 个既有 progress index，只写 iteration18 的 METHODS DESIGN ACCEPTED、独立 review 指针和“等待 WS03→04A binding”下一依赖；不得把 WS04A 标成 CLOSED/PASS。
+  - button "复制":
+  - button "评价回复":
+  - button "分享":
+  - button "朗读":
+  - button "重新生成回复":
+  - button "更多操作":
+  - generic: ChatGPT 可能会出错。请核查重要信息。
+  - button "滚动到底部":
+  - heading "最新一条回复" [level=4]
+  - status
+  - button "添加文件等内容":
+  - textbox "询问 ChatGPT" [active]:
+    - paragraph: 询问 ChatGPT
+  - button "选择 ChatGPT 模型":
+    - generic: 高
+  - button "听写":
+  - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+```

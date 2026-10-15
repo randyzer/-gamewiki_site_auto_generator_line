@@ -1,0 +1,10 @@
+{
+  "command": "npm run test -- tests/config.test.ts tests/theme.test.ts",
+  "exitCode": 1,
+  "failed": 8,
+  "passed": 45,
+  "total": 53,
+  "observedAt": "2026-10-07T16:03:24.865101+00:00",
+  "reason": "new explicit-role acceptance, adapter existence and semantic CSS/layout behavior missing",
+  "implementationWrittenBeforeRed": false
+}

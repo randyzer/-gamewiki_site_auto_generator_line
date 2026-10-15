@@ -1,0 +1,798 @@
+{
+  "status": "PASS",
+  "count": 132,
+  "links": [
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "GAME_ADAPTATION_METHOD_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03d/iteration33/triad-post-identity.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/triad-post-identity.json",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03a/iteration27/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration27/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03b/iteration29/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03b/iteration29/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03c/iteration30/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03c/iteration30/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03d/iteration31/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration31/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../codex/executions/v2.7-ws03d/iteration33/continuation-audit.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/continuation-audit.json",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/schema.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/schema.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/theme-roles.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/theme-roles.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/media.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/media.json",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-presentation.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-presentation.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/GameMedia.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/GameMedia.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/VideoEmbed.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/VideoEmbed.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/ScreenshotGallery.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/ScreenshotGallery.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-search-adapter.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-search-adapter.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/provenance.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/provenance.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/facts.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/facts.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/tools.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/tools.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "../../../Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "target": "WS04A_BINDING_READINESS_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../codex/executions/v2.7-ws04a/iteration34/preimages/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/preimages/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "../../roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "target": "WS04A_BINDING_READINESS_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "target": "../../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "target": "WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "target": "GAME_ADAPTATION_METHOD_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "target": "../../codex/executions/v2.7-ws04a/iteration34/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration34/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws01/capability-evidence-baseline.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws01/capability-evidence-baseline.json",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws01/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws01/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws01/verification.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws01/verification.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws02/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws02/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws02/verification.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws02/verification.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration16/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration16/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../audit/REAL_PROJECT_AND_REFERENCE_EVIDENCE_CROSSWALK_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/audit/REAL_PROJECT_AND_REFERENCE_EVIDENCE_CROSSWALK_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03a/iteration27/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration27/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03b/iteration29/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03b/iteration29/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03c/iteration30/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03c/iteration30/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03d/iteration31/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration31/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/browser-evidence-rerun-1/core-browser-evidence.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/browser-evidence-rerun-1/core-browser-evidence.json",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration15/LIVE_RESIZE_CORE_REPAIR_SPEC_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration15/LIVE_RESIZE_CORE_REPAIR_SPEC_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration16/browser-evidence/core-browser-evidence.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration16/browser-evidence/core-browser-evidence.json",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration16/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration16/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration16/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration16/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/prompts/v2.7-ws06a/iteration17-webkit-policy-implementation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws06a/iteration17-webkit-policy-implementation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration17/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration17/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../LIVE_SITE_VALIDATION_2026-10-01.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/LIVE_SITE_VALIDATION_2026-10-01.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws04a/iteration18/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../codex/executions/v2.7-ws03d/iteration33/continuation-audit.json",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/continuation-audit.json",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/roadmap/V2.7_TASK_LEDGER.md",
+      "target": "../design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "roadmap/V2.7_TASK_LEDGER.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/V2.7_TASK_LEDGER.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "governance/V2.7_VERSION_DECISION.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/governance/V2.7_VERSION_DECISION.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "architecture/GAME_SITE_SYSTEM_EVOLUTION_MODEL.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/architecture/GAME_SITE_SYSTEM_EVOLUTION_MODEL.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "DELIVERY_LAYOUT.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/DELIVERY_LAYOUT.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration33/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws04a/iteration34-interface-consolidation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/WS04A_BINDING_READINESS_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "roadmap/WS01_V2.7_NORMATIVE_FOUNDATION_IMPLEMENTATION_PLAN_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/WS01_V2.7_NORMATIVE_FOUNDATION_IMPLEMENTATION_PLAN_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/prompts/v2.7-ws01/prompt.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws01/prompt.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws01/review-iteration-8.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws01/review-iteration-8.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws01/verification.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws01/verification.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws01/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws01/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/prompts/v2.7-ws02/prompt.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws02/prompt.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws02/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws02/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws02/verification.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws02/verification.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/prompts/v2.7-ws06a/prompt.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws06a/prompt.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/prompts/v2.7-ws06a/iteration12-repair-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws06a/iteration12-repair-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/review-iteration-12.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/review-iteration-12.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration13/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration13/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration14/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration14/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration15/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration15/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration15/LIVE_RESIZE_CORE_REPAIR_SPEC_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration15/LIVE_RESIZE_CORE_REPAIR_SPEC_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration16/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration16/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration16/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration16/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/prompts/v2.7-ws06a/iteration17-webkit-policy-implementation-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/prompts/v2.7-ws06a/iteration17-webkit-policy-implementation-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws06a/iteration17/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws06a/iteration17/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "roadmap/WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/roadmap/WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/design/ws04a/GAME_ADAPTATION_METHOD_V1.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/executions/v2.7-ws04a/iteration18/result.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws04a/iteration18/result.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/verifications/v2.7-design/blueprint-acceptance-and-roadmap-plan.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/verifications/v2.7-design/blueprint-acceptance-and-roadmap-plan.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/verifications/v2.7-design/roadmap-acceptance.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/verifications/v2.7-design/roadmap-acceptance.md",
+      "exists": true
+    },
+    {
+      "document": "template/PROJECT_STATE.md",
+      "target": "codex/verifications/goal-reset-2026-10-01/verification.md",
+      "resolved": "/Users/randyz/work/coding/hot_words_web/template/codex/verifications/goal-reset-2026-10-01/verification.md",
+      "exists": true
+    }
+  ]
+}

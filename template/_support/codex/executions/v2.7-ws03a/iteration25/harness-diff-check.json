@@ -1,0 +1,49 @@
+{
+  "assertionNamesUnchanged": true,
+  "assertionLogicUnchanged": true,
+  "selectorsUnchanged": true,
+  "returnedObservationKeysUnchanged": true,
+  "profileUnchanged": true,
+  "enginesUnchanged": true,
+  "viewportsUnchanged": true,
+  "fixtureMutationUnchanged": true,
+  "buildPathUnchanged": true,
+  "previewLifecycleUnchanged": true,
+  "cleanupRulesUnchanged": true,
+  "hoverAndArticleCallbacksUnchanged": true,
+  "fullTargetedHelperMatches24ExceptOutputPath": true,
+  "status": "PASS",
+  "allowedChanges": [
+    "execution output paths",
+    "home callback local readSurface converted to anonymous map"
+  ],
+  "selectors": [
+    ".game-hero__copy h1",
+    ".eyebrow",
+    ".portal-card",
+    ".button",
+    ".shell"
+  ],
+  "surfaceProperties": [
+    "font",
+    "padding",
+    "minHeight",
+    "height",
+    "width",
+    "radius",
+    "border",
+    "transform",
+    "shadow"
+  ],
+  "observationKeys": [
+    "roles",
+    "family",
+    "bodyFont",
+    "heading",
+    "utility",
+    "card",
+    "control",
+    "shell",
+    "tokens"
+  ]
+}

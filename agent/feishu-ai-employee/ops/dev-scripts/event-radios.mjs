@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});
+const p=c.pages()[0]||await c.newPage();
+await p.goto('https://open.feishu.cn/app/cli_aa476f5e72789ccc/event',{waitUntil:'domcontentloaded'});
+await p.getByText('事件配置',{exact:true}).first().waitFor({timeout:20000});
+await p.getByText('订阅方式',{exact:true}).locator('xpath=..').locator('button').click();
+await p.waitForTimeout(400);
+console.log('RADIOS',JSON.stringify(await p.locator('input[type=radio]').evaluateAll(es=>es.map(e=>({checked:e.checked,near:e.parentElement?.parentElement?.innerText?.slice(0,140)})))));
+console.log('BODY',(await p.locator('body').innerText()).slice(-1600));
+await c.close();

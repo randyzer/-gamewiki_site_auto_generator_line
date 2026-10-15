@@ -1,0 +1,15 @@
+{
+  "ownedTmpRoot": "/tmp/c2c30b.WOCubn",
+  "fixtureRealPath": "/private/tmp/c2c30b.WOCubn/starter-adoption-verification-AATr6N",
+  "fixtureLogicalPath": "/tmp/c2c30b.WOCubn/starter-adoption-verification-AATr6N",
+  "previewPid": 43011,
+  "pidCwd": "/private/tmp/c2c30b.WOCubn/starter-adoption-verification-AATr6N",
+  "fixtureSourceSha256": "1661b9ea81ed5497eb26d1ab06618c6afbc46ee4a8f94a7c0bc08c9c49af82d0",
+  "distSha256": "c11ec5154d715efb28c64735151b9013daf045380d65aa6fbcd816c02cddf1fd",
+  "firstStableObservedAt": "2026-10-08T01:03:03.486Z",
+  "secondStableObservedAt": "2026-10-08T01:03:03.733Z",
+  "sourceStable": true,
+  "distStable": true,
+  "modifiedByObserver": false,
+  "reportExistedAtCapture": false
+}

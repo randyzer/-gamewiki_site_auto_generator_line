@@ -1,0 +1,26 @@
+[
+  {
+    "name": "root-check",
+    "command": "npm run check",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T00:56:28.819Z",
+    "finishedAt": "2026-10-08T00:56:49.721Z"
+  },
+  {
+    "name": "unadopted-final",
+    "command": "npm run verify:unadopted-final",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T00:56:49.721Z",
+    "finishedAt": "2026-10-08T00:56:50.470Z"
+  },
+  {
+    "name": "adopted-final",
+    "command": "npm run verify:adopted-final",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 1,
+    "startedAt": "2026-10-08T00:56:50.471Z",
+    "finishedAt": "2026-10-08T00:56:58.504Z"
+  }
+]

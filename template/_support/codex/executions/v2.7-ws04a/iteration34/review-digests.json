@@ -1,0 +1,12 @@
+{
+  "result.md": "87523cf8672dad3c49fd4f883ecd09186a3613aa92aab9f7a60b0f94fbf32331",
+  "preflight.json": "a626cf1dd38c8c2a975667acee9db077c2edd04631df456e4a8b08b0f8af992f",
+  "preimages.json": "bd3d97bdf07ff859ae2e9f1af82c7fc20cd1f2ee554cb121e166db421682ae54",
+  "design-audit.json": "6f5f83208d1e9aafec2cac76762ecf607b860865ab1de858235c385e7d1dfd69",
+  "approved-scope.patch": "56ae11355b376169b24a7d8656f55483d8e368eb0c93d0540b1503b2a68dcfee",
+  "postimages.json": "cadc529e4870957e887f86004e5a09d1ee65b9e05c57a3d77d814679daffd668",
+  "source-symbol-checks.json": "bbf535128243ba0d85de0120ba756a705f522fef45b9cdb7ffc553874aba11f0",
+  "document-link-checks.json": "86a732f8fa0d2dc7dc0306d59e1adc739e3a8270e4a19a7adeea4f3b9065a600",
+  "dependency-reconciliation-checks.json": "f8814cb906a4d29460016eed3e809977669bfb84079074ff096fb8113627ca9a",
+  "triad-identity.json": "ee06e22b1c39a430d5f545190ff7bdb1ce304ac057fd3862294e40e5eed30ab0"
+}

@@ -1,0 +1,3111 @@
+{
+  "baselineKind": "WS01_EVIDENCE_INDEX",
+  "releaseBaseline": false,
+  "systemVersion": "V2.7",
+  "canonicalContract": {
+    "systemVersion": "V2.7",
+    "productContractVersion": "V2.7",
+    "capabilityRegistryVersion": "V2.7",
+    "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+    "owningArtifact": "GAME_SOP",
+    "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+    "predecessorContractVersion": "v0.2",
+    "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+  },
+  "recordCount": 41,
+  "records": [
+    {
+      "capabilityId": "GI-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "GI-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "HUMAN PRODUCT REVIEW",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "VF-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "HUMAN PRODUCT REVIEW",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "VF-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "MC-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "MC-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "PROHIBITED"
+    },
+    {
+      "capabilityId": "MC-03",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "HR-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "HR-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "IA-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "IA-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PROVEN",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "IA-03",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "CU-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "CU-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "DS-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "DS-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "FR-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "FR-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "ID-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PROVEN",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "ID-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "OPTIONAL"
+    },
+    {
+      "capabilityId": "SEO-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PROVEN",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "SEO-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "SEO-03",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PROVEN",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "AX-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md",
+        "template/codex/executions/phase-a/03_AX01/result.md",
+        "template/codex/verifications/phase-a/03_AX01/verification.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "GAP",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "IMPLEMENTATION_ACCEPTED",
+          "evidenceRefs": [
+            "template/codex/executions/phase-a/03_AX01/result.md",
+            "template/codex/verifications/phase-a/03_AX01/verification.md"
+          ],
+          "browserProof": "PENDING"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "note": "Implementation independently accepted; browser requirement pending; OBSERVED + null, not PROVEN.",
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "AX-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "UNVERIFIED",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "AX-03",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "GAP",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "PENDING"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "note": "Browser matrix absent; full cross-browser requirement unproven.",
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "PP-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PROVEN",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "PP-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md",
+        "template/codex/executions/phase-a/02_PP02/result.md",
+        "template/codex/verifications/phase-a/02_PP02/verification.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "GAP",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "IMPLEMENTATION_ACCEPTED",
+          "evidenceRefs": [
+            "template/codex/executions/phase-a/02_PP02/result.md",
+            "template/codex/verifications/phase-a/02_PP02/verification.md"
+          ],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "PROHIBITED"
+    },
+    {
+      "capabilityId": "TL-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md",
+        "template/PHASE1_S1_TL01_FINAL_PROVENANCE_VERIFICATION.md",
+        "template/PHASE1_S1_TL01_IMPLEMENTATION_EVIDENCE.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "GAP",
+          "responsibility": "DIRECT",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "IMPLEMENTATION_ACCEPTED",
+          "evidenceRefs": [
+            "template/PHASE1_S1_TL01_FINAL_PROVENANCE_VERIFICATION.md",
+            "template/PHASE1_S1_TL01_IMPLEMENTATION_EVIDENCE.md"
+          ],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "PROHIBITED"
+    },
+    {
+      "capabilityId": "TL-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md",
+        "template/codex/executions/phase-a/01_TL02/result.md",
+        "template/codex/verifications/phase-a/01_TL02/verification.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "IMPLEMENTATION_ACCEPTED",
+          "evidenceRefs": [
+            "template/codex/executions/phase-a/01_TL02/result.md",
+            "template/codex/verifications/phase-a/01_TL02/verification.md"
+          ],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "PROHIBITED"
+    },
+    {
+      "capabilityId": "TL-03",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "MR-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PROVEN",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "MR-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "HUMAN PRODUCT REVIEW",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "PA-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "PA-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "RELEASE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "CONDITIONAL"
+    },
+    {
+      "capabilityId": "MC-04",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "MC-05",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "PARTIAL",
+          "responsibility": "SEAM",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "RI-01",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "ACCEPTANCE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "PROHIBITED"
+    },
+    {
+      "capabilityId": "RI-02",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "RELEASE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "RI-03",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "RELEASE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    },
+    {
+      "capabilityId": "RI-04",
+      "canonicalContract": {
+        "systemVersion": "V2.7",
+        "productContractVersion": "V2.7",
+        "capabilityRegistryVersion": "V2.7",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "owningArtifact": "GAME_SOP",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+        "predecessorContractVersion": "v0.2",
+        "predecessorSha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+      },
+      "sourceIdentity": {
+        "sources": [
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+            "commit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+            "tree": "0920c9de216ada5601f681d81e4345cf69fb65e8"
+          },
+          {
+            "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+            "commit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+            "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1"
+          }
+        ]
+      },
+      "projectIdentity": null,
+      "buildIdentity": null,
+      "scope": "PORTABLE",
+      "applicabilityDecision": {
+        "evaluated": false,
+        "reason": "Registry applicability only; current project condition/selection not yet evaluated",
+        "decisionOwner": null,
+        "evidenceRefs": [],
+        "applies": null,
+        "selected": null
+      },
+      "evidenceStatus": "OBSERVED",
+      "verifiedOutcome": null,
+      "evidenceBasis": "HISTORICAL_OBSERVATIONS_ONLY",
+      "requirementCoverage": "UNVERIFIED",
+      "verificationOwner": "RELEASE GATE",
+      "currentBuildReviewed": false,
+      "hasKnownApplicableFailure": false,
+      "evidenceRefs": [
+        "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md"
+      ],
+      "reviewer": null,
+      "reviewedAt": null,
+      "exception": null,
+      "supersedes": [],
+      "conflicts": [],
+      "observations": {
+        "frozenV265": {
+          "sourceCommit": "29b25559cf2af859bca359c7f7fda686a4803c95",
+          "auditDate": "2026-09-30",
+          "supportLabel": "OUTSIDE_STARTER",
+          "responsibility": "EXTERNAL",
+          "evidenceScope": "Read-only portable Core audit; historical executed evidence, not a current assembled outcome"
+        },
+        "acceptedA3": {
+          "sourceCommit": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+          "engineeringDelta": "NO_REVIEWED_CAPABILITY_OUTCOME_IN_THIS_INDEX",
+          "evidenceRefs": [],
+          "browserProof": "NOT_REEVALUATED"
+        },
+        "currentV27": {
+          "productExecution": "WS01_METHOD_ONLY",
+          "requiredTechnicalAndProjectEvidence": "NOT_RUN",
+          "releaseAcceptance": "NOT_RUN"
+        }
+      },
+      "registryApplicability": "REQUIRED"
+    }
+  ],
+  "historicalProjectObservations": {
+    "evidenceRefs": [
+      "gameweb/game_warofgenesis/docs/PRELAUNCH_ACCEPTANCE_2026-09-15.md",
+      "gameweb/game_bombfarm_v2/docs/PHASE_4_QA_RECONCILIATION_REPORT.md",
+      "gameweb/game_bombfarm_v2/docs/VISUAL_MEDIA_GAP_REPORT.md",
+      "gameweb/game_bombfarm_v2/docs/V2_1_VISUAL_MEDIA_ENRICHMENT_REPORT.md",
+      "gameweb/game_bombfarm_v2/docs/V2_1_HUMAN_VISUAL_REVIEW_EVIDENCE.md"
+    ],
+    "currentBuildReviewed": false,
+    "currentVerifiedOutcome": null,
+    "warOfGenesis": "Historical technical build PASS coexists with human release not recommended; no V2.7 adoption result.",
+    "bombFarm": "Historical QA PASS, later media-rights BLOCK and visual PENDING belong to different reports/builds; no inherited Human or V2.7 PASS.",
+    "conflictResolution": "Preserve dates/source/build/scope; follow newer blocking evidence until accurate-build independent re-review; missing identities stay unresolved."
+  },
+  "referenceObligations": {
+    "referenceArchetypes": {
+      "REF-A": "Wiki / Commercial Editorial",
+      "REF-B": "Problem Guide / Tool",
+      "REF-C": "Tactical / Systems"
+    },
+    "realAdoptionProjects": [
+      "PROJECT-WOG",
+      "PROJECT-BOMBFARM",
+      "PROJECT-TASK-GUIDE"
+    ],
+    "realProjectCoverageSubstitutesReferencePass": false,
+    "deterministicReferencePass": {
+      "REF-A": null,
+      "REF-B": null,
+      "REF-C": null
+    },
+    "realAdoptionPass": {
+      "PROJECT-WOG": null,
+      "PROJECT-BOMBFARM": null,
+      "PROJECT-TASK-GUIDE": null
+    }
+  }
+}

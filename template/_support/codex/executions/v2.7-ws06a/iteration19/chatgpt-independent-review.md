@@ -1,0 +1,318 @@
+# Iteration 19 — actual independent ChatGPT review
+
+Source: original ChatGPT conversation https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+Captured after completed response. Design acceptance only; no roadmap amendment or development readiness granted.
+
+```text
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 19"
+      - text: "WORKSTREAM: WS06A development-readiness alternative — DESIGN ONLY"
+      - text: "VERDICT:"
+      - strong: ACCEPT — DESIGN ONLY
+    - paragraph: 我已独立读取 5 份 template/design/ws06a/*.md、实际 PLAN19、result/preflight/design-checks/dual-engine-counterpart-audit/residual-set/closure-recheck，并复核 iteration17 raw evidence、现行 closure verifier、Roadmap 的 WS06A→03→06B→07→08 依赖。
+    - paragraph:
+      - strong: 没有发现需要 finite REVISE 的问题。
+    - heading "1. 方案没有把 WebKit/Safari 问题“技术性消失”" [level=3]
+    - paragraph: 实际状态仍被完整保存：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: raw matrix = 47 executed PASS = 37 FAIL = 10 WebKit rows failed asserts = 40 Safari proof = 0 WS06A = BLOCKED
+    - paragraph: 原 closure verifier 本轮实际重跑仍：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "exit 1 decision = BLOCKED only error: missing/invalid real Safari keyboard evidence"
+    - paragraph:
+      - text: 这一点非常重要：
+      - strong: Development Readiness 没有进入 closure verifier，更没有改变原 Gate。
+    - separator
+    - heading "2. Chromium / Firefox 80 个 counterpart 用法正确" [level=3]
+    - paragraph: 本轮重新计算得到：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WebKit failed assertions = 40 Chromium exact counterparts: 40 / 40 PASS Firefox exact counterparts: 40 / 40 PASS total = 80 / 80"
+    - paragraph: 匹配维度不是只看 assertion name，而是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: category role route viewport javascript reducedMotion assertion
+    - paragraph: 文档把它明确称为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: cross-engine corroboration
+    - paragraph: 而不是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Safari evidence WebKit equivalence 2-of-3 majority PASS
+    - paragraph: 这个语义边界通过。
+    - separator
+    - heading "3. 40 条 residual 不是“允许失败白名单”" [level=3]
+    - paragraph: residual-set-v1.json 正确标记：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: FROZEN_DESIGN_INPUT_NOT_PASS_ALLOWLIST
+    - paragraph: 实际分类：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED
+    - paragraph: 未来规则也足够严格：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 40 → 39 可以 40 → 41 BLOCK 旧失败消失20个 + 新失败1个 仍然 BLOCK
+    - paragraph: 而且同名 assertion、新的“看起来也是 Tab 问题”都不能自动加入集合。
+    - paragraph: 这防止了这套机制随时间演变成“所有 WebKit 失败都可忽略”。
+    - separator
+    - heading "4. 新失败 STOP 规则通过" [level=1]
+    - paragraph: WS03 slice规则明确要求每次新 source：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: fresh unchanged 47 + non-WebKit 0 regression + WebKit residual ⊆ frozen residual set + 每个 residual 当前仍有 Chromium PASS + 每个 residual 当前仍有 Firefox PASS + 0 unknown infrastructure failure
+    - paragraph: 并明确：
+    - blockquote:
+      - paragraph: 切片新增 browser surface 的 failure 不能塞进旧 40 集合。
+    - paragraph: 所以 WS03 新增 theme/media/share/search 等功能如果自己产生 browser bug，不能借 WS06A 的旧 WebKit问题逃避修复。
+    - paragraph: 这是我认为本方案能安全成立的核心条件之一。
+    - separator
+    - heading "5. Source freshness 设计足够严格" [level=1]
+    - paragraph: Development Readiness明确绑定：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Starter branch/head/working-tree 三件套身份 Contract SHA matrix SHA runner SHA closure verifier SHA policy/control/raw/native evidence identity fixture source/dist Playwright 三 engine version/revision host/platform/arch 采集日期 reviewer 下一切片
+    - paragraph: 而且：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 任一产品源 / config / fixture / dist / verification source / tool version / host变化 → readiness = STALE
+    - paragraph: 特别是产品源码变化后：
+    - blockquote:
+      - paragraph: 不能拿 iteration17 的 37/10 和 80/80 继续签下一片。
+    - paragraph: 必须重跑新 source 的 47 和 counterpart audit。
+    - paragraph: 通过。
+    - separator
+    - heading "6. Slice 自身的新 browser surfaces 没有被基础 47 替代" [level=1]
+    - paragraph: 文档没有犯一个容易出现的问题：
+    - blockquote:
+      - paragraph: “47 行没回归，所以新功能就算浏览器验证过。”
+    - paragraph: 相反，每个 WS03 slice都要求额外的 slice browser evidence。
+    - paragraph: 例如未来：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 03A → theme/state/accessibility surfaces 03B → media missing/failure/no-media/video equivalent 03C → generated share media / fallback 03D → search states / date-freshness states
+    - paragraph: 这是必要的。
+    - paragraph: Field Notes 基础 47 只负责继承 Core regression，不负责证明新接口。
+    - separator
+    - heading "7. 首条开发 lane 被严格限制在 WS03" [level=1]
+    - paragraph: 设计 ACCEPT 后仍然：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: readiness = NOT_EVALUATED
+    - paragraph: 即使以后 Development Readiness 被独立 ACCEPT，第一阶段也只允许：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WS03 bounded candidate development
+    - paragraph: 而且：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: one slice at a time
+    - paragraph: 推荐顺序从：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 03A
+    - paragraph: 开始。
+    - paragraph: 没有自动解锁：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 04A contract Gate 05 Pattern 04B 06B 07 08
+    - paragraph: 这一点符合 PLAN19 的风险控制目的。
+    - separator
+    - heading "8. Release Hold 完整保留" [level=1]
+    - paragraph: SAFARI_RELEASE_HOLD_AND_RECONCILIATION_V1.md 的边界足够明确。
+    - paragraph: 没有真实 Safari + WS06A full ACCEPT 时：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WS06A full acceptance BLOCKED AX-01/02/03 promotion NO PA-01 promotion NO WS03 formal Gate NO 04A/05/04B formal chain NO WS06B Gate NO WS07 Gate NO WS08 / release candidate NO push/tag/merge/release NO
+    - paragraph: 因此这不是一种：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: “先继续开发，最后默认算了”
+    - paragraph: 的机制。
+    - paragraph: 最终还是必须回到：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: stable source → fresh 47 → current Safari evidence → closure verifier → independent WS06A review → provisional slice reconciliation → original formal DAG
+    - separator
+    - heading "9. P0/P1 没有被变相 exception" [level=1]
+    - paragraph: 设计里 WS06A_DEVELOPMENT_READINESS 明确只是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: governance workflow state
+    - paragraph: 不是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Contract ID Registry field §W outcome EXCEPTION PASS N/A NOT_SELECTED WAIVED
+    - paragraph: 所以：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: ACCEPTED_FOR_BOUNDED_DEVELOPMENT
+    - paragraph: 可以和：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WS06A = BLOCKED P1 evidence unresolved Safari proof = 0
+    - paragraph: 同时存在。
+    - paragraph: 这正是合理的语义。
+    - paragraph: 没有违反当前 Contract：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: P0/P1 ordinary failures cannot be waived
+    - separator
+    - heading "10. Safari 最终真实 FAIL 的返工路径也被保留" [level=1]
+    - paragraph: 设计没有假设：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Safari未来一定PASS
+    - paragraph: 如果最终真实 Safari证明：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: keyboard failure table scroll failure target issue
+    - paragraph: 则要求：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WS06A stays BLOCKED → product repair → affected WS03 evidence STALE → targeted regression → new 47 → Safari evidence again
+    - paragraph: 即已经投入开发也不能成为豁免理由。
+    - paragraph: 这一点通过。
+    - separator
+    - heading "11. 未来治理 amendment scope 精确为 5 个现有文件" [level=1]
+    - paragraph: 这部分符合 PLAN19。
+    - paragraph: 未来真正实施 proposal 时，只允许：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 1. template/roadmap/ GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md 2. Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ NEW_GAME_SITE_SOP_v2.7.md 3. Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ QA_CHECKLIST.md 4. Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/ EXECUTION_PROMPT.md 5. Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/ CodexMasterPrompt_v2.7Candidate.md
+    - paragraph: 明确排除：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Contract Registry Starter src/runtime schema package / lockfile CI matrix runner closure verifier policy/control
+    - paragraph: 如果未来治理实施发现必须改这些文件：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: STOP
+    - paragraph: 需要重新规划。
+    - paragraph: 这是正确范围。
+    - separator
+    - heading "12. Proposal 没有被写成执行授权" [level=1]
+    - paragraph: 我专门搜索了这类语义。
+    - paragraph: 文档明确写：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: PROPOSAL ONLY ACTIVE ROADMAP UNCHANGED
+    - paragraph: 并且：
+    - blockquote:
+      - paragraph: “写出本提案或接受设计都不能凭本文件开工 WS-03。”
+    - paragraph: Impact Map 又明确：
+    - blockquote:
+      - paragraph: “proposal ACCEPT只证明设计可用，有限实施须有具体可审查计划。”
+    - paragraph:
+      - text: 因此本次我的 ACCEPT
+      - strong: 不会自动产生
+      - text: ：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Roadmap amendment Development Readiness ACCEPT WS03 authorization
+    - paragraph: 通过。
+    - separator
+    - heading "13. Scope / integrity 通过" [level=1]
+    - paragraph: 本轮实际是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 5 design proposals + saved PLAN19 + execution metadata
+    - paragraph: 检查结果：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: protected files = 5775 unchanged local links = 40 valid unexpected = 0 Contract IDs = 41 unchanged activeRoadmapDelta = 0 productDelta = 0 readinessGranted = false
+    - paragraph: 产品构建、757 tests、fresh 47：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: NOT_RUN
+    - paragraph: 这是正确的，因为 iteration19 是纯设计轮。
+    - paragraph: 本轮真正执行的是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 历史 raw重新计算 + 现有 closure negative recheck
+    - paragraph: 没有把旧测试冒充本轮产品回归。
+    - separator
+    - heading "iteration19 独立结论" [level=2]
+    - generic: YAML
+    - button "启用自动换行":
+    - button "复制":
+    - code: "ITERATION19: verdict: ACCEPT_DESIGN_ONLY active_dag_changed: false development_readiness: current_state: NOT_EVALUATED granted: false raw_browser: pass: 37 fail: 10 failed_assertions: 40 corroboration: chromium: 40/40 firefox: 40/40 safari_substitution: false residual_policy: environment_profile_blocked: 37 product_evidence_unresolved: 3 new_failure_auto_allow: false future_first_lane: ws03_only: true one_slice_at_a_time: true release_hold: ws06a: BLOCKED ws06b: BLOCKED ws07: BLOCKED ws08: BLOCKED capability_promotion: NONE future_governance_scope: files: 5 contract_change: forbidden product_change: forbidden proposal_is_authorization: false"
+    - paragraph: 正式状态：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "[C2C] STATE: REVIEW TASK_ID: c2c_a765 ITERATION: 19 WORKSTREAM: WS06A development-readiness alternative VERDICT: ACCEPT — DESIGN ONLY PROPOSAL DESIGN: ACCEPTED ACTIVE ROADMAP: UNCHANGED DEVELOPMENT READINESS: NOT_EVALUATED WS03: NOT AUTHORIZED BY THIS ACCEPT WS06A: BLOCKED SAFARI PROOF: 0 CAPABILITY PROMOTION: NONE"
+    - paragraph:
+      - strong: 下一有限动作应是单独实施那 5 个治理文件的 amendment。
+      - text: 只有那个 amendment 独立 ACCEPT 后，才进行“当前 source 的 Development Readiness 审计”；再之后才可能进入 WS03A 候选代码。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+```

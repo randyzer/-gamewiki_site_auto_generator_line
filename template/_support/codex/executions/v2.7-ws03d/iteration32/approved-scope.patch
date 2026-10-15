@@ -1,0 +1,577 @@
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts
+index 9c642f4..4027ab3 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts
+@@ -52,6 +52,16 @@ export const legalActivationSchema = z.discriminatedUnion("state", [
+   }).strict(),
+ ]);
+ 
++export const liveStatusSchema = z.discriminatedUnion("state", [
++  z.object({ state: z.literal("not-live") }).strict(),
++  z.object({
++    state: z.literal("observed-live"),
++    observedAt: isoDateSchema,
++    sourceUrl: provenanceSchema.shape.sourceUrl,
++    evidenceNote: provenanceSchema.shape.evidenceNote,
++  }).strict(),
++]);
++
+ export const pageInventoryEntrySchema = z
+   .object({
+     pageId: z.string().regex(/^[a-z0-9]+(?:[.-][a-z0-9]+)*$/),
+@@ -90,6 +100,7 @@ export const pageInventoryEntrySchema = z
+     description: z.string().trim().min(50).max(170),
+     publishedAt: isoDateSchema.optional(),
+     updatedAt: isoDateSchema,
++    liveStatus: liveStatusSchema.optional(),
+     primaryKeyword: z.string().trim().min(2).max(80),
+     tags: z.array(z.string().trim().min(2).max(40)).min(1),
+     contentRef: z
+@@ -114,6 +125,13 @@ export const pageInventoryEntrySchema = z
+         path: ["legalActivation"],
+       });
+     }
++    if (entry.publishedAt && entry.updatedAt < entry.publishedAt) {
++      context.addIssue({
++        code: "custom",
++        message: "updatedAt must not precede publishedAt.",
++        path: ["updatedAt"],
++      });
++    }
+     if (
+       entry.visibility === "public" &&
+       entry.publicationStatus === "published" &&
+diff --git a/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts
+new file mode 100644
+index 0000000..a8ea166
+--- /dev/null
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/freshness.ts
+@@ -0,0 +1,28 @@
++import type { PageInventoryEntry } from "../data/schemas/page-inventory";
++import type { Provenance } from "../data/schemas/provenance";
++
++export interface VersionContext {
++  kind: "patch" | "version";
++  value: string;
++}
++
++type FreshnessPage = Pick<PageInventoryEntry, "publishedAt" | "updatedAt" | "sources" | "liveStatus">;
++
++export function latestSourceAccessedAt(sources: readonly Pick<Provenance, "accessedAt">[]) {
++  return [...sources].sort((left, right) => right.accessedAt.localeCompare(left.accessedAt)).at(0)?.accessedAt;
++}
++
++/** Projects authored facts without inferring verification, currency or live telemetry. */
++export function resolvePageFreshness(page: FreshnessPage, versionContext?: VersionContext) {
++  const sourceCheckedAt = latestSourceAccessedAt(page.sources);
++  const liveStatus = page.liveStatus?.state === "observed-live"
++    ? { state: "observed-live" as const, observedAt: page.liveStatus.observedAt, sourceUrl: page.liveStatus.sourceUrl }
++    : page.liveStatus ? { state: "not-live" as const } : undefined;
++  return {
++    ...(page.publishedAt ? { publishedAt: page.publishedAt } : {}),
++    updatedAt: page.updatedAt,
++    ...(sourceCheckedAt ? { sourceCheckedAt } : {}),
++    ...(versionContext ? { versionContext: { kind: versionContext.kind, value: versionContext.value } } : {}),
++    ...(liveStatus ? { liveStatus } : {}),
++  };
++}
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro
+index 9a825bc..bcc20eb 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro
+@@ -1,4 +1,5 @@
+ ---
++import { resolvePageFreshness } from "../core/freshness";
+ import RelatedPages from "./wiki/RelatedPages.astro";
+ import Sources from "./wiki/Sources.astro";
+ import { enabledPageCatalog, getRelatedPages, siteConfig } from "../core/site-data";
+@@ -19,9 +20,7 @@ interface Props {
+ 
+ const { page, sectionLabel } = Astro.props;
+ const relatedPages = getRelatedPages(page);
+-const lastVerified = [...page.sources]
+-  .sort((left, right) => right.accessedAt.localeCompare(left.accessedAt))
+-  .at(0)?.accessedAt;
++const freshness = resolvePageFreshness(page);
+ const canonical = buildCanonicalUrl(siteConfig, page.route);
+ const breadcrumbTrail = buildBreadcrumbTrail(
+   siteConfig,
+@@ -58,16 +57,27 @@ const authorAttribution = resolveStructuredIdentity(siteConfig, page).authorAttr
+         <dl class="article__meta">
+           <div>
+             <dt>Published</dt>
+-            <dd><time datetime={page.publishedAt}>{page.publishedAt}</time></dd>
++            <dd><time datetime={freshness.publishedAt}>{freshness.publishedAt}</time></dd>
+           </div>
+           <div>
+             <dt>Last updated</dt>
+-            <dd><time datetime={page.updatedAt}>{page.updatedAt}</time></dd>
++            <dd><time datetime={freshness.updatedAt}>{freshness.updatedAt}</time></dd>
+           </div>
+-          {lastVerified && (
++          {freshness.sourceCheckedAt && (
+             <div>
+-              <dt>Last verified</dt>
+-              <dd><time datetime={lastVerified}>{lastVerified}</time></dd>
++              <dt>Sources checked</dt>
++              <dd><time datetime={freshness.sourceCheckedAt}>{freshness.sourceCheckedAt}</time></dd>
++            </div>
++          )}
++          {freshness.liveStatus && (
++            <div>
++              <dt>Live status</dt>
++              <dd>
++                {freshness.liveStatus.state === "observed-live" ? <>
++                  Observed live <time datetime={freshness.liveStatus.observedAt}>{freshness.liveStatus.observedAt}</time>
++                  {" "}<a href={freshness.liveStatus.sourceUrl} rel="noreferrer">Status source</a>
++                </> : "Not live telemetry"}
++              </dd>
+             </div>
+           )}
+           {authorAttribution && (
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro
+index 1fef479..8bd6bf4 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro
+@@ -1,4 +1,5 @@
+ ---
++import { resolvePageFreshness } from "../../core/freshness";
+ import type { MarkdownHeading } from "astro";
+ 
+ import { enabledPageCatalog, getRelatedPages, siteConfig } from "../../core/site-data";
+@@ -48,9 +49,7 @@ const {
+ const tocHeadings = selectWikiArticleHeadings(headings);
+ const showToc = tocHeadings.length >= 2;
+ const relatedPages = getRelatedPages(page);
+-const lastVerified = [...page.sources]
+-  .sort((left, right) => right.accessedAt.localeCompare(left.accessedAt))
+-  .at(0)?.accessedAt;
++const freshness = resolvePageFreshness(page);
+ const canonical = buildCanonicalUrl(siteConfig, page.route);
+ const breadcrumbTrail = buildBreadcrumbTrail(
+   siteConfig,
+@@ -85,14 +84,31 @@ const authorAttribution = resolveStructuredIdentity(siteConfig, page).authorAttr
+         <h1 data-pagefind-meta="title">{page.title}</h1>
+         <p class="article__dek" data-pagefind-meta="description">{page.description}</p>
+         <dl class="article__meta wiki-article__meta">
++          {freshness.publishedAt && (
++            <div>
++              <dt>Published</dt>
++              <dd><time datetime={freshness.publishedAt}>{freshness.publishedAt}</time></dd>
++            </div>
++          )}
+           <div>
+             <dt>Last updated</dt>
+-            <dd><time datetime={page.updatedAt}>{page.updatedAt}</time></dd>
++            <dd><time datetime={freshness.updatedAt}>{freshness.updatedAt}</time></dd>
+           </div>
+-          {lastVerified && (
++          {freshness.sourceCheckedAt && (
++            <div>
++              <dt>Sources checked</dt>
++              <dd><time datetime={freshness.sourceCheckedAt}>{freshness.sourceCheckedAt}</time></dd>
++            </div>
++          )}
++          {freshness.liveStatus && (
+             <div>
+-              <dt>Last verified</dt>
+-              <dd><time datetime={lastVerified}>{lastVerified}</time></dd>
++              <dt>Live status</dt>
++              <dd>
++                {freshness.liveStatus.state === "observed-live" ? <>
++                  Observed live <time datetime={freshness.liveStatus.observedAt}>{freshness.liveStatus.observedAt}</time>
++                  {" "}<a href={freshness.liveStatus.sourceUrl} rel="noreferrer">Status source</a>
++                </> : "Not live telemetry"}
++              </dd>
+             </div>
+           )}
+           {authorAttribution && (
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro
+index e717b74..c1a8634 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro
+@@ -1,4 +1,5 @@
+ ---
++import { latestSourceAccessedAt } from "../../core/freshness";
+ import type { Provenance } from "../../data/schemas/provenance";
+ import { projectPublicSources } from "../../core/public-sources";
+ 
+@@ -8,9 +9,7 @@ interface Props {
+ 
+ const { sources } = Astro.props;
+ const publicSources = projectPublicSources(sources);
+-const lastVerified = [...sources]
+-  .sort((left, right) => right.accessedAt.localeCompare(left.accessedAt))
+-  .at(0)?.accessedAt;
++const sourceCheckedAt = latestSourceAccessedAt(sources);
+ ---
+ 
+ {publicSources.length > 0 && (
+@@ -18,9 +17,9 @@ const lastVerified = [...sources]
+     <div>
+       <p class="eyebrow">Sources & verification</p>
+       <h2 id="sources-title">How this page was checked</h2>
+-      {lastVerified && (
++      {sourceCheckedAt && (
+         <p class="sources__verified">
+-          Last verified <time datetime={lastVerified}>{lastVerified}</time>
++          Sources checked <time datetime={sourceCheckedAt}>{sourceCheckedAt}</time>
+         </p>
+       )}
+     </div>
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro
+index 8d605e2..0230e19 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro
+@@ -80,8 +80,8 @@ const breadcrumbTrail = buildBreadcrumbTrail(
+         <h1 data-pagefind-meta="title">{fact.name}</h1>
+         <p data-pagefind-meta="description">{fact.summary}</p>
+       </div>
+-      <div class="entity-page__status" aria-label={`Current patch ${fact.patch}`}>
+-        <span>Current version</span>
++      <div class="entity-page__status" aria-label={`Recorded patch ${fact.patch}`}>
++        <span>Recorded version</span>
+         <strong>Patch {fact.patch}</strong>
+         <small>Updated {fact.updatedAt}</small>
+       </div>
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro
+index 67e76c5..b67f85e 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro
+@@ -92,7 +92,7 @@ const displayHeading = siteConfig.homepage.displayHeading ?? siteConfig.brand.na
+ 
+     <PageCollection
+       id="latest-updates"
+-      eyebrow="What changed"
++      eyebrow="Ordered by recorded update date"
+       title="Latest updates"
+       pages={homepage.latestUpdates}
+       showUpdatedAt
+diff --git a/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/freshness.test.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/freshness.test.ts
+new file mode 100644
+index 0000000..bfd6ada
+--- /dev/null
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/freshness.test.ts
+@@ -0,0 +1,54 @@
++import { describe, expect, it } from "vitest";
++import { pageInventory } from "../src/core/site-data";
++import { pageInventoryEntrySchema } from "../src/data/schemas/page-inventory";
++
++const page = { ...pageInventory.find(entry => entry.pageId === "guide.getting-started")!, publishedAt: "2026-08-10", updatedAt: "2026-09-20", sources: [
++  { sourceUrl: "https://example.com/qa-source-a", sourceType: "editorial" as const, accessedAt: "2026-09-18", evidenceNote: "Private synthetic source A evidence" },
++  { sourceUrl: "https://example.com/qa-source-b", sourceType: "editorial" as const, accessedAt: "2026-09-21", evidenceNote: "Private synthetic source B evidence" },
++] };
++const live = { state: "observed-live", observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "PRIVATE_SYNTHETIC_LIVE_EVIDENCE" };
++async function resolve(input: unknown, context?: { kind: "patch" | "version"; value: string }) {
++  const module = await import("../src/core/freshness");
++  return module.resolvePageFreshness(input as Parameters<typeof module.resolvePageFreshness>[0], context);
++}
++
++describe("distinct freshness facts", () => {
++  it("accepts explicitly evidenced observed-live status", () => {
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: live }).success).toBe(true);
++  });
++  it("accepts not-live as a non-telemetry declaration without live observation fields", () => {
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { state: "not-live" } }).success).toBe(true);
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { state: "not-live", observedAt: "2026-09-22" } }).success).toBe(false);
++  });
++  it.each(["observedAt", "sourceUrl", "evidenceNote"])("rejects observed-live missing its %s evidence", key => {
++    const incomplete = { ...live } as Record<string, unknown>;
++    delete incomplete[key];
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: incomplete }).success).toBe(false);
++  });
++  it("rejects HTTP live-status source and unknown state/fields", () => {
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { ...live, sourceUrl: "http://example.com/status" } }).success).toBe(false);
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { ...live, state: "live-now" } }).success).toBe(false);
++    expect(pageInventoryEntrySchema.safeParse({ ...page, liveStatus: { ...live, telemetry: true } }).success).toBe(false);
++  });
++  it("rejects editorial update before publication without swapping dates", () => {
++    expect(pageInventoryEntrySchema.safeParse({ ...page, updatedAt: "2026-08-01" }).success).toBe(false);
++    expect(pageInventoryEntrySchema.safeParse({ ...page, updatedAt: page.publishedAt }).success).toBe(true);
++    expect(pageInventoryEntrySchema.safeParse(page).success).toBe(true);
++  });
++  it("keeps publication/update/source access/live observation and patch context distinct", async () => {
++    expect(await resolve({ ...page, liveStatus: live }, { kind: "patch", value: "4.2" })).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21", versionContext: { kind: "patch", value: "4.2" }, liveStatus: { state: "observed-live", observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status" } });
++  });
++  it("does not infer live state or version from existing dates", async () => {
++    expect(await resolve(page)).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21" });
++    expect(await resolve({ ...page, liveStatus: { state: "not-live" } }, { kind: "version", value: "Reference edition A" })).toEqual({ publishedAt: "2026-08-10", updatedAt: "2026-09-20", sourceCheckedAt: "2026-09-21", versionContext: { kind: "version", value: "Reference edition A" }, liveStatus: { state: "not-live" } });
++  });
++  it("returns the latest source access date without mutating source order or leaking notes", async () => {
++    const module = await import("../src/core/freshness");
++    const sources = [...page.sources].reverse();
++    const before = JSON.stringify(sources);
++    expect(module.latestSourceAccessedAt(sources)).toBe("2026-09-21");
++    expect(module.latestSourceAccessedAt([])).toBeUndefined();
++    expect(JSON.stringify(sources)).toBe(before);
++    expect(JSON.stringify(await resolve({ ...page, liveStatus: live }))).not.toMatch(/evidenceNote|PRIVATE_SYNTHETIC|Private synthetic/);
++  });
++});
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts
+index f077c2b..a855834 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts
+@@ -22,3 +22,29 @@ describe("EditorialArticle structured identity seam", () => {
+     expect(html).not.toMatch(/<dt>Author<\/dt>/);
+   });
+ });
++
++
++it("renders independent freshness dates and an explicitly authored live observation", async () => {
++  const page = { ...pageInventory.find(entry => entry.pageId === "guide.getting-started")!, publishedAt: "2026-08-10", updatedAt: "2026-09-20", sources: [
++    { sourceUrl: "https://example.com/qa-a", sourceType: "editorial" as const, accessedAt: "2026-09-18", evidenceNote: "Private synthetic source access evidence" },
++    { sourceUrl: "https://example.com/qa-b", sourceType: "editorial" as const, accessedAt: "2026-09-21", evidenceNote: "Private synthetic source access evidence B" },
++  ], liveStatus: { state: "observed-live" as const, observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "PRIVATE_SYNTHETIC_LIVE_EVIDENCE" } };
++  const container = await AstroContainer.create();
++  const html = (await container.renderToString(EditorialArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Synthetic body</p>" } })).replace(/<!--.*?-->/g, "");
++  expect(html).toMatch(/<dt>Published<\/dt>[\s\S]*?<time datetime="2026-08-10"/);
++  expect(html).toMatch(/<dt>Last updated<\/dt>[\s\S]*?<time datetime="2026-09-20"/);
++  expect(html).toMatch(/<dt>Sources checked<\/dt>[\s\S]*?<time datetime="2026-09-21"/);
++  expect(html).toContain("Observed live");
++  expect(html).toContain('<time datetime="2026-09-22"');
++  expect(html).toContain('href="https://example.com/qa-live-status"');
++  expect(html).not.toMatch(/Last verified|Live now|Currently live|PRIVATE_SYNTHETIC_LIVE_EVIDENCE/);
++  expect(html).toContain('"datePublished":"2026-08-10"');
++  expect(html).toContain('"dateModified":"2026-09-20"');
++});
++
++it("does not infer a live claim when the page has no liveStatus", async () => {
++  const page = pageInventory.find(entry => entry.pageId === "guide.getting-started")!;
++  const container = await AstroContainer.create();
++  const html = await container.renderToString(EditorialArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Body</p>" } });
++  expect(html).not.toMatch(/Observed live|Not live telemetry|<dt>Live status<\/dt>/);
++});
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts
+index 024dfe1..f686162 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts
+@@ -152,3 +152,29 @@ describe("WikiArticle", () => {
+   });
+ 
+ });
++
++
++it("renders independent freshness dates and an explicitly authored live observation", async () => {
++  const page = { ...pageInventory.find(entry => entry.pageId === "guide.getting-started")!, publishedAt: "2026-08-10", updatedAt: "2026-09-20", sources: [
++    { sourceUrl: "https://example.com/qa-a", sourceType: "editorial" as const, accessedAt: "2026-09-18", evidenceNote: "Private synthetic source access evidence" },
++    { sourceUrl: "https://example.com/qa-b", sourceType: "editorial" as const, accessedAt: "2026-09-21", evidenceNote: "Private synthetic source access evidence B" },
++  ], liveStatus: { state: "observed-live" as const, observedAt: "2026-09-22", sourceUrl: "https://example.com/qa-live-status", evidenceNote: "PRIVATE_SYNTHETIC_LIVE_EVIDENCE" } };
++  const container = await AstroContainer.create();
++  const html = (await container.renderToString(WikiArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Synthetic body</p>" } })).replace(/<!--.*?-->/g, "");
++  expect(html).toMatch(/<dt>Published<\/dt>[\s\S]*?<time datetime="2026-08-10"/);
++  expect(html).toMatch(/<dt>Last updated<\/dt>[\s\S]*?<time datetime="2026-09-20"/);
++  expect(html).toMatch(/<dt>Sources checked<\/dt>[\s\S]*?<time datetime="2026-09-21"/);
++  expect(html).toContain("Observed live");
++  expect(html).toContain('<time datetime="2026-09-22"');
++  expect(html).toContain('href="https://example.com/qa-live-status"');
++  expect(html).not.toMatch(/Last verified|Live now|Currently live|PRIVATE_SYNTHETIC_LIVE_EVIDENCE/);
++  expect(html).toContain('"datePublished":"2026-08-10"');
++  expect(html).toContain('"dateModified":"2026-09-20"');
++});
++
++it("does not infer a live claim when the page has no liveStatus", async () => {
++  const page = pageInventory.find(entry => entry.pageId === "guide.getting-started")!;
++  const container = await AstroContainer.create();
++  const html = await container.renderToString(WikiArticle, { props: { page, sectionLabel: "QA article" }, slots: { default: "<p>Body</p>" } });
++  expect(html).not.toMatch(/Observed live|Not live telemetry|<dt>Live status<\/dt>/);
++});
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/player-facing-metadata.test.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/player-facing-metadata.test.ts
+index 7d35556..63d5058 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/player-facing-metadata.test.ts
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/player-facing-metadata.test.ts
+@@ -145,3 +145,18 @@ describe("player-facing metadata", () => {
+     },
+   );
+ });
++
++
++it("does not equate source access with verification or recorded patch with current game version", () => {
++  for (const url of [componentUrls.editorialArticle, componentUrls.wikiArticle]) {
++    expect(template(url)).not.toContain("Last verified");
++    expect(template(url)).toContain("Sources checked");
++  }
++  const sources = readFileSync(new URL("../src/components/wiki/Sources.astro", import.meta.url), "utf8");
++  expect(sources).not.toContain("Last verified");
++  expect(sources).toContain("Sources checked");
++  const detail = template(componentUrls.entityDetail);
++  expect(detail).not.toMatch(/Current version|Current patch/);
++  expect(detail).toContain("Recorded version");
++  expect(detail).toContain("Recorded patch");
++});
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/homepage.test.ts b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/homepage.test.ts
+index 044081a..3493cc4 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/homepage.test.ts
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/homepage.test.ts
+@@ -585,3 +585,10 @@ describe("FAQ presentation", () => {
+     expect(html.trim()).toBe("");
+   });
+ });
++
++
++it("states the recorded date provenance of the Latest updates section", () => {
++  const source = readFileSync(indexUrl, "utf8");
++  expect(source).toContain('title="Latest updates"');
++  expect(source).toContain('eyebrow="Ordered by recorded update date"');
++});
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
+index db0e8ea..305d1b5 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md
+@@ -430,3 +430,22 @@ is added by this slice.
+ This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
+ close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
+ absent; release hold active and capability promotion NONE.
++
++
++## V2.7 WS03D freshness truth
++
++The bounded freshness slice keeps five facts distinct:
++
++- `publishedAt`: first page publication date.
++- `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
++- Fact/tool `patch` or version context: recorded game/content version, independent of dates.
++- Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
++- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
++
++Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
++
++The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
+index 237e97c..ca70477 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -428,3 +428,22 @@ Each adopting project must record its search decision outside Core config:
+ - Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
+ 
+ Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
++
++
++## V2.7 WS03D freshness truth
++
++The bounded freshness slice keeps five facts distinct:
++
++- `publishedAt`: first page publication date.
++- `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
++- Fact/tool `patch` or version context: recorded game/content version, independent of dates.
++- Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
++- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
++
++Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
++
++The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+index 292a974..0993ad0 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -1670,3 +1670,22 @@ Each adopting project must record its search decision outside Core config:
+ - Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
+ 
+ Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
++
++
++## V2.7 WS03D freshness truth
++
++The bounded freshness slice keeps five facts distinct:
++
++- `publishedAt`: first page publication date.
++- `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
++- Fact/tool `patch` or version context: recorded game/content version, independent of dates.
++- Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
++- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
++
++Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
++
++The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+index fd35ef7..6ee32b2 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -448,3 +448,22 @@ Each adopting project must record its search decision outside Core config:
+ - Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
+ 
+ Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
++
++
++## V2.7 WS03D freshness truth
++
++The bounded freshness slice keeps five facts distinct:
++
++- `publishedAt`: first page publication date.
++- `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
++- Fact/tool `patch` or version context: recorded game/content version, independent of dates.
++- Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
++- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
++
++Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
++
++The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+index 49d6b73..e07f93d 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -541,3 +541,22 @@ Each adopting project must record its search decision outside Core config:
+ - Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
+ 
+ Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
++
++
++## V2.7 WS03D freshness truth
++
++The bounded freshness slice keeps five facts distinct:
++
++- `publishedAt`: first page publication date.
++- `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
++- Fact/tool `patch` or version context: recorded game/content version, independent of dates.
++- Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
++- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
++
++Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
++
++The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.
+diff --git a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+index 29bf5a5..ff90ca2 100644
+--- a/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03d/iteration32/preimages/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ b/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -1479,3 +1479,22 @@ Each adopting project must record its search decision outside Core config:
+ - Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
+ 
+ Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
++
++
++## V2.7 WS03D freshness truth
++
++The bounded freshness slice keeps five facts distinct:
++
++- `publishedAt`: first page publication date.
++- `updatedAt`: editorial/content update date; when publication exists it must not be earlier. Invalid ordering is rejected, never swapped or auto-corrected.
++- Fact/tool `patch` or version context: recorded game/content version, independent of dates.
++- Provenance `accessedAt`: when a source was checked/accessed, displayed as “Sources checked”; it does not establish an independent verification event.
++- `liveStatus.observedAt`: a dated live-state observation, independent of publication/update/source-access/version.
++
++Optional Page Inventory `liveStatus` is strict: `{ state: "not-live" }` declares no live-telemetry claim, not game/server offline status. `{ state: "observed-live", observedAt: "YYYY-MM-DD", sourceUrl: "https://...", evidenceNote: "private evidence pointer or note" }` records a source-backed observation. It renders “Observed live” with date and source link; evidenceNote remains private. Missing fields, non-HTTPS source and unknown state/fields are rejected. Omission remains valid and creates no live claim. Never infer live state from publication status, update date or patch. Do not add verifiedAt or invent real-time telemetry.
++
++The pure freshness projection exposes only public dates, optional recorded version context and public live-state/date/source. Wiki and editorial metadata preserve Published and Last updated separately; source access no longer claims “Last verified”. Static entity facts say “Recorded version”/recorded patch, not an unsupported current-game claim. Existing tool patch/formula wording remains bounded and unchanged. SEO datePublished/dateModified continue to use the original page publication/update authority, never source access or live observation.
++
++Latest updates is ordered deterministically by recorded page update date and the existing priority tie-break, with that basis shown adjacent to the title. Future Popular/Trending/Latest/Live labels must state explicit editorial or data provenance. Static labels may not imply telemetry they lack; an observed-live snapshot may not claim Live now, Currently live or Real-time. No synthetic live status is inserted into the canonical page inventory. Synthetic rendering proves only the mechanism, never actual game currency/live state or a real project's FR-01/FR-02 outcome.
++
++Actual project observation/evidence appropriateness remains Adaptation/Acceptance work. Safari proof is0, WS06A FULL BLOCKED, formal WS03 NOT_ACCEPTED, capability promotionNONE and release holdACTIVE. This slice does not authorize WS04A/WS05 or release work.

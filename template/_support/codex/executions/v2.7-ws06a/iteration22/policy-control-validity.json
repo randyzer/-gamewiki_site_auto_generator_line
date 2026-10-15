@@ -1,0 +1,9 @@
+{
+  "proposalSha256": "2696a9d7ee691fad07ea7b557a4acab706bb408ea0c5583c3bfe7bd5fb85d917",
+  "arrowControlSha256": "1ff999e08c3c93d93baaca8260bee8c243c3e2367552e58ae9550473bc741344",
+  "proposalExact": true,
+  "controlExact": true,
+  "engineHostValid": true,
+  "nativeCurrentSha256": "10be12d2d2e7677221c5046a450be07a5e05e3dcc8c716b984c60946f51c5030",
+  "nativeProfileUnavailable": true
+}

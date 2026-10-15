@@ -1,0 +1,10 @@
+{
+  "matchesPreparedIdentity": true,
+  "observed": {
+    "starterSource": "423bbb054ede60cf10607e4f5bc83ab6521cc433bbeedfff6e4656079bf5d06d",
+    "fixtureSource": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+    "dist": "5af57170dac4c473f46a3893352c81aba2193b50140dc47be657d52e52f42d48"
+  },
+  "sourceAndDistUnchanged": true,
+  "note": "Exact sourceManifest file/path/mode/symlink algorithm; .env* excluded. This does not certify Safari or browser version."
+}

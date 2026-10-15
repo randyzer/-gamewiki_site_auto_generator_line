@@ -1,0 +1,346 @@
+{
+  "tagline": "DAS STERNENREICH · ATLAS",
+  "library": "Guide-Bibliothek",
+  "walkthroughs": "Komplettlösungen",
+  "listTitle": "Aurelia Lösungen",
+  "listDescription": "Einstiegstipps, Kampfnotizen, Quests, Reisen, Reittiere und Begleiter.",
+  "category": "LÖSUNGEN & QUESTS",
+  "read": "LESEN",
+  "preview": "VORSCHAU",
+  "related": "Verwandte Themen",
+  "browse": "Entdecke die gesamte",
+  "hub": "Guide-Bibliothek",
+  "or": "oder kehre zurück zur",
+  "homeLink": "Aurelia-Startseite",
+  "footerGroups": "GUIDES|RESSOURCEN|WERKZEUGE|FELDNOTIZEN",
+  "disclaimer": "Originale Beispielwelt und redaktionelle Inhalte für diese Vorlage. Aurelia ist eine fiktive Welt; die Angaben beschreiben kein veröffentlichtes Spiel.",
+  "languagesLabel": "LANGUAGES · SPRACHEN · IDIOMAS · 语言",
+  "copyright": "© 2026 AURELIA ATLAS · ORIGINALE BEISPIELWELT UND INHALTE.",
+  "allGuides": "ALLE GUIDES →",
+  "heroEyebrow": "FÜR NEUE ABENTEURER · EINE ORIGINALE FANTASIEWELT",
+  "heroTitle": "Schreibe Deine Legende",
+  "heroAccent": "in Aurelia",
+  "heroDescription": "Eine originale Koop-Abenteuerwelt in den verstreuten Ländern des Sternenreichs. Entdecke verborgene Pfade und uralte Ruinen und finde deinen eigenen Spielstil.",
+  "beginner": "Erste Schritte",
+  "scroll": "SCROLLEN",
+  "viewAll": "Alle Guides ansehen",
+  "fullFaq": "Alle Antworten",
+  "ctaEyebrow": "BEREIT FÜR DEN AUFBRUCH?",
+  "ctaTitle": "Dein Abenteuer wartet.",
+  "ctaLink": "Mit ersten Schritten beginnen",
+  "bestStart": "Bester Start",
+  "articleDescription": "Ein ruhiger Einstieg hilft dir, die Welt kennenzulernen. Erkunde die Umgebung, übe den Kampf und überlege, welche Ausrüstung du mitnehmen möchtest.",
+  "sections": [
+    {
+      "eyebrow": "DAS STERNENREICH",
+      "title": "Was ist Aurelia?"
+    },
+    {
+      "eyebrow": "WÄHLE DEINEN WEG",
+      "title": "Vier Abenteuerpfade"
+    },
+    {
+      "eyebrow": "DIE WELT VON AURELIA",
+      "title": "Entdecke Zwei Regionen"
+    },
+    {
+      "eyebrow": "ATLAS DER ABENTEURER",
+      "title": "Beginne Deine Reise"
+    },
+    {
+      "eyebrow": "DATEN & RANGLISTEN",
+      "title": "Werkzeuge & Ranglisten"
+    },
+    {
+      "eyebrow": "VERTIEFUNG",
+      "title": "Ausgewählte Guides"
+    },
+    {
+      "eyebrow": "BOTEN VON AURELIA",
+      "title": "Neueste Notizen"
+    },
+    {
+      "eyebrow": "KURZE ANTWORTEN",
+      "title": "Aurelia Fragen"
+    }
+  ],
+  "previews": [
+    {
+      "slug": "preview-0",
+      "title": "Aurelia für Einsteiger",
+      "description": "Ein geplanter Einstieg in Erkundung, Ausrüstung und Kampftraining im eigenen Tempo während der ersten Stunden."
+    },
+    {
+      "slug": "preview-2",
+      "title": "Deine erste Ruinenexpedition",
+      "description": "Vorbereitung auf eine erste Expedition mit Packliste, Routenplanung und Hinweisen für unbekannte Begegnungen."
+    },
+    {
+      "slug": "preview-3",
+      "title": "Aurelia Bossbegegnungen",
+      "description": "Vorschau auf Feldnotizen über Warnsignale, Angriffsmuster und das Sammeln der Gruppe nach schweren Kämpfen."
+    },
+    {
+      "slug": "preview-4",
+      "title": "Wegpunkte entdecken",
+      "description": "Markiere sichere Orte, lies die Karte und plane den Rückweg, bevor du unbekanntes Gelände betrittst."
+    },
+    {
+      "slug": "preview-5",
+      "title": "Aurelia Reittierhandbuch",
+      "description": "Ein geplantes Handbuch über Reisen mit Reittieren, Vorräte und die Auswahl angenehmer Wege."
+    },
+    {
+      "slug": "preview-6",
+      "title": "Mit Begleitern reisen",
+      "description": "Vorschau auf Begleiterrollen, gemeinsame Reisen und Platz für einen neuen Freund auf deinem Abenteuer."
+    },
+    {
+      "slug": "preview-7",
+      "title": "Ein Freund am Wegesrand",
+      "description": "Folge einer kleinen Geschichte am Wegesrand, beobachte die Umgebung und bereite dich auf ein neues Wesen vor."
+    },
+    {
+      "slug": "preview-8",
+      "title": "Ein seltenes Wesen finden",
+      "description": "Ein geplantes Spurenbuch über Lebensräume, vorsichtige Annäherung und einen respektvollen Umgang mit Wesen."
+    },
+    {
+      "slug": "preview-9",
+      "title": "Der Auftrag des Hüters",
+      "description": "Entdecke den Entwurf eines Hüterauftrags mit markanten Orten und Hinweisen, die die Etappen verbinden."
+    },
+    {
+      "slug": "preview-10",
+      "title": "Kleine Wesen sammeln",
+      "description": "Vorschau auf Sammelrouten, nützliche Vorräte und die Beobachtung kleiner Bewohner des Waldes."
+    },
+    {
+      "slug": "preview-11",
+      "title": "Ein verborgener Waldbesucher",
+      "description": "Notizen zu einem Waldgeheimnis mit Wegmarken und kleinen Details, die du entlang des Pfades entdecken kannst."
+    },
+    {
+      "slug": "preview-12",
+      "title": "Der Wächter der Küste",
+      "description": "Ein geplanter Küstenführer zum Lesen der Arena, Ausweichen und Zusammenbleiben in schwierigen Situationen."
+    },
+    {
+      "slug": "preview-13",
+      "title": "Sternenlichtfragmente",
+      "description": "Ein Erkundungsbuch über Fragmente, das Festhalten von Orten und ihre Geschichte in dieser Beispielwelt."
+    },
+    {
+      "slug": "preview-14",
+      "title": "Aurelia Begleiterhandbuch",
+      "description": "Ein geplantes Begleiterhandbuch über Reisevorbereitung, Kreaturnotizen und gemeinsame Entdeckungen."
+    },
+    {
+      "slug": "preview-15",
+      "title": "Flüssigeres Abenteuer",
+      "description": "Ein Einstellungsentwurf: Anzeige prüfen, jeweils eine Option ändern und die Wirkung sorgfältig festhalten."
+    },
+    {
+      "slug": "preview-16",
+      "title": "Ausrüstung sortieren",
+      "description": "Ein geplanter Inventarführer zum Sortieren nützlicher Ausrüstung, Ersatzgegenstände und Materialien."
+    },
+    {
+      "slug": "preview-17",
+      "title": "Fortschritt verstehen",
+      "description": "Ein Fortschrittsbuch über erreichbare Ziele und die Rückkehr auf bekannte Wege mit neuer Erfahrung."
+    },
+    {
+      "slug": "preview-18",
+      "title": "Aurelia Handwerkshandbuch",
+      "description": "Eine Handwerksvorschau über Materialordnung, Rezepte und ein überschaubares erstes Projekt."
+    },
+    {
+      "slug": "preview-19",
+      "title": "Ein Koop-Abenteuer planen",
+      "description": "Ein geplanter Gruppenführer über gemeinsame Ziele, klare Rollen und geduldiges Lernen miteinander."
+    },
+    {
+      "slug": "preview-20",
+      "title": "Die erinnernden Steine",
+      "description": "Folge einer Geschichte durch verwitterte Steinzeichen, seltsame Symbole und eine stille Waldlichtung."
+    }
+  ],
+  "articleTitle": "Aurelia Bester Start",
+  "about": [
+    "Aurelia ist eine originale Fantasiewelt für diese Vorlage. Das Sternenreich stellt sich verstreute Inseln, Waldsiedlungen und vergessene Ruinen vor, verbunden durch die Reisen kleiner Abenteuergruppen. Die Geschichten dienen als redaktionelle Beispiele und können durch geprüfte Informationen zu deinem eigenen Spiel ersetzt werden.",
+    "Dieser Atlas zeigt ein vollständiges Guide-Layout. Vorschauthemen werden dabei nicht als veröffentlichte Artikel dargestellt. Der Einstiegsführer ist in fünf Sprachen verfügbar. Die übrigen Einträge bewahren das Referenzlayout für spätere recherchierte Inhalte. Für diese fiktive Welt werden weder Preis noch Veröffentlichung oder Onlinedienst behauptet."
+  ],
+  "factsTitle": "KURZINFOS",
+  "facts": [
+    [
+      "WELT",
+      "Originale Beispielwelt"
+    ],
+    [
+      "GENRE",
+      "Koop-Abenteuerkonzept"
+    ],
+    [
+      "PLATTFORM",
+      "Nicht angekündigt"
+    ],
+    [
+      "SPIELER",
+      "Beispielgruppe"
+    ],
+    [
+      "PREIS",
+      "Nicht angekündigt"
+    ],
+    [
+      "STATUS",
+      "Vorlagendemonstration"
+    ],
+    [
+      "INHALTE",
+      "Originale Beispieltexte"
+    ]
+  ],
+  "classes": [
+    {
+      "tag": "FRONT · VERTEIDIGER",
+      "title": "Wächter",
+      "description": "Ein geduldiger Entdecker mit Schild. Übe ruhige Positionierung und sichere Wege, damit deine Freunde gefahrlos folgen können."
+    },
+    {
+      "tag": "FERNKAMPF · ERKUNDER",
+      "title": "Pfadfinder",
+      "description": "Ein leichtfüßiger Spurenleser. Halte Abstand, beobachte Wegmarken und wähle klare Routen durch unbekanntes Gelände."
+    },
+    {
+      "tag": "ELEMENTAR · MAGIER",
+      "title": "Zauberweber",
+      "description": "Ein erdachter Elementargelehrter. Übe Timing und Abstand und halte Raum frei, um auf Veränderungen zu reagieren."
+    },
+    {
+      "tag": "HILFE · BEGLEITER",
+      "title": "Sternenhüter",
+      "description": "Ein aufmerksamer Gefährte. Stimme dich mit Freunden ab, beobachte die Gruppe und plane Zeit für die Erholung ein."
+    }
+  ],
+  "regions": [
+    {
+      "tag": "STARTREGION",
+      "level": "PFAD I",
+      "title": "Sternfallinseln",
+      "description": "Windige Inseln mit alten Brücken und fremden Pfaden. Ein originales Gebiet für kleine Ruinen und die erste Expedition."
+    },
+    {
+      "tag": "FERNE GRENZE",
+      "level": "PFAD II",
+      "title": "Tal der Bernsteinblätter",
+      "description": "Ein erdachtes Herbsttal mit Waldsiedlungen und überwachsenen Ruinen. Beobachte den Boden und erkunde jeden Pfad in Ruhe."
+    }
+  ],
+  "topics": [
+    "Weltübersicht",
+    "Erste Schritte",
+    "Klassen & Rollen",
+    "Waffen & Fähigkeiten",
+    "Ruinen & Begegnungen",
+    "Koop-Planung",
+    "Reisetipps",
+    "Inhaltsplanung",
+    "Fragen",
+    "Serverstatus",
+    "Spielerzahlen",
+    "Klassenrangliste",
+    "Ausrüstungswahl",
+    "Kampfnotizen",
+    "Belohnungscodes",
+    "Handheld-Einstellungen",
+    "Beste Gruppenrollen",
+    "Im eigenen Tempo lernen",
+    "Ein Abenteuer wählen",
+    "Sternfallinseln Guide",
+    "Handbuch des Bernsteintals",
+    "Allein & gemeinsam reisen"
+  ],
+  "news": [
+    [
+      "WELTNOTIZEN",
+      "Das Sternenreich entsteht: verstreute Inseln, vergessene Pfade und der Beginn eines gemeinsamen Abenteuers."
+    ],
+    [
+      "REDAKTION",
+      "Der Einstiegsartikel ist als originaler Beispieltext in fünf unabhängig gespeicherten Sprachfassungen verfügbar."
+    ],
+    [
+      "INHALTSPLAN",
+      "Vorschauthemen zeigen mögliche zukünftige Guides. Sie bleiben unveröffentlicht, bis geprüfte Inhalte vorliegen."
+    ]
+  ],
+  "faq": [
+    [
+      "Was ist Aurelia?",
+      "Aurelia ist eine originale fiktive Welt für diese Vorlage. Die Abenteuernotizen zeigen die Darstellung von Guide-Inhalten."
+    ],
+    [
+      "Ist das ein veröffentlichtes Spiel?",
+      "Es wird keine Veröffentlichung behauptet. Namen, Regionen und Rollen sind originale Beispiele für diese Vorlage."
+    ],
+    [
+      "Sind die Vorschau-Guides verfügbar?",
+      "Nur vollständige MDX-Artikel öffnen sich als Guides. Vorschau kennzeichnet ein Thema ohne veröffentlichten Artikel."
+    ],
+    [
+      "Kann ich den Einstiegsführer lesen?",
+      "Ja. Öffne die Guide-Bibliothek und wähle Aurelia Bester Start, um den vollständigen Beispielartikel zu lesen."
+    ],
+    [
+      "Zeigt der Atlas Live-Serverdaten?",
+      "Nein. Die Werkzeugkarten sind Vorschauen. Diese Vorlage verbindet sich weder mit Serverstatus noch mit Spielerzahlen."
+    ],
+    [
+      "Welche Sprachen gibt es?",
+      "Englisch, Deutsch, brasilianisches Portugiesisch, Spanisch und vereinfachtes Chinesisch teilen sich dasselbe Layout."
+    ],
+    [
+      "Wo beginne ich am besten?",
+      "Beginne mit dem Einstiegsartikel und entdecke dann die Bibliothek. Andere Themen zeigen Platz für recherchierte Guides."
+    ]
+  ],
+  "stats": [
+    [
+      "WELT",
+      "Originale Beispielwelt"
+    ],
+    [
+      "PLATTFORM",
+      "Nicht angekündigt"
+    ],
+    [
+      "PREIS",
+      "Nicht angekündigt"
+    ],
+    [
+      "STATUS",
+      "Vorlagendemonstration"
+    ]
+  ],
+  "primaryNav": [
+    "Klassen",
+    "Waffen",
+    "Bosse",
+    "Koop",
+    "Lösungen",
+    "Guides"
+  ],
+  "secondaryNav": [
+    "Serverstatus",
+    "Spielerzahlen",
+    "Rangliste",
+    "Beste Waffen",
+    "Codes",
+    "Handheld",
+    "Diagramme",
+    "Übersicht",
+    "Fragen"
+  ]
+}

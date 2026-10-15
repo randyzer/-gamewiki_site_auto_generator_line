@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Site Template Selector"
+  short_description: "Select and safely copy a game site template"
+  default_prompt: "Use $game-site-template-selector to choose the best local game-guide template for my game, recommend complementary modules, and safely copy the selected template into an empty game workspace."

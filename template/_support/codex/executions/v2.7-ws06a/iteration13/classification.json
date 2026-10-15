@@ -1,0 +1,328 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 13,
+  "workstreamStatus": "BLOCKED",
+  "productDelta": 0,
+  "qualificationMatrix": {
+    "executed": 47,
+    "pass": 36,
+    "fail": 11,
+    "notRun": 0,
+    "skipped": 0,
+    "rerunThisIteration": false
+  },
+  "webkit_plain_tab": {
+    "classification": "ENGINE_HOST_KEYBOARD_PROFILE",
+    "minimal_native_evidence": {
+      "file": "native-focus-profile.json",
+      "chromiumPlainTabLinks": true,
+      "firefoxPlainTabLinks": true,
+      "webkitPlainTabLinks": false,
+      "webkitNativeDiagnosticFocus": [
+        {
+          "id": "link",
+          "tag": "A",
+          "class": "",
+          "href": "#target",
+          "text": "link",
+          "tabIndex": 0,
+          "focusVisible": true,
+          "area": "other",
+          "rect": {
+            "width": 24.890625,
+            "height": 18
+          },
+          "visibility": "visible",
+          "display": "inline"
+        },
+        {
+          "id": "button",
+          "tag": "BUTTON",
+          "class": "",
+          "href": null,
+          "text": "button",
+          "tabIndex": 0,
+          "focusVisible": true,
+          "area": "other",
+          "rect": {
+            "width": 50.40625,
+            "height": 18
+          },
+          "visibility": "visible",
+          "display": "inline-block"
+        }
+      ],
+      "topLevelLinkAndButtonVisible": true
+    },
+    "core_evidence": {
+      "file": "native-focus-profile.json",
+      "webkitPlainTabLinksAt390And1280": [
+        false,
+        false
+      ],
+      "chromiumAndFirefoxPlainTabLinksAtBothWidths": true
+    },
+    "qualification_oracle_changed": false,
+    "scopeLimit": "Current installed engine/host ordinary Tab profile only; no claim that all WebKit/Safari hosts behave alike."
+  },
+  "webkit_arrowright": {
+    "classification": "INCONCLUSIVE",
+    "minimal_native_evidence": {
+      "file": "table-arrowright-profile.json",
+      "finalNativeScrolled": {
+        "chromium": true,
+        "firefox": true,
+        "webkit": true
+      },
+      "webkitFinalTimeline": [
+        {
+          "label": "before",
+          "time": 42,
+          "scrollLeft": 0,
+          "key": null,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 46,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 53,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 106,
+          "scrollLeft": 9,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 262,
+          "scrollLeft": 36,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 567,
+          "scrollLeft": 40,
+          "key": "ArrowRight",
+          "active": true
+        }
+      ],
+      "priorPartialAttempt": "diagnostic.log lines20-33 records WebKit nativeScrolled=false before fixture creation failure; complete attempt records true. Raw partial-attempt JSON was replaced by the complete attempt; original aggregate log retained."
+    },
+    "core_evidence": {
+      "file": "table-arrowright-profile.json",
+      "webkitNativeScrolledAt390And1280": [
+        false,
+        false
+      ],
+      "webkitArrowRightReceived": true,
+      "webkitProgrammaticScroll32Effective": true,
+      "chromiumAndFirefoxNativeScrollAtBothWidths": true,
+      "documentOverflowAbsentAllCoreProbes": true
+    },
+    "portable_core_property": "unresolved",
+    "is_arrowright_behavior_portable_core_property": "unresolved",
+    "qualification_oracle_changed": false,
+    "reason": "WebKit minimal native ArrowRight varied between existing attempts, while actual Core received the key but stayed at scrollLeft0 at both widths. Complete-attempt native/Core difference suggests a Core/context difference, but does not uniquely establish its cause; stop without expanded probing."
+  },
+  "chromium_live_resize": {
+    "classification": "CORE_FOCUS_MIGRATION",
+    "forward": {
+      "file": "resize-forward-trace.json",
+      "F1_MqlFalse": true,
+      "F2_DesktopVisible": true,
+      "F3_MobileHidden": true,
+      "F4_DisclosuresClosed": true,
+      "F5_MatchingTargetExists": true,
+      "F6_MatchingTargetVisible": true,
+      "F7_FinalFocus": "BODY",
+      "checkpoints": [
+        {
+          "name": "MQL_EXPECTED_STATE",
+          "width": 901,
+          "reached": true,
+          "active": {
+            "tag": "BODY",
+            "class": "",
+            "href": null,
+            "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+            "area": "other"
+          }
+        },
+        {
+          "name": "NAV_VISIBILITY_SETTLED",
+          "width": 901,
+          "reached": true,
+          "active": {
+            "tag": "BODY",
+            "class": "",
+            "href": null,
+            "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+            "area": "other"
+          }
+        },
+        {
+          "name": "FINAL_FOCUS_STATE",
+          "width": 901,
+          "reached": false,
+          "active": {
+            "tag": "BODY",
+            "class": "",
+            "href": null,
+            "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+            "area": "other"
+          }
+        }
+      ]
+    },
+    "reverse": {
+      "file": "resize-reverse-trace.json",
+      "independentNewContext": true,
+      "finalFocus": "mobile Menu SUMMARY",
+      "checkpoints": [
+        {
+          "name": "MQL_EXPECTED_STATE",
+          "width": 899,
+          "reached": true,
+          "active": {
+            "tag": "SUMMARY",
+            "class": "mobile-nav__toggle",
+            "href": null,
+            "text": "Menu +",
+            "area": "mobile"
+          }
+        },
+        {
+          "name": "NAV_VISIBILITY_SETTLED",
+          "width": 899,
+          "reached": true,
+          "active": {
+            "tag": "SUMMARY",
+            "class": "mobile-nav__toggle",
+            "href": null,
+            "text": "Menu +",
+            "area": "mobile"
+          }
+        },
+        {
+          "name": "FINAL_FOCUS_STATE",
+          "width": 899,
+          "reached": true,
+          "active": {
+            "tag": "SUMMARY",
+            "class": "mobile-nav__toggle",
+            "href": null,
+            "text": "Menu +",
+            "area": "mobile"
+          }
+        }
+      ]
+    },
+    "roundtrip": {
+      "file": "resize-roundtrip-trace.json",
+      "artificialFocusUsed": false,
+      "forwardFinalFocus": "matching desktop child",
+      "reverseFinalFocus": "BODY",
+      "checkpoints": [
+        {
+          "name": "MQL_EXPECTED_STATE",
+          "width": 901,
+          "reached": true,
+          "active": {
+            "tag": "A",
+            "class": "",
+            "href": "/guides/getting-started/",
+            "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+            "pageId": "guide.getting-started",
+            "area": "desktop"
+          }
+        },
+        {
+          "name": "NAV_VISIBILITY_SETTLED",
+          "width": 901,
+          "reached": true,
+          "active": {
+            "tag": "A",
+            "class": "",
+            "href": "/guides/getting-started/",
+            "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+            "pageId": "guide.getting-started",
+            "area": "desktop"
+          }
+        },
+        {
+          "name": "FINAL_FOCUS_STATE",
+          "width": 901,
+          "reached": true,
+          "active": {
+            "tag": "A",
+            "class": "",
+            "href": "/guides/getting-started/",
+            "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+            "pageId": "guide.getting-started",
+            "area": "desktop"
+          }
+        },
+        {
+          "name": "MQL_EXPECTED_STATE",
+          "width": 899,
+          "reached": true,
+          "active": {
+            "tag": "BODY",
+            "class": "",
+            "href": null,
+            "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+            "area": "other"
+          }
+        },
+        {
+          "name": "NAV_VISIBILITY_SETTLED",
+          "width": 899,
+          "reached": true,
+          "active": {
+            "tag": "BODY",
+            "class": "",
+            "href": null,
+            "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+            "area": "other"
+          }
+        },
+        {
+          "name": "FINAL_FOCUS_STATE",
+          "width": 899,
+          "reached": false,
+          "active": {
+            "tag": "BODY",
+            "class": "",
+            "href": null,
+            "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+            "area": "other"
+          }
+        }
+      ]
+    },
+    "source_changed": false,
+    "observation": "In failed forward and roundtrip reverse, browser focusout precedes resize/MQL change and activeElement is already BODY at the first MQL observer. In successful directions the prior navigation element survives until MQL change and Core migrates focus. MQ/visibility settle in every direction.",
+    "inference": "MobileNav reads only document.activeElement inside the MQL change handler; prior navigation identity may already be lost when CSS hides that element. This timing-dependent Core focus migration defect is supported by trace/source comparison; no repair or policy change is authorized here."
+  },
+  "infrastructureStatus": "COMPLETE",
+  "stopReason": "Authorized diagnostic suite complete; contradictory WebKit native scrolling observations prevent unique arrow classification. No expanded experiments.",
+  "independentReview": {
+    "verdict": "DIAGNOSIS ACCEPTED / WS-06A STILL BLOCKED",
+    "source": "result.md / actual ChatGPT review13",
+    "allThreeClassificationsConfirmed": true,
+    "resizePreciseSubtype": "CORE_FOCUS_MIGRATION_TIMING_RACE",
+    "nextDecision": "WebKit verification policy first, then separately authorize narrow resize Core repair; iteration14 not started"
+  }
+}

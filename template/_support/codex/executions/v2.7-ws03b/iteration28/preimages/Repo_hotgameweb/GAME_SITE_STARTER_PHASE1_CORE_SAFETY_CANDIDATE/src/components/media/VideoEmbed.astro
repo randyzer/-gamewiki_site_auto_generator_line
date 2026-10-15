@@ -1,0 +1,38 @@
+---
+import { isLocalVideoPath, videoAssetSchema, type VideoAsset } from "../../data/schemas/media";
+
+interface Props {
+  asset: VideoAsset;
+}
+
+const asset = videoAssetSchema.parse(Astro.props.asset);
+const isLocalVideo = isLocalVideoPath(asset.src);
+---
+
+<figure class="game-media game-media--video" data-media-id={asset.id}>
+  <div class="video-embed">
+    {isLocalVideo ? (
+      <video
+        src={asset.src}
+        poster={asset.poster}
+        title={asset.alt}
+        controls
+        playsinline
+        preload="metadata"
+      />
+    ) : (
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${asset.src}`}
+        title={asset.alt}
+        loading="lazy"
+        allow="encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+      />
+    )}
+  </div>
+  <figcaption>
+    {asset.caption && <span>{asset.caption}</span>}
+    <a href={asset.sourceUrl} rel="noreferrer">Video source <span aria-hidden="true">↗</span></a>
+  </figcaption>
+</figure>

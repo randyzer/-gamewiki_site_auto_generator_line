@@ -1,0 +1,59 @@
+--- before/template/PROJECT_STATE.md
++++ after/template/PROJECT_STATE.md
+@@ -1,6 +1,6 @@
+ # Game Site System V2.7 — 当前项目状态
+ 
+-更新：2026-10-06（Asia/Taipei）。最新用户要求优先于历史计划。当前总览见 [统一任务台账](roadmap/V2.7_TASK_LEDGER.md)；本页保留工程与证据上下文，原始审查记录不改写。
++更新：2026-10-07（Asia/Taipei）。最新用户要求优先于历史计划。当前总览见 [统一任务台账](roadmap/V2.7_TASK_LEDGER.md)；本页保留工程与证据上下文，原始审查记录不改写。
+ 
+ ## 项目目标
+ 
+@@ -13,6 +13,8 @@
+ 关系与同步原则见 [关系核对](architecture/GAME_SITE_SYSTEM_EVOLUTION_MODEL.md)。交付位置见 [DELIVERY_LAYOUT.md](DELIVERY_LAYOUT.md)。
+ 
+ ## 当前阶段
++
++2026-10-07最新：第19轮替代方案[设计独立接受](codex/executions/v2.7-ws06a/iteration19/result.md)；第20轮五文件治理修订已获[实际独立ACCEPT — GOVERNANCE AMENDMENT ONLY](codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md)，有限开发流程已生效，见[本轮结果](codex/executions/v2.7-ws06a/iteration20/result.md)与[现行路线§3.1](roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)。当前源码准入NOT_EVALUATED，完整WS06A BLOCKED、Safari proof0、WS03未开始、能力状态未提升，主任务仍2/8关闭。本轮产品增量0，产品tests/build/浏览器矩阵NOT_RUN。下一有限步骤为当前源码Development Readiness审计/独立裁定；尚未开始该审计或WS03A代码。
+ 
+ **正式路线共8个主任务：2个关闭，1个部分实施且受阻，5个尚未开始产品实施。** WS-01、WS-02 已独立 ACCEPT；WS-06A新源资格37 PASS / 10 FAIL，历史36/11保留，WS-06B 未开始。第13轮诊断、第14轮WebKit策略提案、第15轮焦点修复计划均已独立接受，但不构成WS-06A通过。第16轮两文件修复已完成本地RED/GREEN、专项15病例和root/adopted711测试，已获原ChatGPT独立ACCEPT并关闭有限修复；整体06A仍BLOCKED。第17轮策略实现已完成87/757测试及新37/10矩阵，已获原ChatGPT实际独立ACCEPT，仅接受实现机制；真实Safari补证待取得。WS-04A第18轮方法设计已独立ACCEPT，适配接口实施未开始、契约Gate仍OPEN，等待WS03实际接受后的绑定核实。其余主任务未实施，最终交付未创建，A4不恢复。
+ 
+
+--- before/template/README.md
++++ after/template/README.md
+@@ -2,7 +2,9 @@
+ 
+ 目标：以 V2.6.5 三件套为基础，修复真实项目暴露的问题，吸收五个参考案例的优秀能力，产出协同工作的 V2.7 SOP、Starter 和 Master Prompt。目标版本由用户确定，见 [版本决定](governance/V2.7_VERSION_DECISION.md)；尚未完成产品验收或发布。
+ 
+-2026-10-06：正式路线共8个主任务，WS-01/02已独立ACCEPT关闭；WS-06部分实施且受阻，Core浏览器新源资格37 PASS / 10 FAIL（历史36/11保留）；其余5个尚未开始产品实施，WS-04A第18轮[方法设计已独立ACCEPT](codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)，契约Gate仍OPEN，等待WS03接受后的绑定核实。Browser已从官方本地来源恢复；第16轮两文件修复及RED/GREEN、真实15病例、711测试回归已完成，原ChatGPT已独立ACCEPT关闭有限修复；第17轮策略实现10文件及757测试已获[实际独立ACCEPT](codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md)，仅接受实现机制；10项WebKit/40断言仍需真实Safari补证，[固定样本/清单](codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md)已准备，Safari原生GUI已授权但工具拒绝，Chrome有限补充检查已完成。旧A4保持暂停，最终V2.7交付包未建立。进度入口为[统一任务台账](roadmap/V2.7_TASK_LEDGER.md)，工程上下文见[PROJECT_STATE.md](PROJECT_STATE.md)。三件套关系、目录盘点与有限清理已获[独立ACCEPT](codex/verifications/goal-reset-2026-10-01/verification.md)；本次入口整理不是新的独立验收。
++2026-10-07最新：第20轮有限开发准入治理修订已[独立接受](codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md)，[现行路线§3.1](roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)的流程生效；[五文件修订及检查](codex/executions/v2.7-ws06a/iteration20/result.md)仅治理增量、产品增量0。当前源码准入NOT_EVALUATED，WS06A BLOCKED、Safari proof0、WS03未开始、主任务仍2/8关闭。下一有限步骤为当前源码Development Readiness审计/独立裁定，产品测试/构建/浏览器矩阵本轮NOT_RUN。
++
++截至2026-10-06的历史状态：正式路线共8个主任务，WS-01/02已独立ACCEPT关闭；WS-06部分实施且受阻，Core浏览器新源资格37 PASS / 10 FAIL（历史36/11保留）；其余5个尚未开始产品实施，WS-04A第18轮[方法设计已独立ACCEPT](codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)，契约Gate仍OPEN，等待WS03接受后的绑定核实。Browser已从官方本地来源恢复；第16轮两文件修复及RED/GREEN、真实15病例、711测试回归已完成，原ChatGPT已独立ACCEPT关闭有限修复；第17轮策略实现10文件及757测试已获[实际独立ACCEPT](codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md)，仅接受实现机制；10项WebKit/40断言仍需真实Safari补证，[固定样本/清单](codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md)已准备，Safari原生GUI已授权但工具拒绝，Chrome有限补充检查已完成。旧A4保持暂停，最终V2.7交付包未建立。进度入口为[统一任务台账](roadmap/V2.7_TASK_LEDGER.md)，工程上下文见[PROJECT_STATE.md](PROJECT_STATE.md)。三件套关系、目录盘点与有限清理已获[独立ACCEPT](codex/verifications/goal-reset-2026-10-01/verification.md)；本次入口整理不是新的独立验收。
+ 
+ | 资产 | 用途与有效性 |
+ | --- | --- |
+
+--- before/template/roadmap/V2.7_TASK_LEDGER.md
++++ after/template/roadmap/V2.7_TASK_LEDGER.md
+@@ -1,10 +1,12 @@
+ # V2.7 统一任务台账
+ 
+-更新：2026-10-06，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；索引整理不是产品独立验收；第18轮方法设计实际审查见下。
++更新：2026-10-07，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；索引整理不是产品独立验收；第18～20轮实际审查见下。
+ 
+ 目标：从V2.6.5三件套、真实项目缺口和五案例可借鉴能力，交付协同工作的V2.7 SOP、Starter、Master Prompt。商业适用性须由真实采用与人审证明；不以技术通过宣称收入、流量或案例商业成功。
+ 
+ ## 计数规则与当前总数
++
++第20轮最新：[五文件治理修订](../codex/executions/v2.7-ws06a/iteration20/result.md)已获[实际独立ACCEPT — GOVERNANCE AMENDMENT ONLY](../codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md)，有限开发流程生效；当前源码readiness仍NOT_EVALUATED。完整WS06A BLOCKED、Safari proof0、WS03未开始、能力未提升，主任务仍2/8关闭。下一有限动作是当前源码Development Readiness审计/独立裁定；本轮产品tests/build/浏览器矩阵NOT_RUN，产品增量0。第19轮[替代设计](../codex/executions/v2.7-ws06a/iteration19/result.md)保留，现行依赖以路线§3.1为准。
+ 
+ - 正式路线8个主任务：关闭2，部分实施且受阻1，未开始产品实施5（其中WS-04A方法设计已独立ACCEPT，契约Gate仍OPEN）。主任务只有全部所需子Gate独立接受才关闭。
+ - WS-03A/B/C/D、WS-04A/B、WS-06A/B是子阶段，不加到8个主任务总数。03D搜索/时效、05三组合仍需各自验证。
+@@ -18,7 +20,7 @@
+ | --- | --- | --- | --- | --- |
+ | WS-01 | 单一规范源、三件套引用、证据方法 | CLOSED；方法/工程独立ACCEPT | 后续功能变化仍须三件套同期同步 | [result](../codex/executions/v2.7-ws01/result.md)、[审查](../codex/executions/v2.7-ws01/verification.md) |
+ | WS-02 | Core连续性、采用构建/CI流程 | CLOSED；采用fixture与拒绝默认final独立ACCEPT | 本地验证不冒充远程CI、真实游戏验收 | [result](../codex/executions/v2.7-ws02/result.md)、[审查](../codex/executions/v2.7-ws02/verification.md) |
+-| WS-03 | 主题、媒体/视频、分享图、搜索/时效接口 | 产品实施未开始 | 依WS-02/06A ACCEPT，分切片补接口 | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
++| WS-03 | 主题、媒体/视频、分享图、搜索/时效接口 | 产品实施未开始；当前源码准入NOT_EVALUATED | 下一里程碑是独立准入审计；候选与正式前置见路线§3.1/§4 | [路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)、[治理接受](../codex/executions/v2.7-ws06a/iteration20/chatgpt-independent-review.md) |
+ | WS-04 | 游戏适配方法/接口与实例验证 | 产品实施未开始；第18轮方法设计已独立ACCEPT，仅METHODS DESIGN | 04A设计/接口Gate依WS-03；04B实例依WS-05 | [方法设计](../design/ws04a/GAME_ADAPTATION_METHOD_V1.md)、[实际审查](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md) |
+ | WS-05 | hub/wiki、task-guide、media-rich article三组合 | 产品实施未开始 | 逐组合依03及04A，使用真实Core | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+ | WS-06 | Core及组合独立验收体系 | PARTIAL / BLOCKED；06A工具及部分修复已做，06B未开始 | 06A资格失败未解决；06B需04B/05及06A | [实际结果](../codex/executions/v2.7-ws06a/result.md)、[第16轮本地结果](../codex/executions/v2.7-ws06a/iteration16/result.md) |

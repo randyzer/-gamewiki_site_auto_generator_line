@@ -1,0 +1,17 @@
+{
+  "kind": "HOST_CODEX_CLIENT_POLICY_V1",
+  "trustModel": "USER_APPROVED_SINGLE_USER_TRUSTED_CLIENT",
+  "userDecision": "2026-10-15: 用户明确同意 A；官方客户端、固定宿主代码与本人可信，模型命令/工具受限。",
+  "cli": {
+    "path": "/Users/randyz/Library/pnpm/global/5/.pnpm/@openai+codex@0.153.0-darwin-arm64/node_modules/@openai/codex/vendor/aarch64-apple-darwin/bin/codex",
+    "realPath": "/Users/randyz/Library/pnpm/global/5/.pnpm/@openai+codex@0.153.0-darwin-arm64/node_modules/@openai/codex/vendor/aarch64-apple-darwin/bin/codex",
+    "version": "codex-cli 0.153.0",
+    "sha256": "a29d9e86eef88cbbd69f97ce8c590b1d0a287c8f77424f5eef226b883d7eaa22"
+  },
+  "codeModeHost": {
+    "path": "/Users/randyz/Library/pnpm/global/5/.pnpm/@openai+codex@0.153.0-darwin-arm64/node_modules/@openai/codex/vendor/aarch64-apple-darwin/bin/codex-code-mode-host",
+    "realPath": "/Users/randyz/Library/pnpm/global/5/.pnpm/@openai+codex@0.153.0-darwin-arm64/node_modules/@openai/codex/vendor/aarch64-apple-darwin/bin/codex-code-mode-host",
+    "sha256": "9f6c2696d09c293e1e6d7034930c62a104120db6a13f50f99cb3cdfeb4bb7692"
+  },
+  "runtimeEvidence": null
+}

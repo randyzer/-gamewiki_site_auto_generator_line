@@ -1,0 +1,10 @@
+{
+  "exitCode": 1,
+  "command": "tsx iteration32/browser-freshness.ts",
+  "targetedAttempts": 1,
+  "diagnosticSessions": 0,
+  "retryCount": 0,
+  "childPid": 59612,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c32a.QNAxYv"
+}

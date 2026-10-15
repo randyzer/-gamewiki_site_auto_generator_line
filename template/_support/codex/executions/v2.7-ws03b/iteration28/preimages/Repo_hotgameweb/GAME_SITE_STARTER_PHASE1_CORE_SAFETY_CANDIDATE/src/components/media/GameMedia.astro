@@ -1,0 +1,24 @@
+---
+import { mediaAssetSchema, type MediaAsset } from "../../data/schemas/media";
+import VideoEmbed from "./VideoEmbed.astro";
+
+interface Props {
+  asset: MediaAsset;
+  eager?: boolean;
+}
+
+const asset = mediaAssetSchema.parse(Astro.props.asset);
+const { eager = false } = Astro.props;
+---
+
+{asset.type === "video" ? (
+  <VideoEmbed asset={asset} />
+) : (
+  <figure class="game-media" data-media-id={asset.id}>
+    <img src={asset.src} alt={asset.alt} loading={eager ? "eager" : "lazy"} decoding="async" />
+    <figcaption>
+      {asset.caption && <span>{asset.caption}</span>}
+      <a href={asset.sourceUrl} rel="noreferrer">Image source <span aria-hidden="true">↗</span></a>
+    </figcaption>
+  </figure>
+)}

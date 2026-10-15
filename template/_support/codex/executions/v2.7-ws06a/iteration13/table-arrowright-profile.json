@@ -1,0 +1,596 @@
+{
+  "chromium": {
+    "minimal": {
+      "tabs": 1,
+      "geometry": {
+        "active": true,
+        "client": 320,
+        "scrollWidth": 780,
+        "tableWidth": 780,
+        "overflow": "auto",
+        "documentClient": 390,
+        "documentScroll": 390
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 49.699999928474426,
+          "scrollLeft": 0,
+          "key": null,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 51.799999952316284,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 70.5,
+          "scrollLeft": 1,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 123,
+          "scrollLeft": 16,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 280.2999999523163,
+          "scrollLeft": 40,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 584.2999999523163,
+          "scrollLeft": 40,
+          "key": "ArrowRight",
+          "active": true
+        }
+      ],
+      "programmaticControl": {
+        "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+        "time": 588.8999999761581,
+        "scrollLeft": 32,
+        "key": "ArrowRight",
+        "active": true
+      },
+      "nativeScrolled": true
+    },
+    "core": [
+      {
+        "width": 390,
+        "tabs": 6,
+        "geometry": {
+          "active": true,
+          "client": 360,
+          "scrollWidth": 780,
+          "tableWidth": 780,
+          "overflow": "auto",
+          "documentClient": 390,
+          "documentScroll": 390
+        },
+        "samples": [
+          {
+            "label": "before",
+            "time": 552.7000000476837,
+            "scrollLeft": 0,
+            "key": null,
+            "active": true
+          },
+          {
+            "label": "immediate",
+            "time": 554.5,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "next-frame",
+            "time": 556.8999999761581,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~50ms",
+            "time": 612.3999999761581,
+            "scrollLeft": 9,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~200ms",
+            "time": 768.3999999761581,
+            "scrollLeft": 40,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~500ms",
+            "time": 1073,
+            "scrollLeft": 40,
+            "key": "ArrowRight",
+            "active": true
+          }
+        ],
+        "programmaticControl": {
+          "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+          "time": 1076.1000000238419,
+          "scrollLeft": 32,
+          "key": "ArrowRight",
+          "active": true
+        },
+        "nativeScrolled": true
+      },
+      {
+        "width": 1280,
+        "tabs": 9,
+        "geometry": {
+          "active": true,
+          "client": 748,
+          "scrollWidth": 780,
+          "tableWidth": 780,
+          "overflow": "auto",
+          "documentClient": 1280,
+          "documentScroll": 1280
+        },
+        "samples": [
+          {
+            "label": "before",
+            "time": 548.1000000238419,
+            "scrollLeft": 0,
+            "key": null,
+            "active": true
+          },
+          {
+            "label": "immediate",
+            "time": 549.8000000715256,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "next-frame",
+            "time": 556.3000000715256,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~50ms",
+            "time": 608.3999999761581,
+            "scrollLeft": 9,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~200ms",
+            "time": 763.8000000715256,
+            "scrollLeft": 32,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~500ms",
+            "time": 1068.8000000715256,
+            "scrollLeft": 32,
+            "key": "ArrowRight",
+            "active": true
+          }
+        ],
+        "programmaticControl": {
+          "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+          "time": 1071.7000000476837,
+          "scrollLeft": 32,
+          "key": "ArrowRight",
+          "active": true
+        },
+        "nativeScrolled": true
+      }
+    ]
+  },
+  "firefox": {
+    "minimal": {
+      "tabs": 1,
+      "geometry": {
+        "active": true,
+        "client": 320,
+        "scrollWidth": 780,
+        "tableWidth": 780,
+        "overflow": "auto",
+        "documentClient": 390,
+        "documentScroll": 390
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 41,
+          "scrollLeft": 0,
+          "key": null,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 44,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 58,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 112,
+          "scrollLeft": 15,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 266,
+          "scrollLeft": 35,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 573,
+          "scrollLeft": 35,
+          "key": "ArrowRight",
+          "active": true
+        }
+      ],
+      "programmaticControl": {
+        "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+        "time": 584,
+        "scrollLeft": 32,
+        "key": "ArrowRight",
+        "active": true
+      },
+      "nativeScrolled": true
+    },
+    "core": [
+      {
+        "width": 390,
+        "tabs": 6,
+        "geometry": {
+          "active": true,
+          "client": 360,
+          "scrollWidth": 780,
+          "tableWidth": 780,
+          "overflow": "auto",
+          "documentClient": 390,
+          "documentScroll": 390
+        },
+        "samples": [
+          {
+            "label": "before",
+            "time": 581,
+            "scrollLeft": 0,
+            "key": null,
+            "active": true
+          },
+          {
+            "label": "immediate",
+            "time": 583,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "next-frame",
+            "time": 586,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~50ms",
+            "time": 640,
+            "scrollLeft": 9,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~200ms",
+            "time": 798,
+            "scrollLeft": 39,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~500ms",
+            "time": 1106,
+            "scrollLeft": 39,
+            "key": "ArrowRight",
+            "active": true
+          }
+        ],
+        "programmaticControl": {
+          "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+          "time": 1116,
+          "scrollLeft": 32,
+          "key": "ArrowRight",
+          "active": true
+        },
+        "nativeScrolled": true
+      },
+      {
+        "width": 1280,
+        "tabs": 9,
+        "geometry": {
+          "active": true,
+          "client": 748,
+          "scrollWidth": 780,
+          "tableWidth": 780,
+          "overflow": "auto",
+          "documentClient": 1280,
+          "documentScroll": 1280
+        },
+        "samples": [
+          {
+            "label": "before",
+            "time": 585,
+            "scrollLeft": 0,
+            "key": null,
+            "active": true
+          },
+          {
+            "label": "immediate",
+            "time": 588,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "next-frame",
+            "time": 604,
+            "scrollLeft": 1,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~50ms",
+            "time": 659,
+            "scrollLeft": 17,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~200ms",
+            "time": 816,
+            "scrollLeft": 32,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~500ms",
+            "time": 1120,
+            "scrollLeft": 32,
+            "key": "ArrowRight",
+            "active": true
+          }
+        ],
+        "programmaticControl": {
+          "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+          "time": 1124,
+          "scrollLeft": 32,
+          "key": "ArrowRight",
+          "active": true
+        },
+        "nativeScrolled": true
+      }
+    ]
+  },
+  "webkit": {
+    "minimal": {
+      "tabs": 1,
+      "geometry": {
+        "active": true,
+        "client": 320,
+        "scrollWidth": 780,
+        "tableWidth": 780,
+        "overflow": "auto",
+        "documentClient": 390,
+        "documentScroll": 390
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 42,
+          "scrollLeft": 0,
+          "key": null,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 46,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 53,
+          "scrollLeft": 0,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 106,
+          "scrollLeft": 9,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 262,
+          "scrollLeft": 36,
+          "key": "ArrowRight",
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 567,
+          "scrollLeft": 40,
+          "key": "ArrowRight",
+          "active": true
+        }
+      ],
+      "programmaticControl": {
+        "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+        "time": 575,
+        "scrollLeft": 32,
+        "key": "ArrowRight",
+        "active": true
+      },
+      "nativeScrolled": true
+    },
+    "core": [
+      {
+        "width": 390,
+        "tabs": 2,
+        "geometry": {
+          "active": true,
+          "client": 360,
+          "scrollWidth": 780,
+          "tableWidth": 780,
+          "overflow": "auto",
+          "documentClient": 390,
+          "documentScroll": 390
+        },
+        "samples": [
+          {
+            "label": "before",
+            "time": 551,
+            "scrollLeft": 0,
+            "key": null,
+            "active": true
+          },
+          {
+            "label": "immediate",
+            "time": 554,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "next-frame",
+            "time": 566,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~50ms",
+            "time": 621,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~200ms",
+            "time": 776,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~500ms",
+            "time": 1082,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          }
+        ],
+        "programmaticControl": {
+          "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+          "time": 1090,
+          "scrollLeft": 32,
+          "key": "ArrowRight",
+          "active": true
+        },
+        "nativeScrolled": false
+      },
+      {
+        "width": 1280,
+        "tabs": 1,
+        "geometry": {
+          "active": true,
+          "client": 748,
+          "scrollWidth": 780,
+          "tableWidth": 780,
+          "overflow": "auto",
+          "documentClient": 1280,
+          "documentScroll": 1280
+        },
+        "samples": [
+          {
+            "label": "before",
+            "time": 545,
+            "scrollLeft": 0,
+            "key": null,
+            "active": true
+          },
+          {
+            "label": "immediate",
+            "time": 547,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "next-frame",
+            "time": 561,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~50ms",
+            "time": 615,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~200ms",
+            "time": 770,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          },
+          {
+            "label": "~500ms",
+            "time": 1076,
+            "scrollLeft": 0,
+            "key": "ArrowRight",
+            "active": true
+          }
+        ],
+        "programmaticControl": {
+          "label": "DIAGNOSTIC_ONLY_scrollLeft32",
+          "time": 1089,
+          "scrollLeft": 32,
+          "key": "ArrowRight",
+          "active": true
+        },
+        "nativeScrolled": false
+      }
+    ]
+  }
+}

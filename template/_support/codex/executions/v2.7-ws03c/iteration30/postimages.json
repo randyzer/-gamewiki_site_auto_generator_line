@@ -1,0 +1,92 @@
+{
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts": {
+    "sha256": "60e4bace444ef379f9595dd67b804acc2880bd9f5f80fd5a5f55e996feebb1ca",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts": {
+    "sha256": "868ab5b4344da843d894c7387341837a0efae10c293a1762c5582f8a9dce2030",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts": {
+    "sha256": "60416ef69db378cdfc49c964a2105e281bb40e9feb62519ca3c156c8db4062de",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro": {
+    "sha256": "9e6e03e3a8c73ef24daa49cae1a8a7b5a78a5866f4a6c826693f84c990a71726",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts": {
+    "sha256": "137b65f0c8f034808e206ced088b87ecb2b43a3664ff324441728ed431c699a2",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/audit-build.ts": {
+    "sha256": "ac718bcca077a7b606a93743f3aebb26212dca6f77d9e1a4d773d7f94b819a22",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media.test.ts": {
+    "sha256": "784904aefeb2e2fa22dd51963d9b16b20115f3de1141e4f4cf54756de0b97ab0",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/seo.test.ts": {
+    "sha256": "aed775a1c3bb5008068537894101b2c2cc72cc2b0b1aa53904d48c224fb0112e",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts": {
+    "sha256": "e2116bdfef49a953d1bfe203e07867dd6710d1747bd5d9c81d14845838666106",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-build.test.ts": {
+    "sha256": "8088cc8ad8315d39dfa727d2fff848478ea774426db41186551664f1e9f9b20f",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/helpers/core-build-fixture.ts": {
+    "sha256": "cf07f6d247c361ea3da8b5902803408499f36dde377ccd4a7bb93ff3ed360d40",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/media/README.md": {
+    "sha256": "ae219f5cbde65a1dd0842214b77b69cf35550fc965e3281c76b79049833b71ea",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md": {
+    "sha256": "9f835e5086593c6b6f4bece932253eabcdf2429a2d8fcb15cdb6bbe67b3ca739",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md": {
+    "sha256": "e15434d21d8293bf557d5cb0631298e6b6777a686a25ecc54892a5a1321c9d83",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md": {
+    "sha256": "f523624fd2108b1eb5bf01a994960aed9b53fd23974fc2f224230c6ae9bfb855",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md": {
+    "sha256": "3fb558a36c1ad63a9def73ae327b089aa71d2bed534e60a488e46f8a5a8c26c8",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md": {
+    "sha256": "881744e77336b9bdf09e3738bf7af06b2d0afca6bd005f602960bcaf37a9a36e",
+    "mode": 420,
+    "symlink": false
+  },
+  "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-sentinels.test.ts": {
+    "sha256": "e5ccb5b6ca03582a243641b4107fea3bdba76ccad21c22227e028be59d5247db",
+    "mode": 420,
+    "symlink": false
+  }
+}

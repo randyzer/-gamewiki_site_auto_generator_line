@@ -1,0 +1,102 @@
+{
+  "stage": "roadmap_review",
+  "capabilities_preserved": 41,
+  "workstreams": 8,
+  "dag_edges": [
+    [
+      "W1",
+      "W2"
+    ],
+    [
+      "W2",
+      "W6A"
+    ],
+    [
+      "W2",
+      "W3"
+    ],
+    [
+      "W6A",
+      "W3"
+    ],
+    [
+      "W1",
+      "W4"
+    ],
+    [
+      "W3",
+      "W4"
+    ],
+    [
+      "W3",
+      "W5"
+    ],
+    [
+      "W4",
+      "W5"
+    ],
+    [
+      "W5",
+      "W4B"
+    ],
+    [
+      "W4B",
+      "W6B"
+    ],
+    [
+      "W6A",
+      "W6B"
+    ],
+    [
+      "W6B",
+      "W7"
+    ],
+    [
+      "W7",
+      "W8"
+    ]
+  ],
+  "dag_acyclic": true,
+  "local_links": "PASS",
+  "reference_and_contract_files_unchanged": 233,
+  "repositories": [
+    {
+      "path": "Repo_hotgameweb/GAME_SOP_V2.6.5",
+      "head": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.6.5",
+      "head": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_BASED_gamesop2.6.5",
+      "head": "29b25559cf2af859bca359c7f7fda686a4803c95",
+      "clean": true
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "clean": true
+    }
+  ],
+  "blueprint_sha256": "fcc72e78f5572236829ea81fc93d8d220df3a52bc96c43a656d1b86d4f1cd96b",
+  "roadmap_sha256": "2b700624d385bfd3394ce9e928570aa247a4942e413700fcaad1c897bfaae791",
+  "changed_design_files": [
+    "template/architecture/GAME_SITE_SYSTEM_V2.7_ARCHITECTURE_BLUEPRINT_V1.md",
+    "template/roadmap/GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md",
+    "template/README.md",
+    "template/PROJECT_STATE.md",
+    "template/codex/verifications/v2.7-design/blueprint-acceptance-and-roadmap-plan.md",
+    "template/codex/executions/v2.7-design/roadmap-provenance.json",
+    "template/codex/executions/v2.7-design/roadmap-check.log",
+    "template/codex/executions/v2.7-design/roadmap-check-initial-failure.log",
+    "template/codex/executions/v2.7-design/blueprint-revision-1-provenance.json"
+  ],
+  "implementation_started": false,
+  "a4_resumed": false,
+  "product_tests_run_this_iteration": false,
+  "provenance_revision_scope_corrected": true,
+  "verification_note": "Initial scanner failure and corrected PASS both retained; WS workstream labels are separate from the 41 capability IDs. Revision provenance scope corrected before this review."
+}

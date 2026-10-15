@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="en" data-theme-font="editorial" data-theme-density="comfortable" data-theme-shape="square" data-theme-state="lifted"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="robots" content="index, follow, max-image-preview:large"><title>War of Genesis Gear: Keep, Use or Inspect Before Selling</title><meta name="description" content="Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking."><link rel="canonical" href="https://war-of-genesis.wiki/guides/gear/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:site_name" content="War of Genesis Wiki"><meta property="og:locale" content="en"><meta property="og:url" content="https://war-of-genesis.wiki/guides/gear/"><meta property="og:title" content="War of Genesis Gear: Keep, Use or Inspect Before Selling"><meta property="og:description" content="Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="War of Genesis Gear: Keep, Use or Inspect Before Selling"><meta name="twitter:description" content="Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking."><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://war-of-genesis.wiki/#website","url":"https://war-of-genesis.wiki/","name":"War of Genesis Wiki","description":"A bounded equipment decision guide with dated App 4891320 item examples: inspect the exact copy before choosing to keep, use or check a sale.","inLanguage":"en"},{"@type":"WebPage","@id":"https://war-of-genesis.wiki/guides/gear/#webpage","url":"https://war-of-genesis.wiki/guides/gear/","name":"War of Genesis Gear: Keep, Use or Inspect Before Selling","description":"Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking.","datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"en","isPartOf":{"@id":"https://war-of-genesis.wiki/#website"}},{"@type":"BreadcrumbList","@id":"https://war-of-genesis.wiki/guides/gear/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"War of Genesis Wiki","item":"https://war-of-genesis.wiki/"},{"@type":"ListItem","position":2,"name":"War of Genesis Item Decisions — Gear Before a Sale","item":"https://war-of-genesis.wiki/guides/"},{"@type":"ListItem","position":3,"name":"War of Genesis Gear: Keep, Use or Inspect Before Selling","item":"https://war-of-genesis.wiki/guides/gear/"}]},{"@type":"Article","@id":"https://war-of-genesis.wiki/guides/gear/#article","headline":"War of Genesis Gear: Keep, Use or Inspect Before Selling","description":"Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking.","datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"en","mainEntityOfPage":{"@id":"https://war-of-genesis.wiki/guides/gear/#webpage"}}]}</script><link rel="stylesheet" href="/_astro/BaseLayout.BD4_zmZV.css"></head><body id="top" data-page-family="guides"><a class="skip-link" href="#main-content">Skip to content</a><header class="site-header"><div class="site-header__inner shell"><a class="brand" href="/" aria-label="War of Genesis Wiki home"><span class="brand__mark" aria-hidden="true">WoG</span><span class="brand__copy"><strong>WoG Wiki</strong><small>Inspect the item. Understand the choice before you act.</small></span></a><nav class="desktop-nav" aria-label="Primary navigation"><ul class="desktop-nav__list"><li class="desktop-nav__group" data-nav-page-id="home"><a class="desktop-nav__link" href="/">Overview</a></li><li class="desktop-nav__group" data-active="true" data-nav-page-id="hub.guides"><a class="desktop-nav__link" href="/guides/">Item decisions</a><ul class="desktop-nav__menu" aria-label="Item decisions pages"><li data-nav-page-id="guide.gear"><a href="/guides/gear/" aria-current="page"><span>War of Genesis Gear: Keep, Use or Inspect Before Selling</span><small>Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking.</small></a></li></ul></li></ul></nav><details class="mobile-nav"><summary class="mobile-nav__toggle">Menu <span aria-hidden="true">+</span></summary><nav class="mobile-nav__panel" aria-label="Primary navigation"><ul class="mobile-nav__list"><li data-nav-page-id="home"><a href="/">Overview</a></li><li data-active="true"><details class="mobile-nav__group"><summary>Item decisions</summary><div class="mobile-nav__children"><a class="mobile-nav__overview" href="/guides/" data-nav-page-id="hub.guides">Overview <span aria-hidden="true">→</span></a><ul><li data-nav-page-id="guide.gear"><a href="/guides/gear/" aria-current="page">War of Genesis Gear: Keep, Use or Inspect Before Selling</a></li></ul></div></details></li></ul></nav></details><script>
+  (() => {
+    const mobile = document.querySelector(".mobile-nav");
+    const header = mobile?.closest(".site-header");
+    const desktop = header?.querySelector(".desktop-nav");
+    const home = header?.querySelector(".brand");
+    const summary = mobile?.querySelector(":scope > summary");
+    if (!(mobile instanceof HTMLDetailsElement) || !(desktop instanceof HTMLElement) ||
+      !(home instanceof HTMLElement) || !(summary instanceof HTMLElement) ||
+      typeof window.matchMedia !== "function") return;
+
+    // This matches the existing CSS navigation boundary, including exactly 900px.
+    const mobileMode = window.matchMedia("(max-width: 900px)");
+    const trigger = (disclosure) => disclosure.querySelector(":scope > summary");
+    const close = (disclosure) => {
+      disclosure.open = false;
+      for (const nested of disclosure.querySelectorAll("details")) nested.open = false;
+    };
+    const restore = (disclosure) => {
+      let visible = disclosure;
+      for (let ancestor = disclosure.parentElement?.closest("details"); ancestor;
+        ancestor = ancestor.parentElement?.closest("details")) {
+        if (!ancestor.open) visible = ancestor;
+      }
+      trigger(visible)?.focus({ preventScroll: true });
+    };
+
+    const currentMode = () => mobileMode.matches ? "mobile" : "desktop";
+    const rootFor = (mode) => mode === "mobile" ? mobile : desktop;
+    const visible = (element) => element instanceof HTMLElement && element.isConnected &&
+      element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden" &&
+      getComputedStyle(element).display !== "none";
+    const identityFor = (element) => {
+      if (!(element instanceof HTMLElement) || !element.isConnected) return null;
+      const mode = mobile.contains(element) ? "mobile" : desktop.contains(element) ? "desktop" : null;
+      if (!mode) return null;
+      const group = mode === "mobile" ? element.closest(".mobile-nav__group") : null;
+      const pageId = element.closest("[data-nav-page-id]")?.getAttribute("data-nav-page-id") ??
+        group?.querySelector(".mobile-nav__overview")?.getAttribute("data-nav-page-id") ?? null;
+      return { mode, pageId, kind: mode === "desktop" ? "desktop-page" : element === summary ?
+        "mobile-trigger" : group && element === trigger(group) ? "mobile-group" : "mobile-page" };
+    };
+    const sourceFor = (identity) => {
+      if (!identity) return null;
+      if (identity.kind === "mobile-trigger") return summary;
+      if (identity.kind === "mobile-group") {
+        const group = [...mobile.querySelectorAll(".mobile-nav__group")].find((element) =>
+          element.querySelector(".mobile-nav__overview")?.getAttribute("data-nav-page-id") === identity.pageId);
+        return group ? trigger(group) : null;
+      }
+      if (!identity.pageId) return null;
+      return [...rootFor(identity.mode).querySelectorAll("a[href]")].find((element) =>
+        identityFor(element)?.pageId === identity.pageId) ?? null;
+    };
+    let pendingIdentity = null;
+    let intentRevoked = false;
+    let previousMode = currentMode();
+    const revoke = () => { pendingIdentity = null; intentRevoked = true; };
+    const responsiveLoss = (identity, active) => {
+      if (!identity || identity.mode === currentMode() ||
+        active !== document.body && active !== document.documentElement) return false;
+      const source = sourceFor(identity);
+      return source instanceof HTMLElement && source.isConnected && !visible(source);
+    };
+    document.addEventListener("focusin", (event) => {
+      const identity = identityFor(event.target);
+      if (identity && identity.mode === currentMode() && visible(event.target)) {
+        pendingIdentity = identity;
+        intentRevoked = false;
+      } else if (!responsiveLoss(pendingIdentity, event.target)) revoke();
+    }, true);
+    document.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof Element) || !mobile.contains(event.target) && !desktop.contains(event.target)) revoke();
+    }, true);
+    document.addEventListener("focusout", () => {
+      const observed = pendingIdentity;
+      if (!observed) return;
+      queueMicrotask(() => {
+        // An old event must not invalidate a newer focus record made by the handoff.
+        if (pendingIdentity !== observed) return;
+        if (identityFor(document.activeElement)) return;
+        if (!responsiveLoss(observed, document.activeElement)) revoke();
+      });
+    }, true);
+
+    mobile.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !(event.target instanceof Element)) return;
+      const disclosure = event.target.closest("details[open]");
+      if (!(disclosure instanceof HTMLDetailsElement) || !mobile.contains(disclosure)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      close(disclosure);
+      restore(disclosure);
+    });
+
+    mobile.addEventListener("toggle", (event) => {
+      const disclosure = event.target;
+      if (!(disclosure instanceof HTMLDetailsElement) || !mobile.contains(disclosure) || disclosure.open) return;
+      const hiddenFocus = disclosure.contains(document.activeElement) &&
+        !trigger(disclosure)?.contains(document.activeElement);
+      close(disclosure);
+      if (hiddenFocus) restore(disclosure);
+    }, true);
+
+    mobile.addEventListener("click", (event) => {
+      if (event.defaultPrevented || !(event.target instanceof Element)) return;
+      const link = event.target.closest("a[href]");
+      if (!(link instanceof HTMLElement) || !mobile.contains(link)) return;
+      close(mobile);
+      summary.focus({ preventScroll: true });
+      const destination = new URL(link.href, window.location.href);
+      const current = new URL(window.location.href);
+      if (destination.origin !== current.origin || destination.pathname !== current.pathname ||
+        destination.search !== current.search) return;
+      if (destination.href === current.href) event.preventDefault();
+      let target;
+      try { target = destination.hash ? document.getElementById(decodeURIComponent(destination.hash.slice(1))) : home; }
+      catch { return; }
+      if (!(target instanceof HTMLElement) || target.getClientRects().length === 0) return;
+      if (!target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+        target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+      }
+      target.focus({ preventScroll: true });
+    });
+
+    mobileMode.addEventListener("change", () => {
+      const mode = currentMode();
+      if (mode === previousMode) return;
+      const outgoingMode = previousMode;
+      previousMode = mode;
+      const live = identityFor(document.activeElement);
+      const identity = intentRevoked ? null : live?.mode === outgoingMode ? live :
+        pendingIdentity?.mode === outgoingMode && responsiveLoss(pendingIdentity, document.activeElement) ? pendingIdentity : null;
+      revoke();
+      close(mobile);
+      if (!identity) {
+        const current = identityFor(document.activeElement);
+        if (current?.mode === mode && visible(document.activeElement)) {
+          pendingIdentity = current;
+          intentRevoked = false;
+        }
+        return;
+      }
+      if (mode === "mobile") {
+        if (visible(summary)) summary.focus({ preventScroll: true });
+        return;
+      }
+      const match = [...desktop.querySelectorAll("[data-nav-page-id]")]
+        .find((element) => element.getAttribute("data-nav-page-id") === identity.pageId);
+      const destination = match?.matches("a[href]") ? match : match?.querySelector("a[href]");
+      const parent = destination?.closest(".desktop-nav__group")?.querySelector(".desktop-nav__link");
+      if (visible(parent)) parent.focus({ preventScroll: true });
+      if (visible(destination)) destination.focus({ preventScroll: true });
+      else if (visible(home)) home.focus({ preventScroll: true });
+    });
+    if (!mobileMode.matches) close(mobile);
+  })();
+</script></div></header><main id="main-content"><article class="article wiki-article shell" data-pagefind-body="true"><nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="https://war-of-genesis.wiki/">War of Genesis Wiki</a></li><li><a href="https://war-of-genesis.wiki/guides/">War of Genesis Item Decisions — Gear Before a Sale</a></li><li aria-current="page">War of Genesis Gear: Keep, Use or Inspect Before Selling</li></ol></nav><header class="article__header wiki-article__header reveal reveal--1"><p class="eyebrow">Player guide</p><h1 data-pagefind-meta="title">War of Genesis Gear: Keep, Use or Inspect Before Selling</h1><p class="article__dek" data-pagefind-meta="description">Inspect the exact item, compare what you know and pause when details are unclear. Dated Strife and Valor examples establish item context, not a ranking.</p><dl class="article__meta wiki-article__meta"><div><dt>Published</dt><dd><time datetime="2026-10-08">2026-10-08</time></dd></div><div><dt>Last updated</dt><dd><time datetime="2026-10-08">2026-10-08</time></dd></div><div><dt>Sources checked</dt><dd><time datetime="2026-09-15">2026-09-15</time></dd></div></dl></header><div class="article__layout wiki-article__layout"><aside class="article__rail wiki-article__toc"><nav aria-labelledby="wiki-toc-title"><p class="eyebrow" id="wiki-toc-title">On this page</p><ol><li data-depth="2"><a href="#two-recorded-item-identities-not-a-gear-ranking">Two recorded item identities, not a gear ranking</a></li><li data-depth="2"><a href="#work-through-the-exact-copy-decision">Work through the exact-copy decision</a></li><li data-depth="2"><a href="#keep-inspect-or-revisit">Keep, inspect or revisit</a></li><li data-depth="2"><a href="#your-stopping-point-and-next-check">Your stopping point and next check</a></li></ol></nav></aside><div class="prose"><p><strong>Inspect the exact copy before choosing to use, keep or check a sale.</strong> If its use or eligibility is unclear, pause and keep it while you check the current details. A listing names an item; it does not tell you what your copy does or what you would lose by giving it up.</p>
+<h2 id="two-recorded-item-identities-not-a-gear-ranking">Two recorded item identities, not a gear ranking</h2>
+<p>The source record from <strong>15 September 2026</strong> includes Steam Market listings for <strong>High-Grade Jewel of Strife</strong> and <strong>High-Grade Jewel of Valor</strong> under <strong>App 4891320</strong>. These are concrete item-listing identities, not a ranking of what to equip or sell.</p>
+<p>The recorded Valor listing attributed its publisher fee to the same App 4891320. That ties this example to a specific game’s Market context; it does not establish that every copy is marketable, that the listing is active today or that selling is the right progression choice.</p>
+<p>Those records also do not establish that these jewels are equipment, a rarity tier, an upgrade ingredient or a particular build choice. Use the examples to distinguish a known identity from an unknown gameplay effect.</p>
+<h2 id="work-through-the-exact-copy-decision">Work through the exact-copy decision</h2>
+<p>This is an editorial decision method, not a verified optimal strategy:</p>
+<ol>
+<li><strong>Inspect the details.</strong> Read what the current game actually says this copy does. Do not fill missing information from its name.</li>
+<li><strong>Check your present need.</strong> Identify the goal a use or equipment change would serve, if the current interface confirms that action is available.</li>
+<li><strong>Consider replacement.</strong> Ask what you would need to recover the same useful role if you gave up the item; do not assume a drop source or replacement cost.</li>
+<li><strong>Separate confirmed actions from guesses.</strong> Consider only actions shown for this item. The listing records do not prove upgrade or synthesis mechanics.</li>
+<li><strong>Check the exact copy’s eligibility.</strong> Inspect the current Steam interface if a sale is relevant. A similarly named listing is not enough.</li>
+<li><strong>Name the trade-off.</strong> State what you would give up and what remains uncertain. If you cannot explain that trade-off, stop rather than treating a price as an answer.</li>
+</ol>
+<h2 id="keep-inspect-or-revisit">Keep, inspect or revisit</h2>
+<p><strong>Keep and inspect</strong> when the role, replacement or available action is unclear. That leaves the decision open while you check facts instead of forcing an irreversible choice.</p>
+<p><strong>Consider the sale question</strong> only if the current interface confirms eligibility and you understand why the item is not solving a present need. This guide does not supply a current value, predict demand or recommend a sale.</p>
+<p><strong>Revisit after a relevant change</strong> in the details you can actually verify. Note the exact item, your goal, the reason for your choice and the unresolved question; a previous decision need not be permanent.</p>
+<h2 id="your-stopping-point-and-next-check">Your stopping point and next check</h2>
+<p>The guide has answered its bounded question when you can state the exact item, a confirmed available action and your reason to keep, use or inspect further. If any of those is missing, the stopping point is to check details, not to guess a mechanic.</p>
+<p>For source context, review the recorded <a href="https://steamcommunity.com/market/listings/4891320/High-Grade%20Jewel%20of%20Strife">Strife listing</a> or <a href="https://steamcommunity.com/market/listings/4891320/High-Grade%20Jewel%20of%20Valor">Valor listing</a>; a current page may differ from the dated observation. Return to <a href="/guides/">item decisions</a> to revisit this route. This proof does not provide a fee calculator, live item database or farming/build guide.</p>
+<p>Writing this article on 8 October 2026 does not mean its sources or current market conditions were checked that day.</p></div></div><section class="faq section-rule" aria-labelledby="faq-title"><header class="faq__header"><p class="eyebrow">Quick answers</p><h2 id="faq-title">Frequently asked questions</h2></header><div class="faq__list"><details><summary>Does the name High-Grade tell me whether to equip or sell an item?</summary><p>No. The recorded listing identity does not establish an item&#39;s stats, rarity system, build fit or progression value. Inspect the exact copy and current game details.</p></details><details><summary>Does a recorded Market listing mean every copy can be sold?</summary><p>No. A dated listing does not establish current availability, the eligibility of every copy, demand or a completed sale. Check the exact item in the current interface.</p></details></div></section><nav class="related-pages next-dispatch" aria-label="Related pages"><span class="eyebrow">Keep exploring</span><a href="/guides/"><span><strong>War of Genesis Item Decisions — Gear Before a Sale</strong><small>Use one equipment decision guide to inspect the exact copy, understand what remains unknown and stop before an unsupported keep-or-sell choice.</small></span><span aria-hidden="true">→</span></a><a href="/"><span><strong>War of Genesis Wiki — Start with an Item Decision</strong><small>Inspect the exact item before choosing to use, keep or check a sale. This bounded route leads to one gear guide, not a complete economy database.</small></span><span aria-hidden="true">→</span></a></nav><section class="sources evidence section-rule" aria-labelledby="sources-title"><div><p class="eyebrow">Sources & verification</p><h2 id="sources-title">How this page was checked</h2><p class="sources__verified">Sources checked <time datetime="2026-09-15">2026-09-15</time></p></div><ol><li><span>01</span><div><strong>steamcommunity.com</strong><small>first party platform</small><a href="https://steamcommunity.com/market/listings/4891320/High-Grade%20Jewel%20of%20Strife" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div><time datetime="2026-09-15">Checked 2026-09-15</time></li><li><span>02</span><div><strong>steamcommunity.com</strong><small>first party platform</small><a href="https://steamcommunity.com/market/listings/4891320/High-Grade%20Jewel%20of%20Valor" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div><time datetime="2026-09-15">Checked 2026-09-15</time></li><li><span>03</span><div><strong>steamcommunity.com</strong><small>first party platform</small><a href="https://steamcommunity.com/market/search?appid=4891320" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div><time datetime="2026-09-15">Checked 2026-09-15</time></li></ol></section></article></main><footer class="site-footer"><div class="shell site-footer__grid"><div><span class="eyebrow">WoG Wiki</span><p class="site-footer__statement">Inspect the item. Understand the choice before you act.</p></div><div class="site-footer__meta"><p>War of Genesis Wiki / 2026</p><p>Inspect the item. Understand the choice before you act.</p><nav class="site-footer__links" aria-label="Company and legal"><a href="/about/">about</a></nav><a href="/#top">Back to top ↑</a></div></div></footer></body></html>

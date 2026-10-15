@@ -1,0 +1,10 @@
+{
+  "logicalRoot": "/tmp/c2c22.82dTFV",
+  "realRoot": "/private/tmp/c2c22.82dTFV",
+  "createdByObserverPid": 78063,
+  "fresh": true,
+  "owned": true,
+  "short": true,
+  "closed": true,
+  "cleanupArtifact": "owned-tmp-cleanup.json"
+}

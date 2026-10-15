@@ -1,0 +1,934 @@
+# WS04A 第18轮实际有限方法设计计划
+
+2026-10-06。原ChatGPT页签完整渲染DOM记录；不是Codex改写。完整范围和两项澄清以实际回复为准。
+
+## 原始 PLAN18
+
+```text
+- heading "ChatGPT 说：" [level=4]
+  - paragraph:
+    - text: "[C2C]"
+    - text: "STATE: PLAN"
+    - text: "TASK_ID: c2c_a765"
+    - text: "ITERATION: 18"
+    - text: "WORKSTREAM:"
+    - strong: WS04A bounded methods design
+    - text: "PLAN_STATUS:"
+    - strong: READY FOR AUTONOMOUS EXECUTION
+    - text: "SCOPE:"
+    - strong: METHODS / DESIGN DOCUMENTS ONLY
+    - text: "WS04A_GATE:"
+    - strong: MUST REMAIN OPEN
+  - paragraph: 我已通过当前 hot_words_web workspace 重新读取并对照：
+  - list:
+    - listitem: WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md
+    - listitem: 已 ACCEPT 的 V2.7 roadmap / architecture blueprint
+    - listitem: canonical COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md
+    - listitem: 当前真实 gameConfigSchema
+    - listitem: 当前真实 pageInventoryEntrySchema
+    - listitem: 当前真实 mediaManifestSchema
+    - listitem: 当前 media-readiness.ts
+    - listitem: War of Genesis 上线前验收报告
+    - listitem: Bomb Farm visual/media gap、V2.1 enrichment、Human Visual Review evidence
+    - listitem: 五站 capability/pattern audit 与已有 live-site validation
+  - paragraph:
+    - text: 结论是：
+    - strong: 现在可以把 WS04A 的“方法”设计清楚，但不能冻结真正的 adaptation interface contract。
+    - text: 因为 WS03A/B/C/D 的最终接口尚未独立 ACCEPT；Roadmap也明确规定 04A 方法模板可提前设计，04A contract Gate须等待 WS03。
+  - separator
+  - heading "一、先比较 3 种方案" [level=1]
+  - region "可滚动表格":
+    - table:
+      - rowgroup:
+        - row "方案 做法 优点 主要问题 结论":
+          - columnheader "方案"
+          - columnheader "做法"
+          - columnheader "优点"
+          - columnheader "主要问题"
+          - columnheader "结论"
+      - rowgroup:
+        - row "A. 单一“大适配配置表” 一个巨型文档覆盖主题、页面、媒体、搜索、关系、时效、审核 看起来集中 容易形成第二个 Inventory/Media SSOT；字段会提前猜测 WS03 schema 不采用":
+          - cell "A. 单一“大适配配置表”"
+          - cell "一个巨型文档覆盖主题、页面、媒体、搜索、关系、时效、审核"
+          - cell "看起来集中"
+          - cell "容易形成第二个 Inventory/Media SSOT；字段会提前猜测 WS03 schema"
+          - cell "不采用"
+        - row "B. Decision Worksheet + Dependency Ledger 方法层记录“为什么选择”，真实 Page ID/媒体/接口只引用现有权威；未冻结接口进入依赖台账 最符合当前 DAG；不会复制路由/发布/媒体真相；能承接 WS03变化 后续需在 WS03 ACCEPT 后做一次绑定 采用":
+          - cell "B. Decision Worksheet + Dependency Ledger":
+            - text: B.
+            - strong: Decision Worksheet + Dependency Ledger
+          - cell "方法层记录“为什么选择”，真实 Page ID/媒体/接口只引用现有权威；未冻结接口进入依赖台账"
+          - cell "最符合当前 DAG；不会复制路由/发布/媒体真相；能承接 WS03变化"
+          - cell "后续需在 WS03 ACCEPT 后做一次绑定"
+          - cell "采用":
+            - strong: 采用
+        - row "C. Schema-first adaptation contract 现在直接设计 game-adaptation.schema 并让未来 Starter实现 技术上最明确 明显越过 WS03；会提前发明主题/rights/share/search字段 禁止当前采用":
+          - cell "C. Schema-first adaptation contract"
+          - cell "现在直接设计 game-adaptation.schema 并让未来 Starter实现"
+          - cell "技术上最明确"
+          - cell "明显越过 WS03；会提前发明主题/rights/share/search字段"
+          - cell "禁止当前采用"
+  - button "复制表格":
+  - button "展开表格":
+  - paragraph:
+    - text: 因此 PLAN18 采用
+    - strong: 方案 B
+    - text: 。
+  - paragraph: 核心原则：
+  - blockquote:
+    - paragraph:
+      - text: WS04A 现在设计的是
+      - strong: decision method
+      - text: ，不是新的数据 SSOT，更不是新 schema。
+  - separator
+  - heading "二、PLAN18 精确文件范围" [level=1]
+  - paragraph:
+    - text: 本轮最多新增
+    - strong: 5 个设计文档 + 1 个执行计划记录
+    - text: 。
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: template/design/ws04a/ ├── GAME_ADAPTATION_METHOD_V1.md ├── GAME_ADAPTATION_DECISION_WORKSHEET_V1.md ├── WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md ├── WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md └── WS04A_DESIGN_REVIEW_CHECKLIST_V1.md template/codex/prompts/v2.7-ws04a/ └── iteration18-ws04a-methods-design-plan.md
+  - paragraph:
+    - strong: 不修改
+    - text: 现有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: WS04A_GAME_ADAPTATION_DESIGN_INPUTS_V1.md Roadmap Blueprint Contract Registry SOP Master Prompt Starter 任何 src/** 任何 schema 任何 runtime 任何真实 WoG/BombFarm 项目
+  - paragraph: 如果设计过程中认为必须增加 schema / TS / JSON validator：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: STOP
+  - paragraph: 那已经不是 iteration18。
+  - separator
+  - heading "三、文档 1：GAME_ADAPTATION_METHOD_V1.md" [level=1]
+  - paragraph: 这是 WS04A 的方法主文档。
+  - paragraph: 它回答：
+  - blockquote:
+    - paragraph: 一个游戏从“事实与玩家任务”到“页面组合与视觉/媒体决定”，应该经历哪些显式决定？
+  - paragraph: 固定流程建议：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: A0 Provenance / source identity ↓ A1 Game identity & terminology ↓ A2 Player tasks / answer promises ↓ A3 Existing Page-ID selection ↓ A4 Page-pattern intent ↓ A5 Visual adaptation evidence ↓ A6 Media / video decision ↓ A7 Search / related / freshness decision ↓ A8 Human / rights / evidence ownership ↓ A9 Interface dependency reconciliation
+  - paragraph: 注意：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: A3不是创建route A4不是实现Pattern A6不是批准版权 A9不是WS03 PASS
+  - separator
+  - heading "四、必须明确三类 Authority" [level=1]
+  - paragraph: 主文档必须给出下面的责任分层。
+  - heading "1. Existing technical authority" [level=3]
+  - paragraph: 继续由：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Page Inventory game.config media manifest accepted Core interfaces
+  - paragraph: 持有真实技术数据。
+  - paragraph: 例如：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: route publicationStatus indexability feature actual media asset ID
+  - paragraph: Worksheet只引用，不复制其 authority。
+  - heading "2. Adaptation decision authority" [level=3]
+  - paragraph: WS04A方法负责：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 为什么这个Page ID被选 玩家来到这页要解决什么任务 页面承诺的答案是什么 为什么选择某种pattern意图 为什么需要/不需要媒体 为什么启用/不启用search 为什么某个related关系有意义
+  - heading "3. Human/project authority" [level=3]
+  - paragraph: 继续独立负责：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 游戏事实真实性 媒体权利 真实视觉选择 品牌/官方/非官方表述 最终人工视觉判断
+  - paragraph: 不能让 schema 或 Codex自动批准。
+  - separator
+  - heading "五、文档 2：Reusable Decision Worksheet" [level=1]
+  - paragraph: GAME_ADAPTATION_DECISION_WORKSHEET_V1.md
+  - paragraph: 这是之后每个游戏都可以复制填写的模板。
+  - paragraph: 不要设计成未来 JSON schema。
+  - paragraph: 建议分 6 张表。
+  - separator
+  - heading "Worksheet A — Source / Identity" [level=2]
+  - paragraph: 字段：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Project / game SOP candidate identity Prompt identity Starter identity Contract path + SHA Project/build identity Evidence date Decision owner Review owner
+  - paragraph: 目的：
+  - paragraph: 防止：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 旧项目PASS → 自动继承到新build
+  - separator
+  - heading "Worksheet B — Game Identity / Vocabulary" [level=2]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Concept Approved game term Meaning Source/evidence ref Confidence/status Used on which Page IDs Owner Review status
+  - paragraph: 这里必须能暴露：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: UNKNOWN PENDING BLOCKED
+  - paragraph: 不能自动填词。
+  - separator
+  - heading "六、最重要：Per-page Player Task 表" [level=1]
+  - paragraph: 每个采用中的 Page ID必须有一行：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: pageId existing route reference page role primary player task entry question promised answer actual answer/evidence available? next useful action pattern intent decision owner review state
+  - paragraph: 关键 Gate：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: promised answer ≠ actual supported answer
+  - paragraph: 必须显式标：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: BLOCK / REVISE
+  - paragraph: 这直接承接 War of Genesis 的真实问题：
+  - blockquote:
+    - paragraph: “Best Items”“Builds”等标题/搜索承诺，实际正文主要是通用决策框架，而不是具体当前榜单或配装。
+  - paragraph: 适配方法不能只看：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 页面存在 SEO title存在
+  - paragraph: 而必须问：
+  - blockquote:
+    - paragraph: 这个页面真的回答它声称回答的问题吗？
+  - separator
+  - heading "七、Pattern 在 Worksheet 中只能是 intent" [level=1]
+  - paragraph: 当前允许写：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: Editorial Home Wiki Hub Problem-Oriented Guide Database/Object Detail Tool Page Long-form Guide
+  - paragraph: 或 blueprint 已批准的 presentation intent：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: Immersive Fantasy Tactical Systems Technical Wiki Editorial Dense Minimal Utility
+  - paragraph: 但字段必须叫类似：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: desiredPatternIntent
+  - paragraph: 而不是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: patternId = "problem-guide-v1"
+  - paragraph: 因为 WS05 Pattern实现尚未存在。
+  - separator
+  - heading "八、Media / No-media Decision 是本轮核心" [level=1]
+  - paragraph: Worksheet 每页必须分别记录：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: pageId player task media need candidate media type material value source rights state semantic suitability human decision pattern consequence fallback/no-media decision owner
+  - paragraph: 必须沿用 Contract MC-04 的四类价值：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: comprehension game identity player decision-making evidence quality
+  - paragraph: 而不是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: “为了页面好看”
+  - separator
+  - heading "九、No-media 不能只写一句“无媒体”" [level=1]
+  - paragraph:
+    - text: 设计一个明确的
+    - strong: Complete No-media Decision
+    - text: 。
+  - paragraph: 如果：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: mediaNeed = NO MEDIA NEEDED
+  - paragraph: 或有用媒体：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: UNAVAILABLE
+  - paragraph: 必须记录完整组合：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - text: why media does not materially improve task OR why useful media is unavailable
+    - text: "how the page remains complete: - stronger text hierarchy - quick answer - verified table - callout - checklist - diagram-free explanation - related next action ..."
+  - paragraph: 并绑定：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: owner human review state
+  - paragraph: 这样才能避免：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 没有图 → 随便标 no-media → 伪装成完成
+  - separator
+  - heading "十、不要重新发明 Media lifecycle" [level=1]
+  - paragraph: 现有 media-readiness.ts 已经有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: HIGH PRIORITY / RECOMMENDED / OPTIONAL / NO MEDIA NEEDED NOT FOUND / FOUND / SEMANTICALLY VERIFIED VERIFIED / UNRESOLVED / HUMAN RISK ACCEPTED / NOT REQUIRED FOR EMBED APPROVED / WAIVED / REVISE / BLOCK / PENDING NOT INTEGRATED / INTEGRATED / FALLBACK ONLY PENDING / PASS / REVISE / BLOCK
+  - paragraph: PLAN18不得创造一套：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: MEDIA_OK MEDIA_DONE READY
+  - paragraph: 适配 worksheet只引用现有 lifecycle。
+  - separator
+  - heading "十一、必须明确 sourceUrl != rights approval" [level=1]
+  - paragraph: 这要成为方法硬规则：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: media.sourceUrl exists ≠ rights VERIFIED
+  - paragraph: 同理：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: asset downloaded ≠ SEMANTICALLY VERIFIED asset integrated ≠ Human APPROVED screenshot exists ≠ visual gate PASS
+  - paragraph: 这直接来源于 Bomb Farm 已有 gap。
+  - separator
+  - heading "十二、Bomb Farm traceable example" [level=1]
+  - paragraph: WOG_BOMBFARM_TRACEABILITY_EXAMPLES_V1.md 不是新项目配置。
+  - paragraph: 只展示：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: historical problem → worksheet field → expected decision behavior
+  - paragraph: 至少包含 Bomb Farm 四类例子。
+  - heading "BF-01 Rights BLOCK" [level=3]
+  - paragraph: 历史 gap：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 有视觉/媒体需求 但权利状态 BLOCK/UNRESOLVED
+  - paragraph: 设计映射：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: mediaNeed = HIGH PRIORITY / RECOMMENDED candidate exists rights != VERIFIED → cannot auto-select integrated media → human/rights owner remains explicit
+  - separator
+  - heading "BF-02 22 assets / 23 files" [level=3]
+  - paragraph: 历史 enrichment 数量：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 22 assets 23 files
+  - paragraph: 设计结论必须写：
+  - blockquote:
+    - paragraph: 数量是 inventory evidence，不是 MC-04 completion metric。
+  - paragraph: 不能出现：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: assetCount >= N → PASS
+  - separator
+  - heading "BF-03 historical no-media decisions" [level=3]
+  - paragraph: 四条 no-media决定只作为：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 历史 decision-form example
+  - paragraph: 而不是 V2.7 当前自动批准。
+  - paragraph: 后续项目必须重新绑定：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: current Page ID current build current rationale
+  - separator
+  - heading "BF-04 Human review pending" [level=3]
+  - paragraph: 历史：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: READY FOR HUMAN VISUAL REVIEW
+  - paragraph: 方法必须证明：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: technical integration + screenshots exist
+  - paragraph: 不能推导：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: visual PASS rights PASS
+  - separator
+  - heading "十三、War of Genesis traceable examples" [level=1]
+  - paragraph: 至少四类。
+  - heading "WOG-01 Generic visual identity" [level=3]
+  - paragraph: 历史证据：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 页面整体可工作 但游戏视觉媒体极少 主要只有logo
+  - paragraph: 映射：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Game identity evidence Theme evidence Per-page media assessment
+  - paragraph: 不能：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: brand.logoPath存在 → GI/VF complete
+  - separator
+  - heading "WOG-02 Missing share media" [level=3]
+  - paragraph: 历史：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: OG metadata存在 og:image缺失
+  - paragraph: 映射为：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: SEO-02 dependency → WS03C
+  - paragraph: 因此当前04A：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: record requirement/dependency NOT invent ogImage field
+  - separator
+  - heading "WOG-03 Promise/answer mismatch" [level=3]
+  - paragraph: 历史：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Best Items Builds
+  - paragraph: 搜索承诺可能高于实际答案深度。
+  - paragraph: 映射：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: "Player Task Worksheet: promised answer supported answer gap decision"
+  - separator
+  - heading "WOG-04 Legal / operator incompleteness" [level=3]
+  - paragraph: 历史：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: Privacy/Terms draft 真实主体/contact未落实
+  - paragraph: 这不是主题/媒体问题。
+  - paragraph: Worksheet必须明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: adaptation cannot fabricate identity → TL-01 / TL-02 dependency → BLOCK where applicable
+  - separator
+  - heading "十四、禁止把五站视觉特征当适配默认" [level=1]
+  - paragraph: 案例审计已经说明：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: purple/gold radar archive shared vault Popular Trending Online
+  - paragraph: 都是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: GAME/PATTERN SPECIFIC
+  - paragraph: 不是 Core或适配模板默认。
+  - paragraph: 因此方法中要有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Evidence-backed visual choice
+  - paragraph: 例如：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "visualRole: atmosphere choice: high-contrast dark surface evidence: actual game UI/key art"
+  - paragraph: 而不能：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: genre=fantasy → purple + serif
+  - separator
+  - heading "十五、文档 3：WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md" [level=1]
+  - paragraph: 这是 PLAN18 防止“设计跑到实现前面”的关键。
+  - paragraph: 建议固定列：
+  - region "可滚动表格":
+    - table:
+      - rowgroup:
+        - row "ID Adaptation concern Current existing interface WS03 dependency Current state Can 04A design now? Must wait before Gate? Reconciliation action":
+          - columnheader "ID"
+          - columnheader "Adaptation concern"
+          - columnheader "Current existing interface"
+          - columnheader "WS03 dependency"
+          - columnheader "Current state"
+          - columnheader "Can 04A design now?"
+          - columnheader "Must wait before Gate?"
+          - columnheader "Reconciliation action"
+      - rowgroup
+  - button "复制表格":
+  - button "展开表格":
+  - paragraph: 至少列以下依赖。
+  - heading "D-03A Theme" [level=3]
+  - paragraph: 当前已有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: brand mark logo
+  - paragraph: 缺：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: semantic font roles density shape state role interface
+  - paragraph: 状态：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: DESIGNABLE NOT BINDABLE
+  - separator
+  - heading "D-03B Media" [level=3]
+  - paragraph: 当前 media schema已有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: image/video src alt caption sourceUrl hero/gallery/trailer
+  - paragraph: 但缺/等待：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: rights/credit semantics dimensions/aspect accessible equivalent 统一fallback
+  - paragraph: 所以 worksheet可以记录需求，但不能声明具体 schema field。
+  - separator
+  - heading "D-03C Share media" [level=3]
+  - paragraph: 当前 WOG 已证明现实缺口：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: OG without og:image
+  - paragraph: 04A可记录：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: share media required / unavailable
+  - paragraph: 但 mapping等 WS03C。
+  - separator
+  - heading "D-03D Search / freshness" [level=3]
+  - paragraph: 当前：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: features.search publishedAt updatedAt Pagefind
+  - paragraph: 不等于已解决：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: why search enabled query/result semantics patch/version truth Popular/Live provenance
+  - paragraph: 这些进入 ledger。
+  - separator
+  - heading "十六、Ledger 的状态只能用设计状态" [level=1]
+  - paragraph: 不要冒充 Contract outcome。
+  - paragraph: 建议：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: AVAILABLE_NOW PARTIAL_EXISTING_INTERFACE WAITING_WS03A WAITING_WS03B WAITING_WS03C WAITING_WS03D
+  - paragraph: 不能用：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: PASS FAIL NOT_APPLICABLE
+  - paragraph: 避免与 §W 混淆。
+  - separator
+  - heading "十七、WS03 reconciliation rule" [level=1]
+  - paragraph: PLAN18必须规定：
+  - paragraph: WS03某 slice独立 ACCEPT 后：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: 1. 读取实际 accepted interface 2. 比较 ledger assumption 3. 更新 worksheet binding rule 4. 删除不存在的假设 5. 再做04A contract implementation plan
+  - paragraph: 禁止：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: WS03实现迁就04A早期猜测
+  - paragraph: Authority方向必须是：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: accepted WS03 interface → 04A binding
+  - paragraph: 不是反过来。
+  - separator
+  - heading "十八、文档 4：Traceability Examples" [level=1]
+  - paragraph: 这个文件的作用不是给 WoG/BombFarm重新验收。
+  - paragraph: 每条必须明确：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: HISTORICAL EXAMPLE ONLY NOT CURRENT PROJECT PASS NOT RIGHTS APPROVAL NOT V2.7 ADOPTION RESULT
+  - paragraph: 推荐格式：
+  - region "可滚动表格":
+    - table:
+      - rowgroup:
+        - row "Example Historical evidence Adaptation question Worksheet location Dependency Correct handling Forbidden inference":
+          - columnheader "Example"
+          - columnheader "Historical evidence"
+          - columnheader "Adaptation question"
+          - columnheader "Worksheet location"
+          - columnheader "Dependency"
+          - columnheader "Correct handling"
+          - columnheader "Forbidden inference"
+      - rowgroup
+  - button "复制表格":
+  - button "展开表格":
+  - paragraph: 这样设计的价值可以被实际案例证明，而不是凭空造模板。
+  - separator
+  - heading "十九、文档 5：Design Review Checklist" [level=1]
+  - paragraph: WS04A_DESIGN_REVIEW_CHECKLIST_V1.md
+  - paragraph: 只验设计，不验产品。
+  - paragraph: 必须至少检查：
+  - heading "Authority safety" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 没有复制 routes/publication SSOT 没有复制 media manifest authority 没有 Registry副本 没有创建新 lifecycle enum
+  - heading "Page/task method" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 每页都有玩家任务 承诺答案与可支持答案分开 next action不是假链接
+  - heading "Media method" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: MC-04四种material value rights与source分离 no-media必须是complete composition asset count不是PASS
+  - heading "Truthfulness" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: Popular/Trending/Live需要真实依据 draft/legal/identity不自动补全 旧Human PASS不能继承
+  - heading "Dependency" [level=3]
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: 所有尚不存在接口进入WS03 ledger 没有把假接口写成already available
+  - separator
+  - heading "二十、设计文档内部要有一张 Responsibility Matrix" [level=1]
+  - paragraph: 建议：
+  - region "可滚动表格":
+    - table:
+      - rowgroup:
+        - row "Decision Primary owner Evidence owner Verification Must not be inferred by":
+          - columnheader "Decision"
+          - columnheader "Primary owner"
+          - columnheader "Evidence owner"
+          - columnheader "Verification"
+          - columnheader "Must not be inferred by"
+      - rowgroup:
+        - row "Game terminology Project Project sources Human/content review Core":
+          - cell "Game terminology"
+          - cell "Project"
+          - cell "Project sources"
+          - cell "Human/content review"
+          - cell "Core"
+        - row "Player task Game Adaptation research/content evidence Product review Page type alone":
+          - cell "Player task"
+          - cell "Game Adaptation"
+          - cell "research/content evidence"
+          - cell "Product review"
+          - cell "Page type alone"
+        - row "Theme choice Game Adaptation game visual evidence Human visual review genre label":
+          - cell "Theme choice"
+          - cell "Game Adaptation"
+          - cell "game visual evidence"
+          - cell "Human visual review"
+          - cell "genre label"
+        - row "Media need Game Adaptation page/task evidence Acceptance Gate asset count":
+          - cell "Media need"
+          - cell "Game Adaptation"
+          - cell "page/task evidence"
+          - cell "Acceptance Gate"
+          - cell "asset count"
+        - row "Rights Project/Human rights evidence Human sourceUrl":
+          - cell "Rights"
+          - cell "Project/Human"
+          - cell "rights evidence"
+          - cell "Human"
+          - cell "sourceUrl"
+        - row "Page publication Page Inventory project content pipeline Core validator worksheet":
+          - cell "Page publication"
+          - cell "Page Inventory"
+          - cell "project content pipeline"
+          - cell "Core validator"
+          - cell "worksheet"
+        - row "Pattern intent Adaptation task rationale WS04/05 review Core":
+          - cell "Pattern intent"
+          - cell "Adaptation"
+          - cell "task rationale"
+          - cell "WS04/05 review"
+          - cell "Core"
+        - row "Search enabled Adaptation corpus/player need future 03D/acceptance feature availability":
+          - cell "Search enabled"
+          - cell "Adaptation"
+          - cell "corpus/player need"
+          - cell "future 03D/acceptance"
+          - cell "feature availability"
+        - row "Related relationship Adaptation usefulness/taxonomy acceptance recency alone":
+          - cell "Related relationship"
+          - cell "Adaptation"
+          - cell "usefulness/taxonomy"
+          - cell "acceptance"
+          - cell "recency alone"
+  - button "复制表格":
+  - button "展开表格":
+  - separator
+  - heading "二十一、设计检查方式" [level=1]
+  - paragraph: 因为本轮是 documents-only，不新增 checker脚本。
+  - paragraph: 执行结束后只做 read-only consistency checks。
+  - heading "C1 — exact scope" [level=3]
+  - paragraph: 确认只有上述 6 个 governance documents新增/变化。
+  - paragraph: 任何：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: Repo_hotgameweb/** gameweb/** Contract roadmap/blueprint
+  - paragraph: 变化：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: STOP
+  - separator
+  - heading "C2 — forbidden schema language" [level=3]
+  - paragraph: 检索新文档是否出现类似：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: "export type z.object interface GameAdaptationConfig new field:"
+  - paragraph: 如果它被写成“已决定实现的 schema”：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: STOP
+  - paragraph: 概念示例可以存在，但必须标：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: NON-NORMATIVE / NOT SCHEMA
+  - separator
+  - heading "C3 — Contract ID references" [level=3]
+  - paragraph: 检查设计只引用已有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: GI-01/02 VF-01/02 IA-01/03 MC-02/04/05 FR-02 ID-01 SEO-02 TL-01/02 ...
+  - paragraph: 不能创建：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: GA-01 ADAPT-01
+  - paragraph: 之类新 capability ID。
+  - separator
+  - heading "C4 — Case traceability" [level=3]
+  - paragraph: 每个 WoG/BombFarm example至少有：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: source report path historical issue worksheet field correct handling forbidden inference
+  - paragraph: 不能编造当前状态。
+  - separator
+  - heading "C5 — WS03 dependency completeness" [level=3]
+  - paragraph: 必须至少覆盖：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: 03A theme semantics 03B media rights/dimensions/equivalent 03C share media 03D search/freshness
+  - separator
+  - heading "二十二、PLAN18 不做什么" [level=1]
+  - paragraph: 明确禁止：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: 不改 Starter runtime 不改 schema 不加 game-adaptation.ts 不加 adaptation.json 不实现 Pattern 不修改 WoG/BombFarm 不重新抓网站 不外网research 不批准媒体rights 不补真实游戏事实 不创建Popular/Trending逻辑 不关闭WS04A 不关闭WS03 不改变WS06A状态 不做capability promotion 不commit/push/tag/release
+  - separator
+  - heading "二十三、PLAN18 Exit Gate" [level=1]
+  - paragraph: Iteration18 可以 EXECUTED 的条件：
+  - generic: YAML
+  - button "启用自动换行":
+  - button "复制":
+  - code: "scope: governance_docs_only: true product_delta: 0 contract_delta: 0 registry_delta: 0 runtime_delta: 0 schema_delta: 0 method: reusable_workflow_defined: true authority_boundaries_clear: true project_fact_owner_explicit: true rights_owner_explicit: true human_review_owner_explicit: true worksheet: per_page_player_task: true promised_vs_supported_answer: true pattern_intent: true media_decision: true complete_no_media_decision: true search_related_freshness_decisions: true evidence_and_owner_fields: true traceability: WOG_examples: >=4 BombFarm_examples: >=4 historical_only_label: true ws03_dependency: 03A: recorded 03B: recorded 03C: recorded 03D: recorded no_fake_interface_binding: true review: independent_design_review_required: true"
+  - button:
+  - separator
+  - heading "二十四、什么情况下必须 STOP" [level=1]
+  - paragraph: 任何以下情况：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: 需要决定具体theme schema字段 需要决定media schema扩展 需要决定share-image API 需要决定search interface 需要实现Pattern 需要改Inventory 需要用网络重新确认项目事实 需要批准某张BombFarm图片rights 需要把历史WoG/BombFarm状态升级成当前PASS 需要改变Contract语义
+  - paragraph: 全部 STOP，并留给相应 WS03 / WS04B / WS07。
+  - separator
+  - heading "最关键的退出语义" [level=2]
+  - paragraph: 即使 PLAN18 文档全部完成并被我独立 ACCEPT，也只能得到：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: "WS04A METHODS DESIGN: ACCEPTED"
+  - paragraph: 绝不能写：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: "WS04A: CLOSED WS04A GATE: PASS GAME ADAPTATION CONTRACT: FROZEN"
+  - paragraph: 因为真正的 04A Gate 仍依赖：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code:
+    - generic: WS03 accepted interfaces → 04A binding reconciliation → schema/reference implementation → positive/negative evidence → triad synchronization → independent ACCEPT
+  - paragraph:
+    - text: 所以 iteration18 的价值是：
+    - strong: 把“如何做游戏适配”先设计成一套不会重复造 SSOT、不会自动批准媒体/事实、也不会被具体游戏绑死的方法。
+  - paragraph: 这正好为后续 WS03 接口一旦 ACCEPT 后，快速进入真正的 04A contract implementation 做准备。
+  - button "复制":
+  - button "评价回复":
+  - button "分享":
+  - button "朗读":
+  - button "重新生成回复":
+  - button "更多操作":
+  
+```
+
+## 实际范围与媒体状态澄清
+
+```text
+- heading "ChatGPT 说：" [level=4]
+  - paragraph:
+    - text: "[C2C]"
+    - text: "STATE: CLARIFICATION"
+    - text: "TASK_ID: c2c_a765"
+    - text: "ITERATION: 18"
+    - text: "WORKSTREAM: WS04A bounded methods design"
+    - text: "PLAN18_STATUS:"
+    - strong: UNCHANGED — CLARIFICATION ACCEPTED
+  - paragraph:
+    - text: 两点澄清都确认，
+    - strong: 不改变 PLAN18 的原始范围、DAG、退出语义，也不扩大到实现。
+  - list:
+    - paragraph:
+      - strong: 治理元数据可计为六份设计文档之外的 execution metadata。
+      - text: 仍保持“5 个设计 deliverables + 1 个实际 PLAN”为本轮设计产物范围；允许在 template/codex/executions/v2.7-ws04a/iteration18/ 下保存 preflight、hash/integrity checks、execution result、实际独立 GPT review、必要截图/证据等。它们必须只是“证明本轮怎么执行和怎么审查”，不能承载新的规范语义、接口设计或替代那 5 份设计文档。
+    - paragraph:
+      - text: 你提到的
+      - strong: 3 个现有 progress index 条目
+      - text: 也可以在
+      - strong: independent ACCEPT 之后
+      - text: 更新，但只允许写状态/指针，例如：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: iteration18 methods design → ACCEPTED review artifact → <path> next dependency → WS03 reconciliation required
+    - paragraph: 不得在 index 中偷偷写新的 schema、Gate语义或把 WS04A 标成 CLOSED/PASS。它们属于治理索引元数据，不计入“6 documents”设计 scope。
+    - paragraph:
+      - strong: BF01 的 rights 语义按你提出的方式修正，保留现有 lifecycle 原义。
+      - text: 我确认当前 media-readiness 明确支持：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "rightsState: VERIFIED UNRESOLVED HUMAN RISK ACCEPTED NOT REQUIRED FOR EMBED humanDecision: APPROVED WAIVED REVISE BLOCK PENDING"
+    - paragraph: 所以 PLAN18 中 BF01 不应被解释成：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: rights != VERIFIED → 必然 BLOCK
+    - paragraph: 更准确的设计表达应是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: source exists != rights approved rightsState必须保留其现有literal语义； HUMAN RISK ACCEPTED / NOT REQUIRED FOR EMBED 只有在其既有适用条件、授权范围、责任人和证据完整时才可成立； humanDecision=WAIVED 也必须记录： - authorized scope - reviewer / decision owner - rationale - evidence reference - 当前project/build identity 任何这些状态都不能被适配模板自动推导。
+    - paragraph: 同时继续保持三个层次分离：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: media lifecycle state ≠ Contract §W outcome ≠ release/capability exception
+    - paragraph: 尤其：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: HUMAN RISK ACCEPTED 或 WAIVED
+    - paragraph:
+      - strong: 绝不自动等于 P0/P1 waiver、Contract PASS、rights PASS 或 release exception。
+  - paragraph: 因此 BF01 推荐写成：
+  - blockquote:
+    - paragraph: 历史媒体存在或已有 sourceUrl 不能自动证明 rights approval。WS04A 必须保留现有 rights/human-decision lifecycle 的原始含义；若使用 HUMAN RISK ACCEPTED、NOT REQUIRED FOR EMBED 或 WAIVED，必须绑定当前项目/构建、授权范围、decision owner/reviewer 与证据，并由相应 Gate独立核验。适配 worksheet 不得自动生成这些状态，也不得把它们映射为 Contract PASS 或 P0/P1 exception。
+  - paragraph: 正式确认：
+  - generic: 纯文本
+  - button "启用自动换行":
+  - button "复制":
+  - code: "PLAN18: five_design_deliverables: unchanged saved_actual_plan: unchanged execution_metadata: allowed: true normative_authority: false three_progress_index_updates: allowed_after_independent_ACCEPT: true status_pointer_only: true media_lifecycle: literal_semantics_preserved: true source_equals_rights: false HUMAN_RISK_ACCEPTED_preserved: true NOT_REQUIRED_FOR_EMBED_preserved: true WAIVED_preserved: true automatic_approval: forbidden contract_outcome_separate: true DAG: unchanged WS04A_GATE: remains open"
+  - paragraph: 可以按这个澄清继续执行 iteration18。
+  - button "复制":
+  - button "评价回复":
+  - button "分享":
+  - button "朗读":
+  - button "重新生成回复":
+  - button "更多操作":
+  - generic: ChatGPT 可能会出错。请核查重要信息。
+  - button "滚动到底部":
+  - heading "最新一条回复" [level=4]
+  - status
+  - button "添加文件等内容":
+  - textbox "询问 ChatGPT" [active]:
+    - paragraph: 询问 ChatGPT
+  - button "选择 ChatGPT 模型":
+    - generic: 高
+  - button "听写":
+  - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+```

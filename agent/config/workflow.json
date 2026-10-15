@@ -1,0 +1,17 @@
+{
+  "skillRoot": "../../codex-skills",
+  "inventory": "skill-manifest.json",
+  "workspace": "..",
+  "templateRoots": ["../../template"],
+  "existingProjectAllowlist": "existing-project-allowlist.json",
+  "skills": [
+    "game-homepage-icon-research",
+    "game-innerpage-keyword-information-research",
+    "game-site-template-selector",
+    "game-site-content-integrator",
+    "game-site-ui-ux-audit-optimizer",
+    "game-site-prelaunch-gate",
+    "game-site-deploy-and-measurement",
+    "game-site-adsterra-ad-integration"
+  ]
+}

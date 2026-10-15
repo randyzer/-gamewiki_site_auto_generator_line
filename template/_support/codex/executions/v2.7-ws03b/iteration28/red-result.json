@@ -1,0 +1,10 @@
+{
+  "exitCode": 1,
+  "failed": 9,
+  "passed": 189,
+  "tests": 198,
+  "files": 3,
+  "implementationWrittenBeforeRed": false,
+  "invalidInitialInvocation": "red.log: ENOENT at workspace cwd; excluded",
+  "validEvidence": "red-targeted.log"
+}

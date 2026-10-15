@@ -1,0 +1,140 @@
+---
+import GameHero from "../components/home/GameHero.astro";
+import PageCollection from "../components/home/PageCollection.astro";
+import WikiCategories from "../components/home/WikiCategories.astro";
+import { buildHomepageModel } from "../components/home/home-model";
+import AdSlot from "../components/ads/AdSlot.astro";
+import GameMedia from "../components/media/GameMedia.astro";
+import ScreenshotGallery from "../components/media/ScreenshotGallery.astro";
+import FAQ from "../components/wiki/FAQ.astro";
+import QuickFacts from "../components/wiki/QuickFacts.astro";
+import {
+  enabledPageCatalog,
+  featuredHomepagePages,
+  getPageByRoute,
+  siteConfig,
+} from "../core/site-data";
+import { mediaCatalog } from "../data/media/catalog";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const page = getPageByRoute("/");
+const homepage = buildHomepageModel({
+  enabledPages: enabledPageCatalog,
+  featuredPages: featuredHomepagePages,
+  media: mediaCatalog.getPageMedia(page.pageId),
+});
+const hasHomepageMedia =
+  homepage.media.galleryMedia.length > 0 || Boolean(homepage.media.trailerMedia);
+const displayHeading = siteConfig.homepage.displayHeading ?? siteConfig.brand.name;
+---
+
+<BaseLayout page={page}>
+  <main
+    id="main-content"
+    class="wiki-portal"
+    data-pagefind-body={page.indexability === "index" ? true : undefined}
+  >
+    <GameHero
+      page={page}
+      brand={siteConfig.brand}
+      displayHeading={displayHeading}
+      startPage={homepage.heroStartPage}
+      heroMedia={homepage.media.heroMedia}
+      browseTarget={homepage.categories.length > 0 ? "#browse-by-category" : undefined}
+    />
+
+    <AdSlot placement="home-primary" />
+
+    {homepage.quickFacts.length > 0 && (
+      <div class="shell">
+        <QuickFacts
+          items={homepage.quickFacts}
+          title={`${siteConfig.brand.name} at a glance`}
+        />
+      </div>
+    )}
+
+    {homepage.startHere.length > 0 && (
+      <section
+        id="start-here"
+        class="portal-start shell"
+        aria-labelledby="start-here-title"
+      >
+        <div>
+          <p class="eyebrow">New to the game?</p>
+          <h2 id="start-here-title">Start here</h2>
+        </div>
+        <a class="portal-start__link" href={homepage.startHere[0].route}>
+          <span>
+            <small>Recommended first step</small>
+            <strong>{homepage.startHere[0].title}</strong>
+          </span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </section>
+    )}
+
+    <WikiCategories pages={homepage.categories} />
+
+    <PageCollection
+      id="featured-guides"
+      eyebrow="Selected routes"
+      title="Featured guides"
+      pages={homepage.featuredGuides}
+    />
+
+    <PageCollection
+      id="important-systems"
+      eyebrow="Core reference"
+      title="Important systems"
+      pages={homepage.importantSystems}
+    />
+
+    <PageCollection
+      id="latest-updates"
+      eyebrow="What changed"
+      title="Latest updates"
+      pages={homepage.latestUpdates}
+      showUpdatedAt
+    />
+
+    {hasHomepageMedia && (
+      <section
+        id="home-media"
+        class="portal-section home-media shell"
+        aria-labelledby="home-media-title"
+      >
+        <header class="portal-section__header">
+          <p class="eyebrow">In game</p>
+          <h2 id="home-media-title">Screenshots and trailer</h2>
+        </header>
+        <div class="home-media__content">
+          {homepage.media.galleryMedia.length > 0 && (
+            <div data-media-placement="gallery">
+              <ScreenshotGallery assets={homepage.media.galleryMedia} />
+            </div>
+          )}
+          {homepage.media.trailerMedia && (
+            <div data-media-placement="trailer">
+              <GameMedia asset={homepage.media.trailerMedia} />
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    {homepage.faq.length > 0 && (
+      <div class="shell">
+        <FAQ items={homepage.faq} title="Common questions" />
+      </div>
+    )}
+
+    <PageCollection
+      id="browse-all"
+      eyebrow="More to explore"
+      title="Browse all"
+      pages={homepage.browseAll}
+      showDescriptions={false}
+    />
+  </main>
+</BaseLayout>

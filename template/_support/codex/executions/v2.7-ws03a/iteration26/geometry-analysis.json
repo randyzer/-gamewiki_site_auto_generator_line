@@ -1,0 +1,1861 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 26,
+  "candidate": "INCONCLUSIVE",
+  "diagnosticComplete": true,
+  "reason": "PLAN26 A requires16 stable DOMRect measurements; WebKit1000 instead alternates44 and +/-1/32768 while ancestor reveal animation translates. Used height/offsetHeight/protocol box are44 and no scaling observed. Precision signature supported but strict A conditions not met.",
+  "dyadicQuantizationSignatureObserved": true,
+  "hypothesis": "Existing reveal animation translation causes transient fractional DOMRect representation; requires naturally settled remeasurement in separate finite plan",
+  "productDefectEstablished": false,
+  "originalIteration25Assertion": "FAIL preserved",
+  "oracleDelta": 0,
+  "qualificationAttempts": 0,
+  "diagnosticSessions": 1,
+  "retries": 0,
+  "fresh47": "NOT_STARTED",
+  "continuation": "BLOCKED",
+  "safariProof": 0,
+  "ws06a": "BLOCKED",
+  "rows": [
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "sampleCount": 16,
+      "computedHeight44": true,
+      "tokenAndMinHeight44": true,
+      "borderBox": true,
+      "elementTransformNone": true,
+      "offsetHeight44": true,
+      "normalScale": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "stable16RectHeights": true,
+      "shortfalls": [
+        {
+          "index": 0,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 1,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 2,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 3,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 4,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 5,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 6,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 7,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 8,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 9,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 10,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 11,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 12,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 13,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 14,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 15,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        }
+      ],
+      "ancestorTransformSamples": [
+        {
+          "index": 0,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.239181)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.179715)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.132653)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0954483)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0667091)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0450728)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0290097)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0176217)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00981668)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0048411)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00197978)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00056113)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 6.95933e-05)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 9.37206e-12)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        }
+      ],
+      "boundingBox": {
+        "x": 40,
+        "y": 419.203125,
+        "width": 142.71875,
+        "height": 44
+      },
+      "raster": {
+        "screenshotPath": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration26/screenshots/chromium-800-control.png",
+        "pixelWidth": 143,
+        "pixelHeight": 45,
+        "devicePixelRatio": 1
+      }
+    },
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "sampleCount": 16,
+      "computedHeight44": true,
+      "tokenAndMinHeight44": true,
+      "borderBox": true,
+      "elementTransformNone": true,
+      "offsetHeight44": true,
+      "normalScale": true,
+      "uniqueRawRectHeights": [
+        44,
+        44.000030517578125
+      ],
+      "stable16RectHeights": false,
+      "shortfalls": [
+        {
+          "index": 0,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 1,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 2,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 3,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 4,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 5,
+          "observedHeight": 44.000030517578125,
+          "shortfallCssPx": -0.000030517578125,
+          "shortfallTimes32768": -1
+        },
+        {
+          "index": 6,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 7,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 8,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 9,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 10,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 11,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 12,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 13,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 14,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 15,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        }
+      ],
+      "ancestorTransformSamples": [
+        {
+          "index": 0,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.179757)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.132686)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0954737)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0667286)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0449753)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0290203)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0175723)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00982156)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00484407)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00196912)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.000561802)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 6.85048e-05)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 1.42286e-11)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        }
+      ],
+      "boundingBox": {
+        "x": 18,
+        "y": 508.828125,
+        "width": 142.71875,
+        "height": 44
+      },
+      "raster": {
+        "screenshotPath": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration26/screenshots/chromium-1000-control.png",
+        "pixelWidth": 143,
+        "pixelHeight": 45,
+        "devicePixelRatio": 1
+      }
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "sampleCount": 16,
+      "computedHeight44": true,
+      "tokenAndMinHeight44": true,
+      "borderBox": true,
+      "elementTransformNone": true,
+      "offsetHeight44": true,
+      "normalScale": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "stable16RectHeights": true,
+      "shortfalls": [
+        {
+          "index": 0,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 1,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 2,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 3,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 4,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 5,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 6,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 7,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 8,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 9,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 10,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 11,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 12,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 13,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 14,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 15,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        }
+      ],
+      "ancestorTransformSamples": [
+        {
+          "index": 0,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0954084)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0667286)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0450126)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0289932)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0175723)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00979658)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00483646)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00196912)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00056353)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0000680907)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        }
+      ],
+      "boundingBox": {
+        "x": 40,
+        "y": 419.23333740234375,
+        "width": 143,
+        "height": 44
+      },
+      "raster": {
+        "screenshotPath": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration26/screenshots/firefox-800-control.png",
+        "pixelWidth": 143,
+        "pixelHeight": 45,
+        "devicePixelRatio": 1
+      }
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "sampleCount": 16,
+      "computedHeight44": true,
+      "tokenAndMinHeight44": true,
+      "borderBox": true,
+      "elementTransformNone": true,
+      "offsetHeight44": true,
+      "normalScale": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "stable16RectHeights": true,
+      "shortfalls": [
+        {
+          "index": 0,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 1,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 2,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 3,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 4,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 5,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 6,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 7,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 8,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 9,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 10,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 11,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 12,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 13,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 14,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 15,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        }
+      ],
+      "ancestorTransformSamples": [
+        {
+          "index": 0,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.179757)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.132518)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0954084)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0667286)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0450126)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0289932)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0175723)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00979658)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00483646)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00196912)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00056353)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.0000757928)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)",
+              "zoom": "1"
+            }
+          ]
+        }
+      ],
+      "boundingBox": {
+        "x": 18,
+        "y": 508.83331298828125,
+        "width": 143,
+        "height": 44
+      },
+      "raster": {
+        "screenshotPath": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration26/screenshots/firefox-1000-control.png",
+        "pixelWidth": 143,
+        "pixelHeight": 45,
+        "devicePixelRatio": 1
+      }
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "sampleCount": 16,
+      "computedHeight44": true,
+      "tokenAndMinHeight44": true,
+      "borderBox": true,
+      "elementTransformNone": true,
+      "offsetHeight44": true,
+      "normalScale": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "stable16RectHeights": true,
+      "shortfalls": [
+        {
+          "index": 0,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 1,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 2,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 3,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 4,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 5,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 6,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 7,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 8,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 9,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 10,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 11,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 12,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 13,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 14,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 15,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        }
+      ],
+      "ancestorTransformSamples": [
+        {
+          "index": 0,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.10629)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.077846)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.066729)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.050468)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.040347)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.030936)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.023229)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.017012)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.012085)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.007621)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.005389)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.003298)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.002094)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.000913)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00033)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.000101)",
+              "zoom": "1"
+            }
+          ]
+        }
+      ],
+      "boundingBox": {
+        "x": 40,
+        "y": 419.140625,
+        "width": 142.921875,
+        "height": 44
+      },
+      "raster": {
+        "screenshotPath": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration26/screenshots/webkit-800-control.png",
+        "pixelWidth": 143,
+        "pixelHeight": 45,
+        "devicePixelRatio": 1
+      }
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "sampleCount": 16,
+      "computedHeight44": true,
+      "tokenAndMinHeight44": true,
+      "borderBox": true,
+      "elementTransformNone": true,
+      "offsetHeight44": true,
+      "normalScale": true,
+      "uniqueRawRectHeights": [
+        44.000030517578125,
+        43.999969482421875,
+        44
+      ],
+      "stable16RectHeights": false,
+      "shortfalls": [
+        {
+          "index": 0,
+          "observedHeight": 44.000030517578125,
+          "shortfallCssPx": -0.000030517578125,
+          "shortfallTimes32768": -1
+        },
+        {
+          "index": 1,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        },
+        {
+          "index": 2,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        },
+        {
+          "index": 3,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 4,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 5,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 6,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        },
+        {
+          "index": 7,
+          "observedHeight": 44.000030517578125,
+          "shortfallCssPx": -0.000030517578125,
+          "shortfallTimes32768": -1
+        },
+        {
+          "index": 8,
+          "observedHeight": 44.000030517578125,
+          "shortfallCssPx": -0.000030517578125,
+          "shortfallTimes32768": -1
+        },
+        {
+          "index": 9,
+          "observedHeight": 44.000030517578125,
+          "shortfallCssPx": -0.000030517578125,
+          "shortfallTimes32768": -1
+        },
+        {
+          "index": 10,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 11,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        },
+        {
+          "index": 12,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        },
+        {
+          "index": 13,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        },
+        {
+          "index": 14,
+          "observedHeight": 44,
+          "shortfallCssPx": 0,
+          "shortfallTimes32768": 0
+        },
+        {
+          "index": 15,
+          "observedHeight": 43.999969482421875,
+          "shortfallCssPx": 0.000030517578125,
+          "shortfallTimes32768": 1
+        }
+      ],
+      "ancestorTransformSamples": [
+        {
+          "index": 0,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.176602)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.152877)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.126755)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.104182)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.083012)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.068239)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.054222)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.042454)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.032674)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.025375)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.017572)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.012976)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00895)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.005897)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.00366)",
+              "zoom": "1"
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "game-hero__copy reveal reveal--1",
+              "transform": "matrix(1, 0, 0, 1, 0, 0.002094)",
+              "zoom": "1"
+            }
+          ]
+        }
+      ],
+      "boundingBox": {
+        "x": 18,
+        "y": 508.82830810546875,
+        "width": 142.921875,
+        "height": 44
+      },
+      "raster": {
+        "screenshotPath": "/Users/randyz/work/coding/hot_words_web/template/codex/executions/v2.7-ws03a/iteration26/screenshots/webkit-1000-control.png",
+        "pixelWidth": 143,
+        "pixelHeight": 45,
+        "devicePixelRatio": 1
+      }
+    }
+  ],
+  "normalCleanup": true
+}

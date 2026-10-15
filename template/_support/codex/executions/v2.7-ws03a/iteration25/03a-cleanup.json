@@ -1,0 +1,8 @@
+{
+  "normalStopExit": 0,
+  "pidAliveBeforeStop": true,
+  "pidAliveAfterStop": false,
+  "fallbackSignalUsed": false,
+  "fixtureRemoved": true,
+  "startedPid": 2284
+}

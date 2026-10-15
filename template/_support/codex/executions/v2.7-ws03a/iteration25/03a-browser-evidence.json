@@ -1,0 +1,720 @@
+{
+  "kind": "WS03A_SYNTHETIC_TECHNICAL_PROFILE",
+  "profile": {
+    "font": "interface",
+    "density": "compact",
+    "shape": "soft",
+    "state": "quiet"
+  },
+  "rows": [
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "four-explicit-role-bindings",
+          "passed": true,
+          "detail": {
+            "font": "interface",
+            "density": "compact",
+            "shape": "soft",
+            "state": "quiet"
+          }
+        },
+        {
+          "name": "inventory-family-authority",
+          "passed": true,
+          "detail": "core"
+        },
+        {
+          "name": "interface-body-and-heading-fonts",
+          "passed": true,
+          "detail": {
+            "body": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+            "heading": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif"
+          }
+        },
+        {
+          "name": "utility-font-role",
+          "passed": true,
+          "detail": "SFMono-Regular, \"Cascadia Mono\", \"Liberation Mono\", monospace"
+        },
+        {
+          "name": "compact-consumed-density",
+          "passed": true,
+          "detail": {
+            "tokens": {
+              "shell-gutter": "28px",
+              "card-padding": "22px",
+              "control-min-height": "44px",
+              "section-spacing": "clamp(52px, 7vw, 96px)",
+              "font-utility": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+              "media-radius": "10px"
+            },
+            "card": "22px",
+            "shell": 720
+          }
+        },
+        {
+          "name": "compact-control-minimum",
+          "passed": true,
+          "detail": {
+            "font": "SFMono-Regular, \"Cascadia Mono\", \"Liberation Mono\", monospace",
+            "padding": "12px",
+            "minHeight": "44px",
+            "height": 44,
+            "width": 142.71875,
+            "radius": "8px",
+            "border": "rgb(31, 36, 38)",
+            "transform": "none",
+            "shadow": "none"
+          }
+        },
+        {
+          "name": "soft-rendered-shape",
+          "passed": true,
+          "detail": {
+            "card": "12px",
+            "control": "8px",
+            "mediaToken": "10px"
+          }
+        },
+        {
+          "name": "quiet-hover-with-visible-feedback",
+          "passed": true,
+          "detail": {
+            "before": {
+              "font": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+              "padding": "22px",
+              "minHeight": "270px",
+              "height": 270,
+              "width": 720,
+              "radius": "12px",
+              "border": "color(srgb 0.121569 0.141176 0.14902 / 0.72)",
+              "transform": "none",
+              "shadow": "none"
+            },
+            "after": {
+              "transform": "none",
+              "shadow": "none",
+              "border": "rgb(79, 111, 120)"
+            }
+          }
+        },
+        {
+          "name": "site-wide-font-with-independent-article-family",
+          "passed": true,
+          "detail": {
+            "font": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+            "family": "guides",
+            "fontRole": "interface"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "four-explicit-role-bindings",
+          "passed": true,
+          "detail": {
+            "font": "interface",
+            "density": "compact",
+            "shape": "soft",
+            "state": "quiet"
+          }
+        },
+        {
+          "name": "inventory-family-authority",
+          "passed": true,
+          "detail": "core"
+        },
+        {
+          "name": "interface-body-and-heading-fonts",
+          "passed": true,
+          "detail": {
+            "body": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+            "heading": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif"
+          }
+        },
+        {
+          "name": "utility-font-role",
+          "passed": true,
+          "detail": "SFMono-Regular, \"Cascadia Mono\", \"Liberation Mono\", monospace"
+        },
+        {
+          "name": "compact-consumed-density",
+          "passed": true,
+          "detail": {
+            "tokens": {
+              "shell-gutter": "36px",
+              "card-padding": "22px",
+              "control-min-height": "44px",
+              "section-spacing": "clamp(52px, 7vw, 96px)",
+              "font-utility": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+              "media-radius": "10px"
+            },
+            "card": "22px",
+            "shell": 964
+          }
+        },
+        {
+          "name": "compact-control-minimum",
+          "passed": true,
+          "detail": {
+            "font": "SFMono-Regular, \"Cascadia Mono\", \"Liberation Mono\", monospace",
+            "padding": "12px",
+            "minHeight": "44px",
+            "height": 44,
+            "width": 142.71875,
+            "radius": "8px",
+            "border": "rgb(31, 36, 38)",
+            "transform": "none",
+            "shadow": "none"
+          }
+        },
+        {
+          "name": "soft-rendered-shape",
+          "passed": true,
+          "detail": {
+            "card": "12px",
+            "control": "8px",
+            "mediaToken": "10px"
+          }
+        },
+        {
+          "name": "shell-gutter-real-consumption",
+          "passed": true,
+          "detail": 964
+        },
+        {
+          "name": "quiet-hover-with-visible-feedback",
+          "passed": true,
+          "detail": {
+            "before": {
+              "font": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+              "padding": "22px",
+              "minHeight": "270px",
+              "height": 270,
+              "width": 964,
+              "radius": "12px",
+              "border": "color(srgb 0.121569 0.141176 0.14902 / 0.72)",
+              "transform": "none",
+              "shadow": "none"
+            },
+            "after": {
+              "transform": "none",
+              "shadow": "none",
+              "border": "rgb(79, 111, 120)"
+            }
+          }
+        },
+        {
+          "name": "site-wide-font-with-independent-article-family",
+          "passed": true,
+          "detail": {
+            "font": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+            "family": "guides",
+            "fontRole": "interface"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "four-explicit-role-bindings",
+          "passed": true,
+          "detail": {
+            "font": "interface",
+            "density": "compact",
+            "shape": "soft",
+            "state": "quiet"
+          }
+        },
+        {
+          "name": "inventory-family-authority",
+          "passed": true,
+          "detail": "core"
+        },
+        {
+          "name": "interface-body-and-heading-fonts",
+          "passed": true,
+          "detail": {
+            "body": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "heading": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+          }
+        },
+        {
+          "name": "utility-font-role",
+          "passed": true,
+          "detail": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace"
+        },
+        {
+          "name": "compact-consumed-density",
+          "passed": true,
+          "detail": {
+            "tokens": {
+              "shell-gutter": "28px",
+              "card-padding": "22px",
+              "control-min-height": "44px",
+              "section-spacing": "clamp(52px, 7vw, 96px)",
+              "font-utility": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+              "media-radius": "10px"
+            },
+            "card": "22px",
+            "shell": 720
+          }
+        },
+        {
+          "name": "compact-control-minimum",
+          "passed": true,
+          "detail": {
+            "font": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+            "padding": "12px",
+            "minHeight": "44px",
+            "height": 44,
+            "width": 143,
+            "radius": "8px",
+            "border": "rgb(31, 36, 38)",
+            "transform": "none",
+            "shadow": "none"
+          }
+        },
+        {
+          "name": "soft-rendered-shape",
+          "passed": true,
+          "detail": {
+            "card": "12px",
+            "control": "8px",
+            "mediaToken": "10px"
+          }
+        },
+        {
+          "name": "quiet-hover-with-visible-feedback",
+          "passed": true,
+          "detail": {
+            "before": {
+              "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+              "padding": "22px",
+              "minHeight": "270px",
+              "height": 270,
+              "width": 720,
+              "radius": "12px",
+              "border": "color(srgb 0.121569 0.141176 0.14902 / 0.72)",
+              "transform": "none",
+              "shadow": "none"
+            },
+            "after": {
+              "transform": "none",
+              "shadow": "none",
+              "border": "rgb(79, 111, 120)"
+            }
+          }
+        },
+        {
+          "name": "site-wide-font-with-independent-article-family",
+          "passed": true,
+          "detail": {
+            "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "family": "guides",
+            "fontRole": "interface"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "four-explicit-role-bindings",
+          "passed": true,
+          "detail": {
+            "font": "interface",
+            "density": "compact",
+            "shape": "soft",
+            "state": "quiet"
+          }
+        },
+        {
+          "name": "inventory-family-authority",
+          "passed": true,
+          "detail": "core"
+        },
+        {
+          "name": "interface-body-and-heading-fonts",
+          "passed": true,
+          "detail": {
+            "body": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "heading": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+          }
+        },
+        {
+          "name": "utility-font-role",
+          "passed": true,
+          "detail": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace"
+        },
+        {
+          "name": "compact-consumed-density",
+          "passed": true,
+          "detail": {
+            "tokens": {
+              "shell-gutter": "36px",
+              "card-padding": "22px",
+              "control-min-height": "44px",
+              "section-spacing": "clamp(52px, 7vw, 96px)",
+              "font-utility": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+              "media-radius": "10px"
+            },
+            "card": "22px",
+            "shell": 964
+          }
+        },
+        {
+          "name": "compact-control-minimum",
+          "passed": true,
+          "detail": {
+            "font": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+            "padding": "12px",
+            "minHeight": "44px",
+            "height": 44,
+            "width": 143,
+            "radius": "8px",
+            "border": "rgb(31, 36, 38)",
+            "transform": "none",
+            "shadow": "none"
+          }
+        },
+        {
+          "name": "soft-rendered-shape",
+          "passed": true,
+          "detail": {
+            "card": "12px",
+            "control": "8px",
+            "mediaToken": "10px"
+          }
+        },
+        {
+          "name": "shell-gutter-real-consumption",
+          "passed": true,
+          "detail": 964
+        },
+        {
+          "name": "quiet-hover-with-visible-feedback",
+          "passed": true,
+          "detail": {
+            "before": {
+              "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+              "padding": "22px",
+              "minHeight": "270px",
+              "height": 270,
+              "width": 964,
+              "radius": "12px",
+              "border": "color(srgb 0.121569 0.141176 0.14902 / 0.72)",
+              "transform": "none",
+              "shadow": "none"
+            },
+            "after": {
+              "transform": "none",
+              "shadow": "none",
+              "border": "rgb(79, 111, 120)"
+            }
+          }
+        },
+        {
+          "name": "site-wide-font-with-independent-article-family",
+          "passed": true,
+          "detail": {
+            "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "family": "guides",
+            "fontRole": "interface"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "four-explicit-role-bindings",
+          "passed": true,
+          "detail": {
+            "font": "interface",
+            "density": "compact",
+            "shape": "soft",
+            "state": "quiet"
+          }
+        },
+        {
+          "name": "inventory-family-authority",
+          "passed": true,
+          "detail": "core"
+        },
+        {
+          "name": "interface-body-and-heading-fonts",
+          "passed": true,
+          "detail": {
+            "body": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "heading": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          }
+        },
+        {
+          "name": "utility-font-role",
+          "passed": true,
+          "detail": "SFMono-Regular, Cascadia Mono, Liberation Mono, monospace"
+        },
+        {
+          "name": "compact-consumed-density",
+          "passed": true,
+          "detail": {
+            "tokens": {
+              "shell-gutter": "28px",
+              "card-padding": "22px",
+              "control-min-height": "44px",
+              "section-spacing": "clamp(52px, 7vw, 96px)",
+              "font-utility": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+              "media-radius": "10px"
+            },
+            "card": "22px",
+            "shell": 720
+          }
+        },
+        {
+          "name": "compact-control-minimum",
+          "passed": true,
+          "detail": {
+            "font": "SFMono-Regular, Cascadia Mono, Liberation Mono, monospace",
+            "padding": "12px",
+            "minHeight": "44px",
+            "height": 44,
+            "width": 142.921875,
+            "radius": "8px",
+            "border": "rgb(31, 36, 38)",
+            "transform": "none",
+            "shadow": "none"
+          }
+        },
+        {
+          "name": "soft-rendered-shape",
+          "passed": true,
+          "detail": {
+            "card": "12px",
+            "control": "8px",
+            "mediaToken": "10px"
+          }
+        },
+        {
+          "name": "quiet-hover-with-visible-feedback",
+          "passed": true,
+          "detail": {
+            "before": {
+              "font": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+              "padding": "22px",
+              "minHeight": "270px",
+              "height": 270,
+              "width": 720,
+              "radius": "12px",
+              "border": "color(srgb 0.121569 0.141176 0.14902 / 0.72)",
+              "transform": "none",
+              "shadow": "none"
+            },
+            "after": {
+              "transform": "none",
+              "shadow": "none",
+              "border": "rgb(79, 111, 120)"
+            }
+          }
+        },
+        {
+          "name": "site-wide-font-with-independent-article-family",
+          "passed": true,
+          "detail": {
+            "font": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "family": "guides",
+            "fontRole": "interface"
+          }
+        }
+      ],
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "final-home-response",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "four-explicit-role-bindings",
+          "passed": true,
+          "detail": {
+            "font": "interface",
+            "density": "compact",
+            "shape": "soft",
+            "state": "quiet"
+          }
+        },
+        {
+          "name": "inventory-family-authority",
+          "passed": true,
+          "detail": "core"
+        },
+        {
+          "name": "interface-body-and-heading-fonts",
+          "passed": true,
+          "detail": {
+            "body": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "heading": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          }
+        },
+        {
+          "name": "utility-font-role",
+          "passed": true,
+          "detail": "SFMono-Regular, Cascadia Mono, Liberation Mono, monospace"
+        },
+        {
+          "name": "compact-consumed-density",
+          "passed": true,
+          "detail": {
+            "tokens": {
+              "shell-gutter": "36px",
+              "card-padding": "22px",
+              "control-min-height": "44px",
+              "section-spacing": "clamp(52px, 7vw, 96px)",
+              "font-utility": "\"SFMono-Regular\", \"Cascadia Mono\", \"Liberation Mono\", monospace",
+              "media-radius": "10px"
+            },
+            "card": "22px",
+            "shell": 964
+          }
+        },
+        {
+          "name": "compact-control-minimum",
+          "passed": false,
+          "detail": {
+            "font": "SFMono-Regular, Cascadia Mono, Liberation Mono, monospace",
+            "padding": "12px",
+            "minHeight": "44px",
+            "height": 43.999969482421875,
+            "width": 142.921875,
+            "radius": "8px",
+            "border": "rgb(31, 36, 38)",
+            "transform": "none",
+            "shadow": "none"
+          }
+        },
+        {
+          "name": "soft-rendered-shape",
+          "passed": true,
+          "detail": {
+            "card": "12px",
+            "control": "8px",
+            "mediaToken": "10px"
+          }
+        },
+        {
+          "name": "shell-gutter-real-consumption",
+          "passed": true,
+          "detail": 964
+        },
+        {
+          "name": "quiet-hover-with-visible-feedback",
+          "passed": true,
+          "detail": {
+            "before": {
+              "font": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+              "padding": "22px",
+              "minHeight": "270px",
+              "height": 270,
+              "width": 964,
+              "radius": "12px",
+              "border": "color(srgb 0.121569 0.141176 0.14902 / 0.72)",
+              "transform": "none",
+              "shadow": "none"
+            },
+            "after": {
+              "transform": "none",
+              "shadow": "none",
+              "border": "rgb(79, 111, 120)"
+            }
+          }
+        },
+        {
+          "name": "site-wide-font-with-independent-article-family",
+          "passed": true,
+          "detail": {
+            "font": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "family": "guides",
+            "fontRole": "interface"
+          }
+        }
+      ],
+      "overall": "FAIL"
+    }
+  ],
+  "overall": "FAIL",
+  "errors": [],
+  "safariProof": 0,
+  "axPromotion": false
+}

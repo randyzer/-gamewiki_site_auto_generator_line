@@ -1,0 +1,52 @@
+{
+  "starter": {
+    "branch": "v2.7/evolution",
+    "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+    "workingTreeSha256": "c3c12745b589f0a43ee5d76b4aa971a139a4c2aba0acb43bf80d7b1e1d419573"
+  },
+  "canonicalContract": {
+    "reference": {
+      "version": "2.7",
+      "owningArtifact": "GAME_SOP",
+      "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+      "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+    },
+    "verification": {
+      "mode": "FILE_SHA256",
+      "filePath": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+      "observedSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+    }
+  },
+  "fixture": {
+    "identity": "Field Notes synthetic adoption",
+    "sourceSha256": "1661b9ea81ed5497eb26d1ab06618c6afbc46ee4a8f94a7c0bc08c9c49af82d0"
+  },
+  "build": {
+    "distSha256": "c11ec5154d715efb28c64735151b9013daf045380d65aa6fbcd816c02cddf1fd"
+  },
+  "playwright": {
+    "packageVersion": "1.63.0"
+  },
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.22.0"
+  },
+  "engines": {
+    "chromium": {
+      "browserName": "chromium",
+      "version": "153.0.8010.12",
+      "revision": "1243"
+    },
+    "firefox": {
+      "browserName": "firefox",
+      "version": "155.0",
+      "revision": "1543"
+    },
+    "webkit": {
+      "browserName": "webkit",
+      "version": "26.6",
+      "revision": "2359"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});const p=c.pages()[0]||await c.newPage();
+await p.goto('https://open.feishu.cn/app/cli_aa476f5e72789ccc/auth',{waitUntil:'domcontentloaded'});await p.getByText('权限管理',{exact:true}).first().waitFor({timeout:25000});await p.waitForTimeout(1500);
+const node=p.getByText('application:application:self_manage',{exact:true}).first();console.log('parents',JSON.stringify(await node.evaluate(e=>{let x=e;return Array.from({length:5},(_,i)=>{let a={i,tag:x.tagName,cls:String(x.className).slice(0,80),text:x.innerText?.slice(0,170),buttons:[...x.querySelectorAll('button')].map(y=>y.innerText)};x=x.parentElement;return a})}),null,2));await c.close();

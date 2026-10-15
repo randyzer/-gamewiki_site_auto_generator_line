@@ -1,0 +1,13 @@
+{
+  "name": "gamewiki-orchestrator",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs feishu-ai-employee/tests/*.test.mjs",
+    "inventory": "node src/cli.mjs inventory",
+    "start": "node src/cli.mjs",
+    "entry:host": "node scripts/entry-host.mjs",
+    "test:entry-host": "node --test tests/entry-host-bootstrap.test.mjs tests/local-entry-approval.test.mjs tests/entry-approval.test.mjs tests/macos-entry-human-approval.test.mjs"
+  }
+}

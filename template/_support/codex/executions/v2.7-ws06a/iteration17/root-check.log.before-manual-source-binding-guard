@@ -1,0 +1,24 @@
+
+> game-site-starter@0.1.0 check
+> astro check && vitest run
+
+10:49:00 [content] Syncing content
+10:49:00 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/meta"
+10:49:00 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/news"
+10:49:00 [content] Synced content
+10:49:00 [types] Generated 185ms
+10:49:00 [check] Getting diagnostics for Astro files in /Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE...
+Result (146 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+ RUN  v4.1.11 /Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE
+
+
+ Test Files  46 passed (46)
+      Tests  756 passed (756)
+   Start at  10:49:05
+   Duration  13.55s (transform 4.45s, setup 0ms, import 9.43s, tests 48.08s, environment 2ms)
+

@@ -1,0 +1,1596 @@
+[
+  {
+    "engine": "chromium",
+    "viewport": {
+      "width": 800,
+      "height": 900
+    },
+    "status": "PASS",
+    "selector": ".game-hero__copy.reveal.reveal--1",
+    "before": {
+      "animationName": "enter",
+      "animationDuration": "0.62s",
+      "animationDelay": "0.08s",
+      "animationTimingFunction": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "animationFillMode": "both",
+      "animationPlayState": "running",
+      "animations": [
+        {
+          "playState": "running",
+          "currentTime": 483.27800002360345
+        }
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, 0.23932)",
+      "opacity": "0.990028"
+    },
+    "limitMs": 2000,
+    "observations": [
+      {
+        "elapsedMs": 7.600000023841858,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.179776)",
+        "opacity": "0.992509",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 499.9940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 22.200000047683716,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.132449)",
+        "opacity": "0.994481",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 516.6940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 40.40000009536743,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0954855)",
+        "opacity": "0.996021",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 533.2940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 57.60000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0668876)",
+        "opacity": "0.997213",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 549.8940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 74.10000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.044982)",
+        "opacity": "0.998126",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 566.6940000236035
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 89.5,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0290252)",
+        "opacity": "0.998791",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 583.2940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 105.40000009536743,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0175757)",
+        "opacity": "0.999268",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 599.9940000236035
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 124.10000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00978635)",
+        "opacity": "0.999592",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 616.6940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 140.90000009536743,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00484544)",
+        "opacity": "0.999798",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 633.2940000236035
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 157.30000007152557,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00196985)",
+        "opacity": "0.999918",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 649.9940000236035
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 173.90000009536743,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000562113)",
+        "opacity": "0.999977",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 666.6940000236035
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 191.10000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 6.73418e-05)",
+        "opacity": "0.999997",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 683.3940000236034
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 207.5,
+        "transform": "matrix(1, 0, 0, 1, 0, 7.10543e-15)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 699.9940000236035
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 223.90000009536743,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 1
+      },
+      {
+        "elapsedMs": 240.10000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 2
+      }
+    ],
+    "naturallyFinished": true,
+    "intervention": false
+  },
+  {
+    "engine": "chromium",
+    "viewport": {
+      "width": 1000,
+      "height": 900
+    },
+    "status": "PASS",
+    "selector": ".game-hero__copy.reveal.reveal--1",
+    "before": {
+      "animationName": "enter",
+      "animationDuration": "0.62s",
+      "animationDelay": "0.08s",
+      "animationTimingFunction": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "animationFillMode": "both",
+      "animationPlayState": "running",
+      "animations": [
+        {
+          "playState": "running",
+          "currentTime": 483.2849999699891
+        }
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, 0.239292)",
+      "opacity": "0.99003"
+    },
+    "limitMs": 2000,
+    "observations": [
+      {
+        "elapsedMs": 8,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.179754)",
+        "opacity": "0.99251",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 500.00099996998904
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 24.800000071525574,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.132683)",
+        "opacity": "0.994472",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 516.6009999699891
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 41.300000071525574,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0954718)",
+        "opacity": "0.996022",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 533.300999969989
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 57.89999997615814,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0667271)",
+        "opacity": "0.99722",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 550.000999969989
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 74.60000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0450862)",
+        "opacity": "0.998121",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 566.6009999699891
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 91.39999997615814,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0290195)",
+        "opacity": "0.998791",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 583.3009999699891
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 108.20000004768372,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0175718)",
+        "opacity": "0.999268",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 600.000999969989
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 123.60000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00982118)",
+        "opacity": "0.999591",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 616.6009999699891
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 141.5,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00484384)",
+        "opacity": "0.999798",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 633.300999969989
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 158.30000007152557,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00196899)",
+        "opacity": "0.999918",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 650.000999969989
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 174.39999997615814,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000561751)",
+        "opacity": "0.999977",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 666.7009999699891
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 191.5,
+        "transform": "matrix(1, 0, 0, 1, 0, 6.84924e-05)",
+        "opacity": "0.999997",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 683.3009999699891
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 208.20000004768372,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 1
+      },
+      {
+        "elapsedMs": 224.60000002384186,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 2
+      }
+    ],
+    "naturallyFinished": true,
+    "intervention": false
+  },
+  {
+    "engine": "firefox",
+    "viewport": {
+      "width": 800,
+      "height": 900
+    },
+    "status": "PASS",
+    "selector": ".game-hero__copy.reveal.reveal--1",
+    "before": {
+      "animationName": "enter",
+      "animationDuration": "0.62s",
+      "animationDelay": "0.08s",
+      "animationTimingFunction": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "animationFillMode": "both",
+      "animationPlayState": "running",
+      "animations": [
+        {
+          "playState": "running",
+          "currentTime": 500.18
+        }
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, 0.179172)",
+      "opacity": "0.992534"
+    },
+    "limitMs": 2000,
+    "observations": [
+      {
+        "elapsedMs": 7,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.132056)",
+        "opacity": "0.994498",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 516.84
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 27,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0950483)",
+        "opacity": "0.99604",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 533.5
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 42,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.066453)",
+        "opacity": "0.997231",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 550.18
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 57,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0448066)",
+        "opacity": "0.998133",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 566.84
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 73,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0288437)",
+        "opacity": "0.998798",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 583.5
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 92,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0174681)",
+        "opacity": "0.999272",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 600.18
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 105,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00972779)",
+        "opacity": "0.999595",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 616.84
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 122,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00479458)",
+        "opacity": "0.9998",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 633.5
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 139,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00194668)",
+        "opacity": "0.999919",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 650.18
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 158,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000554029)",
+        "opacity": "0.999977",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 666.84
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 176,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0000658334)",
+        "opacity": "0.999997",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 683.5
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 190,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 1
+      },
+      {
+        "elapsedMs": 210,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 2
+      }
+    ],
+    "naturallyFinished": true,
+    "intervention": false
+  },
+  {
+    "engine": "firefox",
+    "viewport": {
+      "width": 1000,
+      "height": 900
+    },
+    "status": "PASS",
+    "selector": ".game-hero__copy.reveal.reveal--1",
+    "before": {
+      "animationName": "enter",
+      "animationDuration": "0.62s",
+      "animationDelay": "0.08s",
+      "animationTimingFunction": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "animationFillMode": "both",
+      "animationPlayState": "running",
+      "animations": [
+        {
+          "playState": "running",
+          "currentTime": 483.32
+        }
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, 0.2391)",
+      "opacity": "0.990038"
+    },
+    "limitMs": 2000,
+    "observations": [
+      {
+        "elapsedMs": 2,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.180071)",
+        "opacity": "0.992497",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 499.9
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 26,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.132518)",
+        "opacity": "0.994478",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 516.66
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 38,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0954084)",
+        "opacity": "0.996025",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 533.32
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 58,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0667286)",
+        "opacity": "0.99722",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 550
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 73,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0450126)",
+        "opacity": "0.998125",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 566.66
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 87,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0289932)",
+        "opacity": "0.998792",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 583.32
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 106,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0175723)",
+        "opacity": "0.999268",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 600
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 123,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00979658)",
+        "opacity": "0.999592",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 616.66
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 140,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00483646)",
+        "opacity": "0.999799",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 633.32
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 157,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00196912)",
+        "opacity": "0.999918",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 650
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 173,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00056353)",
+        "opacity": "0.999977",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 666.66
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 189,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.0000680907)",
+        "opacity": "0.999997",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 683.32
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 202,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 1
+      },
+      {
+        "elapsedMs": 220,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 2
+      }
+    ],
+    "naturallyFinished": true,
+    "intervention": false
+  },
+  {
+    "engine": "webkit",
+    "viewport": {
+      "width": 800,
+      "height": 900
+    },
+    "status": "PASS",
+    "selector": ".game-hero__copy.reveal.reveal--1",
+    "before": {
+      "animationName": "enter",
+      "animationDuration": "0.62s",
+      "animationDelay": "0.08s",
+      "animationTimingFunction": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "animationFillMode": "both",
+      "animationPlayState": "running",
+      "animations": [
+        {
+          "playState": "running",
+          "currentTime": 505
+        }
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, 0.16441)",
+      "opacity": "0.99315"
+    },
+    "limitMs": 2000,
+    "observations": [
+      {
+        "elapsedMs": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.161466)",
+        "opacity": "0.993272",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 505
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 2,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.158563)",
+        "opacity": "0.993393",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 507
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 12,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.131683)",
+        "opacity": "0.994513",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 517
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 25,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.102105)",
+        "opacity": "0.995746",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 530
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 33,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.086595)",
+        "opacity": "0.996392",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 538
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 43,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.069776)",
+        "opacity": "0.997093",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 548
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 53,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.055518)",
+        "opacity": "0.997687",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 558
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 63,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.043537)",
+        "opacity": "0.998186",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 568
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 74,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.032674)",
+        "opacity": "0.998639",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 579
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 82,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.026121)",
+        "opacity": "0.998912",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 587
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 93,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.018733)",
+        "opacity": "0.999219",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 598
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 104,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.012976)",
+        "opacity": "0.999459",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 608
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 111,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.010048)",
+        "opacity": "0.999581",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 616
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 123,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.006163)",
+        "opacity": "0.999743",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 628
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 133,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.003851)",
+        "opacity": "0.99984",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 638
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 143,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.002224)",
+        "opacity": "0.999907",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 648
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 153,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.001148)",
+        "opacity": "0.999952",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 658
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 164,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000451)",
+        "opacity": "0.999981",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 669
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 173,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000158)",
+        "opacity": "0.999993",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 678
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 183,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000025)",
+        "opacity": "0.999999",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 688
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 195,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 699
+          }
+        ],
+        "exactIdentity": true,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 203,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 1
+      },
+      {
+        "elapsedMs": 213,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 2
+      }
+    ],
+    "naturallyFinished": true,
+    "intervention": false
+  },
+  {
+    "engine": "webkit",
+    "viewport": {
+      "width": 1000,
+      "height": 900
+    },
+    "status": "PASS",
+    "selector": ".game-hero__copy.reveal.reveal--1",
+    "before": {
+      "animationName": "enter",
+      "animationDuration": "0.62s",
+      "animationDelay": "0.08s",
+      "animationTimingFunction": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "animationFillMode": "both",
+      "animationPlayState": "running",
+      "animations": [
+        {
+          "playState": "running",
+          "currentTime": 504
+        }
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, 0.167395)",
+      "opacity": "0.993025"
+    },
+    "limitMs": 2000,
+    "observations": [
+      {
+        "elapsedMs": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.16441)",
+        "opacity": "0.99315",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 504
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 11,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.136756)",
+        "opacity": "0.994302",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 515
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 22,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.110603)",
+        "opacity": "0.995392",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 526
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 31,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.092187)",
+        "opacity": "0.996159",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 535
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 42,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.072925)",
+        "opacity": "0.996961",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 546
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 51,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.059544)",
+        "opacity": "0.997519",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 555
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 61,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.046908)",
+        "opacity": "0.998046",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 565
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 72,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.035414)",
+        "opacity": "0.998524",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 576
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 81,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.027661)",
+        "opacity": "0.998847",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 585
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 91,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.020575)",
+        "opacity": "0.999143",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 595
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 101,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.014897)",
+        "opacity": "0.999379",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 605
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 111,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.010435)",
+        "opacity": "0.999565",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 614
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 121,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.007012)",
+        "opacity": "0.999708",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 625
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 132,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.004254)",
+        "opacity": "0.999823",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 636
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 141,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.002649)",
+        "opacity": "0.99989",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 645
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 151,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.00142)",
+        "opacity": "0.999941",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 655
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 161,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000655)",
+        "opacity": "0.999973",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 665
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 169,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000296)",
+        "opacity": "0.999988",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 673
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 181,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000049)",
+        "opacity": "0.999998",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 685
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 190,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.000003)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "running",
+            "currentTime": 693
+          }
+        ],
+        "exactIdentity": false,
+        "settled": false,
+        "consecutiveSettledFrames": 0
+      },
+      {
+        "elapsedMs": 202,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 1
+      },
+      {
+        "elapsedMs": 211,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "animations": [
+          {
+            "playState": "finished",
+            "currentTime": 700
+          }
+        ],
+        "exactIdentity": true,
+        "settled": true,
+        "consecutiveSettledFrames": 2
+      }
+    ],
+    "naturallyFinished": true,
+    "intervention": false
+  }
+]

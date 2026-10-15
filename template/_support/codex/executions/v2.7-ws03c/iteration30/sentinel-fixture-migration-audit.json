@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "existingAssertionsByteIdentical": true,
+  "negativeCasesByteIdentical": true,
+  "onlyRegisteredAssetInputAndReadImport": true
+}

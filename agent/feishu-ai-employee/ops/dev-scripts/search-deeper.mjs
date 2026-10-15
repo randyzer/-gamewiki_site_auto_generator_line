@@ -1,0 +1,4 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});const p=await c.newPage();await p.goto('https://l1sbomj6i7.feishu.cn/next/messenger/',{waitUntil:'domcontentloaded'});await p.getByText('Messenger',{exact:true}).first().waitFor({timeout:20000});
+const x=p.getByText('Search',{exact:true}).first();console.log('searchDOM',(await x.evaluate(e=>e.outerHTML)).slice(0,350));await x.click();await p.waitForTimeout(1700);
+console.log(JSON.stringify({url:p.url(),pages:c.pages().map(q=>q.url()),text:(await p.locator('body').innerText()).slice(-1200),editable:await p.locator('input,textarea,[contenteditable]').evaluateAll(es=>es.map(e=>({tag:e.tagName,html:e.outerHTML.slice(0,230)})).slice(0,30))},null,2));await c.close();

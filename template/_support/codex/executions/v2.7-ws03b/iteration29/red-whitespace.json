@@ -1,0 +1,10 @@
+{
+  "exitCode": 1,
+  "failed": 3,
+  "implementationWrittenBeforeRed": false,
+  "evidence": "red-whitespace.log",
+  "invalidInvocationExcluded": "red-whitespace-invalid-cwd.log",
+  "passed": 23,
+  "files": 1,
+  "tests": 26
+}

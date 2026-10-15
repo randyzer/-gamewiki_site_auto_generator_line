@@ -1,0 +1,24 @@
+{
+  "logicalRoot": "/tmp/c2c33d.c2jJH6",
+  "realRoot": "/private/tmp/c2c33d.c2jJH6",
+  "runnerExited": true,
+  "previewPidGone": true,
+  "fixtureGone": true,
+  "inventoryCount": 5,
+  "tsxTransformFiles": 4,
+  "tsxSockets": 0,
+  "nodeCompileCacheFiles": 0,
+  "symlinksFound": 0,
+  "unknownEntries": [],
+  "pathEscapes": [],
+  "deletedEntries": [
+    "tsx-501/17914-3083d3d35ff4bb53d154c2c92a4503b4687100b7",
+    "tsx-501/17914-5dcf56c7e5254028f70ab1bfe59143d566a4b792",
+    "tsx-501/17914-9058505be62e0276a14b827ab5768e82a219becc",
+    "tsx-501/17914-cf49d5830f1e29b745e6350db39f41e5bffe1e86",
+    "tsx-501"
+  ],
+  "rootRemoved": true,
+  "fallbackSignalUsed": false,
+  "status": "PASS"
+}

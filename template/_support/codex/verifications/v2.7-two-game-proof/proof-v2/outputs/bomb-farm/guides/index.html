@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en" data-theme-font="editorial" data-theme-density="comfortable" data-theme-shape="square" data-theme-state="lifted"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="robots" content="index, follow, max-image-preview:large"><title>Bomb Farm Mine Guides — Start with the Core Loop</title><meta name="description" content="One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database."><link rel="canonical" href="https://bombfarmwiki.wiki/guides/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:site_name" content="Bomb Farm Wiki"><meta property="og:locale" content="en"><meta property="og:url" content="https://bombfarmwiki.wiki/guides/"><meta property="og:title" content="Bomb Farm Mine Guides — Start with the Core Loop"><meta property="og:description" content="One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Bomb Farm Mine Guides — Start with the Core Loop"><meta name="twitter:description" content="One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database."><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://bombfarmwiki.wiki/#website","url":"https://bombfarmwiki.wiki/","name":"Bomb Farm Wiki","description":"Understand the bomber squad's mine loop, observe progress and use the recorded three-team switching concept without invented timers.","inLanguage":"en"},{"@type":"WebPage","@id":"https://bombfarmwiki.wiki/guides/#webpage","url":"https://bombfarmwiki.wiki/guides/","name":"Bomb Farm Mine Guides — Start with the Core Loop","description":"One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database.","datePublished":"2026-10-08","dateModified":"2026-10-08","inLanguage":"en","isPartOf":{"@id":"https://bombfarmwiki.wiki/#website"}}]}</script><link rel="stylesheet" href="/_astro/BaseLayout.yppudl0a.css"></head><body id="top" data-page-family="guides"><a class="skip-link" href="#main-content">Skip to content</a><header class="site-header"><div class="site-header__inner shell"><a class="brand" href="/" aria-label="Bomb Farm Wiki home"><span class="brand__mark" aria-hidden="true">BF</span><span class="brand__copy"><strong>BF Wiki</strong><small>Understand the mine. Switch teams with a purpose.</small></span></a><nav class="desktop-nav" aria-label="Primary navigation"><ul class="desktop-nav__list"><li class="desktop-nav__group" data-nav-page-id="home"><a class="desktop-nav__link" href="/">Mine overview</a></li><li class="desktop-nav__group" data-active="true" data-nav-page-id="hub.guides"><a class="desktop-nav__link" href="/guides/" aria-current="page">Mine guides</a><ul class="desktop-nav__menu" aria-label="Mine guides pages"><li data-nav-page-id="guide.how-to-play"><a href="/guides/how-to-play/"><span>How to Play Bomb Farm: The Mine and Three-Team Loop</span><small>Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.</small></a></li></ul></li></ul></nav><details class="mobile-nav"><summary class="mobile-nav__toggle">Menu <span aria-hidden="true">+</span></summary><nav class="mobile-nav__panel" aria-label="Primary navigation"><ul class="mobile-nav__list"><li data-nav-page-id="home"><a href="/">Mine overview</a></li><li data-active="true"><details class="mobile-nav__group"><summary>Mine guides</summary><div class="mobile-nav__children"><a class="mobile-nav__overview" href="/guides/" aria-current="page" data-nav-page-id="hub.guides">Overview <span aria-hidden="true">→</span></a><ul><li data-nav-page-id="guide.how-to-play"><a href="/guides/how-to-play/">How to Play Bomb Farm: The Mine and Three-Team Loop</a></li></ul></div></details></li></ul></nav></details><script>
+  (() => {
+    const mobile = document.querySelector(".mobile-nav");
+    const header = mobile?.closest(".site-header");
+    const desktop = header?.querySelector(".desktop-nav");
+    const home = header?.querySelector(".brand");
+    const summary = mobile?.querySelector(":scope > summary");
+    if (!(mobile instanceof HTMLDetailsElement) || !(desktop instanceof HTMLElement) ||
+      !(home instanceof HTMLElement) || !(summary instanceof HTMLElement) ||
+      typeof window.matchMedia !== "function") return;
+
+    // This matches the existing CSS navigation boundary, including exactly 900px.
+    const mobileMode = window.matchMedia("(max-width: 900px)");
+    const trigger = (disclosure) => disclosure.querySelector(":scope > summary");
+    const close = (disclosure) => {
+      disclosure.open = false;
+      for (const nested of disclosure.querySelectorAll("details")) nested.open = false;
+    };
+    const restore = (disclosure) => {
+      let visible = disclosure;
+      for (let ancestor = disclosure.parentElement?.closest("details"); ancestor;
+        ancestor = ancestor.parentElement?.closest("details")) {
+        if (!ancestor.open) visible = ancestor;
+      }
+      trigger(visible)?.focus({ preventScroll: true });
+    };
+
+    const currentMode = () => mobileMode.matches ? "mobile" : "desktop";
+    const rootFor = (mode) => mode === "mobile" ? mobile : desktop;
+    const visible = (element) => element instanceof HTMLElement && element.isConnected &&
+      element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden" &&
+      getComputedStyle(element).display !== "none";
+    const identityFor = (element) => {
+      if (!(element instanceof HTMLElement) || !element.isConnected) return null;
+      const mode = mobile.contains(element) ? "mobile" : desktop.contains(element) ? "desktop" : null;
+      if (!mode) return null;
+      const group = mode === "mobile" ? element.closest(".mobile-nav__group") : null;
+      const pageId = element.closest("[data-nav-page-id]")?.getAttribute("data-nav-page-id") ??
+        group?.querySelector(".mobile-nav__overview")?.getAttribute("data-nav-page-id") ?? null;
+      return { mode, pageId, kind: mode === "desktop" ? "desktop-page" : element === summary ?
+        "mobile-trigger" : group && element === trigger(group) ? "mobile-group" : "mobile-page" };
+    };
+    const sourceFor = (identity) => {
+      if (!identity) return null;
+      if (identity.kind === "mobile-trigger") return summary;
+      if (identity.kind === "mobile-group") {
+        const group = [...mobile.querySelectorAll(".mobile-nav__group")].find((element) =>
+          element.querySelector(".mobile-nav__overview")?.getAttribute("data-nav-page-id") === identity.pageId);
+        return group ? trigger(group) : null;
+      }
+      if (!identity.pageId) return null;
+      return [...rootFor(identity.mode).querySelectorAll("a[href]")].find((element) =>
+        identityFor(element)?.pageId === identity.pageId) ?? null;
+    };
+    let pendingIdentity = null;
+    let intentRevoked = false;
+    let previousMode = currentMode();
+    const revoke = () => { pendingIdentity = null; intentRevoked = true; };
+    const responsiveLoss = (identity, active) => {
+      if (!identity || identity.mode === currentMode() ||
+        active !== document.body && active !== document.documentElement) return false;
+      const source = sourceFor(identity);
+      return source instanceof HTMLElement && source.isConnected && !visible(source);
+    };
+    document.addEventListener("focusin", (event) => {
+      const identity = identityFor(event.target);
+      if (identity && identity.mode === currentMode() && visible(event.target)) {
+        pendingIdentity = identity;
+        intentRevoked = false;
+      } else if (!responsiveLoss(pendingIdentity, event.target)) revoke();
+    }, true);
+    document.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof Element) || !mobile.contains(event.target) && !desktop.contains(event.target)) revoke();
+    }, true);
+    document.addEventListener("focusout", () => {
+      const observed = pendingIdentity;
+      if (!observed) return;
+      queueMicrotask(() => {
+        // An old event must not invalidate a newer focus record made by the handoff.
+        if (pendingIdentity !== observed) return;
+        if (identityFor(document.activeElement)) return;
+        if (!responsiveLoss(observed, document.activeElement)) revoke();
+      });
+    }, true);
+
+    mobile.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !(event.target instanceof Element)) return;
+      const disclosure = event.target.closest("details[open]");
+      if (!(disclosure instanceof HTMLDetailsElement) || !mobile.contains(disclosure)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      close(disclosure);
+      restore(disclosure);
+    });
+
+    mobile.addEventListener("toggle", (event) => {
+      const disclosure = event.target;
+      if (!(disclosure instanceof HTMLDetailsElement) || !mobile.contains(disclosure) || disclosure.open) return;
+      const hiddenFocus = disclosure.contains(document.activeElement) &&
+        !trigger(disclosure)?.contains(document.activeElement);
+      close(disclosure);
+      if (hiddenFocus) restore(disclosure);
+    }, true);
+
+    mobile.addEventListener("click", (event) => {
+      if (event.defaultPrevented || !(event.target instanceof Element)) return;
+      const link = event.target.closest("a[href]");
+      if (!(link instanceof HTMLElement) || !mobile.contains(link)) return;
+      close(mobile);
+      summary.focus({ preventScroll: true });
+      const destination = new URL(link.href, window.location.href);
+      const current = new URL(window.location.href);
+      if (destination.origin !== current.origin || destination.pathname !== current.pathname ||
+        destination.search !== current.search) return;
+      if (destination.href === current.href) event.preventDefault();
+      let target;
+      try { target = destination.hash ? document.getElementById(decodeURIComponent(destination.hash.slice(1))) : home; }
+      catch { return; }
+      if (!(target instanceof HTMLElement) || target.getClientRects().length === 0) return;
+      if (!target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+        target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+      }
+      target.focus({ preventScroll: true });
+    });
+
+    mobileMode.addEventListener("change", () => {
+      const mode = currentMode();
+      if (mode === previousMode) return;
+      const outgoingMode = previousMode;
+      previousMode = mode;
+      const live = identityFor(document.activeElement);
+      const identity = intentRevoked ? null : live?.mode === outgoingMode ? live :
+        pendingIdentity?.mode === outgoingMode && responsiveLoss(pendingIdentity, document.activeElement) ? pendingIdentity : null;
+      revoke();
+      close(mobile);
+      if (!identity) {
+        const current = identityFor(document.activeElement);
+        if (current?.mode === mode && visible(document.activeElement)) {
+          pendingIdentity = current;
+          intentRevoked = false;
+        }
+        return;
+      }
+      if (mode === "mobile") {
+        if (visible(summary)) summary.focus({ preventScroll: true });
+        return;
+      }
+      const match = [...desktop.querySelectorAll("[data-nav-page-id]")]
+        .find((element) => element.getAttribute("data-nav-page-id") === identity.pageId);
+      const destination = match?.matches("a[href]") ? match : match?.querySelector("a[href]");
+      const parent = destination?.closest(".desktop-nav__group")?.querySelector(".desktop-nav__link");
+      if (visible(parent)) parent.focus({ preventScroll: true });
+      if (visible(destination)) destination.focus({ preventScroll: true });
+      else if (visible(home)) home.focus({ preventScroll: true });
+    });
+    if (!mobileMode.matches) close(mobile);
+  })();
+</script></div></header><main id="main-content" class="hub-page shell" data-pagefind-body><header class="hub-page__header reveal reveal--1"><div><p class="eyebrow">Guide library / 01 available</p><h1 data-pagefind-meta="title">Bomb Farm Mine Guides — Start with the Core Loop</h1></div><p data-pagefind-meta="description">One bounded player guide explains the mine loop, progress observations and three-team switching; this directory does not promise a full game database.</p></header><div class="hub-page__legend" aria-label="Guide index legend"><span>No.</span><span>Player guide</span><span>Last updated</span></div><ol class="guide-index"><li><a href="/guides/how-to-play/"><span class="guide-index__number">01</span><span class="guide-index__title"><small>Player guide</small><strong>How to Play Bomb Farm: The Mine and Three-Team Loop</strong><span>Observe the mine, inspect upgrade opportunities and switch between three teams using the recorded official concept, without invented recovery timers.</span></span><span class="guide-index__updated"><small>Last updated</small><time datetime="2026-10-08">2026-10-08</time></span></a></li></ol></main><footer class="site-footer"><div class="shell site-footer__grid"><div><span class="eyebrow">BF Wiki</span><p class="site-footer__statement">Understand the mine. Switch teams with a purpose.</p></div><div class="site-footer__meta"><p>Bomb Farm Wiki / 2026</p><p>Understand the mine. Switch teams with a purpose.</p><nav class="site-footer__links" aria-label="Company and legal"><a href="/about/">about</a></nav><a href="/#top">Back to top ↑</a></div></div></footer></body></html>

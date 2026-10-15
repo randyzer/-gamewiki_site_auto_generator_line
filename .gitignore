@@ -1,0 +1,34 @@
+# Dependencies, virtual environments, and generated files
+node_modules/
+.venv/
+.venv-*/
+venv/
+.next/
+.astro/
+dist/
+out/
+build/
+coverage/
+.cache/
+__pycache__/
+*.py[cod]
+*.tsbuildinfo
+*.log
+.DS_Store
+
+# Local credentials and machine-specific settings
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+.claude/settings.local.json
+
+# Local execution state and downloaded dependencies
+/agent/.existing-content-test-*/
+/agent/host-approval-store/
+/agent/deps/m3-favicon-downloads/

@@ -1,0 +1,96 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 14,
+  "policyStatus": "PROPOSAL_ACCEPTED_NOT_IMPLEMENTED",
+  "currentRulesRemainEffective": true,
+  "currentQualification": {
+    "executed": 47,
+    "pass": 36,
+    "fail": 11,
+    "notRun": 0,
+    "skip": 0,
+    "rerun": false,
+    "historyRewritten": false
+  },
+  "diagnosticDispositionsAreNotContractOutcomes": true,
+  "plain_tab": {
+    "contract_property": "AX-01 keyboard operation; AX-02 skip/visible focus; AX-03 keyboard-path integrity",
+    "current_oracle": "plain Tab reaches ordinary anchors",
+    "environment_control_result": "unavailable under iteration13 installed engine/host",
+    "diagnosis": "ENGINE_HOST_KEYBOARD_PROFILE",
+    "raw_evidence": "../iteration13/native-focus-profile.json",
+    "proposed_policy": {
+      "product_defect_attribution": false,
+      "evidence_disposition": "ENVIRONMENT_PROFILE_BLOCKED",
+      "automatic_pass": false,
+      "alternate_evidence_required": true
+    }
+  },
+  "arrowright": {
+    "contract_property": "AX-03 keyboard-path / overflow usability",
+    "current_oracle": "native ArrowRight scroll of .table-scroll",
+    "repeatability_control": {
+      "file": "arrowright-repeatability.json",
+      "valid_runs": 10,
+      "scrolled_runs": 0,
+      "classification": "NATIVE_ARROW_UNAVAILABLE",
+      "independent_fresh_browser_processes": 10
+    },
+    "current_core_result": {
+      "source": "../iteration13/table-arrowright-profile.json",
+      "webkit_390": "no_scroll",
+      "webkit_1280": "no_scroll",
+      "historical_minimal_success_preserved": true
+    },
+    "proposed_policy": {
+      "deterministic_native_oracle_supported": false,
+      "scope": "current installed WebKit/host and finite pure-native process controls",
+      "product_defect_attribution": "unresolved",
+      "evidence_disposition": "PRODUCT_EVIDENCE_UNRESOLVED",
+      "automatic_pass": false,
+      "alternate_evidence_required": true
+    },
+    "decision_rules": {
+      "10_of_10": "NATIVE_ARROW_REPEATABLE; future Core/context investigation; no automatic Core bug/PASS",
+      "0_of_10": "NATIVE_ARROW_UNAVAILABLE; native deterministic prerequisite unsupported in this control",
+      "1_to_9_of_10": "NATIVE_ARROW_NONDETERMINISTIC; native deterministic prerequisite unsupported in this control",
+      "any_invalid": "CONTROL_INVALID; STOP ArrowRight policy conclusion"
+    }
+  },
+  "live_resize": {
+    "diagnosis": "CORE_FOCUS_MIGRATION_TIMING_RACE",
+    "policy_relief_applicable": false,
+    "separate_repair_plan_required": true
+  },
+  "future_adoption": {
+    "additional_explicit_authorization_required": true,
+    "requirement_owner_and_verification_owner_required": true,
+    "real_keyboard_alternate_evidence_required": true,
+    "programmatic_focus_or_scroll_is_not_keyboard_proof": true,
+    "human_AX02_gate_preserved": true,
+    "assembled_AX03_gate_preserved": true,
+    "AX_verifiedOutcome_promotion": "NONE",
+    "ordinary_P0_P1_failure_waiver": false,
+    "distinct_future_plans": [
+      "Policy Implementation Plan",
+      "Live-Resize Repair Plan"
+    ],
+    "policy_implementation_candidates": [
+      "SOP",
+      "QA checklist",
+      "Execution Prompt",
+      "Master Prompt",
+      "evidence schema",
+      "runner",
+      "validator",
+      "CI"
+    ]
+  },
+  "policyAuthorityActive": false,
+  "independentReview": {
+    "verdict": "ACCEPT",
+    "source": "result.md / actual ChatGPT review14",
+    "WS06AStatus": "BLOCKED",
+    "nextFiniteDecision": "Authorize iteration15 solely to formulate Live-Resize Core Repair Plan; policy implementation separate"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "height": 2765,
+  "width": 1440,
+  "overflow": false,
+  "sections": [
+    {
+      "tag": "HEADER",
+      "x": 0,
+      "y": 0,
+      "w": 1425,
+      "h": 90.5,
+      "text": "SIGNAL · DEMO　//　 COUNTRY OPS · SANDBOX\nCONCEPT BUILD　//　ORIGINAL DEMO CODEX\nFRO"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 90.5,
+      "w": 1425,
+      "h": 353,
+      "text": "FIELD MANUAL · SECTION 08\nFRONTIER OPS GUIDES\n\nLong-form field reports for a cou"
+    },
+    {
+      "tag": "SECTION",
+      "x": 0,
+      "y": 443.5,
+      "w": 1425,
+      "h": 843,
+      "text": "ABOUT FRONTIER OPS GUIDES\n\nEach complete guide in this codex is written as a pra"
+    },
+    {
+      "tag": "SECTION",
+      "x": 72.5,
+      "y": 1286.5,
+      "w": 1280,
+      "h": 1072,
+      "text": "ALL GUIDES\nBEGINNER\nOCT 12, 2026\nBEGINNER FIELD GUIDE: YOUR FIRST TEN MINUTES\n\nA"
+    },
+    {
+      "tag": "FOOTER",
+      "x": 0,
+      "y": 2454.5,
+      "w": 1425,
+      "h": 310,
+      "text": "FRONTIER OPS\nFIELD CODEX\n\nAn original strategy reference for Frontier Ops, a fic"
+    }
+  ],
+  "heads": [
+    {
+      "text": "FRONTIER OPS GUIDES",
+      "x": 88.5,
+      "y": 202.5,
+      "w": 1248,
+      "h": 60,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "READING PATH BY SKILL LEVEL",
+      "x": 109.5,
+      "y": 840.5,
+      "w": 359.515625,
+      "h": 28,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "TOPICS COVERED",
+      "x": 527.015625,
+      "y": 840.5,
+      "w": 359.53125,
+      "h": 28,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "ALL GUIDES",
+      "x": 88.5,
+      "y": 1334.5,
+      "w": 1,
+      "h": 1,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    },
+    {
+      "text": "PAIR FRONTIER OPS GUIDES WITH",
+      "x": 121.5,
+      "y": 2167.5,
+      "w": 1182,
+      "h": 28,
+      "font": "Impact, \"Arial Narrow\", sans-serif"
+    }
+  ]
+}

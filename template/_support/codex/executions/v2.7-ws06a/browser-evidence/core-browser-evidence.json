@@ -1,0 +1,3883 @@
+{
+  "schemaVersion": "1",
+  "identity": {
+    "starter": {
+      "branch": "v2.7/evolution",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "workingTreeSha256": "c44c2f516f9f2051e919eb04e6a627ab3b25e5f31ddd7dcebef29e762ab497ff"
+    },
+    "canonicalContract": {
+      "reference": {
+        "version": "2.7",
+        "owningArtifact": "GAME_SOP",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      },
+      "verification": {
+        "mode": "FILE_SHA256",
+        "filePath": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "observedSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      }
+    },
+    "fixture": {
+      "identity": "Field Notes synthetic adoption",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e"
+    },
+    "build": {
+      "distSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6"
+    },
+    "playwright": {
+      "packageVersion": "1.63.0"
+    },
+    "host": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.22.0"
+    },
+    "engines": {
+      "chromium": {
+        "browserName": "chromium",
+        "version": "153.0.8010.12",
+        "revision": "1243"
+      },
+      "firefox": {
+        "browserName": "firefox",
+        "version": "155.0",
+        "revision": "1543"
+      },
+      "webkit": {
+        "browserName": "webkit",
+        "version": "26.6",
+        "revision": "2359"
+      }
+    }
+  },
+  "overall": "FAIL",
+  "infrastructureErrors": [],
+  "cleanup": {
+    "previewStopped": true,
+    "fixtureRemoved": true
+  },
+  "humanReview": {
+    "visualFocus": "DEFERRED",
+    "contrast": "DEFERRED"
+  },
+  "rows": [
+    {
+      "caseId": "baseline:chromium:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6489.560166000001,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": false,
+          "detail": "Document overflow: {\"scroll\":764,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3330.4302500000013,
+      "failure": "document-overflow: Document overflow: {\"scroll\":764,\"client\":390}\nskip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 2749.154832999997,
+      "failure": "skip-keyboard: Skip did not move focus to main"
+    },
+    {
+      "caseId": "baseline:chromium:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":650,\"y\":22,\"width\":94,\"height\":44},{\"x\":373,\"y\":133,\"width\":362,\"height\":48},{\"x\":387,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 5588.8787919999995,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3340.2055839999994,
+      "failure": "skip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable"
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 2795.659583000004,
+      "failure": "skip-keyboard: Skip did not move focus to main"
+    },
+    {
+      "caseId": "baseline:chromium:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.40625}}"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 9421.985,
+      "failure": "skip-keyboard: Skip did not move focus to main\ntarget-size: locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+    },
+    {
+      "caseId": "baseline:chromium:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3325.1642090000023,
+      "failure": "skip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable"
+    },
+    {
+      "caseId": "baseline:chromium:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 2815.686249999999,
+      "failure": "skip-keyboard: Skip did not move focus to main"
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.08332824707031}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.083343505859375}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6426.070500000002,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": false,
+          "detail": "Document overflow: {\"scroll\":764,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3450.4203750000015,
+      "failure": "document-overflow: Document overflow: {\"scroll\":764,\"client\":390}\nskip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 2963.650250000006,
+      "failure": "skip-keyboard: Skip did not move focus to main"
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.08332824707031}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":650,\"y\":22,\"width\":94,\"height\":44},{\"x\":373,\"y\":133,\"width\":362,\"height\":48},{\"x\":387,\"y\":229,\"width\":348,\"height\":49.083343505859375}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 5899.490749999997,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":718,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":768,\"documentScroll\":768}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3495.2676250000077,
+      "failure": "skip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable"
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 2945.327667000005,
+      "failure": "skip-keyboard: Skip did not move focus to main"
+    },
+    {
+      "caseId": "baseline:firefox:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.39999389648438}}"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 9659.820500000002,
+      "failure": "skip-keyboard: Skip did not move focus to main\ntarget-size: locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+    },
+    {
+      "caseId": "baseline:firefox:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3493.728166000001,
+      "failure": "skip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable"
+    },
+    {
+      "caseId": "baseline:firefox:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "firefox",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 2936.9943340000027,
+      "failure": "skip-keyboard: Skip did not move focus to main"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 7521.725332999995,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/getting-started/\ntarget-size: Target not keyboard reachable: /guides/getting-started/\nnested-cleanup: Target not keyboard reachable: /guides/getting-started/\nordinary-navigation: Target not keyboard reachable: /guides/getting-started/\nsame-document-focus: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": false,
+          "detail": "Document overflow: {\"scroll\":764,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3529.4971249999944,
+      "failure": "document-overflow: Document overflow: {\"scroll\":764,\"client\":390}\nfooter-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3157.027041999987,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nrecovery-navigation: Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6470.748667000007,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/getting-started/\ntarget-size: Target not keyboard reachable: /guides/getting-started/\nnested-cleanup: Target not keyboard reachable: /guides/getting-started/\nordinary-navigation: Target not keyboard reachable: /guides/getting-started/\nsame-document-focus: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "page.waitForFunction: Timeout 4000ms exceeded."
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 7574.906749999995,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: page.waitForFunction: Timeout 4000ms exceeded."
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":768,\"client\":768}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3151.864208999992,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nrecovery-navigation: Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 9844.711958,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/\ntarget-size: locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n\nordinary-navigation: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "page.waitForFunction: Timeout 4000ms exceeded."
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 7550.989124999993,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: page.waitForFunction: Timeout 4000ms exceeded."
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "engine": "webkit",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3100.9804580000055,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nrecovery-navigation: Target not keyboard reachable: /"
+    },
+    {
+      "caseId": "no-js:chromium:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Native no-JS anchor did not reach content"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.078125}]"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3896.6867499999935,
+      "failure": "skip-keyboard: Skip did not move focus to main\nnavigation-keyboard: Native no-JS anchor did not reach content"
+    },
+    {
+      "caseId": "no-js:firefox:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "firefox",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "155.0",
+      "browserRevision": "1543",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.85000610351562,\"height\":16.316665649414062}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Native no-JS anchor did not reach content"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.083343505859375}]"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 4197.601874999993,
+      "failure": "skip-keyboard: Skip did not move focus to main\nnavigation-keyboard: Native no-JS anchor did not reach content"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "engine": "webkit",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "browserVersion": "26.6",
+      "browserRevision": "2359",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /#top"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "First Tab does not focus skip link"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "Target not keyboard reachable: /guides/getting-started/"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 4358.873124999984,
+      "failure": "footer-keyboard: Target not keyboard reachable: /#top\nskip-keyboard: First Tab does not focus skip link\nnavigation-keyboard: Target not keyboard reachable: /guides/getting-started/\ntarget-size: Target not keyboard reachable: /guides/getting-started/"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:899x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 899,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":899,\"client\":899}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":715.5,\"y\":22,\"width\":94,\"height\":44},{\"x\":438.5,\"y\":133,\"width\":362,\"height\":48},{\"x\":452.5,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 5644.190750000009,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:900x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 900,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":900,\"client\":900}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":716,\"y\":22,\"width\":94,\"height\":44},{\"x\":439,\"y\":133,\"width\":362,\"height\":48},{\"x\":453,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 5666.619500000001,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:901x800",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 901,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":901,\"client\":901}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.40625}}"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 9441.102875000011,
+      "failure": "skip-keyboard: Skip did not move focus to main\ntarget-size: locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":619,\"client\":619}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":511,\"y\":15,\"width\":94,\"height\":44},{\"x\":234,\"y\":126,\"width\":362,\"height\":48},{\"x\":248,\"y\":222,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6180.387749999994,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": false,
+          "detail": "Document overflow: {\"scroll\":764,\"client\":619}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":619,\"documentScroll\":764}"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3816.0831249999756,
+      "failure": "document-overflow: Document overflow: {\"scroll\":764,\"client\":619}\nskip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":619,\"documentScroll\":764}\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:619x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 619,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":619,\"client\":619}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3321.5467500000086,
+      "failure": "skip-keyboard: Skip did not move focus to main\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":620,\"client\":620}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":512,\"y\":15,\"width\":94,\"height\":44},{\"x\":235,\"y\":126,\"width\":362,\"height\":48},{\"x\":249,\"y\":222,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6196.814457999979,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": false,
+          "detail": "Document overflow: {\"scroll\":764,\"client\":620}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":620,\"documentScroll\":764}"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3799.9900829999824,
+      "failure": "document-overflow: Document overflow: {\"scroll\":764,\"client\":620}\nskip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":620,\"documentScroll\":764}\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:620x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 620,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":620,\"client\":620}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3300.324332999997,
+      "failure": "skip-keyboard: Skip did not move focus to main\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:shell-nav:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":621,\"client\":621}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":509,\"y\":22,\"width\":94,\"height\":44},{\"x\":232,\"y\":133,\"width\":362,\"height\":48},{\"x\":246,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6210.4896250000165,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:content-detail:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":621,\"client\":621}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":583,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":621,\"documentScroll\":621}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3869.2071250000154,
+      "failure": "skip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "boundary:chromium:recovery-404:621x844",
+      "category": "boundary",
+      "engine": "chromium",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 621,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 404,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 404"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Page Not Found | Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":621,\"client\":621}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "recovery-navigation",
+          "passed": true,
+          "detail": "missing URL HTTP404; keyboard home activation succeeds; search HTTP200"
+        },
+        {
+          "name": "layout-boundary",
+          "passed": false,
+          "detail": "page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3316.7714160000032,
+      "failure": "skip-keyboard: Skip did not move focus to main\nlayout-boundary: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:311:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "caseId": "reduced-motion:chromium:shell-nav:390x844",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":390,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":282,\"y\":15,\"width\":94,\"height\":44},{\"x\":31,\"y\":126,\"width\":336,\"height\":48},{\"x\":45,\"y\":222,\"width\":322,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 6337.13058300002,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore"
+    },
+    {
+      "caseId": "reduced-motion:chromium:content-detail:390x844",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": false,
+          "detail": "Document overflow: {\"scroll\":764,\"client\":390}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": false,
+          "detail": "Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3873.321292000008,
+      "failure": "document-overflow: Document overflow: {\"scroll\":764,\"client\":390}\nskip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable\ntable-local-scroll: Local table overflow contract failed: {\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":390,\"documentScroll\":764}"
+    },
+    {
+      "caseId": "reduced-motion:chromium:shell-nav:1280x800",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "desktop: >900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":322,\"height\":95.40625}}"
+        },
+        {
+          "name": "target-size",
+          "passed": false,
+          "detail": "locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "desktop has no disclosure state; mobile disclosure hidden/closed"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": true,
+          "detail": "desktop native anchors; no hidden disclosure to restore"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 10046.813583999989,
+      "failure": "skip-keyboard: Skip did not move focus to main\ntarget-size: locator.boundingBox: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.brand__mark')\u001b[22m\n"
+    },
+    {
+      "caseId": "reduced-motion:chromium:content-detail:1280x800",
+      "category": "reduced-motion",
+      "engine": "chromium",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "reduce",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Getting Started with Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":1280,\"client\":1280}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(31, 36, 38)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "article-content",
+          "passed": false,
+          "detail": "Article or existing heading path unavailable"
+        },
+        {
+          "name": "table-local-scroll",
+          "passed": true,
+          "detail": "{\"tableWidth\":780,\"wrapperClient\":748,\"wrapperScroll\":780,\"overflow\":\"auto\",\"documentClient\":1280,\"documentScroll\":1280}; real ArrowRight scroll observed"
+        },
+        {
+          "name": "reduced-motion",
+          "passed": true,
+          "detail": "{\"matches\":true,\"scroll\":\"auto\",\"durations\":[{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"},{\"animation\":\"1e-05s\",\"transition\":\"1e-05s\"}]}"
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 3921.307709000015,
+      "failure": "skip-keyboard: Skip did not move focus to main\narticle-content: Article or existing heading path unavailable"
+    },
+    {
+      "caseId": "live-resize:chromium:shell-nav:899x800",
+      "category": "live-resize",
+      "engine": "chromium",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 899,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "browserVersion": "153.0.8010.12",
+      "browserRevision": "1243",
+      "sourceSha256": "69db6f23a83e533d6cc390df09df4c5d35aa51fd9c6daadbdeaef7a66d43566e",
+      "buildSha256": "4c4eec687832c64aa118fd5ff76f886f3fa33ee4edb053878c8ed544892759b6",
+      "httpStatus": 200,
+      "assertions": [
+        {
+          "name": "http-status",
+          "passed": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "visible-h1",
+          "passed": true,
+          "detail": "Field Notes"
+        },
+        {
+          "name": "main-content",
+          "passed": true,
+          "detail": "main#main-content visible"
+        },
+        {
+          "name": "document-overflow",
+          "passed": true,
+          "detail": "{\"scroll\":899,\"client\":899}"
+        },
+        {
+          "name": "skip-link",
+          "passed": true,
+          "detail": "one skip link targets main"
+        },
+        {
+          "name": "footer-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":83.65625,\"height\":16.296875}}"
+        },
+        {
+          "name": "skip-keyboard",
+          "passed": false,
+          "detail": "Skip did not move focus to main"
+        },
+        {
+          "name": "navigation-mode",
+          "passed": true,
+          "detail": "mobile: <=900"
+        },
+        {
+          "name": "navigation-keyboard",
+          "passed": true,
+          "detail": "{\"focused\":true,\"outline\":\"solid\",\"width\":3,\"color\":\"rgb(79, 111, 120)\",\"visibility\":\"visible\",\"rect\":{\"width\":348,\"height\":49.078125}}"
+        },
+        {
+          "name": "target-size",
+          "passed": true,
+          "detail": "[{\"x\":715.5,\"y\":22,\"width\":94,\"height\":44},{\"x\":438.5,\"y\":133,\"width\":362,\"height\":48},{\"x\":452.5,\"y\":229,\"width\":348,\"height\":49.078125}]"
+        },
+        {
+          "name": "nested-cleanup",
+          "passed": true,
+          "detail": "native ancestor close cleans nested details and restores visible trigger"
+        },
+        {
+          "name": "ordinary-navigation",
+          "passed": true,
+          "detail": "real child anchor reaches /guides/getting-started/"
+        },
+        {
+          "name": "same-document-focus",
+          "passed": false,
+          "detail": "Same-document home focus did not restore"
+        },
+        {
+          "name": "resize-focus",
+          "passed": false,
+          "detail": "page.waitForFunction: Timeout 4000ms exceeded."
+        },
+        {
+          "name": "browser-errors",
+          "passed": true,
+          "detail": "no pageerror/unexpected console.error"
+        }
+      ],
+      "caseStatus": "FAIL",
+      "durationMs": 10283.97866600001,
+      "failure": "skip-keyboard: Skip did not move focus to main\nsame-document-focus: Same-document home focus did not restore\nresize-focus: page.waitForFunction: Timeout 4000ms exceeded."
+    }
+  ]
+}

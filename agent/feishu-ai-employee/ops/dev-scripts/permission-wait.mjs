@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+import path from 'node:path';
+const ctx = await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'), { channel: 'chrome', headless: false });
+const page = ctx.pages()[0] || await ctx.newPage();
+await page.goto('https://open.feishu.cn/app/cli_aa476f5e72789ccc/auth', { waitUntil: 'domcontentloaded' });
+await page.getByText('开通权限', { exact: true }).first().click();
+const input = page.locator('input[placeholder*="im:chat:read"]').last();
+await input.fill('im:message.p2p_msg:readonly');
+await input.press('Enter');
+await page.waitForTimeout(4500);
+console.log('BODY', (await page.locator('body').innerText()).slice(-1600));
+const checks = await page.locator('input[type=checkbox]').evaluateAll(elements => elements.map(element => ({ disabled: element.disabled, checked: element.checked, near: element.parentElement?.parentElement?.parentElement?.innerText?.slice(0,250) })));
+console.log('CHECK', JSON.stringify(checks));
+await ctx.close();

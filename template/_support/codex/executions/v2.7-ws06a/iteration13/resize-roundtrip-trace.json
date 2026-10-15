@@ -1,0 +1,1447 @@
+{
+  "kind": "roundtrip",
+  "checkpoints": [
+    {
+      "name": "MQL_EXPECTED_STATE",
+      "width": 901,
+      "reached": true,
+      "state": {
+        "label": "MQL_EXPECTED_STATE",
+        "time": 575,
+        "width": 901,
+        "height": 800,
+        "mql": false,
+        "mobileVisible": false,
+        "desktopVisible": true,
+        "outerOpen": false,
+        "nestedOpen": [
+          false
+        ],
+        "active": {
+          "tag": "A",
+          "class": "",
+          "href": "/guides/getting-started/",
+          "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+          "pageId": "guide.getting-started",
+          "area": "desktop"
+        },
+        "target": {
+          "expectedId": "guide.getting-started",
+          "exists": true,
+          "visible": true,
+          "rect": {
+            "width": 322,
+            "height": 95.40624237060547
+          },
+          "display": "grid",
+          "visibility": "visible"
+        }
+      }
+    },
+    {
+      "name": "NAV_VISIBILITY_SETTLED",
+      "width": 901,
+      "reached": true,
+      "state": {
+        "label": "NAV_VISIBILITY_SETTLED",
+        "time": 575.7999999523163,
+        "width": 901,
+        "height": 800,
+        "mql": false,
+        "mobileVisible": false,
+        "desktopVisible": true,
+        "outerOpen": false,
+        "nestedOpen": [
+          false
+        ],
+        "active": {
+          "tag": "A",
+          "class": "",
+          "href": "/guides/getting-started/",
+          "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+          "pageId": "guide.getting-started",
+          "area": "desktop"
+        },
+        "target": {
+          "expectedId": "guide.getting-started",
+          "exists": true,
+          "visible": true,
+          "rect": {
+            "width": 322,
+            "height": 95.40624237060547
+          },
+          "display": "grid",
+          "visibility": "visible"
+        }
+      }
+    },
+    {
+      "name": "FINAL_FOCUS_STATE",
+      "width": 901,
+      "reached": true,
+      "state": {
+        "label": "FINAL_FOCUS_STATE",
+        "time": 576.6000000238419,
+        "width": 901,
+        "height": 800,
+        "mql": false,
+        "mobileVisible": false,
+        "desktopVisible": true,
+        "outerOpen": false,
+        "nestedOpen": [
+          false
+        ],
+        "active": {
+          "tag": "A",
+          "class": "",
+          "href": "/guides/getting-started/",
+          "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+          "pageId": "guide.getting-started",
+          "area": "desktop"
+        },
+        "target": {
+          "expectedId": "guide.getting-started",
+          "exists": true,
+          "visible": true,
+          "rect": {
+            "width": 322,
+            "height": 95.40624237060547
+          },
+          "display": "grid",
+          "visibility": "visible"
+        }
+      }
+    },
+    {
+      "name": "MQL_EXPECTED_STATE",
+      "width": 899,
+      "reached": true,
+      "state": {
+        "label": "MQL_EXPECTED_STATE",
+        "time": 605.8999999761581,
+        "width": 899,
+        "height": 800,
+        "mql": true,
+        "mobileVisible": true,
+        "desktopVisible": false,
+        "outerOpen": false,
+        "nestedOpen": [
+          false
+        ],
+        "active": {
+          "tag": "BODY",
+          "class": "",
+          "href": null,
+          "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+          "area": "other"
+        },
+        "target": {
+          "expectedId": "guide.getting-started",
+          "exists": true,
+          "visible": false,
+          "rect": {
+            "width": 0,
+            "height": 0
+          },
+          "display": "grid",
+          "visibility": "visible"
+        }
+      }
+    },
+    {
+      "name": "NAV_VISIBILITY_SETTLED",
+      "width": 899,
+      "reached": true,
+      "state": {
+        "label": "NAV_VISIBILITY_SETTLED",
+        "time": 606.8999999761581,
+        "width": 899,
+        "height": 800,
+        "mql": true,
+        "mobileVisible": true,
+        "desktopVisible": false,
+        "outerOpen": false,
+        "nestedOpen": [
+          false
+        ],
+        "active": {
+          "tag": "BODY",
+          "class": "",
+          "href": null,
+          "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+          "area": "other"
+        },
+        "target": {
+          "expectedId": "guide.getting-started",
+          "exists": true,
+          "visible": false,
+          "rect": {
+            "width": 0,
+            "height": 0
+          },
+          "display": "grid",
+          "visibility": "visible"
+        }
+      }
+    },
+    {
+      "name": "FINAL_FOCUS_STATE",
+      "width": 899,
+      "reached": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 4000ms exceeded.",
+      "state": {
+        "label": "FINAL_FOCUS_STATE:TIMEOUT",
+        "time": 4608.799999952316,
+        "width": 899,
+        "height": 800,
+        "mql": true,
+        "mobileVisible": true,
+        "desktopVisible": false,
+        "outerOpen": false,
+        "nestedOpen": [
+          false
+        ],
+        "active": {
+          "tag": "BODY",
+          "class": "",
+          "href": null,
+          "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+          "area": "other"
+        },
+        "target": {
+          "expectedId": "guide.getting-started",
+          "exists": true,
+          "visible": false,
+          "rect": {
+            "width": 0,
+            "height": 0
+          },
+          "display": "grid",
+          "visibility": "visible"
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "label": "event:focusin",
+      "time": 510.39999997615814,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "skip-link",
+        "href": "#main-content",
+        "text": "Skip to content",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 533.6999999284744,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 533.7999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "brand",
+        "href": "/",
+        "text": "FieldClear answers for every session.",
+        "area": "brand"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 536.2999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 536.3999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "SUMMARY",
+        "class": "mobile-nav__toggle",
+        "href": null,
+        "text": "Menu +",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:toggle",
+      "time": 539.3999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "SUMMARY",
+        "class": "mobile-nav__toggle",
+        "href": null,
+        "text": "Menu +",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 540.6999999284744,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 540.7999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/",
+        "text": "Home",
+        "pageId": "home",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 542.3999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 542.5,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "SUMMARY",
+        "class": "",
+        "href": null,
+        "text": "Guides",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 546.6999999284744,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 546.6999999284744,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "A",
+        "class": "mobile-nav__overview",
+        "href": "/guides/",
+        "text": "Overview →",
+        "pageId": "hub.guides",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 548.6999999284744,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 548.7999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field Notes",
+        "pageId": "guide.getting-started",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": null,
+        "exists": false,
+        "visible": false,
+        "rect": null
+      }
+    },
+    {
+      "label": "KEYBOARD_CHILD_READY",
+      "time": 550.8999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field Notes",
+        "pageId": "guide.getting-started",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "SET_VIEWPORT_RETURNED",
+      "time": 553.7999999523163,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field Notes",
+        "pageId": "guide.getting-started",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:resize",
+      "time": 556.1999999284744,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field Notes",
+        "pageId": "guide.getting-started",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:mql-change",
+      "time": 556.1999999284744,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": true,
+      "nestedOpen": [
+        true
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field Notes",
+        "pageId": "guide.getting-started",
+        "area": "mobile"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 556.3999999761581,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 556.5,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "desktop-nav__link",
+        "href": "/guides/",
+        "text": "Guides",
+        "pageId": "hub.guides",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 556.6000000238419,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:focusin",
+      "time": 556.6000000238419,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:toggle",
+      "time": 557.2999999523163,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:toggle",
+      "time": 557.2999999523163,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "RAF_1",
+      "time": 557.2999999523163,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40625
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "RAF_2",
+      "time": 573.5,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40624237060547
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "MQL_EXPECTED_STATE",
+      "time": 575,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40624237060547
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "NAV_VISIBILITY_SETTLED",
+      "time": 575.7999999523163,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40624237060547
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "FINAL_FOCUS_STATE",
+      "time": 576.6000000238419,
+      "width": 901,
+      "height": 800,
+      "mql": false,
+      "mobileVisible": false,
+      "desktopVisible": true,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "A",
+        "class": "",
+        "href": "/guides/getting-started/",
+        "text": "Getting Started with Field NotesSet the brand, feature flags, page inventory, an",
+        "pageId": "guide.getting-started",
+        "area": "desktop"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": true,
+        "rect": {
+          "width": 322,
+          "height": 95.40624237060547
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:focusout",
+      "time": 578.2999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "SET_VIEWPORT_RETURNED",
+      "time": 578.3999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:resize",
+      "time": 588.2999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "event:mql-change",
+      "time": 588.2999999523163,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "RAF_1",
+      "time": 588.6999999284744,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "RAF_2",
+      "time": 604.8999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "MQL_EXPECTED_STATE",
+      "time": 605.8999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "NAV_VISIBILITY_SETTLED",
+      "time": 606.8999999761581,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "FINAL_FOCUS_STATE:TIMEOUT",
+      "time": 4608.799999952316,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    },
+    {
+      "label": "END",
+      "time": 4610.100000023842,
+      "width": 899,
+      "height": 800,
+      "mql": true,
+      "mobileVisible": true,
+      "desktopVisible": false,
+      "outerOpen": false,
+      "nestedOpen": [
+        false
+      ],
+      "active": {
+        "tag": "BODY",
+        "class": "",
+        "href": null,
+        "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+        "area": "other"
+      },
+      "target": {
+        "expectedId": "guide.getting-started",
+        "exists": true,
+        "visible": false,
+        "rect": {
+          "width": 0,
+          "height": 0
+        },
+        "display": "grid",
+        "visibility": "visible"
+      }
+    }
+  ],
+  "setupError": null,
+  "expectedPageId": "guide.getting-started",
+  "start": {
+    "label": "KEYBOARD_CHILD_READY",
+    "time": 550.8999999761581,
+    "width": 899,
+    "height": 800,
+    "mql": true,
+    "mobileVisible": true,
+    "desktopVisible": false,
+    "outerOpen": true,
+    "nestedOpen": [
+      true
+    ],
+    "active": {
+      "tag": "A",
+      "class": "",
+      "href": "/guides/getting-started/",
+      "text": "Getting Started with Field Notes",
+      "pageId": "guide.getting-started",
+      "area": "mobile"
+    },
+    "target": {
+      "expectedId": "guide.getting-started",
+      "exists": true,
+      "visible": false,
+      "rect": {
+        "width": 0,
+        "height": 0
+      },
+      "display": "grid",
+      "visibility": "visible"
+    }
+  },
+  "final": {
+    "label": "END",
+    "time": 4610.100000023842,
+    "width": 899,
+    "height": 800,
+    "mql": true,
+    "mobileVisible": true,
+    "desktopVisible": false,
+    "outerOpen": false,
+    "nestedOpen": [
+      false
+    ],
+    "active": {
+      "tag": "BODY",
+      "class": "",
+      "href": null,
+      "text": "Skip to contentFieldClear answers for every session.HomeGuidesGetting Started wi",
+      "area": "other"
+    },
+    "target": {
+      "expectedId": "guide.getting-started",
+      "exists": true,
+      "visible": false,
+      "rect": {
+        "width": 0,
+        "height": 0
+      },
+      "display": "grid",
+      "visibility": "visible"
+    }
+  }
+}

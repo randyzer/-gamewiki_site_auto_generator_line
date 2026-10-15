@@ -1,0 +1,324 @@
+[
+  {
+    "title": "新手指南",
+    "description": "在黑水城开始第一个完整夜晚前，了解操作方式、章节结构、证据整理和低剧透生存提示，循序掌握调查的基本节奏。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 1,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Reviewed",
+    "slug": "beginner"
+  },
+  {
+    "title": "章节流程攻略",
+    "description": "按故事顺序经历侦探、证人和夜班工作人员的章节，以明确目标为核心梳理路线，并清晰标注涉及剧情揭示的边界。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 2,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Reviewed",
+    "searchOrder": 0,
+    "searchTitle": "完整章节流程",
+    "searchDescription": "跟随各章追查消失的一小时。",
+    "slug": "walkthrough"
+  },
+  {
+    "title": "角色档案",
+    "description": "浏览玛拉·维尔、埃利斯·里德及其他与黑水城案件相关的角色，了解他们的章节职责、地点与可玩视角，避免提前知道谜底。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 3,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Draft",
+    "slug": "characters"
+  },
+  {
+    "title": "谜题解法",
+    "description": "寻找环境线索、物品互动和推进提示，先使用低剧透观察建议，再根据需要查看阻碍调查的锁具与机关解法。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 4,
+    "cover": "/illustrations/blackwater-city.svg",
+    "status": "Draft",
+    "slug": "puzzles"
+  },
+  {
+    "title": "Midnight Evidence 玩法：调查过程如何运作",
+    "description": "从证据收集、可玩视角、安静探索和章节节奏出发，了解第一次调查的基本流程。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 5,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "gameplay"
+  },
+  {
+    "title": "Midnight Evidence 餐馆场景：失控的夜班",
+    "description": "梳理深夜点单流程、七号桌的陌生人，以及餐馆遭遇为案件时间线补充的信息。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 6,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "diner"
+  },
+  {
+    "title": "Midnight Evidence 项目时间线与平台说明",
+    "description": "说明虚构项目的原型节点、设想的平台，以及发布公告和实际可玩版本之间的区别。",
+    "category": "Release",
+    "publishedAt": "2026-10-09",
+    "order": 7,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "release-notes"
+  },
+  {
+    "title": "Midnight Evidence 试玩设定：章节与首轮路线",
+    "description": "介绍开场警局、餐馆和车站三段场景，以短路线帮助理解原创故事原型。",
+    "category": "Release",
+    "publishedAt": "2026-10-09",
+    "order": 8,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "demo"
+  },
+  {
+    "title": "Midnight Evidence PC 指南：操作与辅助功能",
+    "description": "整理键盘操作、字幕、可读线索、暂停设置和虚构 PC 冒险的辅助功能设计。",
+    "category": "Platforms",
+    "publishedAt": "2026-10-09",
+    "order": 9,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "platforms"
+  },
+  {
+    "title": "Midnight Evidence 下载：项目可用性说明",
+    "description": "明确区分这个可运行网站示例、可下载游戏、商店页面与官方发行渠道。",
+    "category": "Platforms",
+    "publishedAt": "2026-10-09",
+    "order": 10,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "download"
+  },
+  {
+    "title": "Midnight Evidence 社区笔记：如何阅读玩家推测",
+    "description": "区分观察与理论，对照证据，并在不破坏首次体验的前提下讨论后期剧情。",
+    "category": "Community",
+    "publishedAt": "2026-10-09",
+    "order": 11,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "community"
+  },
+  {
+    "title": "Midnight Evidence 配音设定：角色与表演方向",
+    "description": "原创侦探、证人及夜班群像的制作大纲，涵盖角色职责、语气和相互关系。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 12,
+    "cover": "/illustrations/blackwater-city.svg",
+    "searchOrder": 3,
+    "searchTitle": "配音与群像设定",
+    "searchDescription": "认识各角色及其原创表演方向。",
+    "slug": "voice-cast"
+  },
+  {
+    "title": "Midnight Evidence 玛拉·维尔：侦探与章节职责",
+    "description": "玛拉的第一个案件、她与旧车站的联系，以及贯穿黑水城调查的现场证据。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 13,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "mara"
+  },
+  {
+    "title": "Midnight Evidence 埃利斯·里德：搭档角色笔记",
+    "description": "埃利斯在警局的职责、最初的疑问，以及新证据到来后不断变化的对话。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 14,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "ellis"
+  },
+  {
+    "title": "Midnight Evidence 卡斯·罗文：电影院放映员",
+    "description": "卡斯的夜班、损坏的胶片，以及旧电影院与失踪案件之间的重要联系。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 15,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "cass"
+  },
+  {
+    "title": "谁是信号守望者？身份、动机与最终证据",
+    "description": "明确标注剧透，解析匿名录音、误导线索和指向信号守望者身份的最终证据。",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 16,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "identity"
+  },
+  {
+    "title": "Midnight Evidence 妮娜·哈特：餐馆店员与证人",
+    "description": "妮娜的深夜班次、七号桌、失踪收据，以及她在变化的案件时间线中的位置。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 17,
+    "cover": "/illustrations/blackwater-city.svg",
+    "searchOrder": 2,
+    "searchTitle": "妮娜角色指南",
+    "searchDescription": "夜班经历、证人陈述与章节职责。",
+    "slug": "nina"
+  },
+  {
+    "title": "Midnight Evidence 欧文·帕克：车站夜间守卫",
+    "description": "欧文在封闭站台的巡逻、维修日志，以及普通夜班报告中隐藏的关键线索。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 18,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "owen"
+  },
+  {
+    "title": "Midnight Evidence 艾瑞丝·贝尔：深夜电台主持人",
+    "description": "艾瑞丝的夜间广播、重复的台标，以及混入城市最后一档直播节目的声音。",
+    "category": "Cast",
+    "publishedAt": "2026-10-09",
+    "order": 19,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "iris"
+  },
+  {
+    "title": "Midnight Evidence 案件档案：全部十六份条目",
+    "description": "按路线整理章节记录、可选证词、修复录音和容易漏掉的警局备忘录。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 20,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "achievements"
+  },
+  {
+    "title": "Midnight Evidence 谜题提示与证物室密码",
+    "description": "提供桌柜、车站时钟、胶片顺序和最终证物室锁具的低剧透观察与解法提示。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 21,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "puzzle-codes"
+  },
+  {
+    "title": "Midnight Evidence 设计评析：节奏与恐怖氛围",
+    "description": "分析虚构冒险的短章节、克制的调查机制和由角色视角切换形成的恐怖感。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 22,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "review"
+  },
+  {
+    "title": "Midnight Evidence 故事与完整剧情梳理",
+    "description": "从第一段匿名录音到封闭站台的结局，按章节路线整理原创世界的完整剧情。",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 23,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "story"
+  },
+  {
+    "title": "下一次调查可以探索的六个原创悬疑场景",
+    "description": "六个原创场景概念，围绕不可靠证人、废弃建筑及藏在普通生活中的线索展开。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 24,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "next-investigation"
+  },
+  {
+    "title": "Midnight Evidence 内容提示与剧透边界",
+    "description": "整理令人不安的场景、虚构暴力、可选剧情揭示及档案采用的剧透标注方式。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 25,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "content-notes"
+  },
+  {
+    "title": "Midnight Evidence 如何构思：美术、声音与场景",
+    "description": "介绍城市环境、低多边形场景和小规模虚构角色群像背后的原创创作方向。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 26,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "making-of"
+  },
+  {
+    "title": "Midnight Evidence 车站时钟：线索指向哪里",
+    "description": "说明损坏时钟为何是时间线证据，如何对照工作日志，以及哪个谜题会用到它。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 27,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "station-clock"
+  },
+  {
+    "title": "Midnight Evidence 录音带：每段录音的作用",
+    "description": "整理十二段虚构录音、背景声音提供的线索，以及损坏的最后一盘录音带。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 28,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "recordings"
+  },
+  {
+    "title": "Midnight Evidence 档案版：附加内容是什么",
+    "description": "原创美术册、带注释的场景笔记和原声包构想；本站没有提供真实购买入口。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 30,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "archive-edition"
+  },
+  {
+    "title": "Midnight Evidence 翻译：字幕与界面说明",
+    "description": "说明术语选择，并明确区分翻译后的攻略网站与真正完成本地化的游戏。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 31,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "translation-notes"
+  },
+  {
+    "title": "Midnight Evidence 字幕指南：可读的证据",
+    "description": "整理字幕呈现、录音文字记录及如何保留背景声音线索，方便所有读者比较证据。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 32,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "subtitle-guide"
+  },
+  {
+    "title": "Midnight Evidence 媒体说明：原创项目素材",
+    "description": "介绍网站示例使用的原创插画、项目说明与虚构制作资料，并说明素材用途。",
+    "category": "Guide",
+    "publishedAt": "2026-10-09",
+    "order": 33,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "press-notes"
+  },
+  {
+    "title": "Midnight Evidence 最终章节与结局解析",
+    "description": "说明封闭站台终章的位置、录音线索如何汇合，以及最后一份档案揭示的内容。",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 34,
+    "cover": "/illustrations/blackwater-city.svg",
+    "searchOrder": 1,
+    "searchTitle": "结局解析",
+    "searchDescription": "最终广播与背后的关键证据。",
+    "slug": "ending"
+  },
+  {
+    "title": "Midnight Evidence 后日谈：最后一段广播",
+    "description": "梳理车站发现与最终广播之间的短暂过渡，以及它如何收束黑水城的时间线。",
+    "category": "Story",
+    "publishedAt": "2026-10-09",
+    "order": 35,
+    "cover": "/illustrations/blackwater-city.svg",
+    "slug": "aftermath"
+  }
+]

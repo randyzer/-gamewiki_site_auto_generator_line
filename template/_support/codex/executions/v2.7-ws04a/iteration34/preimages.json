@@ -1,0 +1,19 @@
+{
+  "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md": null,
+  "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md": {
+    "sha256": "c00fd7cb699abe311b5416dd569a530cc9c8d159dafde1ff6d07836ad62f3342",
+    "mode": 420,
+    "symlink": false
+  },
+  "template/design/ws04a/WS04A_BINDING_READINESS_V1.md": null,
+  "template/roadmap/V2.7_TASK_LEDGER.md": {
+    "sha256": "c5f3887cd3b9e7bab7bc04f287583046b6fd8bd6f83e21405e707d9fc0ad1b29",
+    "mode": 420,
+    "symlink": false
+  },
+  "template/PROJECT_STATE.md": {
+    "sha256": "0f825557c78b89367db2b54ae6209f0aedb703c02240039f3b6b8f4028eca393",
+    "mode": 420,
+    "symlink": false
+  }
+}

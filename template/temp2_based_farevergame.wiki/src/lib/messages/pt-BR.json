@@ -1,0 +1,346 @@
+{
+  "tagline": "O REINO ESTELAR · ATLAS",
+  "library": "Biblioteca",
+  "walkthroughs": "Guias de jornada",
+  "listTitle": "Jornadas em Aurelia",
+  "listDescription": "Dicas iniciais, combate, missões, viagens, montarias e companheiros.",
+  "category": "JORNADAS E MISSÕES",
+  "read": "LER",
+  "preview": "PRÉVIA",
+  "related": "Relacionados",
+  "browse": "Explore toda a",
+  "hub": "biblioteca de guias",
+  "or": "ou volte ao",
+  "homeLink": "atlas de Aurelia",
+  "footerGroups": "GUIAS|RECURSOS|FERRAMENTAS|GUIAS DE CAMPO",
+  "disclaimer": "Cenário e textos originais de exemplo para este modelo. Aurelia é um mundo fictício; estes textos não descrevem um jogo lançado.",
+  "languagesLabel": "LANGUAGES · SPRACHEN · IDIOMAS · 语言",
+  "copyright": "© 2026 AURELIA ATLAS · MUNDO E CONTEÚDO ORIGINAIS DE EXEMPLO.",
+  "allGuides": "TODOS OS GUIAS →",
+  "heroEyebrow": "PARA NOVOS AVENTUREIROS · UM MUNDO DE FANTASIA ORIGINAL",
+  "heroTitle": "Escreva Sua Lenda",
+  "heroAccent": "em Aurelia",
+  "heroDescription": "Um cenário original de aventura cooperativa nas terras dispersas do Reino Estelar. Descubra caminhos escondidos, explore ruínas antigas e encontre seu próprio estilo.",
+  "beginner": "Primeiros Passos",
+  "scroll": "ROLE",
+  "viewAll": "Ver todos os guias",
+  "fullFaq": "Ver todas as respostas",
+  "ctaEyebrow": "PRONTO PARA COMEÇAR?",
+  "ctaTitle": "Sua próxima aventura espera.",
+  "ctaLink": "Comece pelos primeiros passos",
+  "bestStart": "Melhor Começo",
+  "articleDescription": "Um início tranquilo ajuda a conhecer o mundo. Use estas notas para explorar, praticar o combate e escolher o que levar na primeira sessão.",
+  "sections": [
+    {
+      "eyebrow": "O REINO ESTELAR",
+      "title": "O que é Aurelia?"
+    },
+    {
+      "eyebrow": "ESCOLHA SEU CAMINHO",
+      "title": "Quatro Caminhos"
+    },
+    {
+      "eyebrow": "O MUNDO DE AURELIA",
+      "title": "Explore Duas Regiões"
+    },
+    {
+      "eyebrow": "ATLAS DO AVENTUREIRO",
+      "title": "Comece Sua Jornada"
+    },
+    {
+      "eyebrow": "DADOS E RANKINGS",
+      "title": "Ferramentas e Rankings"
+    },
+    {
+      "eyebrow": "EM DETALHES",
+      "title": "Guias em Destaque"
+    },
+    {
+      "eyebrow": "ARAUTOS DE AURELIA",
+      "title": "Últimas Notas"
+    },
+    {
+      "eyebrow": "RESPOSTAS RÁPIDAS",
+      "title": "Dúvidas de Aurelia"
+    }
+  ],
+  "previews": [
+    {
+      "slug": "preview-0",
+      "title": "Aurelia para Iniciantes",
+      "description": "Uma introdução planejada à exploração, aos equipamentos e ao aprendizado do combate no seu próprio ritmo."
+    },
+    {
+      "slug": "preview-2",
+      "title": "Sua Primeira Expedição",
+      "description": "Prepare uma expedição com uma lista de suprimentos, um caminho seguro e atenção aos encontros desconhecidos."
+    },
+    {
+      "slug": "preview-3",
+      "title": "Encontros com Chefes",
+      "description": "Prévia de notas sobre sinais de perigo, padrões de ataque e como reunir o grupo depois de um encontro difícil."
+    },
+    {
+      "slug": "preview-4",
+      "title": "Encontrando Pontos de Viagem",
+      "description": "Marque locais seguros, leia o mapa e planeje a volta antes de entrar em uma região desconhecida."
+    },
+    {
+      "slug": "preview-5",
+      "title": "Manual de Montarias",
+      "description": "Um manual planejado sobre viajar com montarias, cuidar dos suprimentos e escolher rotas confortáveis."
+    },
+    {
+      "slug": "preview-6",
+      "title": "Viajando com Companheiros",
+      "description": "Uma prévia dos papéis dos companheiros, das viagens em grupo e do espaço para um novo amigo na aventura."
+    },
+    {
+      "slug": "preview-7",
+      "title": "Um Amigo pelo Caminho",
+      "description": "Siga uma pequena história pelo caminho, observe o ambiente e se prepare antes de conhecer uma criatura."
+    },
+    {
+      "slug": "preview-8",
+      "title": "Rastreando uma Criatura Rara",
+      "description": "Um caderno planejado de rastreamento com observações de habitats, aproximação calma e respeito às criaturas."
+    },
+    {
+      "slug": "preview-9",
+      "title": "O Pedido do Guardião",
+      "description": "Conheça o esboço de uma missão, seus pontos de referência e as pistas que conectam cada etapa da jornada."
+    },
+    {
+      "slug": "preview-10",
+      "title": "Coletando Pequenas Criaturas",
+      "description": "Uma prévia de rotas de coleta, suprimentos de campo e observação dos pequenos habitantes da floresta."
+    },
+    {
+      "slug": "preview-11",
+      "title": "Uma Visita Oculta na Floresta",
+      "description": "Notas para um mistério na floresta, com locais para observar e detalhes discretos ao longo do caminho."
+    },
+    {
+      "slug": "preview-12",
+      "title": "O Guardião da Costa",
+      "description": "Um guia planejado da costa sobre observar a arena, praticar esquivas e manter o grupo reunido."
+    },
+    {
+      "slug": "preview-13",
+      "title": "Fragmentos de Luz Estelar",
+      "description": "Um caderno de exploração sobre reconhecer fragmentos, registrar locais e acompanhar sua história imaginada."
+    },
+    {
+      "slug": "preview-14",
+      "title": "Manual de Companheiros",
+      "description": "Uma referência planejada de companheiros sobre preparação, observações de criaturas e jornadas compartilhadas."
+    },
+    {
+      "slug": "preview-15",
+      "title": "Ajustes para uma Boa Aventura",
+      "description": "Um roteiro de configurações: confira a tela, ajuste uma opção por vez e registre o que mudou."
+    },
+    {
+      "slug": "preview-16",
+      "title": "Organizando Equipamentos",
+      "description": "Um guia planejado de inventário para separar equipamentos úteis, itens extras e materiais antes da viagem."
+    },
+    {
+      "slug": "preview-17",
+      "title": "Entendendo a Progressão",
+      "description": "Um caderno de progressão sobre metas possíveis e revisitar caminhos conhecidos com mais experiência."
+    },
+    {
+      "slug": "preview-18",
+      "title": "Manual de Artesanato",
+      "description": "Uma prévia de artesanato sobre organizar materiais, ler receitas e escolher um primeiro projeto simples."
+    },
+    {
+      "slug": "preview-19",
+      "title": "Planejando uma Aventura Co-op",
+      "description": "Um guia planejado de grupo sobre objetivos em comum, funções claras e tempo para aprender juntos."
+    },
+    {
+      "slug": "preview-20",
+      "title": "As Pedras que Lembram",
+      "description": "Siga uma história entre pedras antigas, símbolos curiosos e uma clareira tranquila na floresta."
+    }
+  ],
+  "articleTitle": "Aurelia Melhor Começo",
+  "about": [
+    "Aurelia é um cenário original de fantasia criado para este modelo. O Reino Estelar imagina ilhas dispersas, vilas na floresta e ruínas esquecidas, conectadas pelas jornadas de pequenos grupos de aventureiros. As histórias são exemplos editoriais, prontos para serem substituídos por informações verificadas sobre o seu jogo.",
+    "Este atlas demonstra um layout completo sem apresentar temas de prévia como artigos publicados. O guia inicial está disponível em cinco idiomas. Os outros tópicos preservam a estrutura de referência para futuras informações pesquisadas. Este mundo fictício não possui data de lançamento, preço ou serviço online anunciados."
+  ],
+  "factsTitle": "INFORMAÇÕES",
+  "facts": [
+    [
+      "CENÁRIO",
+      "Mundo original de exemplo"
+    ],
+    [
+      "GÊNERO",
+      "Conceito de aventura co-op"
+    ],
+    [
+      "PLATAFORMA",
+      "Não anunciada"
+    ],
+    [
+      "JOGADORES",
+      "Grupo de exemplo"
+    ],
+    [
+      "PREÇO",
+      "Não anunciado"
+    ],
+    [
+      "STATUS",
+      "Demonstração de modelo"
+    ],
+    [
+      "CONTEÚDO",
+      "Textos originais de exemplo"
+    ]
+  ],
+  "classes": [
+    {
+      "tag": "FRENTE · DEFESA",
+      "title": "Sentinela",
+      "description": "Um explorador paciente com escudo. Pratique o posicionamento, ataques cuidadosos e mantenha um caminho seguro para seus amigos."
+    },
+    {
+      "tag": "DISTÂNCIA · EXPLORAÇÃO",
+      "title": "Desbravador",
+      "description": "Um leitor de trilhas ágil. Aprenda a manter distância, observar marcos e escolher rotas claras pelo terreno desconhecido."
+    },
+    {
+      "tag": "ELEMENTAL · MAGIA",
+      "title": "Tecelão",
+      "description": "Um estudioso elemental imaginado. Experimente o ritmo e a distância, deixando espaço para reagir às mudanças do encontro."
+    },
+    {
+      "tag": "APOIO · COMPANHEIRO",
+      "title": "Guardião",
+      "description": "Um companheiro atento. Converse com os amigos, observe o posicionamento do grupo e reserve tempo para recuperar as forças."
+    }
+  ],
+  "regions": [
+    {
+      "tag": "REGIÃO INICIAL",
+      "level": "TRILHA I",
+      "title": "Ilhas da Estrela",
+      "description": "Ilhas varridas pelo vento, pontes antigas e trilhas desconhecidas. Um cenário original para sua primeira expedição."
+    },
+    {
+      "tag": "FRONTEIRA DISTANTE",
+      "level": "TRILHA II",
+      "title": "Vale das Folhas de Âmbar",
+      "description": "Um vale de outono imaginado com vilas tranquilas e ruínas cobertas de plantas. Observe o terreno e siga com calma."
+    }
+  ],
+  "topics": [
+    "Visão do Mundo",
+    "Primeiros Passos",
+    "Classes e Funções",
+    "Armas e Habilidades",
+    "Ruínas e Encontros",
+    "Planejamento Co-op",
+    "Dicas de Viagem",
+    "Plano de Conteúdo",
+    "Perguntas",
+    "Status do Servidor",
+    "Gráficos de Jogadores",
+    "Ranking de Classes",
+    "Escolha de Equipamentos",
+    "Notas de Combate",
+    "Códigos de Recompensa",
+    "Ajustes de Portátil",
+    "Funções do Grupo",
+    "Aprenda no Seu Ritmo",
+    "Escolha uma Aventura",
+    "Guia das Ilhas da Estrela",
+    "Manual do Vale de Âmbar",
+    "Jornadas Solo e em Grupo"
+  ],
+  "news": [
+    [
+      "NOTAS DO MUNDO",
+      "Esboçando o Reino Estelar: ilhas dispersas, caminhos esquecidos e o início de uma aventura compartilhada."
+    ],
+    [
+      "REDAÇÃO",
+      "O artigo inicial está disponível como conteúdo original de exemplo em cinco versões de idioma independentes."
+    ],
+    [
+      "PLANO DE CONTEÚDO",
+      "Os temas de prévia sugerem futuros guias. Permanecem inéditos até que existam materiais reais e verificados."
+    ]
+  ],
+  "faq": [
+    [
+      "O que é Aurelia?",
+      "Aurelia é um mundo fictício original criado para este modelo. Suas notas demonstram como apresentar conteúdos de um site de guias."
+    ],
+    [
+      "É um jogo lançado?",
+      "Não há anúncio de lançamento. Os nomes, regiões e funções dos personagens são exemplos originais deste modelo."
+    ],
+    [
+      "Os guias de prévia estão disponíveis?",
+      "Somente artigos MDX completos abrem como guias. A etiqueta Prévia indica um tema ainda sem artigo publicado."
+    ],
+    [
+      "Posso ler o guia da primeira sessão?",
+      "Sim. Abra a biblioteca e escolha Aurelia Melhor Começo para ler o artigo original de exemplo completo."
+    ],
+    [
+      "O atlas mostra dados ao vivo?",
+      "Não. As ferramentas são prévias. Este modelo não se conecta a serviços de status de servidor ou contagem de jogadores."
+    ],
+    [
+      "Quais idiomas estão disponíveis?",
+      "Inglês, alemão, português brasileiro, espanhol e chinês simplificado compartilham o layout com conteúdo independente."
+    ],
+    [
+      "Por onde devo começar?",
+      "Comece pelo artigo inicial e explore a biblioteca. Os outros temas mostram espaço para futuros guias pesquisados."
+    ]
+  ],
+  "stats": [
+    [
+      "CENÁRIO",
+      "Mundo original de exemplo"
+    ],
+    [
+      "PLATAFORMA",
+      "Não anunciada"
+    ],
+    [
+      "PREÇO",
+      "Não anunciado"
+    ],
+    [
+      "STATUS",
+      "Demonstração de modelo"
+    ]
+  ],
+  "primaryNav": [
+    "Classes",
+    "Armas",
+    "Chefes",
+    "Co-op",
+    "Jornadas",
+    "Guias"
+  ],
+  "secondaryNav": [
+    "Servidores",
+    "Jogadores",
+    "Ranking",
+    "Melhores Armas",
+    "Códigos",
+    "Portátil",
+    "Gráficos",
+    "Visão Geral",
+    "Dúvidas"
+  ]
+}

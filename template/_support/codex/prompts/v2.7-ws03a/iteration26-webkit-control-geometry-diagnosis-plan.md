@@ -1,0 +1,290 @@
+# Actual ChatGPT REVIEW25 and PLAN26
+
+Observed: 2026-10-07T16:43:46.145Z
+Source: https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 25"
+      - text: "VERDICT:"
+      - strong: BLOCKED — ONE REAL GEOMETRY ASSERTION FAILURE; PRODUCT DEFECT NOT ESTABLISHED
+    - paragraph: 独立复核与执行摘要一致：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "serialization preflight = PASS targeted attempts = 1 retry = 0 rows = 6/6 executed rows PASS = 5 rows FAIL = 1 assertions = 62/63 PASS unexpected errors = 0 sole failure: WebKit 26.6 @ 1000×900 computed min-height = 44px DOMRect.height = 43.999969482421875px shortfall = 0.000030517578125px = 1 / 32768 CSS px"
+    - paragraph: 当前产品 CSS 确实仍是：
+    - generic: CSS
+    - button "启用自动换行":
+    - button "复制":
+    - code: ".button { min-height: var(--role-control-min-height); }"
+    - paragraph: 而 compact role 的 token 仍严格是 44px。Iteration25 没有证据支持现在去把 CSS 改成 44.01px/45px，也没有依据把原来的 height >= 44 偷偷改成 epsilon 比较。
+    - paragraph: 因此：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WS03A continuation = BLOCKED fresh47 = NOT_STARTED product repair = NOT JUSTIFIED YET oracle relaxation = NOT JUSTIFIED YET Safari proof = 0 WS06A FULL = BLOCKED
+    - paragraph: 下面只做几何诊断。
+    - button "添加到资料库":
+      - generic: PLAN26 — WebKit 44px Geometry Precision Diagnosis
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 26"
+        - text: "WORKSTREAM: WS03A geometry diagnosis"
+        - text: "SCOPE: EXECUTION-ONLY / READ-ONLY"
+        - text: "PRODUCT_DELTA_ALLOWED: 0"
+        - text: "ASSERTION_ORACLE_DELTA_ALLOWED: 0"
+        - text: "FRESH47: NOT AUTHORIZED IN THIS ROUND"
+      - heading "1. 目标" [level=2]
+      - paragraph: 只回答一个问题：
+      - blockquote:
+        - paragraph:
+          - text: WebKit1000 的
+          - code: 43.999969482421875px
+          - text: 是真实 control geometry 小于44px，还是 DOMRect/布局数值表示的精度量化？
+      - paragraph: 本轮不尝试让 targeted test PASS。
+      - separator
+      - heading "2. 全部历史冻结" [level=2]
+      - paragraph: 不得修改：
+      - code: iteration23/** iteration24/** iteration25/**
+      - paragraph: 尤其保留 iteration25 的真实：
+      - code: 62/63 PASS WebKit1000 FAIL
+      - paragraph: 当前13个 WS03A product/governance文件必须继续与：
+      - code: iteration23/postimages/**
+      - paragraph: 13/13 byte-identical。
+      - separator
+      - heading "3. 禁止事项" [level=2]
+      - paragraph: 本轮禁止：
+      - code: 改 CSS 改 --role-control-min-height 改 visualRoles 加 44.01 / 44.1 / 45px 改 height >= 44 加 epsilon Math.round(height) >= 44 toFixed() floor/ceil devicePixelRatio补偿 改 engines/viewports/assertions 重新做 targeted qualification 启动 fresh47
+      - paragraph: 也不修改 runner/matrix/closure/policy。
+      - separator
+      - heading "4. Execution-only diagnostic" [level=2]
+      - paragraph: 新增：
+      - code: template/codex/prompts/v2.7-ws03a/ iteration26-webkit-control-geometry-diagnosis-plan.md template/codex/executions/v2.7-ws03a/iteration26/
+      - paragraph: 可包含：
+      - code: geometry-probe.mjs run-geometry-probe.mjs preflight.json geometry-observations.json geometry-analysis.json cleanup.json integrity-check.json result.md
+      - separator
+      - heading "5. 使用同一个 post03A synthetic profile" [level=2]
+      - paragraph: 仍采用：
+      - code: font = interface density = compact shape = soft state = quiet
+      - paragraph: 仍基于现有 adopted disposable fixture。
+      - paragraph:
+        - text: Canonical
+        - code: game.config.ts
+        - text: 不修改。
+      - paragraph: 要求 fixture source/build身份记录完整。
+      - separator
+      - heading "6. 诊断矩阵" [level=2]
+      - paragraph: 不是 qualification matrix，只是固定只读比较：
+      - code: Chromium 800×900 Chromium 1000×900 Firefox 800×900 Firefox 1000×900 WebKit 800×900 WebKit 1000×900
+      - paragraph: 这样可以直接与 iteration25 六行对应。
+      - paragraph: 只运行一次 diagnostic session，不以结果重试。
+      - separator
+      - heading "7. 同一个 .button 收集多套几何信号" [level=2]:
+        - text: 7. 同一个
+        - code: .button
+        - text: 收集多套几何信号
+      - paragraph: 每一行对 iteration25 相同 representative：
+      - code: .button
+      - paragraph: 读取以下内容。
+      - heading "CSS contract" [level=3]
+      - code: "--role-control-min-height computedStyle.minHeight computedStyle.height computedStyle.boxSizing paddingTop paddingBottom borderTopWidth borderBottomWidth lineHeight fontSize transform zoom"
+      - paragraph: 必须继续看到：
+      - code: role token = 44px minHeight = 44px
+      - paragraph: 否则说明已经出现真实 source/style drift，立即 STOP。
+      - separator
+      - heading "8. Layout geometry" [level=2]
+      - paragraph: 同一次稳定布局读取：
+      - code: rect.top rect.bottom rect.height rect.bottom - rect.top clientHeight offsetHeight scrollHeight clientTop
+      - paragraph: 并保存：
+      - code: getClientRects()[0].height
+      - paragraph: 不做 rounding。
+      - paragraph: 原始 double值完整保存。
+      - separator
+      - heading "9. Browser / viewport scale" [level=2]
+      - paragraph: 同时保存：
+      - code: window.devicePixelRatio window.innerWidth window.innerHeight visualViewport.width visualViewport.height visualViewport.scale documentElement clientWidth/clientHeight
+      - paragraph: 确认是否存在：
+      - code: zoom scale transform DPR变化 viewport缩放
+      - paragraph: 导致真实视觉尺寸变化。
+      - separator
+      - heading "10. 重复测量不是 qualification retry" [level=2]
+      - paragraph:
+        - text: 在
+        - strong: 同一个页面、同一个 navigation、同一个布局
+        - text: 下连续采集固定：
+      - code: 16 samples
+      - paragraph:
+        - text: 例如跨16个
+        - code: requestAnimationFrame
+        - text: 。
+      - paragraph: 不 reload，不 resize，不重启 browser。
+      - paragraph: 目的仅是判断：
+      - code: 43.999969...
+      - paragraph: 是稳定布局值还是测量抖动。
+      - paragraph: 全部16个原值必须保存，不能取最好值。
+      - separator
+      - heading "11. Node-side Playwright geometry旁证" [level=2]
+      - paragraph:
+        - text: 同一
+        - code: .button
+        - text: 再从 Node侧读取：
+      - code: locator.boundingBox()
+      - paragraph: 记录原始：
+      - code: x y width height
+      - paragraph: 它只作为第二读取通道。
+      - paragraph: 不能用它覆盖 DOMRect结果。
+      - separator
+      - heading "12. Raster旁证" [level=2]
+      - paragraph:
+        - text: 允许对
+        - strong: 同一个按钮
+        - text: 执行：
+      - code: locator.screenshot()
+      - paragraph: 只用于诊断。
+      - paragraph: 从 PNG IHDR直接读取：
+      - code: pixelWidth pixelHeight
+      - paragraph: 同时保存 DPR。
+      - paragraph: 不得把 PNG整数尺寸直接当原 assertion PASS。
+      - paragraph: 它只能回答：
+      - blockquote:
+        - paragraph: 浏览器最终栅格化出来的 control大约占多少设备像素。
+      - separator
+      - heading "13. 不允许人为注入测量环境" [level=2]
+      - paragraph: 禁止：
+      - code: setViewport after page ready CSS injection DOM mutation style injection zoom setting deviceScaleFactor override transform reset font substitution
+      - paragraph: 使用 Playwright当前固定默认 engine环境。
+      - separator
+      - heading "14. 特别检查 1/32768 现象" [level=2]
+      - paragraph: 对原始 WebKit1000值只做数学描述：
+      - code: 44 - observedHeight
+      - paragraph: 保存 exact double。
+      - paragraph: 同时记录：
+      - code: shortfall × 32768
+      - paragraph: 如果结果仍精确接近：
+      - code: "1"
+      - paragraph: 只标记：
+      - code: DYADIC_QUANTIZATION_SIGNATURE_OBSERVED
+      - paragraph: 这不是新的 PASS threshold。
+      - separator
+      - heading "15. 三类诊断结果" [level=2]
+      - paragraph: 最终只能分类为三种之一。
+      - heading "A — PRECISION_ARTIFACT_SUPPORTED" [level=3]:
+        - text: A —
+        - code: PRECISION_ARTIFACT_SUPPORTED
+      - paragraph: 必须同时满足：
+      - code: token = 44px computed minHeight = 44px computed height = 44px boxSizing = border-box transform = none 无 zoom/viewport scale异常 offsetHeight = 44 16次 DOMRect测量稳定 且只有 fractional DOMRect/protocol 表示低于44 其它离散/used-value/raster信号不支持实际缩小
+      - paragraph: 这里仍然：
+      - code: iteration25 assertion = FAIL
+      - paragraph: 不能改写历史。
+      - separator
+      - heading "B — REAL_GEOMETRY_DEFECT_SUPPORTED" [level=3]:
+        - text: B —
+        - code: REAL_GEOMETRY_DEFECT_SUPPORTED
+      - paragraph: 只要出现例如：
+      - code: computed height < 44px 或 offsetHeight <= 43 或真实 transform/zoom缩小 或多个独立布局信号一致显示实际 control不足44
+      - paragraph: 则认为需要下一轮产品修复计划。
+      - paragraph: PLAN26自身仍不修。
+      - separator
+      - heading "C — INCONCLUSIVE" [level=3]:
+        - text: C —
+        - code: INCONCLUSIVE
+      - paragraph: 若各信号矛盾、浏览器API不足或证据无法明确区分：
+      - code: INCONCLUSIVE
+      - paragraph: 继续 BLOCK。
+      - paragraph: 不能为了继续 WS03A把它强行归 A。
+      - separator
+      - heading "16. 不将跨浏览器 PASS 当结论" [level=2]
+      - paragraph: Chromium和Firefox显示44px只能作为 comparison。
+      - paragraph: 不能推导：
+      - code: 2 engines say44 → WebKit也PASS
+      - paragraph: WebKit1000仍单独判断。
+      - separator
+      - heading "17. Cleanup" [level=2]
+      - paragraph: 使用新的短 owned TMP：
+      - code: /tmp/c2c26.XXXXXX
+      - paragraph: 要求：
+      - code: normal Astro stop PID gone fixture gone no signal fallback known Node/tsx caches only 0 symlink 0 escape 0 unknown root removed
+      - separator
+      - heading "18. Integrity" [level=2]
+      - paragraph: 结束必须证明：
+      - code: exact13 unchanged iteration23 unchanged iteration24 unchanged iteration25 unchanged productDelta = 0 governanceDelta = 0 Contract SHA unchanged 41 IDs unchanged package/lock unchanged matrix unchanged runner unchanged closure unchanged policy/control unchanged
+      - separator
+      - heading "19. 本轮不恢复 continuation" [level=2]
+      - paragraph: 无论诊断得到 A/B/C：
+      - code: WS03A continuation = BLOCKED fresh47 = NOT_STARTED
+      - paragraph: PLAN26不直接重新运行 iteration25 targeted qualification。
+      - separator
+      - heading "20. 下一步由诊断决定" [level=2]
+      - paragraph: 若独立 REVIEW26 接受：
+      - heading "如果 A — Precision artifact supported" [level=3]
+      - paragraph: 下一轮另做有限计划，专门决定：
+      - code: verification semantics
+      - paragraph:
+        - text: 是否需要一个
+        - strong: 明确、可解释、跨引擎一致
+        - text: 的几何验证方法。
+      - paragraph: 那一轮才讨论 oracle。
+      - paragraph: 不能回头改历史 FAIL。
+      - heading "如果 B — Real geometry defect supported" [level=3]
+      - paragraph: 下一轮才允许有限产品修复计划。
+      - heading "如果 C — Inconclusive" [level=3]
+      - paragraph: 继续诊断或维持 BLOCK。
+      - separator
+      - heading "21. Codex结果边界" [level=2]
+      - paragraph: Codex只能输出：
+      - code: PRECISION_ARTIFACT_SUPPORTED_CANDIDATE
+      - paragraph: 或：
+      - code: REAL_GEOMETRY_DEFECT_SUPPORTED_CANDIDATE
+      - paragraph: 或：
+      - code: INCONCLUSIVE
+      - paragraph: 最终分类仍需独立 review。
+      - separator
+      - heading "PLAN26正确终点" [level=2]
+      - paragraph: 本轮不是为了“把43.999969变成44”。
+      - paragraph: 而是为了确认：
+      - blockquote:
+        - paragraph:
+          - strong: CSS要求的44px、布局引擎实际使用的尺寸、DOMRect浮点报告值和最终栅格尺寸，到底是不是同一件事。
+      - paragraph: 在这个问题回答清楚以前，不改产品，也不改测试数字。
+    - paragraph:
+      - text: 因此 REVIEW25 仍是
+      - strong: BLOCKED
+      - text: ；但现在已经不是“代码有 bug”的结论，而是一个非常窄的 WebKit 几何表示问题需要先定性。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

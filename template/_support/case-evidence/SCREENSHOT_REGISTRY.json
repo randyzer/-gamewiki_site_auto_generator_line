@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-01",
+  "scope": "Availability/preservation only; no new visual or browser verification",
+  "captures": [
+    {
+      "record": "case-evidence/case-vv.json",
+      "original_path": "/tmp/hot-words-c2c-a765-case-vv-article.png",
+      "available_now": true,
+      "evidence_type": "original_site_observation_capture",
+      "durable_path": "case-evidence/screenshots/hot-words-c2c-a765-case-vv-article.png",
+      "sha256": "e9729b3f9c709035ee56b1981c6e912c8f8370c6f2731f60df1195aaa8f91748"
+    },
+    {
+      "record": "case-evidence/cases-b.json",
+      "original_path": "/tmp/hot-words-bomb-article.png",
+      "available_now": true,
+      "evidence_type": "original_site_observation_capture",
+      "durable_path": "case-evidence/screenshots/hot-words-bomb-article.png",
+      "sha256": "bba443f3d9c2f100feb44fb49417ecdcb887893966eecfea71b53b68760ba070"
+    },
+    {
+      "record": "case-evidence/cases-b.json",
+      "original_path": "/tmp/hot-words-bomb-home.png",
+      "available_now": true,
+      "evidence_type": "original_site_observation_capture",
+      "durable_path": "case-evidence/screenshots/hot-words-bomb-home.png",
+      "sha256": "533633bc7b96ff3b6c5074762dd946f7855caffb20240f9144105a94d0b65695"
+    },
+    {
+      "record": "case-evidence/cases-b.json",
+      "original_path": "/tmp/hot-words-mini-article.png",
+      "available_now": true,
+      "evidence_type": "original_site_observation_capture",
+      "durable_path": "case-evidence/screenshots/hot-words-mini-article.png",
+      "sha256": "3400cde30475a6ad3b29523b48ece31c931646319d60a3501de1cf59ec34c56e"
+    },
+    {
+      "record": "case-evidence/cases-b.json",
+      "original_path": "/tmp/hot-words-mini-home.png",
+      "available_now": true,
+      "evidence_type": "original_site_observation_capture",
+      "durable_path": "case-evidence/screenshots/hot-words-mini-home.png",
+      "sha256": "bd5cb7a5041555c1e2fa0caa200be654c6ae626de940abd57682f3cf9b3d30e3"
+    }
+  ]
+}

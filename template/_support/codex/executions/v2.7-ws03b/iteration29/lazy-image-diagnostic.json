@@ -1,0 +1,1044 @@
+{
+  "kind": "WS03B_READ_ONLY_LAZY_IMAGE_DIAGNOSTIC",
+  "diagnosticSessions": 1,
+  "qualificationAttempts": 0,
+  "retryCount": 0,
+  "rows": [
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [],
+      "before": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 826.65625,
+              "bottom": 1491.28125,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 9.5,
+                "duration": 4.899999976158142,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 2809.6875,
+              "bottom": 3474.3125,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 9.5,
+                "duration": 4.899999976158142,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:02:52.713Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:02:52.720Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:02:55.320Z"
+      },
+      "after": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": -1865.34375,
+              "bottom": -1200.71875,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 9.5,
+                "duration": 4.899999976158142,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 117.6875,
+              "bottom": 782.3125,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 9.5,
+                "duration": 4.899999976158142,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:02:52.713Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:02:52.720Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:02:55.350Z"
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0,
+      "sharedUrlResource": {
+        "heroAndGallerySameUrl": true,
+        "response200": true,
+        "requestFailed": false,
+        "note": "One resource URL is shared by two DOM instances. A hero request/cache response is not claimed as a distinct gallery request."
+      },
+      "overall": "PASS"
+    },
+    {
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "assertions": [],
+      "before": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 883.171875,
+              "bottom": 1087.671875,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 3.5,
+                "duration": 3.9000000953674316,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 2039.453125,
+              "bottom": 2243.953125,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 3.5,
+                "duration": 3.9000000953674316,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:02:55.420Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:02:55.422Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:02:58.533Z"
+      },
+      "after": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": -808.828125,
+              "bottom": -604.328125,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 3.5,
+                "duration": 3.9000000953674316,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 347.453125,
+              "bottom": 551.953125,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 3.5,
+                "duration": 3.9000000953674316,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:02:55.420Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:02:55.422Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:02:58.556Z"
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0,
+      "sharedUrlResource": {
+        "heroAndGallerySameUrl": true,
+        "response200": true,
+        "requestFailed": false,
+        "note": "One resource URL is shared by two DOM instances. A hero request/cache response is not claimed as a distinct gallery request."
+      },
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [],
+      "before": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 826.7833251953125,
+              "bottom": 1491.4166259765625,
+              "width": 1180,
+              "height": 664.63330078125
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 57,
+                "duration": 28,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 2809.89990234375,
+              "bottom": 3474.5332641601562,
+              "width": 1180,
+              "height": 664.6333618164062
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 57,
+                "duration": 28,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:02:59.551Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:02:59.556Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:00.134Z"
+      },
+      "after": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": -1865.2166748046875,
+              "bottom": -1200.5833740234375,
+              "width": 1180,
+              "height": 664.63330078125
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 57,
+                "duration": 28,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 117.89999389648438,
+              "bottom": 782.5333557128906,
+              "width": 1180,
+              "height": 664.6333618164062
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 57,
+                "duration": 28,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:02:59.551Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:02:59.556Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:00.193Z"
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0,
+      "sharedUrlResource": {
+        "heroAndGallerySameUrl": true,
+        "response200": true,
+        "requestFailed": false,
+        "note": "One resource URL is shared by two DOM instances. A hero request/cache response is not claimed as a distinct gallery request."
+      },
+      "overall": "PASS"
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "assertions": [],
+      "before": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 883.1500244140625,
+              "bottom": 1087.6500244140625,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 5,
+                "duration": 6,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 2039.5333251953125,
+              "bottom": 2244.0333251953125,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 5,
+                "duration": 6,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:00.315Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:00.317Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:00.864Z"
+      },
+      "after": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": -808.8499755859375,
+              "bottom": -604.3499755859375,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 5,
+                "duration": 6,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 347.5333251953125,
+              "bottom": 552.0333251953125,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 5,
+                "duration": 6,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:00.315Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:00.317Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:00.916Z"
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0,
+      "sharedUrlResource": {
+        "heroAndGallerySameUrl": true,
+        "response200": true,
+        "requestFailed": false,
+        "note": "One resource URL is shared by two DOM instances. A hero request/cache response is not claimed as a distinct gallery request."
+      },
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [],
+      "before": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 826.609375,
+              "bottom": 1491.234375,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 22,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": false,
+            "naturalWidth": 0,
+            "naturalHeight": 0,
+            "rect": {
+              "top": 2809.625,
+              "bottom": 3474.25,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 22,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:01.447Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:01.523Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:02.086Z"
+      },
+      "after": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": -1865.390625,
+              "bottom": -1200.765625,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 22,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              },
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 701,
+                "duration": 0,
+                "transferSize": 0,
+                "encodedBodySize": 0,
+                "decodedBodySize": 0
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 117.625,
+              "bottom": 782.25,
+              "width": 1180,
+              "height": 664.625
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 22,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              },
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 701,
+                "duration": 0,
+                "transferSize": 0,
+                "encodedBodySize": 0,
+                "decodedBodySize": 0
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:01.447Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:01.523Z"
+          },
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:02.126Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:02.128Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:02.138Z"
+      },
+      "classification": "HARNESS_LAZY_LOAD_CONFIRMED",
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0,
+      "sharedUrlResource": {
+        "heroAndGallerySameUrl": true,
+        "response200": true,
+        "requestFailed": false,
+        "note": "One resource URL is shared by two DOM instances. A hero request/cache response is not claimed as a distinct gallery request."
+      },
+      "overall": "PASS"
+    },
+    {
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "assertions": [],
+      "before": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 883.015625,
+              "bottom": 1087.515625,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 4,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": false,
+            "naturalWidth": 0,
+            "naturalHeight": 0,
+            "rect": {
+              "top": 2039.296875,
+              "bottom": 2243.796875,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 4,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:02.281Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:02.285Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:02.859Z"
+      },
+      "after": {
+        "instances": [
+          {
+            "index": 0,
+            "placement": "hero",
+            "loading": "eager",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": -808.984375,
+              "bottom": -604.484375,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": false,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 4,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              },
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 619,
+                "duration": 0,
+                "transferSize": 0,
+                "encodedBodySize": 0,
+                "decodedBodySize": 0
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "placement": "gallery",
+            "loading": "lazy",
+            "currentSrc": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "complete": true,
+            "naturalWidth": 1200,
+            "naturalHeight": 675,
+            "rect": {
+              "top": 347.296875,
+              "bottom": 551.796875,
+              "width": 362,
+              "height": 204.5
+            },
+            "viewportHeight": 900,
+            "inViewport": true,
+            "performanceResources": [
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 4,
+                "duration": 1,
+                "transferSize": 506,
+                "encodedBodySize": 206,
+                "decodedBodySize": 206
+              },
+              {
+                "name": "http://127.0.0.1:64954/media/qa-contract.svg",
+                "startTime": 619,
+                "duration": 0,
+                "transferSize": 0,
+                "encodedBodySize": 0,
+                "decodedBodySize": 0
+              }
+            ]
+          }
+        ],
+        "resourceEvents": [
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:02.281Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:02.285Z"
+          },
+          {
+            "kind": "request",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "at": "2026-10-08T00:03:02.896Z"
+          },
+          {
+            "kind": "response",
+            "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+            "status": 200,
+            "at": "2026-10-08T00:03:02.899Z"
+          }
+        ],
+        "observedAt": "2026-10-08T00:03:02.908Z"
+      },
+      "classification": "HARNESS_LAZY_LOAD_CONFIRMED",
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0,
+      "sharedUrlResource": {
+        "heroAndGallerySameUrl": true,
+        "response200": true,
+        "requestFailed": false,
+        "note": "One resource URL is shared by two DOM instances. A hero request/cache response is not claimed as a distinct gallery request."
+      },
+      "overall": "PASS"
+    }
+  ],
+  "overall": "FAIL",
+  "errors": [],
+  "safariProof": 0,
+  "capabilityPromotion": "NONE"
+}

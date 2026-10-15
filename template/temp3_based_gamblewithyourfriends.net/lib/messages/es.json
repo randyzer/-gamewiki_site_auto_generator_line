@@ -1,0 +1,274 @@
+{
+  "home": "Inicio",
+  "guide": "Guía",
+  "complete": "Guía completa",
+  "beginner": "Guía para principiantes",
+  "nav": [
+    "Guía",
+    "Ayuda online",
+    "Mods",
+    "Estrategia",
+    "Objetos",
+    "Logros",
+    "Juegos",
+    "Plataformas"
+  ],
+  "steam": "Ver en Steam",
+  "viewSteam": "Ver en Steam →",
+  "buySteam": "Comprar en Steam →",
+  "preview": "Vista previa",
+  "read": "Leer guía →",
+  "open": "Abrir guía →",
+  "openMenu": "Abrir menú",
+  "closeMenu": "Cerrar menú",
+  "navLabel": "Navegación principal",
+  "heroBadge": "Una guía cooperativa · Primero el banco, luego las mesas",
+  "heroTitle": "Gamble With Your Friends",
+  "heroHighlight": "Guía completa",
+  "heroDescription": "Tu punto de partida para el banco compartido, la planificación, las mesas y los objetos. Aprende el ciclo, prepara un plan y mantén al equipo unido.",
+  "heroButton": "Abrir la guía completa",
+  "fixButton": "Ayuda para jugar online",
+  "stats": [
+    "Juegos de azar",
+    "Logros",
+    "Pisos",
+    "Finales"
+  ],
+  "aboutTitle": "¿Qué es Gamble With Your Friends?",
+  "about": [
+    "Gamble With Your Friends lleva a un grupo a un casino ficticio con un banco compartido. Cada decisión afecta a todos; comunicarse importa tanto como entender la siguiente mesa.",
+    "El ritmo combina preparación, una visita con tiempo limitado y una revisión del día. Los objetivos crecientes hacen útil elegir una mesa, fijar un límite de gasto y asignar a alguien al reloj.",
+    "Esta guía original explica ese ciclo sin prometer victorias. Empieza con el artículo para principiantes y usa las vistas previas para conocer los temas de una futura biblioteca."
+  ],
+  "features": [
+    [
+      "1–6 jugadores",
+      "En equipo o solo"
+    ],
+    [
+      "Banco compartido",
+      "Un saldo para todos"
+    ],
+    [
+      "Días con tiempo",
+      "Vigila el reloj"
+    ],
+    [
+      "Cuota diaria",
+      "Planea el objetivo"
+    ],
+    [
+      "Mesas de casino",
+      "Aprende las reglas"
+    ],
+    [
+      "Revisión",
+      "Comenta cada día"
+    ]
+  ],
+  "allTitle": "Todas las guías",
+  "allDescription": "Una ruta de inicio clara y vistas previas de los temas de una guía cooperativa completa.",
+  "cardTitles": [
+    "Resumen del wiki",
+    "Guía completa",
+    "Guía para principiantes",
+    "Estrategia de equipo",
+    "Consejos y planificación",
+    "Logros y finales",
+    "Lista de logros",
+    "Accesorios",
+    "Juegos de casino",
+    "Objetos y tiempos",
+    "Notas de la cámara",
+    "Compatibilidad de mods",
+    "Resumen de plataformas",
+    "Ayuda online"
+  ],
+  "cardTags": [
+    "Índice",
+    "Empieza aquí",
+    "Bases",
+    "Tácticas",
+    "Popular",
+    "Completar",
+    "Lista",
+    "Cosméticos",
+    "Reglas",
+    "Objetos",
+    "Tiempo",
+    "Comunidad",
+    "PC",
+    "Cooperativo"
+  ],
+  "cardDescriptions": [
+    "Una vista previa del índice de reglas, objetos, preparación del equipo y objetivos de finalización.",
+    "Encuentra el recorrido inicial por el dinero compartido, la elección de mesa y la preparación del primer día.",
+    "Prepara un plan común antes de entrar y descubre cómo el saldo compartido cambia las decisiones del equipo.",
+    "Vista previa de funciones, límites de gasto y formas de anunciar decisiones que ponen en riesgo el banco.",
+    "Temas para nuevas partidas: revisar errores, acordar cuándo parar y aprender las mesas desconocidas.",
+    "Una futura ruta para seguir logros, objetivos colectivos y partidas dedicadas a distintos finales.",
+    "Vista previa de una lista que separa las partidas normales de los intentos centrados en desafíos.",
+    "Un futuro resumen de cosméticos y cómo separar las compras de una partida con objetivos claros.",
+    "Nombres de mesas y preguntas necesarias antes de comprometer el dinero compartido en un juego nuevo.",
+    "Vista previa de selección, portadores y activación de objetos junto a una apuesta acordada.",
+    "Un futuro análisis de la cámara, comunicación y comprobaciones antes de preparar una combinación.",
+    "Vista previa de versiones y preguntas que conviene resolver antes de añadir mods de la comunidad.",
+    "Un futuro resumen de dónde consultar el soporte oficial y los detalles de compatibilidad actuales.",
+    "Vista previa de una lista sobre versiones, invitaciones, conexión de Steam y coincidencia de mods."
+  ],
+  "gamesTitle": "Guías de juegos de casino",
+  "gamesDescription": "Vista previa de los temas de las mesas. Muestran la estructura prevista; las guías individuales aún no están publicadas.",
+  "gamesButton": "Ver vistas previas de juegos",
+  "tipsTitle": "Consejos para nuevos jugadores",
+  "tipsDescription": "Seis hábitos que conviene acordar antes de visitar el casino.",
+  "tipsButton": "Abrir la guía inicial",
+  "tips": [
+    [
+      "Acordad una regla bancaria",
+      "Todos usáis el mismo saldo. Elegid una reserva y anunciad el importe antes de hacer una apuesta grande."
+    ],
+    [
+      "Proteged un resultado seguro",
+      "Cuando la cuota esté cubierta, revisad si otra apuesta ayuda a la partida. Una pequeña ganancia no suele justificar un riesgo imprevisto."
+    ],
+    [
+      "Aprended antes de repetir",
+      "Probad una mesa desconocida con poco dinero. Comentad el resultado antes de repetir el mismo error con una apuesta mayor."
+    ],
+    [
+      "Asignad una función a cada objeto",
+      "Elegid un portador y un momento de uso. Comprar una herramienta útil es solo una parte del plan."
+    ],
+    [
+      "Hablad de los intercambios de emergencia",
+      "Algunas opciones afectan también al siguiente día. Valorad el coste y pedid el acuerdo del jugador afectado."
+    ],
+    [
+      "Revisad la partida juntos",
+      "Usad el resultado para mejorar funciones y planes. Una pérdida sirve para aprender, no para perseguir una recuperación personal."
+    ]
+  ],
+  "faqTitle": "Preguntas frecuentes",
+  "faq": [
+    [
+      "¿Qué es Co-op Fieldnotes?",
+      "Una plantilla independiente de guía cooperativa. El artículo inicial está disponible; los demás temas son vistas previas."
+    ],
+    [
+      "¿Qué juego presenta esta guía?",
+      "Gamble With Your Friends, un videojuego con mesas ficticias y banco compartido. Steam ofrece la información oficial actual."
+    ],
+    [
+      "¿Es un wiki oficial?",
+      "No. Esta guía de aficionados es independiente de los desarrolladores y del editor."
+    ],
+    [
+      "¿Una guía garantiza ganar?",
+      "No. La coordinación puede ayudar, pero el azar, las decisiones y las actualizaciones afectan a los resultados."
+    ],
+    [
+      "¿Por dónde empieza un grupo nuevo?",
+      "Abrid la guía completa y leed juntos el artículo inicial. Acordad primero una regla para el banco."
+    ],
+    [
+      "¿Dónde consulto las plataformas?",
+      "En la ficha oficial de Steam y los anuncios del desarrollador. La tarjeta de plataformas es una vista previa."
+    ],
+    [
+      "¿Cómo preparamos una sesión online?",
+      "Comparad versiones, comprobad Steam y acordad los mods antes de enviar una invitación."
+    ],
+    [
+      "¿Dónde hay consejos de la comunidad?",
+      "Consultad las comunidades enlazadas por el desarrollador o Steam. Esta plantilla no tiene una comunidad oficial."
+    ],
+    [
+      "¿Y si no conecta la sala?",
+      "Comprobad versiones y el estado de Steam, luego enviad una invitación nueva. La guía específica todavía no está publicada."
+    ],
+    [
+      "¿Hay guías de logros?",
+      "Las tarjetas son vistas previas. En esta plantilla mínima solo está publicado el artículo inicial."
+    ],
+    [
+      "¿Las imágenes son capturas del juego?",
+      "No. El fondo y los diagramas son ilustraciones originales; los pies de imagen lo indican."
+    ],
+    [
+      "¿Están disponibles las guías de mods?",
+      "Todavía no. Las tarjetas conservan el diseño de referencia y están marcadas como vistas previas."
+    ]
+  ],
+  "ctaTitle": "¿Listos para vuestra primera partida?",
+  "ctaDescription": "Empezad con el recorrido y leed los fundamentos con vuestro equipo antes de elegir una mesa.",
+  "ctaSecondary": "Guía para principiantes",
+  "footerDescription": "Notas independientes para jugar juntos: banco compartido, preparación, objetos y una primera partida coordinada.",
+  "footerDisclaimer": "Plantilla de aficionados sin relación con los desarrolladores. Ilustraciones originales de ejemplo.",
+  "footerGuides": "GUÍAS",
+  "footerInfo": "INFORMACIÓN",
+  "footerCopyright": "© 2026 Co-op Fieldnotes — Guía independiente.",
+  "footerCredit": "Los nombres de juegos pertenecen a sus propietarios. Arte original de plantilla.",
+  "guideTitle": "Guía de Gamble With Your Friends",
+  "guideDescription": "Una ruta práctica para el equipo: entender el saldo compartido, elegir una mesa inicial, preparar objetos y acordar cuándo parar antes de la próxima visita con tiempo limitado.",
+  "quickTitle": "Inicio rápido",
+  "quickDescription": "Hablad primero del banco compartido. Elegid una mesa, un plan de objetos y una reserva clara. Asignad las apuestas grandes y el reloj. Cuando la cuota esté cubierta, parad y acordad el siguiente paso antes de arriesgar otra vez.",
+  "strategyButton": "Ruta de estrategia",
+  "figureCaption": "Ilustración original: el plan común empieza antes de sentarse a una mesa.",
+  "mainGuides": "Guías principales",
+  "checklistTitle": "Lista para la primera partida",
+  "checklist": [
+    [
+      "Fijar una regla de gasto",
+      "Decidid quién puede hacer apuestas grandes y cuánto dinero quiere conservar el grupo como reserva."
+    ],
+    [
+      "Elegir una mesa conocida",
+      "Escoged un juego que alguien pueda explicar. Una mesa familiar ofrece un punto de partida común."
+    ],
+    [
+      "Preparar objetos antes de salir",
+      "Elegid al portador y el propósito de cada herramienta. Confirmad que está lista antes de empezar el reloj."
+    ],
+    [
+      "Pausar al cubrir la cuota",
+      "Revisad juntos el saldo antes de volver a jugar. Proteger un objetivo cumplido también forma parte del plan."
+    ]
+  ],
+  "answersTitle": "Respuestas habituales",
+  "answers": [
+    [
+      "¿Se apuesta dinero real?",
+      "No. La guía trata de un videojuego con dinero ficticio y no ofrece servicios de apuestas reales."
+    ],
+    [
+      "¿Dónde vemos las plataformas?",
+      "La ficha oficial indica los requisitos actuales; los desarrolladores anuncian nuevas plataformas."
+    ],
+    [
+      "¿Qué plan sirve para empezar?",
+      "Una regla compartida, una mesa conocida, un portador preparado y comunicación antes de apostar fuerte."
+    ],
+    [
+      "¿Podemos esperar siempre el mismo resultado?",
+      "No. Verificad las observaciones en vuestra versión actual y evitad tratar un plan como una garantía."
+    ]
+  ],
+  "moreHelp": "Más ayuda",
+  "moreRows": [
+    "Plataformas y requisitos oficiales",
+    "Mods comunitarios y versiones coincidentes",
+    "Nuevas partidas y revisión del resultado",
+    "Planificación de cámara y tiempos del equipo",
+    "Cosméticos y compras en otra sesión",
+    "Resumen de futuros temas de la biblioteca"
+  ],
+  "articleBadge": "Empieza aquí",
+  "articleGame": "Gamble With Your Friends",
+  "articleTitle": "Guía para principiantes",
+  "articleMeta": "Notas originales · Juego en equipo · Plantilla ilustrada",
+  "articleMore": "¿Qué sigue?",
+  "articleMoreDescription": "Volved al recorrido o repasad la lista inicial con vuestro grupo.",
+  "notFound": "Página no encontrada",
+  "notFoundText": "Este artículo no está publicado. Vuelve a la guía para ver el contenido disponible.",
+  "footerEnding": "Guía de Finales"
+}

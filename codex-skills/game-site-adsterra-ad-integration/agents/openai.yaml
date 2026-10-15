@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Site Adsterra Ad Integration"
+  short_description: "Place Adsterra ads and verify live rendering"
+  default_prompt: "Use $game-site-adsterra-ad-integration to place my Adsterra code, deploy the approved change, and verify the ads."

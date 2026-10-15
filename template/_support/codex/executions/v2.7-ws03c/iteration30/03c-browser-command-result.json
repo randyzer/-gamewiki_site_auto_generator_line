@@ -1,0 +1,10 @@
+{
+  "exitCode": 0,
+  "command": "tsx iteration30/browser-share-metadata.ts",
+  "targetedAttempts": 1,
+  "diagnosticSessions": 0,
+  "retryCount": 0,
+  "childPid": 42566,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c30a.Dgh4sa"
+}

@@ -1,0 +1,6 @@
+{
+  "state": "STALE",
+  "priorAcceptance": "iteration27 WS03A continuation",
+  "reason": "First WS03B test mutation; source-bound acceptance no longer applies",
+  "at": "2026-10-07T23:31:09.645822+00:00"
+}

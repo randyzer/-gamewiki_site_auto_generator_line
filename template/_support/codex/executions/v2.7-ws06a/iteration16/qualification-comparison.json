@@ -1,0 +1,76 @@
+{
+  "overall": "FAIL",
+  "counts": {
+    "PASS": 37,
+    "FAIL": 10
+  },
+  "infrastructureErrors": [
+    "WEBKIT_STANDARD_TAB_LINK_PROFILE_UNAVAILABLE"
+  ],
+  "nonWebkitRegressions": [],
+  "changes": [
+    {
+      "caseId": "live-resize:chromium:shell-nav:899x800",
+      "old": "FAIL",
+      "new": "PASS"
+    }
+  ],
+  "newFailureAssertions": [],
+  "sameCaseIds": true,
+  "cleanup": {
+    "previewStopped": true,
+    "fixtureRemoved": true
+  },
+  "identity": {
+    "starter": {
+      "branch": "v2.7/evolution",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "workingTreeSha256": "6708a8a3d069b586ef4381d4151ae6772c6dfbebc051edcf60d3985e6afbc72f"
+    },
+    "canonicalContract": {
+      "reference": {
+        "version": "2.7",
+        "owningArtifact": "GAME_SOP",
+        "canonicalPath": "docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "sha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      },
+      "verification": {
+        "mode": "FILE_SHA256",
+        "filePath": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V2.7.md",
+        "observedSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+      }
+    },
+    "fixture": {
+      "identity": "Field Notes synthetic adoption",
+      "sourceSha256": "066cca503a1c6fd1936c2667ffe0b45ee066c91a4c9500128ceb41ae1c3e5333"
+    },
+    "build": {
+      "distSha256": "928645ac0e3307cacbf7e8b3e527cc461d97d3e813c7688a433fe49ed874189a"
+    },
+    "playwright": {
+      "packageVersion": "1.63.0"
+    },
+    "host": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.22.0"
+    },
+    "engines": {
+      "chromium": {
+        "browserName": "chromium",
+        "version": "153.0.8010.12",
+        "revision": "1243"
+      },
+      "firefox": {
+        "browserName": "firefox",
+        "version": "155.0",
+        "revision": "1543"
+      },
+      "webkit": {
+        "browserName": "webkit",
+        "version": "26.6",
+        "revision": "2359"
+      }
+    }
+  }
+}

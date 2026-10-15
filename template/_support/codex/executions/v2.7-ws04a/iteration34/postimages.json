@@ -1,0 +1,27 @@
+{
+  "template/design/ws04a/WS03_CANDIDATE_INTERFACE_BINDING_BASELINE_V1.md": {
+    "sha256": "db73723ea173b22284fc9bbf49df5a29e6d66fdb243b7a0ff2e00200b1fb237c",
+    "mode": 420,
+    "symlink": false
+  },
+  "template/design/ws04a/WS03_INTERFACE_DEPENDENCY_LEDGER_V1.md": {
+    "sha256": "4306741e6f26a34abd158268e54b175f6ce51f6a5ded196557f7522031c9b0ac",
+    "mode": 420,
+    "symlink": false
+  },
+  "template/design/ws04a/WS04A_BINDING_READINESS_V1.md": {
+    "sha256": "d49352c868b5944985af6e563335d8c6fb51a7f726e2799e6a361c1bdf479ea2",
+    "mode": 420,
+    "symlink": false
+  },
+  "template/roadmap/V2.7_TASK_LEDGER.md": {
+    "sha256": "6fc5d0a2171fd8cf228715b8847bdd8ca27d6eadcd0f47a4152ebc9a89cab482",
+    "mode": 420,
+    "symlink": false
+  },
+  "template/PROJECT_STATE.md": {
+    "sha256": "46d50ed6265b905e865883f5e7a6c03fd8f80cb349934b38525911daab571368",
+    "mode": 420,
+    "symlink": false
+  }
+}

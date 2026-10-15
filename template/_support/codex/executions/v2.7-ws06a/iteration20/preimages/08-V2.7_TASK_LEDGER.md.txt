@@ -1,0 +1,75 @@
+# V2.7 统一任务台账
+
+更新：2026-10-06，Asia/Taipei。依据[已接受路线](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md)及实际执行/审查记录。本文是进度索引，不取代规范、路线或原始证据；索引整理不是产品独立验收；第18轮方法设计实际审查见下。
+
+目标：从V2.6.5三件套、真实项目缺口和五案例可借鉴能力，交付协同工作的V2.7 SOP、Starter、Master Prompt。商业适用性须由真实采用与人审证明；不以技术通过宣称收入、流量或案例商业成功。
+
+## 计数规则与当前总数
+
+- 正式路线8个主任务：关闭2，部分实施且受阻1，未开始产品实施5（其中WS-04A方法设计已独立ACCEPT，契约Gate仍OPEN）。主任务只有全部所需子Gate独立接受才关闭。
+- WS-03A/B/C/D、WS-04A/B、WS-06A/B是子阶段，不加到8个主任务总数。03D搜索/时效、05三组合仍需各自验证。
+- 协作第16轮两文件修复已独立ACCEPT关闭；第17轮策略实现已实施并完成回归，已获实际独立ACCEPT（仅机制实现），Safari真实补证待取得；第13～15轮分别是诊断、策略提案、修复计划，不是三个新增产品任务。
+- 2/8不是产品完成25%。不把历史四个安全检查点、文档数量或测试数重复计为新主任务完成。
+- [WS-01证据索引](../codex/executions/v2.7-ws01/capability-evidence-baseline.json)保留41条null outcome，是历史baseline索引，不代表没有旧功能，也不代表当前41项全部通过。
+
+## 八个主任务
+
+| ID | 交付内容 | 当前状态与实际完成 | 尚缺 / 下一里程碑 | 依据 |
+| --- | --- | --- | --- | --- |
+| WS-01 | 单一规范源、三件套引用、证据方法 | CLOSED；方法/工程独立ACCEPT | 后续功能变化仍须三件套同期同步 | [result](../codex/executions/v2.7-ws01/result.md)、[审查](../codex/executions/v2.7-ws01/verification.md) |
+| WS-02 | Core连续性、采用构建/CI流程 | CLOSED；采用fixture与拒绝默认final独立ACCEPT | 本地验证不冒充远程CI、真实游戏验收 | [result](../codex/executions/v2.7-ws02/result.md)、[审查](../codex/executions/v2.7-ws02/verification.md) |
+| WS-03 | 主题、媒体/视频、分享图、搜索/时效接口 | 产品实施未开始 | 依WS-02/06A ACCEPT，分切片补接口 | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+| WS-04 | 游戏适配方法/接口与实例验证 | 产品实施未开始；第18轮方法设计已独立ACCEPT，仅METHODS DESIGN | 04A设计/接口Gate依WS-03；04B实例依WS-05 | [方法设计](../design/ws04a/GAME_ADAPTATION_METHOD_V1.md)、[实际审查](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md) |
+| WS-05 | hub/wiki、task-guide、media-rich article三组合 | 产品实施未开始 | 逐组合依03及04A，使用真实Core | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+| WS-06 | Core及组合独立验收体系 | PARTIAL / BLOCKED；06A工具及部分修复已做，06B未开始 | 06A资格失败未解决；06B需04B/05及06A | [实际结果](../codex/executions/v2.7-ws06a/result.md)、[第16轮本地结果](../codex/executions/v2.7-ws06a/iteration16/result.md) |
+| WS-07 | WoG、Bomb Farm、任务指南三类真实采用 | 产品实施未开始；V2.7最终采用验收0/3 | 需06B及相关组合通过；历史项目报告仅作输入 | [项目证据对应](../audit/REAL_PROJECT_AND_REFERENCE_EVIDENCE_CROSSWALK_V1.md) |
+| WS-08 | 41能力跨版比较、三件套兼容组装 | 未开始；交付根未创建 | 全部必要Gate通过后导出并复验 | [路线§4](GAME_SITE_SYSTEM_V2.7_EVOLUTION_ROADMAP_V1.md) |
+
+## 当前关键路径与可准备工作
+
+关键路径保持：WS-06A → WS-03 → WS-04A → WS-05 → WS-04B → WS-06B → WS-07 → WS-08。路线允许并行准备04A术语/主题证据和项目输入；不允许提前关闭接口/实例Gate。
+
+| 子阶段 | 状态 | 退出依据 |
+| --- | --- | --- |
+| 03A 主题角色 | NOT_STARTED | 接口、两种主题及可用性验证接受 |
+| 03B 媒体/视频 | NOT_STARTED | schema/adapter/render、缺失/fallback与证据边界接受 |
+| 03C 分享媒体 | NOT_STARTED | 03B后，同一媒体权威与实际产物审计接受 |
+| 03D 搜索/时效 | NOT_STARTED | 搜索与日期两部分分别验证，不冒充实时数据 |
+| 04A 方法/适配契约 | METHODS_DESIGN_ACCEPTED / GATE_OPEN | 第18轮仅方法设计接受；等待03实际接口接受→绑定核实，schema未冻结 |
+| 04B 实例组装 | NOT_STARTED | 05后至少两种不同配置实例接受 |
+| 06A Core浏览器 | BLOCKED | 修复与真实资格/证据问题解决，再独立验收 |
+| 06B 组装验收 | NOT_STARTED | 04B/05/06A后，REF-A/B/C与组装验收机制接受 |
+
+## WS-06A：证据、授权与阻塞
+
+| 轮次 | 实际结果 | 不代表什么 |
+| --- | --- | --- |
+| 11 | 建立runner，首轮47 FAIL；存在工具/判定缺陷和真实溢出，预览遗留后纠正 | 不算资格通过；初次错误cleanup记录保留 |
+| 12 | 修复长表溢出、exact same-URL及runner；45文件699 tests；47病例36 PASS / 11 FAIL，独立BLOCKED | unit/build通过不替代browser Gate |
+| 13 | 时序/原生输入诊断独立ACCEPT；产品增量0 | 不是修复或新资格PASS |
+| 14 | WebKit策略提案独立ACCEPT；未实施；产品增量0 | 不豁免现有失败，不改变Contract |
+| 15 | Live-Resize两文件修复计划独立ACCEPT；仅Markdown候选代码 | 未应用/编译/执行，不证明修复成功 |
+| 16 | 两文件修复；RED8→GREEN29；专项15/15；root/adopted711 tests；新47矩阵37 PASS / 10 FAIL，已独立ACCEPT关闭 | 整体仍FAIL；10项WebKit未解决；不关闭06A |
+| 17 | 严格10文件策略实现；87定向/757回归PASS；新47矩阵37/10；实际closure缺真实Safari证据exit1；实际独立ACCEPT仅实现机制 | 补证0，40断言待真实核验；新增390px归因已接受；不关闭06A、不提升能力 |
+
+历史[47项原始资格](../codex/executions/v2.7-ws06a/browser-evidence-rerun-1/core-browser-evidence.json)：36 PASS / 11 FAIL / 0 NOT_RUN / 0 skip；10项WebKit、1项Chromium live-resize失败。SHA256 c24c2371ff8a52453582468165f0f2fb93918ea69bf59fd35e4f511b0bb00cf9。
+
+第16轮仅改MobileNav.astro和navigation-behavior.test.ts：先RED，再GREEN，再真实双向/往返、无焦点偷取、no-JS、完整回归、新源47项证据及独立审查。具体命令/回退/STOP见[已接受规格](../codex/executions/v2.7-ws06a/iteration15/LIVE_RESIZE_CORE_REPAIR_SPEC_V1.md)。WebKit策略须分开处理；修复专项接受仍不自动关闭06A。
+
+当前工具链已恢复：用官方本地bundled marketplace恢复Browser技能，原ChatGPT页签已确认workspace并恢复第16轮。第16轮[47项资格](../codex/executions/v2.7-ws06a/iteration16/browser-evidence/core-browser-evidence.json)为37 PASS / 10 FAIL；唯一变化为Chromium live-resize FAIL→PASS，此前非WebKit PASS无回归，未新增失败assertion。[两文件本地结果](../codex/executions/v2.7-ws06a/iteration16/result.md)已获原ChatGPT[实际独立ACCEPT](../codex/executions/v2.7-ws06a/iteration16/chatgpt-independent-review.md)，有限修复关闭。用户全权授权自主推进，不重复请求常规实施授权；WebKit策略已按[PLAN17](../codex/prompts/v2.7-ws06a/iteration17-webkit-policy-implementation-plan.md)另行实施。最新[第17轮结果](../codex/executions/v2.7-ws06a/iteration17/result.md)37/10、40失败断言；没有真实Safari证据时closure实际拒绝。原ChatGPT[实际独立ACCEPT](../codex/executions/v2.7-ws06a/iteration17/chatgpt-independent-review.md)仅接受实现机制及新增390px失败归因，不要求重复诊断；真实补证和最终closure独立审查仍缺失。现有IAB无Safari通道，用户已明确授权Safari原生GUI，但工具以URL限制拒绝；用户指定的Chrome有限补充检查完成，不能替代Safari证据；[固定样本/清单](../codex/executions/v2.7-ws06a/iteration17/REAL_SAFARI_KEYBOARD_CHECKLIST.md)已准备，不提前通过06A。
+
+## 以产品成果衡量的后续里程碑
+
+1. 修复焦点迁移并取得真实浏览器证据；明确保留WebKit尚未解决的资格问题。
+2. 完成06A Gate后，按已接受接口/适配/组合前置，形成一条实际Core上的可查看游戏站组合，验证玩家入口→答案→下一步，以及有依据的主题/媒体或完整no-media方案。它是WS-05/04B的有限里程碑，不取代三组合或三项目最终验收。
+3. 补齐三组合、REF-A/B/C与三类真实采用，完成逐能力跨版和三件套交付；最终位置仍为Repo_hotgameweb/GAME_SITE_SYSTEM_V2.7/。
+
+每轮进度报告区分：本轮产品行为/可查看成果、验证结果、仅计划/治理成果、剩余阻塞、下一有限动作。只有文档或诊断时明确写产品增量0，不拿数量包装完成度。
+
+## 研究与产品证据缺口
+
+五份本地代码审计已做；四个原站已观察，Farever原站未取得，不能称五个成功商业站验证完成。Bomb Farm原站TOC实际滚动亦有待复测。[原站记录](../LIVE_SITE_VALIDATION_2026-10-01.md)与本地分析分开；本站内数据未取得的部分不能下市场判断。真实项目旧构建/人审/权利状态不可直接继承为V2.7 PASS。
+
+进度纠偏仅更新入口与准备设计输入；随后第16轮独立实施两文件修复。已接受路线/DAG、41项规范、历史证据、能力outcome或发布状态未改变。后续实际实现结果出来时同步本台账、PROJECT_STATE和README；历史审查/哈希快照不覆盖。
+
+第18轮：[WS04A有限方法设计结果](../codex/executions/v2.7-ws04a/iteration18/result.md)及[实际独立ACCEPT](../codex/executions/v2.7-ws04a/iteration18/chatgpt-independent-review.md)。五份文档接受，产品增量0，build/tests NOT_RUN；主任务关闭仍2/8，等待WS03接受后的04A绑定核实。06A Safari proof0与既有关键路径保持。

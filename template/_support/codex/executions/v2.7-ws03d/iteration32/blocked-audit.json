@@ -1,0 +1,80 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 32,
+  "slice": "WS03D-freshness",
+  "state": "BLOCKED",
+  "reason": "Targeted browser page.evaluate callback serialization: __name undefined",
+  "sourceIntegrity": "PASS",
+  "approvedFiles": 18,
+  "rootTests": 859,
+  "healthCommands": [
+    {
+      "name": "root-check",
+      "command": "npm run check",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T02:09:57.192Z",
+      "finishedAt": "2026-10-08T02:10:18.840Z"
+    },
+    {
+      "name": "unadopted-final",
+      "command": "npm run verify:unadopted-final",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T02:10:18.841Z",
+      "finishedAt": "2026-10-08T02:10:19.591Z"
+    },
+    {
+      "name": "adopted-final",
+      "command": "npm run verify:adopted-final",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T02:10:19.592Z",
+      "finishedAt": "2026-10-08T02:10:42.896Z"
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git diff --check",
+      "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T02:10:42.896Z",
+      "finishedAt": "2026-10-08T02:10:42.929Z"
+    }
+  ],
+  "red": {
+    "exitCode": 1,
+    "failed": 10,
+    "passed": 44,
+    "tests": 54,
+    "files": 5,
+    "implementationWrittenBeforeRed": false,
+    "evidence": "red-targeted.log"
+  },
+  "green": {
+    "exitCode": 0,
+    "files": 5,
+    "passed": 54,
+    "failed": 0
+  },
+  "targeted": {
+    "overall": "FAIL",
+    "rows": 6,
+    "pass": 0,
+    "fail": 6,
+    "intendedAssertionsExecuted": 0,
+    "unexpectedErrors": 6,
+    "attempts": 1,
+    "retries": 0,
+    "exitCode": 1,
+    "rawSha256": "9894d48af02fff3ed6f601cdd2b607b2925c46585577dc064e8dab59e6a587ce"
+  },
+  "normalCleanup": true,
+  "fresh47": "NOT_STARTED",
+  "browserRepair": "NOT_ATTEMPTED",
+  "independentAcceptance": "NOT_GRANTED",
+  "safariProof": 0,
+  "formalWs03Gate": "NOT_ACCEPTED",
+  "ws06a": "BLOCKED",
+  "releaseHold": true,
+  "errors": []
+}

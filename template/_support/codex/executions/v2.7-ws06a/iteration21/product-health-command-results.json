@@ -1,0 +1,26 @@
+[
+  {
+    "name": "root-check",
+    "command": "npm run check",
+    "exitCode": 0,
+    "observedAt": "2026-10-07T15:22:05.763040+00:00"
+  },
+  {
+    "name": "unadopted-final",
+    "command": "npm run verify:unadopted-final",
+    "exitCode": 0,
+    "observedAt": "2026-10-07T15:22:06.638500+00:00"
+  },
+  {
+    "name": "adopted-final",
+    "command": "npm run verify:adopted-final",
+    "exitCode": 0,
+    "observedAt": "2026-10-07T15:22:29.471994+00:00"
+  },
+  {
+    "name": "git-diff-check",
+    "command": "git diff --check",
+    "exitCode": 0,
+    "observedAt": "2026-10-07T15:22:29.492418+00:00"
+  }
+]

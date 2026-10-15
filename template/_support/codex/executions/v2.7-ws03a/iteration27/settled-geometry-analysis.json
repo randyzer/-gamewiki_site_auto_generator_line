@@ -1,0 +1,98 @@
+{
+  "candidate": "SETTLED_PRECISION_ARTIFACT_SUPPORTED",
+  "rows": [
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "settlementPass": true,
+      "sampleCount": 16,
+      "usedLayoutStrict44": true,
+      "boundingBoxStrict44": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "allRawRectsStrict44": true
+    },
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "settlementPass": true,
+      "sampleCount": 16,
+      "usedLayoutStrict44": true,
+      "boundingBoxStrict44": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "allRawRectsStrict44": true
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "settlementPass": true,
+      "sampleCount": 16,
+      "usedLayoutStrict44": true,
+      "boundingBoxStrict44": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "allRawRectsStrict44": true
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "settlementPass": true,
+      "sampleCount": 16,
+      "usedLayoutStrict44": true,
+      "boundingBoxStrict44": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "allRawRectsStrict44": true
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 800,
+        "height": 900
+      },
+      "settlementPass": true,
+      "sampleCount": 16,
+      "usedLayoutStrict44": true,
+      "boundingBoxStrict44": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "allRawRectsStrict44": true
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 1000,
+        "height": 900
+      },
+      "settlementPass": true,
+      "sampleCount": 16,
+      "usedLayoutStrict44": true,
+      "boundingBoxStrict44": true,
+      "uniqueRawRectHeights": [
+        44
+      ],
+      "allRawRectsStrict44": true
+    }
+  ],
+  "oracleDelta": 0,
+  "productDelta": 0,
+  "iteration25FailurePreserved": true
+}

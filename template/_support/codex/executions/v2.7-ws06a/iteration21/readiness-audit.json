@@ -1,0 +1,23 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 21,
+  "decision": "BLOCKED",
+  "reason": "One-off observer TMPDIR path causes tsx IPC listen EADDRINUSE during final build; raw 47 NOT_RUN; no independent fixture capture",
+  "rawOverall": "FAIL",
+  "executed": 0,
+  "notRun": 47,
+  "productHealth": "PASS",
+  "oldManualCleanup": "PASS",
+  "safariProof": 0,
+  "ws06a": "BLOCKED",
+  "nextAuthorizedSlice": "NONE_PENDING_NEW_FINITE_REPAIR_PLAN",
+  "freshCleanup": {
+    "startedPid": null,
+    "astroStopExit": null,
+    "pidAliveBeforeStop": false,
+    "pidAliveAfterStop": false,
+    "fallbackSignalUsed": false,
+    "fixtureRemoved": true
+  },
+  "retryPerformed": false
+}

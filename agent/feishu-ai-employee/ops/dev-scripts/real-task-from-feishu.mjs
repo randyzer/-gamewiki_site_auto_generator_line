@@ -1,0 +1,7 @@
+import {chromium} from 'playwright';import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});const p=await c.newPage();
+await p.goto('https://l1sbomj6i7.feishu.cn/next/messenger/',{waitUntil:'domcontentloaded'});
+await p.getByText('游戏网站 AI 工程师',{exact:true}).first().waitFor({timeout:20000});await p.getByText('游戏网站 AI 工程师',{exact:true}).first().click();
+await p.getByText('Message 游戏网站 AI 工程师',{exact:false}).first().waitFor({timeout:12000});
+await p.locator('[contenteditable=true]').last().fill('Tetris');await p.locator('[contenteditable=true]').last().press('Enter');
+await p.waitForTimeout(2000);console.log('SENT',(await p.locator('body').innerText()).slice(-460));await c.close();

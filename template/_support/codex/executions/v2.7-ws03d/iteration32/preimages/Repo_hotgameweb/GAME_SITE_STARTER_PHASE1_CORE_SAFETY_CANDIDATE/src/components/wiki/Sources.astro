@@ -1,0 +1,43 @@
+---
+import type { Provenance } from "../../data/schemas/provenance";
+import { projectPublicSources } from "../../core/public-sources";
+
+interface Props {
+  sources: Provenance[];
+}
+
+const { sources } = Astro.props;
+const publicSources = projectPublicSources(sources);
+const lastVerified = [...sources]
+  .sort((left, right) => right.accessedAt.localeCompare(left.accessedAt))
+  .at(0)?.accessedAt;
+---
+
+{publicSources.length > 0 && (
+  <section class="sources evidence section-rule" aria-labelledby="sources-title">
+    <div>
+      <p class="eyebrow">Sources & verification</p>
+      <h2 id="sources-title">How this page was checked</h2>
+      {lastVerified && (
+        <p class="sources__verified">
+          Last verified <time datetime={lastVerified}>{lastVerified}</time>
+        </p>
+      )}
+    </div>
+    <ol>
+      {publicSources.map((source, index) => (
+        <li>
+          <span>{(index + 1).toString().padStart(2, "0")}</span>
+          <div>
+            <strong>{source.host}</strong>
+            <small>{source.sourceTypeLabel}</small>
+            <a href={source.sourceUrl} rel="noreferrer">
+              View source <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <time datetime={source.accessedAt}>Checked {source.accessedAt}</time>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}

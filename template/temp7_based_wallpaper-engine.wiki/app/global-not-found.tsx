@@ -1,0 +1,2 @@
+import './globals.css';
+export default function GlobalNotFound(){return <html lang="en"><head><title>Page not found — Motion Desktop Wiki</title><meta name="robots" content="noindex,nofollow"/></head><body><main className="not-found"><img src="/logo.svg" width="48" height="48" alt=""/><p>404</p><h1>Page not found</h1><p>This page has not been published. 此页面尚未发布。</p><a className="button primary" href="/">Back to home</a><a className="button" href="/zh-cn/">返回中文首页</a></main></body></html>;}

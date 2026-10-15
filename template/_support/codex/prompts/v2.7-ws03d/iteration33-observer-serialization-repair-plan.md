@@ -1,0 +1,324 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 32"
+      - text: "WORKSTREAM: WS03D-FRESHNESS"
+      - text: "VERDICT:"
+      - strong: BLOCKED — OBSERVER SERIALIZATION FAILURE; PRODUCT DEFECT NOT ESTABLISHED
+    - paragraph: 我独立复核后，同意 iteration32 的 STOP，而且这次失败边界很清楚。
+    - paragraph: 实际状态是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "scope = exact18 PASS RED = 10 FAIL / 44 PASS GREEN = 54 / 54 PASS root = 859 PASS Astro = clean adoption/diff = PASS targeted: 6 / 6 rows executed 0 PASS 6 FAIL 0 / 78 intended assertions executed 1 attempt 0 retry fresh47 = NOT_STARTED"
+    - paragraph: 六个浏览器行全部在完全相同的 page.evaluate(observeFreshness) 阶段失败：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "Chromium: ReferenceError: __name is not defined observeFreshness ... <anonymous>:1:701 Firefox: __name is not defined observeFreshness ... :1:701 WebKit: Can't find variable: __name"
+    - paragraph: 我读取了实际 observer。问题高度集中在这一段：
+    - generic: JavaScript
+    - button "启用自动换行":
+    - button "复制":
+    - code: "function visit(node) { if (Array.isArray(node)) { node.forEach(visit); return; } ... if (node[\"@graph\"]) visit(node[\"@graph\"]); }"
+    - paragraph:
+      - text: 这是 observeFreshness() 内唯一显式的
+      - strong: 嵌套 named recursive function
+      - text: 。它与我们在 iteration23–25 已遇到的 tsx callback 序列化问题同型：tsx/esbuild 为函数名语义注入 host-side __name(...)，Playwright 把 callback source 序列化进浏览器后，浏览器上下文没有这个 helper。
+    - paragraph: 目前证据支持：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "ITER32 FAILURE CLASS: HARNESS / OBSERVER SERIALIZATION FRESHNESS PRODUCT FAILURE: NOT ESTABLISHED FRESHNESS PRODUCT PASS: NOT ESTABLISHED"
+    - paragraph: 另外确认：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: product18 source = intact protected files = 6591 unchanged Contract = exact SHA Registry = 41 unique IDs verification infrastructure delta = 0 preview normal stop = PASS PID gone = PASS fixture removed = PASS fallback signal = false
+    - paragraph: 因此不能修改 freshness product，也不能调整 78 条 assertions。
+    - paragraph: 下面只做 iteration33 的 observer-side repair，并把后续 qualification 一次走完。
+    - button "添加到资料库":
+      - generic: PLAN33 — WS03D Freshness Observer Serialization Repair and Qualification
+    - button "复制":
+    - button "打开编辑器":
+    - textbox "开始写作":
+      - paragraph:
+        - text: "[C2C]"
+        - text: "STATE: PLAN"
+        - text: "TASK_ID: c2c_a765"
+        - text: "ITERATION: 33"
+        - text: "WORKSTREAM: WS03D-FRESHNESS"
+        - text: "TYPE: EXECUTION / OBSERVER ONLY"
+        - text: "PREDECESSOR: REVIEW32 BLOCKED"
+        - text: "PRODUCT_SOURCE_MUTATION: PROHIBITED"
+        - text: "ASSERTION_CHANGE: PROHIBITED"
+        - text: "HELPER_INJECTION: PROHIBITED"
+      - heading "1. Freeze iteration32 permanently" [level=2]
+      - paragraph: "Do not modify:"
+      - code: template/codex/executions/v2.7-ws03d/iteration32/**
+      - paragraph: "Retain permanently:"
+      - code: 6 FAIL 0 / 78 intended assertions 1 attempt 0 retry fresh47 NOT_STARTED raw SHA 9894d48...
+      - paragraph: Iteration33 is new evidence, never a rewrite/retry of iteration32.
+      - separator
+      - heading "2. Product-source precondition" [level=2]
+      - paragraph: Before doing anything, verify current triad/product source still exactly matches the iteration32 blocked identity and postimages.
+      - paragraph: "Especially Starter working source must remain:"
+      - code: workingTreeSha256 = bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1
+      - paragraph: and the exact18 files must remain byte-identical to iteration32 postimages.
+      - paragraph: "If any product/governance/test source differs:"
+      - code: STOP REPLAN
+      - paragraph: No attempt to reconcile it inside PLAN33.
+      - separator
+      - heading "3. Diagnostic A — prove the actual transformed callback" [level=2]
+      - paragraph: "Create execution-only:"
+      - code: iteration33/check-observer-serialization.ts
+      - paragraph: "Run it through the same real runtime:"
+      - code: node_modules/.bin/tsx
+      - paragraph:
+        - text: It must import the
+        - strong: actual iteration32
+        - text: ":"
+      - code: freshness-observation.mjs
+      - paragraph: "and save:"
+      - code: iteration32-observer-serialized.txt iteration32-observer-serialization.json
+      - paragraph: "using:"
+      - code: Function.prototype.toString.call(observeFreshness)
+      - paragraph: "Record at minimum:"
+      - code: contains __name serialized SHA256 source SHA256
+      - paragraph: "Expected diagnosis:"
+      - code: contains __name = true
+      - paragraph:
+        - text: If the actual transformed function does not contain
+        - code: __name
+        - text: ":"
+      - code: diagnosis = INCONCLUSIVE STOP
+      - paragraph: Do not guess another repair.
+      - separator
+      - heading "4. Observer-only repair" [level=2]
+      - paragraph: "Create a new execution artifact only:"
+      - code: iteration33/freshness-observation.mjs
+      - paragraph: Do not edit the iteration32 observer.
+      - paragraph: "Its returned shape must stay exactly:"
+      - code: "{ rows, articles, parseErrors, bodyText, html }"
+      - separator
+      - heading "5. Required repair shape" [level=2]
+      - paragraph: "Remove the recursive nested:"
+      - code: function visit(node)
+      - paragraph: entirely.
+      - paragraph:
+        - text: Do
+        - strong: not
+        - text: "replace it with:"
+      - code: const visit = (...) => ... function walk(...) const walk = function ...
+      - paragraph: No nested helper function of any kind.
+      - paragraph: "Instead perform JSON-LD traversal using an explicit iterative stack:"
+      - code: "const stack = [parsed]; while (stack.length > 0) { const node = stack.pop(); if (Array.isArray(node)) { for (...) { stack.push(node[index]); } continue; } if (!node || typeof node !== \"object\") continue; if (node[\"@type\"] === \"Article\") { articles.push(node); } if (node[\"@graph\"]) { stack.push(node[\"@graph\"]); } }"
+      - separator
+      - heading "6. Stronger serialization rule" [level=2]
+      - paragraph:
+        - text: For maximum stability, the browser callback should avoid
+        - strong: all locally declared callback/helper functions
+        - text: .
+      - paragraph: "Prefer explicit loops over:"
+      - code: .map(...) .forEach(...) .flatMap(...)
+      - paragraph:
+        - text: inside
+        - code: observeFreshness()
+        - text: where practical.
+      - paragraph: This is not a product style requirement.
+      - paragraph: It is only an execution-observer serialization safeguard.
+      - paragraph: No external helper may be injected into browser context.
+      - separator
+      - heading "7. Forbidden repair mechanisms" [level=2]
+      - paragraph: "Do not use:"
+      - code: "window.__name = ... globalThis.__name = ... page.addInitScript(...) page.evaluate(({ helper }) => ...) browser-side helper injection eval generated helper new Function helper shim Playwright exposedFunction addBinding"
+      - paragraph: The observer must serialize and execute standalone.
+      - separator
+      - heading "8. Diagnostic B — repaired serialization preflight" [level=2]
+      - paragraph:
+        - text: Import the new iteration33 observer through the same
+        - code: tsx
+        - text: chain.
+      - paragraph: "Save:"
+      - code: iteration33-observer-serialized.txt observer-serialization-check.json
+      - paragraph: "Require:"
+      - code: __name references = 0
+      - paragraph: "Also compare the public observer contract with iteration32:"
+      - code: same exported function purpose same returned top-level keys same metadata extraction same Article discovery same parseErrors behavior same bodyText same html
+      - paragraph: No assertion semantics are changed here.
+      - separator
+      - heading "9. Diagnostic C — real browser callback execution" [level=2]
+      - paragraph: Before any qualification, run a diagnostic-only browser evaluation.
+      - paragraph: "Use one tiny synthetic HTML document containing:"
+      - code: article .article__meta Published row Last updated row Sources checked row Live status row one JSON-LD Article one @graph containing an Article
+      - paragraph:
+        - text: Evaluate the
+        - strong: actual imported repaired function directly
+        - text: ":"
+      - code: page.evaluate(observeFreshness)
+      - paragraph: No wrapper/helper injection.
+      - paragraph: "Run in:"
+      - code: Chromium Firefox WebKit
+      - paragraph: "This is:"
+      - code: diagnostic only qualificationAttempts = 0
+      - paragraph: "Require all three engines:"
+      - code: no __name/reference error rows parsed Article discovery works @graph traversal works parseErrors = [] returned shape exact
+      - paragraph: "If any engine fails:"
+      - code: STOP targeted qualification NOT_STARTED
+      - separator
+      - heading "10. Observer semantic negative diagnostic" [level=2]
+      - paragraph: "The same diagnostic must also prove malformed JSON-LD still produces:"
+      - code: parseErrors.length > 0
+      - paragraph: without crashing the entire observer.
+      - paragraph: Do not remove error capture just to achieve serialization safety.
+      - separator
+      - heading "11. Harness preservation" [level=2]
+      - paragraph: "Create iteration33 qualification harness by copying iteration32:"
+      - code: browser-freshness.ts
+      - paragraph: "Allowed semantic differences are only:"
+      - code: iteration32 output paths → iteration33 output paths iteration32 observer import → iteration33 repaired observer
+      - paragraph: All fixture mutation and all intended assertions remain unchanged.
+      - separator
+      - heading "12. Assertion freeze" [level=2]
+      - paragraph: "The exact intended qualification remains:"
+      - code: 6 rows 13 assertions / row 78 assertions total
+      - paragraph: "Including:"
+      - code: guide-route-http200 Published = 2026-08-10 Last updated = 2026-09-20 Sources checked = 2026-09-21 Live status = 2026-09-22 Observed live wording exact status-source href no Last verified no private evidenceNote four dates distinct JSON-LD parse valid datePublished = publication authority dateModified = update authority
+      - paragraph: No assertion deletion, renaming, weakening, epsilon, or alternate oracle.
+      - separator
+      - heading "13. Harness diff gate" [level=2]
+      - paragraph: "Before qualification, generate:"
+      - code: harness-diff-check.json
+      - paragraph: "Prove against iteration32:"
+      - code: fixture semantics unchanged synthetic dates unchanged synthetic source URLs unchanged live evidence marker unchanged engines unchanged viewports unchanged assertion names unchanged assertion count unchanged = 78 only observer import / iteration output plumbing differs
+      - paragraph: "Any additional semantic harness delta:"
+      - code: STOP
+      - separator
+      - heading "14. Qualification attempt" [level=2]
+      - paragraph: Only after Diagnostics A/B/C and harness diff all PASS.
+      - paragraph: "Use new owned root:"
+      - code: /tmp/c2c33a.XXXXXX
+      - paragraph: "Run targeted qualification exactly once:"
+      - code: qualificationAttempts = 1 retryCount = 0
+      - paragraph: "Expected required result:"
+      - code: 6 / 6 rows PASS 78 / 78 intended assertions PASS 0 unexpected errors
+      - paragraph: "Any FAIL:"
+      - code: STOP preserve raw FAIL fresh47 NOT_STARTED
+      - paragraph: No same-iteration repair/retry.
+      - separator
+      - heading "15. Product source must remain unchanged through qualification" [level=2]
+      - paragraph: "Capture before/after:"
+      - code: Starter source SHA SOP source SHA Prompt source SHA canonical page-inventory.json SHA
+      - paragraph: Require exact equality to iteration32 post-product source.
+      - paragraph: PLAN33 is not allowed to touch the exact18 implementation.
+      - separator
+      - heading "16. Retained product health" [level=2]
+      - paragraph: "Because no product/test/governance source mutation is authorized, iteration32 health may be retained only after exact identity binding:"
+      - code: 859 tests PASS Astro clean unadopted PASS adopted PASS git diff --check PASS
+      - paragraph: "Record:"
+      - code: retained-iteration32-health-binding.json
+      - paragraph: "If exact source identity does not match, retained health is invalid:"
+      - code: STOP
+      - paragraph: Do not silently rerun against drifted source.
+      - separator
+      - heading "17. Fresh47 after targeted PASS only" [level=2]
+      - paragraph: "If and only if 6/6 and 78/78 PASS, run the original unchanged:"
+      - code: npm run check:browser
+      - paragraph: "with:"
+      - code: /tmp/c2c33b.XXXXXX
+      - paragraph: "Exactly:"
+      - code: 1 qualification attempt 0 retry 47 planned 47 executed 0 NOT_RUN
+      - paragraph: Raw FAIL remains acceptable only for the already-governed WebKit residual set.
+      - separator
+      - heading "18. Residual rules" [level=2]
+      - paragraph: "Recompute from iteration33 fresh raw:"
+      - code: current residual set ⊆ iteration19 frozen40 newOutsideFrozen40 = 0
+      - paragraph: "Compare against iteration31:"
+      - code: persisted disappeared reappearedFromFrozen40 newOutsideFrozen40
+      - paragraph: Do not use iteration31's 40/40 counterpart evidence as current evidence.
+      - separator
+      - heading "19. Current counterpart proof" [level=2]
+      - paragraph: "For every current WebKit residual require fresh:"
+      - code: Chromium counterpart PASS Firefox counterpart PASS
+      - paragraph: "If current residual count is N:"
+      - code: Chromium N/N Firefox N/N
+      - paragraph: must be independently calculated from iteration33 fresh raw.
+      - separator
+      - heading "20. Policy / identity / closure" [level=2]
+      - paragraph: "Rebind current:"
+      - code: Starter / SOP / Prompt identities Contract exact SHA fixture source dist SHA Node Playwright Chromium / Firefox / WebKit host matrix runner evidence script closure verifier WebKit policy/control/native probe
+      - paragraph: No Safari evidence is added.
+      - paragraph: Run the existing unchanged closure verifier.
+      - paragraph: "Expected, if known residuals remain:"
+      - code: "exit 1 decision BLOCKED sole error: missing/invalid real Safari keyboard evidence"
+      - paragraph: "Any second closure error:"
+      - code: STOP
+      - separator
+      - heading "21. Cleanup" [level=2]
+      - paragraph: Diagnostic and qualification resources must close normally.
+      - paragraph: "For owned TMP roots:"
+      - code: preview normal stop PID gone fixture gone known Node/tsx caches only 0 symlink 0 path escape 0 unknown 0 signal fallback owned root removed
+      - paragraph: The tiny serialization diagnostic browser session must also close all browsers normally.
+      - separator
+      - heading "22. Exact source scope" [level=2]
+      - paragraph: "PLAN33 may create/change only:"
+      - code: template/codex/prompts/v2.7-ws03d/PLAN33... template/codex/executions/v2.7-ws03d/iteration33/**
+      - paragraph: "No files under:"
+      - code: Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/** Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/** Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/**
+      - paragraph: may change.
+      - paragraph: "So:"
+      - code: product delta = 0 governance delta = 0 test delta = 0
+      - separator
+      - heading "23. Iteration32 history rule" [level=2]
+      - paragraph: "Iteration33 must explicitly state:"
+      - code: iteration32 = BLOCKED 6 FAIL preserved 0/78 intended assertions preserved fresh47 NOT_STARTED preserved
+      - paragraph: Iteration33 PASS does not retroactively convert iteration32 into PASS.
+      - separator
+      - heading "24. Final candidate boundary" [level=2]
+      - paragraph: "If every gate above succeeds, iteration33 may report only:"
+      - code: "WS03D-FRESHNESS: ELIGIBLE_FOR_INDEPENDENT_CONTINUATION_REVIEW"
+      - paragraph: "Not:"
+      - code: FR-01 PASS FR-02 PASS WS03 formal Gate ACCEPT WS06A FULL ACCEPT capability promotion release ready
+      - paragraph: Independent REVIEW33 remains required.
+      - separator
+      - heading "25. System holds" [level=2]
+      - paragraph: "Throughout iteration33:"
+      - code: Safari proof = 0 WS06A FULL = BLOCKED WS03 FORMAL GATE = NOT_ACCEPTED WS04A formal integration = NOT AUTHORIZED WS05 = NOT AUTHORIZED Capability promotion = NONE Release hold = ACTIVE
+      - heading "PLAN33 core rule" [level=2]
+      - code: Prove the serializer caused the failure. Remove the serializer-sensitive observer structure. Prove the repaired observer stands alone in real browser contexts. Then run the original 78 assertions unchanged exactly once. No product repair is allowed because iteration32 never reached a single product-facing browser assertion.
+    - paragraph:
+      - text: 所以这轮不需要碰那18个 freshness 文件。
+      - strong: 最合理的修复目标只有 observer：把递归 named callback 改成纯迭代、无嵌套 helper 的浏览器自包含函数，并在正式 qualification 前先证明它经过同一 tsx 链后不再携带 __name。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

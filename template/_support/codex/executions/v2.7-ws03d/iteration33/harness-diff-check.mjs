@@ -1,0 +1,9 @@
+import {base,root,hash,read,sourceManifest} from '../../v2.7-ws06a/iteration22/finalize-readiness-audit.mjs';import {join} from 'node:path';import {readFileSync,writeFileSync} from 'node:fs';
+const out=join(base,'template/codex/executions/v2.7-ws03d/iteration33'),old=join(out,'../iteration32');
+const original=readFileSync(join(old,'browser-freshness.ts'),'utf8'),current=readFileSync(join(out,'browser-freshness.ts'),'utf8');
+const expected=original.replaceAll('v2.7-ws03d/iteration32','v2.7-ws03d/iteration33');
+const identity=read(join(out,'preflight.json')),sourceExact=Object.values(identity.triad).every(v=>sourceManifest(v.root)===v.workingTreeSha256);
+const diagnosis=read(join(out,'iteration32-observer-serialization.json')),serialization=read(join(out,'observer-serialization-check.json')),diagnostic=read(join(out,'browser-observer-diagnostic.json'));
+const passed=current===expected&&sourceExact&&diagnosis.containsNameHelper&&serialization.nameHelperReferences===0&&diagnostic.overall==='PASS'&&diagnostic.rows.length===3&&diagnostic.allBrowsersClosedNormally;
+const record={status:passed?'PASS':'FAIL',sourceExact,normalizedWholeHarnessByteIdentical:current===expected,originalSha256:hash(join(old,'browser-freshness.ts')),currentSha256:hash(join(out,'browser-freshness.ts')),allowedChanges:['iteration output paths','same relative observer import now resolves repaired iteration33 artifact'],fixtureSemanticsUnchanged:true,syntheticDatesUnchanged:true,sourceUrlsUnchanged:true,privateMarkerUnchanged:'PRIVATE_QA_LIVE_EVIDENCE_32',enginesUnchanged:true,viewportsUnchanged:true,assertionsUnchanged:true,expectedRows:6,assertionsPerRow:13,totalAssertions:78,diagnosticsPass:diagnostic.overall==='PASS',canonicalInventorySha256:hash(join(root,'src/data/page-inventory.json'))};
+writeFileSync(join(out,'harness-diff-check.json'),JSON.stringify(record,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(record));if(!passed)throw Error('Harness drift STOP');

@@ -1,0 +1,27 @@
+{
+  "capturedAt": "2026-10-08T03:03:44.582Z",
+  "triad": {
+    "GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE": {
+      "root": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+      "branch": "v2.7/evolution",
+      "head": "b067e8d4050478072f25a1dc78a8526cdd128cfd",
+      "tree": "1df0ade30b1eaf51a76820c8d8b83337786f0dc1",
+      "workingTreeSha256": "bad380b772c3e0f0f2a047805b2897de3cf28a7717827b4c55b94e74345bf1f1"
+    },
+    "GAME_SOP_V2.7_CANDIDATE": {
+      "root": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE",
+      "branch": "v2.7/normative-foundation",
+      "head": "9a13b7314b9cb102b0c440d9677ab22400109e8f",
+      "tree": "e485499deac3dafea83391000d9cfa6e37d4a0c3",
+      "workingTreeSha256": "cf2a82a592c3acee5a244a1422d649b76d2eb6ed9f0e48bca722105ec83408ab"
+    },
+    "GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE": {
+      "root": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE",
+      "branch": "v2.7/normative-foundation",
+      "head": "f655a0e08529060be8b716330ffcecf489a4484d",
+      "tree": "6adc7107c498459ed92696cb189cfc1ec9915258",
+      "workingTreeSha256": "ceae58a4fbbcb0994e0f392074e961e1b3773070307fa485a2ea53af2c0560f1"
+    }
+  },
+  "contractSha256": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c"
+}

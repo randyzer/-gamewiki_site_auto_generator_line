@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Site UI UX Audit Optimizer"
+  short_description: "Audit and safely optimize game-guide site UI/UX"
+  default_prompt: "Use $game-site-ui-ux-audit-optimizer to audit my game-guide site across representative pages and viewports, then optimize only the approved findings."

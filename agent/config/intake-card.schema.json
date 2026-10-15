@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "mode": { "const": "existing-project" },
+    "targetId": { "type": "string", "pattern": "^[a-zA-Z0-9_-]+$" },
+    "gameIdentity": { "type": "string", "minLength": 1 },
+    "objective": { "type": "string", "minLength": 1 },
+    "rawKeywordsFile": { "type": "string", "pattern": "^/.*\\.md$" },
+    "canonicalOrigin": { "type": "string", "pattern": "^https://[^/]+$" },
+    "repository": { "type": "string", "minLength": 1 },
+    "deploymentProvider": { "enum": ["Vercel", "Cloudflare"] },
+    "adRequested": { "type": "boolean" },
+    "adSnippetRef": { "type": "string", "pattern": "^[A-Za-z0-9_-]+\\.html$" },
+    "allowedOperations": { "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": { "enum": ["read-source", "write-candidate"] } },
+    "promotionPolicy": { "const": "review-required" },
+    "gameMetadata": { "type": "object" }
+  },
+  "required": ["schemaVersion", "mode", "targetId", "gameIdentity", "objective", "rawKeywordsFile", "canonicalOrigin", "repository", "deploymentProvider", "adRequested", "allowedOperations", "promotionPolicy"],
+  "allOf": [{ "if": { "properties": { "adRequested": { "const": true } } }, "then": { "required": ["adSnippetRef"] } }]
+}

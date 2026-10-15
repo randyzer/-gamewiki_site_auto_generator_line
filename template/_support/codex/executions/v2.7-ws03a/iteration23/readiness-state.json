@@ -1,0 +1,8 @@
+{
+  "state": "STALE",
+  "reason": "WS03A_FIRST_PRODUCT_MUTATION",
+  "observedAt": "2026-10-07T16:01:38.147689+00:00",
+  "firstMutatedFile": "tests/config.test.ts",
+  "previousAcceptedReadiness": "iteration22/readiness-acceptance.json",
+  "postChangeEvidenceRequired": true
+}

@@ -1,0 +1,261 @@
+# Actual independent REVIEW22
+
+Observed 2026-10-07T15:45:57.263Z
+Original conversation https://chatgpt.com/c/6abddfa5-02ac-83ee-9b18-0b6960427b4c
+
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 22"
+      - text: "WORKSTREAM: Current-source Development Readiness re-audit"
+      - text: "VERDICT:"
+      - strong: ACCEPT — CURRENT-SOURCE DEVELOPMENT READINESS
+    - paragraph: 我已独立读取 iteration22 的实际 helpers、raw browser evidence、identity/build capture、residual/counterpart evidence、TMP inventory/cleanup、closure、integrity、health results，并重新从 raw + iteration19 baseline 计算关键结果。
+    - heading "1. Fresh47 成立，raw FAIL 被如实保留" [level=3]
+    - paragraph: 实际唯一 qualification attempt：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: attempts = 1 retry = 0 exit = 1 47 planned 47 executed 37 PASS 10 FAIL 0 NOT_RUN
+    - paragraph: 10 个 FAIL全部为 WebKit。
+    - paragraph: 非 WebKit：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Chromium failures = 0 Firefox failures = 0 boundary / reduced-motion / live-resize regression = 0
+    - paragraph:
+      - text: 因此这里的 exit 1
+      - strong: 不是 readiness reject 本身
+      - text: ；它仍然是严格 raw qualification 的真实 FAIL。
+    - separator
+    - heading "2. 我独立重算 residual：39 是旧40的真子集" [level=3]
+    - paragraph: 不是依赖 residual-comparison.json 的摘要。
+    - paragraph: 从 fresh raw重新得到：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: failed assertions = 39 37 ENVIRONMENT_PROFILE_BLOCKED 2 PRODUCT_EVIDENCE_UNRESOLVED 0 UNKNOWN
+    - paragraph: 与 iteration19 accepted residual-set逐 identity比较：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: new residuals = 0
+    - paragraph: 唯一消失的是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: baseline:webkit:content-detail:390x844 table-local-scroll PRODUCT_EVIDENCE_UNRESOLVED
+    - paragraph: 所以：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: fresh39 ⊂ accepted historical40
+    - paragraph: 符合 governance。
+    - paragraph:
+      - text: 这次 390px table-scroll PASS
+      - strong: 不能解释成 Safari已证明
+      - text: ；它只说明这个非稳定 native-Arrow residual在本次 Playwright-WebKit运行中没有重现。
+    - separator
+    - heading "3. 双引擎对应我也重新计算过" [level=3]
+    - paragraph: 对 fresh 39 个 WebKit failed assertion，按：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: category role route viewport javascript reducedMotion assertion
+    - paragraph: 逐项找同次 fresh run对应。
+    - paragraph: 结果：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Chromium = 39 / 39 row PASS + assertion PASS Firefox = 39 / 39 row PASS + assertion PASS bad counterparts = 0
+    - paragraph: 因此 cross-engine corroboration条件成立。
+    - paragraph: 仍然只是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: development confidence evidence
+    - paragraph: 不是：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Safari proof WebKit equivalent PASS 2/3 browsers = PASS
+    - separator
+    - heading "4. Independent identity binding 通过" [level=3]
+    - paragraph: pre-run独立捕获：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "Starter: branch v2.7/evolution HEAD b067e8d... workingTree 423bbb... Playwright 1.63.0 Chromium 153.0.8010.12 / 1243 Firefox 155.0 / 1543 WebKit 26.6 / 2359 host darwin / arm64 / Node 22.22.0"
+    - paragraph: observer在 raw report存在之前独立捕获实际 disposable fixture：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "fixture source: f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac dist: a4e7bb4c37771fb46f9ab3a1042b6eb26fd9fbd68516f44ae992c84f79d3122b"
+    - paragraph: 我重新比较：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: raw.identity == independent-expected-identity
+    - paragraph:
+      - text: 结果
+      - strong: exact match
+      - text: 。
+    - paragraph: 同时所有47 rows只有：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 1 unique source SHA 1 unique build SHA
+    - paragraph: 且 engine version/revision全部一致。
+    - paragraph: 不存在 raw self-oracle问题。
+    - separator
+    - heading "5. PLAN22 harness修复边界通过" [level=3]
+    - paragraph: 实际执行仍然是原：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: npm run check:browser → tsx scripts/run-core-browser-evidence.ts
+    - paragraph: helper没有改变：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: matrix runner assertions browser engines browser flags timeout policy focus/scroll/key behavior
+    - paragraph: Qualification：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: exactly 1 attempt retryCount = 0
+    - paragraph: 所以不是 retry-to-green。
+    - separator
+    - heading "6. TMP cleanup通过" [level=3]
+    - paragraph: 实际：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: logical = /tmp/c2c22.82dTFV real = /private/tmp/c2c22.82dTFV
+    - paragraph: 符合 macOS path规则。
+    - paragraph: Runner正常关闭：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: Astro stop exit = 0 preview PID before = alive preview PID after = gone fallback signal = false fixture removed = true
+    - paragraph: Owned TMP inventory：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: 1581 entries tsx transform regular files = 43 Node compile-cache files = 1535 tsx stale sockets = 0 symlink = 0 unknown = 0 path escape = 0
+    - paragraph: 最终：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: rootRemoved = true fallbackSignalUsed = false status = PASS
+    - paragraph: helper实现也是“先完整 inventory + allowlist，再逐文件删除、bottom-up删空目录”，没有直接无条件 rm -rf。
+    - paragraph: 通过。
+    - separator
+    - heading "7. Policy / native / control 仍有效" [level=3]
+    - paragraph: Fresh实际身份仍为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: WebKit 26.6 revision 2359 darwin arm64
+    - paragraph: Policy：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: proposal SHA exact = true Arrow control exact = true
+    - paragraph: fresh native probe仍显示：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: plainTabReachesLink = false
+    - paragraph: 因此原：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: ENVIRONMENT_PROFILE_BLOCKED
+    - paragraph: 归因仍可用于当前 source。
+    - paragraph: 没有 engine/control drift。
+    - separator
+    - heading "8. Closure verifier 仍然正确拒绝 Full Acceptance" [level=3]
+    - paragraph: 未传任何 Safari evidence。
+    - paragraph: 实际 unchanged verifier：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: exit = 1 decision = BLOCKED
+    - paragraph:
+      - text: 而且 errors
+      - strong: 恰好只有一个
+      - text: ：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: missing/invalid real Safari keyboard evidence
+    - paragraph: 没有：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: unknown failure policy mismatch native probe mismatch source/build mismatch control mismatch infrastructure mismatch
+    - paragraph: 这正是 Development Readiness 与 Full Acceptance分离机制应该产生的结果。
+    - separator
+    - heading "9. Product health通过" [level=3]
+    - paragraph: Fresh iteration22：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: npm run check → PASS 46 test files 757 tests PASS verify:unadopted-final → exit0 内部 validate/build仍为 expected PP-02 rejection verify:adopted-final → PASS validate/check/build = 0 git diff --check → PASS
+    - paragraph: 没有拿 iteration21或iteration17的测试冒充本轮结果。
+    - separator
+    - heading "10. Integrity通过" [level=3]
+    - paragraph: 最终实际：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: protectedFilesUnchanged = 5972 canonicalCapabilityRows = 41 uniqueCapabilityIds = 41 duplicateCapabilityRows = 0 productDelta = 0 governanceDelta = 0 verificationInfrastructureDelta = 0
+    - paragraph: iteration21 的失败历史也已经在 iteration22 preflight后冻结，没有被本轮 qualification改写。
+    - separator
+    - heading "正式 REVIEW22" [level=2]
+    - generic: YAML
+    - button "启用自动换行":
+    - button "复制":
+    - code: "ITERATION22: verdict: ACCEPT_CURRENT_SOURCE_DEVELOPMENT_READINESS readiness: state: ACCEPTED_FOR_BOUNDED_DEVELOPMENT next_authorized_slice: WS03A scope: ONE_SLICE_ONLY fresh_browser: planned: 47 executed: 47 pass: 37 fail: 10 not_run: 0 raw_overall: FAIL residuals: current: 39 environment_profile_blocked: 37 product_evidence_unresolved: 2 new: 0 exact_subset_of_accepted19: true counterparts: chromium: 39/39 firefox: 39/39 product_health: tests: 757_PASS adoption: PASS identity_binding: independent: true exact: true cleanup: runner_normal: true tmp_owned_cleanup: PASS integrity: protected_unchanged: 5972 contract_ids: 41 product_delta: 0 governance_delta: 0 safari_proof: 0 ws06a_full: BLOCKED formal_ws03_gate: NOT_ACCEPTED capability_promotion: NONE release_hold: ACTIVE"
+    - paragraph: 正式状态因此变更为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "[C2C] STATE: REVIEW TASK_ID: c2c_a765 ITERATION: 22 VERDICT: ACCEPT — CURRENT-SOURCE DEVELOPMENT READINESS WS06A_DEVELOPMENT_READINESS: ACCEPTED_FOR_BOUNDED_DEVELOPMENT NEXT AUTHORIZED SLICE: WS03A ONLY RAW BROWSER: 37 PASS / 10 FAIL 39 residual assertions SAFARI PROOF: 0 WS06A FULL: BLOCKED FORMAL WS03 GATE: NOT ACCEPTED CAPABILITY PROMOTION: NONE RELEASE HOLD: ACTIVE"
+    - paragraph:
+      - text: 这份 readiness 必须绑定本次 exact source/tool/engine/build，并按治理要求在
+      - strong: 本独立 ACCEPT 的记录时间 + 7 calendar days
+      - text: 或更早触发 source/config/governance/verification/engine/host/build变化时失效。尤其一旦 WS03A 发生第一次 product mutation，当前 readiness立即变成 STALE，之后进入 per-slice continuation，而不是继续拿本次资格做通行证。
+    - paragraph:
+      - text: 按照已经生效的 standing authorization，
+      - strong: 下一步可以直接进入一个新的、有限的 WS03A implementation PLAN；现在授权的是规划 WS03A 单切片，不是一次性实施整个 WS03。
+    - button "复制":
+    - button "评价回复":
+    - button "分享":
+    - button "朗读":
+    - button "重新生成回复":
+    - button "更多操作":
+    - generic: ChatGPT 可能会出错。请核查重要信息。
+    - button "滚动到底部":
+    - heading "最新一条回复" [level=4]
+    - status
+    - button "添加文件等内容":
+    - textbox "询问 ChatGPT" [active]:
+      - paragraph: 询问 ChatGPT
+    - button "选择 ChatGPT 模型":
+      - generic: 高
+    - button "听写":
+    - button "开始语音":
+- status
+- status: 回答已完成
+- status
+- status
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"
+- button "⋮⋮"

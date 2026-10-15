@@ -1,0 +1,15 @@
+{
+  "ownedTmpRoot": "/tmp/c2c27b.yQS1M0",
+  "fixtureRealPath": "/private/tmp/c2c27b.yQS1M0/starter-adoption-verification-3Wv3Vp",
+  "fixtureLogicalPath": "/tmp/c2c27b.yQS1M0/starter-adoption-verification-3Wv3Vp",
+  "previewPid": 9373,
+  "pidCwd": "/private/tmp/c2c27b.yQS1M0/starter-adoption-verification-3Wv3Vp",
+  "fixtureSourceSha256": "478a2a1330100f797f12efddaf550e94647483534ffaa6df9933f7436792a322",
+  "distSha256": "e6ab5c0220db8065276e2f8d25e9e31529e1b89395d718e3c85603e1765453f0",
+  "firstStableObservedAt": "2026-10-07T17:01:26.221Z",
+  "secondStableObservedAt": "2026-10-07T17:01:26.473Z",
+  "sourceStable": true,
+  "distStable": true,
+  "modifiedByObserver": false,
+  "reportExistedAtCapture": false
+}

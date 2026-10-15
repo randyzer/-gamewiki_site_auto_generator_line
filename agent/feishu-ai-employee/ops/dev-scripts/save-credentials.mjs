@@ -1,0 +1,15 @@
+import {chromium} from 'playwright';
+import {writeFileSync} from 'node:fs';
+import path from 'node:path';
+const c=await chromium.launchPersistentContext(path.resolve('data/feishu-browser-profile'),{channel:'chrome',headless:false});
+const p=c.pages()[0]||await c.newPage();
+await p.goto('https://open.feishu.cn/app/cli_aa476f5e72789ccc/baseinfo',{waitUntil:'domcontentloaded'});
+await p.locator('.auth-info__secret').waitFor({timeout:20000});
+await p.locator('.auth-info__secret svg[data-icon="VisibleOutlined"]').locator('xpath=..').click();
+await p.waitForTimeout(400);
+const secret=await p.locator('.auth-info__secret .secret-code__code').textContent();
+if(!secret||secret.length<20||/[*∗]/.test(secret))throw new Error('App Secret not visible or invalid');
+const data='FEISHU_APP_ID=cli_aa476f5e72789ccc\nFEISHU_APP_SECRET='+secret.trim()+'\nFEISHU_ALLOWED_OPEN_IDS=\nAGENT_MODE=mock\nCODEX_BIN=codex\n';
+writeFileSync(path.resolve('.env'),data,{mode:0o600});
+console.log('Stored Feishu credentials locally; redacted; secret characters:',secret.trim().length);
+await c.close();

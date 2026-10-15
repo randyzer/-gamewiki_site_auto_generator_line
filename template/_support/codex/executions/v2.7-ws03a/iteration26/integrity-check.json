@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "protectedFilesUnchanged": 6119,
+  "exact13": true,
+  "iteration23HistoryUnchanged": true,
+  "productDelta": 0,
+  "governanceDelta": 0,
+  "errors": [],
+  "ContractSHA": "1ff2bd01a089975c6b22bff48ca71faffe2be9c710d0123afd3ae47acc7ac24c",
+  "canonicalCapabilityRows": 41,
+  "uniqueCapabilityIds": 41,
+  "duplicateCapabilityRows": 0,
+  "histories23through25Unchanged": true
+}

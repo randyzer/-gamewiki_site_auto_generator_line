@@ -1,0 +1,50 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 28"
+      - text: "WORKSTREAM: WS03B"
+      - text: "VERDICT:"
+      - strong: BLOCKED — TARGETED MEDIA QUALIFICATION
+    - paragraph:
+      - text: 独立复核支持本轮 STOP。03B 当前
+      - strong: 不能接受 continuation
+      - text: ，但也
+      - strong: 没有证据支持修改媒体产品实现来修 WebKit
+      - text: 。
+    - paragraph: 我确认的关键事实：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: scope = exact 18 files RED = 9 FAIL / 189 PASS GREEN = 243 PASS root = 807 PASS / Astro 0 adoption/diff = PASS targeted attempts = 1 retry = 0 rows = 6/6 executed Chromium = 2/2 PASS Firefox = 2/2 PASS WebKit = 0/2 PASS fresh47 = NOT_STARTED
+    - paragraph:
+      - text: WebKit 每个 viewport 都只有
+      - strong: 1 条 assertion FAIL
+      - text: 。更关键的是，同一页面存在两个相同 qa.image：manifest 同时将它映射为 hero 和 gallery。WebKit 中第一个 qa.image：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: naturalWidth = 1200 naturalHeight = 675 complete = true
+    - paragraph: 而后出现的第二个 qa.image：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: width = "1200" height = "675" naturalWidth = 0 naturalHeight = 0 complete = false
+    - paragraph:
+      - text: 结合实际 harness，我认为下一轮优先级已经很明确：page.goto(... networkidle) 后只等待了
+      - strong: local video metadata
+      - text: ，没有等待 lazy images；GameMedia 的 gallery image 使用 loading="lazy"。因此“
+      - strong: WebKit没有在 off-screen gallery image 被观察前启动/完成 lazy load
+      - text: ”已经是一个强诊断假设，但还不能直接算 PASS，也不能直接用 scroll 修 harness后重跑。
+    - paragraph:
+      - text: 另外，静态 audit whitespace 假设确实有代码依据：schema 的 .trim() 只处理首尾空白，内部连续空格/换行仍合法；而 media-validation.ts 的 tagText() 会把可见空白折叠成一个空格，再与未折叠的 authored credit.text / equivalent exact compare。这是一个值得用 RED 正式确认的
+      - strong: 独立 audit defect candidate
+      - text: 。
+    - paragraph: 正式状态：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03B: BLOCKED iteration28 targeted FAIL: PRESERVED PRODUCT MEDIA RENDERING DEFECT: NOT ESTABLISHED TARGETED HARNESS LAZY-LOAD DEFECT: STRONGLY SUSPECTED, NOT YET PROVEN fresh47: NOT_STARTED WS03C: NOT STARTED Safari proof: 0 WS06A FULL: BLOCKED Capability promotion: NONE"
+    - paragraph: 下一轮可以把 diagnosis、有限修复和剩余 continuation evidence 放在一个有硬 STOP 的有限序列里。
+

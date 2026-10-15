@@ -1,0 +1,16 @@
+{
+  "capturedAt": "2026-10-06T03:02:51.797Z",
+  "reportExistedAtCapture": false,
+  "actualQualificationBuildRoot": "/private/var/folders/sx/0vw4jt396yj64d3ydl1qls9h0000gn/T/starter-adoption-verification-lKgZMx",
+  "observed": {
+    "fixtureSourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+    "distSha256": "4a8a31401cb208cc2f8e3ccdc63481590123224e4a57052b7d8b71fdbca1b139"
+  },
+  "preparedManualBuild": {
+    "sourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+    "distSha256": "5af57170dac4c473f46a3893352c81aba2193b50140dc47be657d52e52f42d48"
+  },
+  "fixtureSourceEqual": true,
+  "distEqual": false,
+  "method": "Read actual independent source/dist during frozen runner execution before its report exists; actual engines captured independently by preparation."
+}

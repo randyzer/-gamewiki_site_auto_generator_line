@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Site Prelaunch Gate"
+  short_description: "Evidence-based release checks for game guide sites"
+  default_prompt: "Use $game-site-prelaunch-gate to inspect a game guide site before launch."

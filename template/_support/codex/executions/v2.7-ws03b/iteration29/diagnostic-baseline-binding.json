@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "diagnosticStarterSourceSha256": "12779642fb52ed536ec46c9b7074957cdf0d4d07354419c18ab390514a5c9d0b",
+  "expectedPreMutationSourceSha256": "12779642fb52ed536ec46c9b7074957cdf0d4d07354419c18ab390514a5c9d0b",
+  "byteIdenticalBeforeWhitespaceMutation": true
+}

@@ -1,0 +1,10 @@
+{
+  "observedAt": "2026-10-07T15:47:53.914018+00:00",
+  "status": "PASS",
+  "protectedFilesUnchanged": 5972,
+  "errors": [],
+  "acceptedReadinessSha256": "66fda796f98f9372abcfa972313d7dc62254679b6d78e77887964870c55150fa",
+  "actualIndependentReviewSha256": "dca1c1051d7e00104965b2f888610373367a41e2cafcbcef8c7fbfcc43f8e665",
+  "productDelta": 0,
+  "noPostReviewProductOrGovernanceChange": true
+}

@@ -1,0 +1,536 @@
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts
+@@ -9,6 +9,30 @@
+   url: string;
+   title: string;
+   excerpt: string;
++}
++
++export interface SearchProvider {
++  search(query: string): Promise<SearchResult[]>;
++}
++
++export type SearchOutcome =
++  | { status: "results"; query: string; results: SearchResult[] }
++  | { status: "empty" | "error"; query: string; results: [] };
++
++export async function runSearchProvider(
++  provider: SearchProvider,
++  rawQuery: string,
++): Promise<SearchOutcome> {
++  const query = normalizeQuery(rawQuery);
++  if (!query) return { status: "empty", query, results: [] };
++  try {
++    const results = await provider.search(query);
++    return results.length
++      ? { status: "results", query, results }
++      : { status: "empty", query, results: [] };
++  } catch {
++    return { status: "error", query, results: [] };
++  }
+ }
+ 
+ function normalizeQuery(value: string): string {
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-search-adapter.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-search-adapter.ts
+@@ -0,0 +1,38 @@
++import {
++  normalizeSearchResult,
++  type RawSearchResult,
++  type SearchProvider,
++} from "./search-state";
++
++interface PagefindModule {
++  init(): Promise<void>;
++  search(query: string): Promise<{
++    results: Array<{ data(): Promise<RawSearchResult> }>;
++  }>;
++}
++
++export async function createPagefindSearchProvider(
++  module: PagefindModule,
++): Promise<SearchProvider> {
++  await module.init();
++  return {
++    async search(query) {
++      const response = await module.search(query);
++      const hits = await Promise.all(
++        response.results.slice(0, 20).map(hit => hit.data()),
++      );
++      return hits.flatMap(hit => {
++        const result = normalizeSearchResult(hit);
++        return result ? [result] : [];
++      });
++    },
++  };
++}
++
++export async function loadPagefindSearchProvider(): Promise<SearchProvider> {
++  const pagefindPath = "/pagefind/pagefind.js";
++  const module = (await import(
++    /* @vite-ignore */ pagefindPath
++  )) as PagefindModule;
++  return createPagefindSearchProvider(module);
++}
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx
+@@ -5,100 +5,51 @@
+   useState,
+ } from "react";
+ 
++import { loadPagefindSearchProvider } from "../../core/pagefind-search-adapter";
+ import {
+   buildSearchLocation,
+-  normalizeSearchResult,
+   readSearchQuery,
+-  type RawSearchResult,
+-  type SearchResult,
++  runSearchProvider,
++  type SearchOutcome,
++  type SearchProvider,
+ } from "../../core/search-state";
+ 
+-interface PagefindHit {
+-  data: () => Promise<RawSearchResult>;
+-}
+-
+-interface PagefindModule {
+-  init: () => Promise<void>;
+-  search: (query: string) => Promise<{ results: PagefindHit[] }>;
+-}
+-
+-type SearchStatus = "idle" | "loading" | "ready" | "error";
++type SearchUiState = SearchOutcome | {
++  status: "idle" | "loading";
++  query: string;
++  results: [];
++};
+ 
+ export default function SearchIsland() {
+-  const pagefindRef = useRef<PagefindModule | null>(null);
++  const providerRef = useRef<Promise<SearchProvider> | null>(null);
+   const requestRef = useRef(0);
+   const [query, setQuery] = useState("");
+-  const [submittedQuery, setSubmittedQuery] = useState("");
+-  const [results, setResults] = useState<SearchResult[]>([]);
+-  const [status, setStatus] = useState<SearchStatus>("loading");
++  const [state, setState] = useState<SearchUiState>({ status: "idle", query: "", results: [] });
+ 
+-  async function runSearch(value: string, pagefind = pagefindRef.current) {
+-    const normalized = readSearchQuery(
+-      `?${new URLSearchParams({ q: value }).toString()}`,
+-    );
++  async function runSearch(value: string) {
++    const normalized = readSearchQuery(`?${new URLSearchParams({ q: value }).toString()}`);
+     const requestId = ++requestRef.current;
+-    setSubmittedQuery(normalized);
+-
+     if (!normalized) {
+-      setResults([]);
+-      setStatus("idle");
++      setState({ status: "idle", query: "", results: [] });
+       return;
+     }
+-
+-    if (!pagefind) {
+-      setStatus("loading");
+-      return;
+-    }
+-
+-    setStatus("loading");
++    setState({ status: "loading", query: normalized, results: [] });
+     try {
+-      const response = await pagefind.search(normalized);
+-      const rawResults = await Promise.all(
+-        response.results.slice(0, 20).map((result) => result.data()),
+-      );
+-      if (requestId !== requestRef.current) return;
+-
+-      setResults(
+-        rawResults.flatMap((result) => {
+-          const normalizedResult = normalizeSearchResult(result);
+-          return normalizedResult ? [normalizedResult] : [];
+-        }),
+-      );
+-      setStatus("ready");
++      providerRef.current ??= loadPagefindSearchProvider();
++      const provider = await providerRef.current;
++      const outcome = await runSearchProvider(provider, normalized);
++      if (requestId === requestRef.current) setState(outcome);
+     } catch {
+-      if (requestId === requestRef.current) {
+-        setResults([]);
+-        setStatus("error");
+-      }
++      providerRef.current = null;
++      if (requestId === requestRef.current) setState({ status: "error", query: normalized, results: [] });
+     }
+   }
+ 
+   useEffect(() => {
+-    let active = true;
+-
+-    async function initialize() {
+-      try {
+-        const pagefindPath = "/pagefind/pagefind.js";
+-        const pagefind = (await import(
+-          /* @vite-ignore */ pagefindPath
+-        )) as PagefindModule;
+-        await pagefind.init();
+-        if (!active) return;
+-
+-        pagefindRef.current = pagefind;
+-        const initialQuery = readSearchQuery(window.location.search);
+-        setQuery(initialQuery);
+-        await runSearch(initialQuery, pagefind);
+-      } catch {
+-        if (active) setStatus("error");
+-      }
+-    }
+-
+-    void initialize();
+-    return () => {
+-      active = false;
+-      requestRef.current += 1;
+-    };
++    const initialQuery = readSearchQuery(window.location.search);
++    setQuery(initialQuery);
++    void runSearch(initialQuery);
++    return () => { requestRef.current += 1; };
+   }, []);
+ 
+   function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+@@ -108,20 +59,22 @@
+   }
+ 
+   const statusMessage =
+-    status === "loading"
++    state.status === "loading"
+       ? "Searching the local index…"
+-      : status === "error"
+-        ? "The local search index could not be loaded. Try refreshing this page."
+-        : status === "ready" && submittedQuery
+-          ? `${results.length} result${results.length === 1 ? "" : "s"} for “${submittedQuery}”.`
+-          : "Enter a guide title, game term, or question.";
++      : state.status === "error"
++        ? "The local search index is unavailable. Try refreshing this page."
++        : state.status === "results"
++          ? `${state.results.length} result${state.results.length === 1 ? "" : "s"} for “${state.query}”.`
++          : state.status === "empty"
++            ? `No matching results for “${state.query}”. Try a shorter or broader term.`
++            : "Enter a guide title, game term, or question.";
+ 
+   return (
+-    <section className="search-console" aria-labelledby="search-console-title">
++    <section className="search-console" aria-labelledby="search-console-title" data-search-state={state.status}>
+       <div className="search-console__status">
+         <span className="signal-dot" aria-hidden="true" />
+         <div>
+-          <p id="search-console-title">Local index online</p>
++          <p id="search-console-title">Local site search</p>
+           <small>Queries stay in this browser and run against the static build.</small>
+         </div>
+       </div>
+@@ -146,16 +99,16 @@
+         {statusMessage}
+       </p>
+ 
+-      {status === "ready" && submittedQuery && results.length === 0 && (
++      {state.status === "empty" && (
+         <div className="search-empty">
+           <span aria-hidden="true">00</span>
+           <p>No matching dispatches. Try a shorter or broader term.</p>
+         </div>
+       )}
+ 
+-      {results.length > 0 && (
++      {state.status === "results" && (
+         <ol className="search-results">
+-          {results.map((result, index) => (
++          {state.results.map((result, index) => (
+             <li key={result.url}>
+               <span>{String(index + 1).padStart(2, "0")}</span>
+               <a href={result.url}>
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/normalize-pagefind-output.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/normalize-pagefind-output.ts
+@@ -138,16 +138,21 @@
+   optionalUiFiles: string[],
+ ): void {
+   if (optionalUiFiles.length === 0) return;
+-  const searchRuntimePath = join(projectRoot, "src/components/islands/SearchIsland.tsx");
+-  if (!existsSync(searchRuntimePath) || !lstatSync(searchRuntimePath).isFile()) {
+-    throw new Error(
+-      "Pagefind optional UI reference safety cannot be proven because the current Starter search runtime is missing.",
+-    );
++  const searchRuntimePaths = [
++    join(projectRoot, "src/components/islands/SearchIsland.tsx"),
++    join(projectRoot, "src/core/pagefind-search-adapter.ts"),
++  ];
++  for (const path of searchRuntimePaths) {
++    if (!existsSync(path) || !lstatSync(path).isFile()) {
++      throw new Error(
++        `Pagefind optional UI reference safety cannot be proven because the current Starter search runtime is missing: ${path}.`,
++      );
++    }
+   }
+   const pagefindDirectory = join(outputDirectory, "pagefind");
+   const referenceFiles = [
+     ...collectReferenceFiles(outputDirectory, pagefindDirectory),
+-    searchRuntimePath,
++    ...searchRuntimePaths,
+   ];
+   for (const path of referenceFiles) {
+     let content: Buffer;
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/search-state.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/search-state.test.ts
+@@ -62,3 +62,37 @@
+     expect(normalizeSearchResult({ url: "/../private/" })).toBeNull();
+   });
+ });
++
++
++describe("provider-neutral search outcomes", () => {
++  type Provider = { search(query: string): Promise<Array<{ url: string; title: string; excerpt: string }>> };
++  async function run(provider: Provider, query: string) {
++    const module = await import("../src/core/search-state");
++    const execute = Reflect.get(module, "runSearchProvider") as (provider: Provider, query: string) => Promise<unknown>;
++    return execute(provider, query);
++  }
++  it("returns explicit results using the normalized query", async () => {
++    const results = [{ url: "/guides/getting-started/", title: "Guide", excerpt: "Steps" }];
++    const queries: string[] = [];
++    expect(await run({ search: async query => { queries.push(query); return results; } }, "  Configure  ")).toEqual({ status: "results", query: "Configure", results });
++    expect(queries).toEqual(["Configure"]);
++  });
++  it("distinguishes zero results from provider failure", async () => {
++    expect(await run({ search: async () => [] }, "missing")).toEqual({ status: "empty", query: "missing", results: [] });
++    expect(await run({ search: async () => { throw new Error("private provider details"); } }, "missing")).toEqual({ status: "error", query: "missing", results: [] });
++  });
++  it("handles a synchronous provider throw without exposing internal errors", async () => {
++    expect(await run({ search: () => { throw new Error("private synchronous error"); } }, "term")).toEqual({ status: "error", query: "term", results: [] });
++  });
++  it("bounds the query before invoking the provider", async () => {
++    let actual = "";
++    const outcome = await run({ search: async query => { actual = query; return []; } }, " " + "a".repeat(140) + " ");
++    expect(actual).toHaveLength(120);
++    expect(outcome).toEqual({ status: "empty", query: "a".repeat(120), results: [] });
++  });
++  it("does not call a provider for a blank normalized query", async () => {
++    let calls = 0;
++    expect(await run({ search: async () => { calls++; return []; } }, "   ")).toEqual({ status: "empty", query: "", results: [] });
++    expect(calls).toBe(0);
++  });
++});
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-search-adapter.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-search-adapter.test.ts
+@@ -0,0 +1,39 @@
++import { describe, expect, it, vi } from "vitest";
++
++interface Module {
++  init(): Promise<void>;
++  search(query: string): Promise<{ results: Array<{ data(): Promise<{ url: string; meta?: Record<string, string>; excerpt?: string }> }> }>;
++}
++async function create(module: Module) {
++  const adapter = await import("../src/core/pagefind-search-adapter");
++  return adapter.createPagefindSearchProvider(module);
++}
++
++describe("Pagefind provider edge", () => {
++  it("initializes once and passes the query through its provider interface", async () => {
++    const init = vi.fn(async () => {}), search = vi.fn(async () => ({ results: [] }));
++    const provider = await create({ init, search });
++    expect(init).toHaveBeenCalledTimes(1);
++    await provider.search("Configure");
++    await provider.search("Second");
++    expect(init).toHaveBeenCalledTimes(1);
++    expect(search.mock.calls).toEqual([["Configure"], ["Second"]]);
++  });
++  it("consumes at most20 hits and normalizes their title/excerpt", async () => {
++    const hits = Array.from({ length: 25 }, (_, index) => ({ data: vi.fn(async () => ({ url: `/guides/item-${index}/`, meta: { title: "  Item  " }, excerpt: "A <mark>safe</mark> &amp; local answer" })) }));
++    const provider = await create({ init: async () => {}, search: async () => ({ results: hits }) });
++    const results = await provider.search("term");
++    expect(results).toHaveLength(20);
++    expect(results[0]).toEqual({ url: "/guides/item-0/", title: "Item", excerpt: "A safe & local answer" });
++    expect(hits.slice(0, 20).every(hit => hit.data.mock.calls.length === 1)).toBe(true);
++    expect(hits.slice(20).every(hit => hit.data.mock.calls.length === 0)).toBe(true);
++  });
++  it("discards unsafe external/protocol-relative/traversal/malformed hits", async () => {
++    const urls = ["https://external.example/", "//external.example/", "/../private/", "/%ZZ/", "/guides/safe/"];
++    const provider = await create({ init: async () => {}, search: async () => ({ results: urls.map(url => ({ data: async () => ({ url }) })) }) });
++    expect((await provider.search("term")).map(result => result.url)).toEqual(["/guides/safe/"]);
++  });
++  it("does not hide provider initialization failures", async () => {
++    await expect(create({ init: async () => { throw new Error("initialization failed"); }, search: async () => ({ results: [] }) })).rejects.toThrow("initialization failed");
++  });
++});
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-artifacts.test.ts
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-artifacts.test.ts
+@@ -111,6 +111,9 @@
+     'const pagefindPath = "/pagefind/pagefind.js";\n',
+   );
+ 
++  mkdirSync(join(projectRoot, "src/core"), { recursive: true });
++  writeFileSync(join(projectRoot, "src/core/pagefind-search-adapter.ts"), 'const pagefindPath = "/pagefind/pagefind.js";\n');
++
+   const baseSizes = {
+     loader: 45_555,
+     worker: 41_255,
+@@ -301,6 +304,20 @@
+     })).toThrow(/pagefind-component-ui\.js.*referenced|reference safety/i);
+   });
+ 
++  it("fails closed and deletes nothing when the Pagefind adapter references optional UI", () => {
++    const fixture = createPagefindFixture({ optionalUi: true });
++    writeFileSync(join(fixture.projectRoot, "src/core/pagefind-search-adapter.ts"), 'import("/pagefind/pagefind-ui.js");\n');
++    expect(() => normalizePagefindOutput({ projectRoot: fixture.projectRoot, outputDirectory: fixture.outputDirectory, installedVersion: "1.5.2" })).toThrow(/pagefind-ui\.js.*referenced|reference safety/i);
++    expect(PAGEFIND_OPTIONAL_UI_FILES.every(file => existsSync(join(fixture.pagefindDirectory, file)))).toBe(true);
++  });
++
++  it("fails closed when the finite provider adapter source cannot be inspected", () => {
++    const fixture = createPagefindFixture({ optionalUi: true });
++    rmSync(join(fixture.projectRoot, "src/core/pagefind-search-adapter.ts"));
++    expect(() => normalizePagefindOutput({ projectRoot: fixture.projectRoot, outputDirectory: fixture.outputDirectory, installedVersion: "1.5.2" })).toThrow(/runtime|adapter|reference safety/i);
++    expect(PAGEFIND_OPTIONAL_UI_FILES.every(file => existsSync(join(fixture.pagefindDirectory, file)))).toBe(true);
++  });
++
+   it("fails closed when required runtime or locale artifacts are missing", () => {
+     const fixture = createPagefindFixture();
+     rmSync(join(fixture.pagefindDirectory, "pagefind-worker.js"));
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md
+@@ -370,3 +370,20 @@
+ ## Core browser evidence (WS-06A)
+ 
+ The dev-only `npm run check:browser` verifies 47 required cases against one final-built disposable Field Notes adoption using real Chromium, Firefox and WebKit. Install pinned dependencies and `npm exec -- playwright install chromium firefox webkit` first. See [Core browser evidence](docs/CORE_BROWSER_EVIDENCE.md) for matrix, Contract input, evidence output and fail-closed behavior. This adds to root check and both WS-02 adoption gates. It proves Core technical behavior only; manual visual/contrast, composed pages, real-game adoption and release remain separate. Browser results never populate capability outcomes automatically.
++
++
++## V2.7 WS03D search boundary
++
++This bounded search slice keeps `features.search` as the sole technical activation flag. The Core `SearchProvider` interface returns public `SearchResult[]`; completed outcomes distinguish results, empty and error. Pagefind remains the current implementation behind `pagefind-search-adapter.ts`, including its existing first20-hit and safe local result normalization. The UI owns form/history, request identity, loading and rendering; idle does not require provider loading and says “Local site search,” never claiming an unavailable index is online. Older requests cannot overwrite newer submissions.
++
++Pagefind1.5.2, the800000-byte normalized payload budget, required artifact contract and optional UI deletion policy remain fixed. Optional UI reference safety inspects both finite runtime source files: SearchIsland and the Pagefind adapter. References in either file block normalization. No alternate provider, remote service, ranking feature, analytics or query logging is introduced.
++
++Each adopting project must record its search decision outside Core config:
++
++- Decision: ENABLED or DISABLED.
++- Rationale and corpus/task basis, with a named decision owner and evidence reference.
++- The technical `features.search` value must agree with that decision. No duplicate activation boolean and no invented corpus-size claims.
++- Enabled search requires actual result/empty/error browser evidence and useful local results; a working provider alone does not prove that search should be enabled.
++- Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
++
++Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
+--- before/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
++++ after/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -411,3 +411,20 @@
+ Supplemental proof must cover exactly every failed case/assertion, with matching route/viewport/JS, Starter/source and independently captured manual fixture/final-dist identity. Record Safari/WebKit version, host, operator/date, real keys, observable focus/results and evidence artifacts. Accept only `HUMAN_PHYSICAL_KEYBOARD` or specifically authorized trusted system keyboard, never Playwright, injected events, programmatic focus/scroll, Option/Alt workarounds or changed Safari/macOS keyboard preferences. ArrowRight must genuinely move the table. The no-JS case must genuinely disable JavaScript; JS-enabled proof cannot substitute. A manifest declaration or synthesized positive unit fixture is not proof of real execution; an independent reviewer must inspect actual records/artifacts.
+ 
+ Human visual focus quality/contrast remains DEFERRED until separately reviewed. Core closure never completes AX-01/02/03 capability outcomes, assembled AX-03/PA-01, WS-06B, REF suites, WS-07 real adoption or release. Registry/outcome values are unchanged. Missing real Safari proof keeps WS-06A BLOCKED even when the policy implementation itself passes engineering tests.
++
++
++## V2.7 WS03D search boundary
++
++This bounded search slice keeps `features.search` as the sole technical activation flag. The Core `SearchProvider` interface returns public `SearchResult[]`; completed outcomes distinguish results, empty and error. Pagefind remains the current implementation behind `pagefind-search-adapter.ts`, including its existing first20-hit and safe local result normalization. The UI owns form/history, request identity, loading and rendering; idle does not require provider loading and says “Local site search,” never claiming an unavailable index is online. Older requests cannot overwrite newer submissions.
++
++Pagefind1.5.2, the800000-byte normalized payload budget, required artifact contract and optional UI deletion policy remain fixed. Optional UI reference safety inspects both finite runtime source files: SearchIsland and the Pagefind adapter. References in either file block normalization. No alternate provider, remote service, ranking feature, analytics or query logging is introduced.
++
++Each adopting project must record its search decision outside Core config:
++
++- Decision: ENABLED or DISABLED.
++- Rationale and corpus/task basis, with a named decision owner and evidence reference.
++- The technical `features.search` value must agree with that decision. No duplicate activation boolean and no invented corpus-size claims.
++- Enabled search requires actual result/empty/error browser evidence and useful local results; a working provider alone does not prove that search should be enabled.
++- Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
++
++Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md
+@@ -1653,3 +1653,20 @@
+ This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
+ close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
+ absent; release hold active and capability promotion NONE.
++
++
++## V2.7 WS03D search boundary
++
++This bounded search slice keeps `features.search` as the sole technical activation flag. The Core `SearchProvider` interface returns public `SearchResult[]`; completed outcomes distinguish results, empty and error. Pagefind remains the current implementation behind `pagefind-search-adapter.ts`, including its existing first20-hit and safe local result normalization. The UI owns form/history, request identity, loading and rendering; idle does not require provider loading and says “Local site search,” never claiming an unavailable index is online. Older requests cannot overwrite newer submissions.
++
++Pagefind1.5.2, the800000-byte normalized payload budget, required artifact contract and optional UI deletion policy remain fixed. Optional UI reference safety inspects both finite runtime source files: SearchIsland and the Pagefind adapter. References in either file block normalization. No alternate provider, remote service, ranking feature, analytics or query logging is introduced.
++
++Each adopting project must record its search decision outside Core config:
++
++- Decision: ENABLED or DISABLED.
++- Rationale and corpus/task basis, with a named decision owner and evidence reference.
++- The technical `features.search` value must agree with that decision. No duplicate activation boolean and no invented corpus-size claims.
++- Enabled search requires actual result/empty/error browser evidence and useful local results; a working provider alone does not prove that search should be enabled.
++- Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
++
++Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md
+@@ -431,3 +431,20 @@
+ - [ ] Share-only references create no body image or new visual placement; empty manifest remains structurally valid and missing share alone is not a noindex failure.
+ - [ ] Synthetic default media stays in disposable adopted QA projects; real-project rights and suitability require human review.
+ - [ ] Current three-engine head/local-asset proof, fresh unchanged47, residual/counterpart/closure identities and normal cleanup are recorded; original failures and Safari/formal/release holds remain explicit.
++
++
++## V2.7 WS03D search boundary
++
++This bounded search slice keeps `features.search` as the sole technical activation flag. The Core `SearchProvider` interface returns public `SearchResult[]`; completed outcomes distinguish results, empty and error. Pagefind remains the current implementation behind `pagefind-search-adapter.ts`, including its existing first20-hit and safe local result normalization. The UI owns form/history, request identity, loading and rendering; idle does not require provider loading and says “Local site search,” never claiming an unavailable index is online. Older requests cannot overwrite newer submissions.
++
++Pagefind1.5.2, the800000-byte normalized payload budget, required artifact contract and optional UI deletion policy remain fixed. Optional UI reference safety inspects both finite runtime source files: SearchIsland and the Pagefind adapter. References in either file block normalization. No alternate provider, remote service, ranking feature, analytics or query logging is introduced.
++
++Each adopting project must record its search decision outside Core config:
++
++- Decision: ENABLED or DISABLED.
++- Rationale and corpus/task basis, with a named decision owner and evidence reference.
++- The technical `features.search` value must agree with that decision. No duplicate activation boolean and no invented corpus-size claims.
++- Enabled search requires actual result/empty/error browser evidence and useful local results; a working provider alone does not prove that search should be enabled.
++- Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
++
++Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
+--- before/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
++++ after/Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md
+@@ -524,3 +524,20 @@
+ This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
+ close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
+ absent; release hold active and capability promotion NONE.
++
++
++## V2.7 WS03D search boundary
++
++This bounded search slice keeps `features.search` as the sole technical activation flag. The Core `SearchProvider` interface returns public `SearchResult[]`; completed outcomes distinguish results, empty and error. Pagefind remains the current implementation behind `pagefind-search-adapter.ts`, including its existing first20-hit and safe local result normalization. The UI owns form/history, request identity, loading and rendering; idle does not require provider loading and says “Local site search,” never claiming an unavailable index is online. Older requests cannot overwrite newer submissions.
++
++Pagefind1.5.2, the800000-byte normalized payload budget, required artifact contract and optional UI deletion policy remain fixed. Optional UI reference safety inspects both finite runtime source files: SearchIsland and the Pagefind adapter. References in either file block normalization. No alternate provider, remote service, ranking feature, analytics or query logging is introduced.
++
++Each adopting project must record its search decision outside Core config:
++
++- Decision: ENABLED or DISABLED.
++- Rationale and corpus/task basis, with a named decision owner and evidence reference.
++- The technical `features.search` value must agree with that decision. No duplicate activation boolean and no invented corpus-size claims.
++- Enabled search requires actual result/empty/error browser evidence and useful local results; a working provider alone does not prove that search should be enabled.
++- Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
++
++Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.
+--- before/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
++++ after/Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md
+@@ -1462,3 +1462,20 @@
+ This bounded WS03C slice does not establish SEO-02/MC-* capability PASS,
+ close formal WS03/WS06A, or permit release. Genuine Safari keyboard proof remains
+ absent; release hold active and capability promotion NONE.
++
++
++## V2.7 WS03D search boundary
++
++This bounded search slice keeps `features.search` as the sole technical activation flag. The Core `SearchProvider` interface returns public `SearchResult[]`; completed outcomes distinguish results, empty and error. Pagefind remains the current implementation behind `pagefind-search-adapter.ts`, including its existing first20-hit and safe local result normalization. The UI owns form/history, request identity, loading and rendering; idle does not require provider loading and says “Local site search,” never claiming an unavailable index is online. Older requests cannot overwrite newer submissions.
++
++Pagefind1.5.2, the800000-byte normalized payload budget, required artifact contract and optional UI deletion policy remain fixed. Optional UI reference safety inspects both finite runtime source files: SearchIsland and the Pagefind adapter. References in either file block normalization. No alternate provider, remote service, ranking feature, analytics or query logging is introduced.
++
++Each adopting project must record its search decision outside Core config:
++
++- Decision: ENABLED or DISABLED.
++- Rationale and corpus/task basis, with a named decision owner and evidence reference.
++- The technical `features.search` value must agree with that decision. No duplicate activation boolean and no invented corpus-size claims.
++- Enabled search requires actual result/empty/error browser evidence and useful local results; a working provider alone does not prove that search should be enabled.
++- Disabled search requires no search route/UI and no navigation targeting the excluded page. Pagefind build artifacts need not disappear in this slice.
++
++Mechanism/state evidence does not establish ranking quality, real-player demand, corpus usefulness or project decision appropriateness. Actual project binding belongs to Adaptation/Acceptance. Freshness/date/patch/verified/Popular/Live semantics are a separate slice. Safari proof remains0, WS06A FULL remains BLOCKED, formal WS03 remains NOT_ACCEPTED, capability promotion is NONE and release hold remains active until separate acceptance.

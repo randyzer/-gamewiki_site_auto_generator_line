@@ -1,0 +1,10 @@
+{
+  "exitCode": 0,
+  "command": "tsx iteration29/browser-media-contract.ts",
+  "targetedAttempts": 1,
+  "diagnosticSessions": 0,
+  "retryCount": 0,
+  "childPid": 27559,
+  "childGone": true,
+  "ownedTmpRoot": "/tmp/c2c29a.d6gHYK"
+}

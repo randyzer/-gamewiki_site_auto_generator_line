@@ -1,0 +1,719 @@
+{
+  "taskId": "c2c_a765",
+  "iteration": 14,
+  "purpose": "Pure native ArrowRight repeatability control; not qualification",
+  "identity": {
+    "playwright": "1.63.0",
+    "executable": "/Users/randyz/Library/Caches/ms-playwright/webkit-2359/pw_run.sh",
+    "revision": "2359",
+    "host": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.22.0"
+    },
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "html": "<div id=\"scroll\" tabindex=\"0\" style=\"width:320px;overflow-x:auto\"><table style=\"min-width:780px\"><tr><td>Native wide table</td></tr></table></div>",
+    "headless": true
+  },
+  "protocol": {
+    "plannedIndependentBrowserProcesses": 10,
+    "tabPerRun": 1,
+    "arrowRightPerRun": 1,
+    "retries": 0,
+    "programmaticFocus": false,
+    "programmaticScroll": false,
+    "corePages": false,
+    "coreCssOrJs": false,
+    "extraBrowserFlags": false,
+    "systemSettingsChanged": false
+  },
+  "runs": [
+    {
+      "number": 1,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 98,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 98,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 104,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 1128,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 1182,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 1339,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 1646,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 101,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 2,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 35,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 35,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 39,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 88,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 143,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 299,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 606,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 37,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 3,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 35,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 35,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 39,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 88,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 142,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 299,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 606,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 36,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 4,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 36,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 36,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 40,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 95,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 148,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 305,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 612,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 37,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 5,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 37,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 37,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 40,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 107,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 162,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 319,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 624,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 37,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 6,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 34,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 34,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 39,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 90,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 144,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 299,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 604,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 36,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 7,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 33,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 33,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 36,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 83,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 138,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 293,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 601,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 34,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 8,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 35,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 35,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 38,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 86,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 141,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 300,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 610,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 36,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 9,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 39,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 39,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 44,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 87,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 141,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 297,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 601,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 40,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    },
+    {
+      "number": 10,
+      "browserVersion": "26.6",
+      "before": {
+        "label": "before",
+        "time": 37,
+        "scrollLeft": 0,
+        "active": true
+      },
+      "geometry": {
+        "active": true,
+        "clientWidth": 320,
+        "scrollWidth": 780,
+        "overflowX": "auto",
+        "tableWidth": 780
+      },
+      "samples": [
+        {
+          "label": "before",
+          "time": 37,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "immediate",
+          "time": 41,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "next-frame",
+          "time": 82,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~50ms",
+          "time": 136,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~200ms",
+          "time": 292,
+          "scrollLeft": 0,
+          "active": true
+        },
+        {
+          "label": "~500ms",
+          "time": 598,
+          "scrollLeft": 0,
+          "active": true
+        }
+      ],
+      "keyEvents": [
+        {
+          "key": "ArrowRight",
+          "time": 39,
+          "targetId": "scroll",
+          "defaultPrevented": false
+        }
+      ],
+      "controlValid": true,
+      "nativeScrolled": false,
+      "contextClosed": true,
+      "browserClosed": true,
+      "error": null
+    }
+  ],
+  "validRuns": 10,
+  "scrolledRuns": 0,
+  "classification": "NATIVE_ARROW_UNAVAILABLE",
+  "error": null
+}

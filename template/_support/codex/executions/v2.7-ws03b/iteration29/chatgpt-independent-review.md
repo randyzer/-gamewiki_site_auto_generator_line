@@ -1,0 +1,33 @@
+- heading "ChatGPT 说：" [level=4]
+    - paragraph:
+      - text: "[C2C]"
+      - text: "STATE: REVIEW"
+      - text: "TASK_ID: c2c_a765"
+      - text: "ITERATION: 29"
+      - text: "WORKSTREAM: WS03B"
+      - text: "VERDICT:"
+      - strong: ACCEPT — WS03B IMPLEMENTATION FOR CONTINUATION
+    - paragraph:
+      - text: 我独立复核后，iteration29 可以接受为
+      - strong: continuation ACCEPT
+      - text: ，但仅限 WS03B 候选实现，不关闭正式 WS03 Gate。
+    - paragraph:
+      - text: 这次最关键的是 iteration28 的两个 WebKit FAIL 已经被真正解释，而不是“通过多等一会儿刷绿”。诊断把两个同 URL 的 qa.image 分成 hero/gallery DOM instance：WebKit 下 hero 已 complete=true / 1200×675，off-screen gallery 为 loading=lazy / complete=false / naturalWidth=0；一次自然 scrollIntoViewIfNeeded() 后，WebKit 两个 viewport 都新增真实 /media/qa-contract.svg request +
+      - strong: 200 response
+      - text: ，随后 gallery 变为 complete=true / naturalWidth=1200 / naturalHeight=675。这足以支持 HARNESS_LAZY_LOAD_CONFIRMED，而 iteration28 原 FAIL 仍原样保留。
+    - paragraph: 独立验收要点如下：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "diagnostic: 1 session 0 qualification 0 retry WebKit lazy gallery diagnosis = CONFIRMED conditional audit defect: RED = 3 FAIL / 23 PASS GREEN targeted = 247 PASS changed = media-validation.ts + media-audit.test.ts only visible whitespace normalized symmetrically different credit/equivalent text still rejected root: 46 files 811 tests PASS Astro 0 unadopted/adopted/diff PASS 03B targeted: 6 / 6 rows PASS 156 / 156 assertions PASS 1 attempt 0 retry original assertion lines unchanged fresh47: 47 executed 37 PASS 10 WebKit FAIL 0 NOT_RUN raw FAIL retained residual: 40 current 37 ENVIRONMENT_PROFILE_BLOCKED 3 PRODUCT_EVIDENCE_UNRESOLVED outside frozen40 = 0 vs iteration27: 40 persisted 0 disappeared 0 reappeared 0 new counterparts: Chromium 40 / 40 PASS Firefox 40 / 40 PASS closure: BLOCKED sole error = missing/invalid real Safari keyboard evidence"
+    - paragraph: Integrity 也成立：iteration29 只增加了 PLAN29 条件授权的两个文件变化；iteration28 历史冻结，6293 protected files unchanged，Contract 仍为 41 unique IDs，Core matrix/runner/closure/policy身份未改变。诊断、targeted、fresh47 三组临时环境也都正常 stop、PID gone、fixture gone、无 fallback signal、无未知 TMP residue。
+    - paragraph: 因此正式状态更新为：
+    - generic: 纯文本
+    - button "启用自动换行":
+    - button "复制":
+    - code: "WS03B: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03A: IMPLEMENTATION_ACCEPTED_FOR_CONTINUATION WS03 FORMAL GATE: NOT ACCEPTED WS06A FULL: BLOCKED Safari proof: 0 SEO-02 / MC-* capability PASS: NOT CLAIMED Capability promotion: NONE Release hold: ACTIVE"
+    - paragraph:
+      - text: 现在 standing authorization 允许进入
+      - strong: WS03C 单切片
+      - text: 。
+

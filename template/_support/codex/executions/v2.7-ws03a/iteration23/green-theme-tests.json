@@ -1,0 +1,7 @@
+{
+  "command": "npm run test -- tests/config.test.ts tests/theme.test.ts",
+  "exitCode": 0,
+  "passed": 53,
+  "testFiles": 2,
+  "observedAt": "2026-10-07T16:08:51.217496+00:00"
+}

@@ -1,0 +1,76 @@
+--- preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts
++++ postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts
+@@ -76,6 +76,10 @@
+   logoPath?: string;
+ }
+ 
++function normalizeVisibleText(text: string): string {
++  return text.replace(/\s+/g, " ").trim();
++}
++
+ function tagText(html: string): string {
+   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+ }
+@@ -177,7 +181,7 @@
+     if (decodeText(body).includes(asset.rightsRef) || /\bright[s]?Ref\b/.test(body + match[1])) errors.push(`Media ${id} exposes private rights evidence.`);
+     if (presentation.publicCredit) {
+       const credit = body.match(/<span\b[^>]*class="media-credit"[^>]*>([\s\S]*?)<\/span>/)?.[1];
+-      if (!credit || decodeText(tagText(credit)) !== presentation.publicCredit.text ||
++      if (!credit || normalizeVisibleText(decodeText(tagText(credit))) !== normalizeVisibleText(presentation.publicCredit.text) ||
+           (presentation.publicCredit.url && !openingTags(credit, "a").some(tag => attributes(tag).get("href") === presentation.publicCredit!.url))) errors.push(`Media ${id} public credit does not match its asset.`);
+     }
+     if (!frame.get("class")?.split(/\s+/).includes("game-media")) errors.push(`Media ${id} lacks its responsive figure class.`);
+@@ -198,7 +202,7 @@
+       const equivalent = presentation.videoEquivalent!;
+       const equivalentHtml = body.match(/<p\b[^>]*class="media-equivalent"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+       const equivalentText = equivalent.kind === "text" ? equivalent.text : equivalent.label;
+-      if (!equivalentHtml || decodeText(tagText(equivalentHtml)) !== equivalentText ||
++      if (!equivalentHtml || normalizeVisibleText(decodeText(tagText(equivalentHtml))) !== normalizeVisibleText(equivalentText) ||
+           (equivalent.kind === "link" && !openingTags(equivalentHtml, "a").some(tag => attributes(tag).get("href") === equivalent.href))) errors.push(`Media ${id} accessible equivalent does not match its asset.`);
+       if (asset.src.startsWith("/media/")) {
+         const videos = openingTags(body, "video");
+--- preimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts
++++ postimage/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts
+@@ -2,6 +2,8 @@
+ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { afterEach, describe, expect, it } from "vitest";
++
++import { imageAssetSchema, videoAssetSchema } from "../src/data/schemas/media";
+ 
+ const modules = import.meta.glob("../scripts/media-validation.ts");
+ const temporaryDirectories: string[] = [];
+@@ -143,3 +145,33 @@
+     expect(collectMediaHtmlErrors(hero + hero, [image], () => true, { heroMedia: image, galleryMedia: [] }).join(" ")).toMatch(/hero/);
+   });
+ });
++
++
++describe("WS03B visible-text whitespace semantics", () => {
++  it("accepts valid internal whitespace in public credit", async () => {
++    const { collectMediaHtmlErrors } = await validation();
++    const asset = imageAssetSchema.parse({ ...image, credit: { text: "Synthetic QA\n  author" } });
++    const html = imageHtml.replace("<figcaption>", '<figcaption><span class="media-credit">Synthetic QA author</span>');
++    expect(collectMediaHtmlErrors(html, [asset], () => true)).toEqual([]);
++  });
++  it("accepts valid internal whitespace in equivalent text", async () => {
++    const { collectMediaHtmlErrors } = await validation();
++    const asset = videoAssetSchema.parse({ ...video, accessibleEquivalent: { kind: "text", text: "Technical QA\n  equivalent" } });
++    const html = videoHtml.replace(video.accessibleEquivalent.text, "Technical QA equivalent");
++    expect(collectMediaHtmlErrors(html, [asset], () => true)).toEqual([]);
++  });
++  it("accepts valid internal whitespace in equivalent link labels", async () => {
++    const { collectMediaHtmlErrors } = await validation();
++    const asset = videoAssetSchema.parse({ ...video, accessibleEquivalent: { kind: "link", label: "Technical QA\n  equivalent", href: "/about/" } });
++    const html = videoHtml.replace(video.accessibleEquivalent.text, '<a href="/about/">Technical QA equivalent</a>');
++    expect(collectMediaHtmlErrors(html, [asset], () => true)).toEqual([]);
++  });
++  it("still rejects different credit, equivalent text and link label", async () => {
++    const { collectMediaHtmlErrors } = await validation();
++    const credit = imageAssetSchema.parse({ ...image, credit: { text: "Synthetic QA author" } });
++    expect(collectMediaHtmlErrors(imageHtml.replace("<figcaption>", '<figcaption><span class="media-credit">Different author</span>'), [credit], () => true).join(" ")).toMatch(/credit/);
++    expect(collectMediaHtmlErrors(videoHtml.replace(video.accessibleEquivalent.text, "A substantively different description."), [video], () => true).join(" ")).toMatch(/equivalent/);
++    const link = videoAssetSchema.parse({ ...video, accessibleEquivalent: { kind: "link", label: "Technical QA equivalent", href: "/about/" } });
++    expect(collectMediaHtmlErrors(videoHtml.replace(video.accessibleEquivalent.text, '<a href="/about/">A different label</a>'), [link], () => true).join(" ")).toMatch(/equivalent/);
++  });
++});

@@ -1,0 +1,573 @@
+{
+  "status": "FROZEN_DESIGN_INPUT_NOT_PASS_ALLOWLIST",
+  "sourceRaw": "template/codex/executions/v2.7-ws06a/iteration17/browser-evidence/core-browser-evidence.json",
+  "rawEvidenceSha256": "ea30f494c31872d3b262fe011859afba14a42bd7f12ec9f685ee92f38ffdb5ef",
+  "count": 40,
+  "dispositionCounts": {
+    "ENVIRONMENT_PROFILE_BLOCKED": 37,
+    "PRODUCT_EVIDENCE_UNRESOLVED": 3
+  },
+  "rows": [
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "target-size",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "nested-cleanup",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "ordinary-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:390x844",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "same-document-focus",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:390x844",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "table-local-scroll",
+      "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:390x844",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "recovery-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "target-size",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "nested-cleanup",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "ordinary-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:768x1024",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "same-document-focus",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:768x1024",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "table-local-scroll",
+      "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:768x1024",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "recovery-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:shell-nav:1280x800",
+      "category": "baseline",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "ordinary-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:content-detail:1280x800",
+      "category": "baseline",
+      "role": "content-detail",
+      "route": "/guides/getting-started/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "table-local-scroll",
+      "disposition": "PRODUCT_EVIDENCE_UNRESOLVED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "baseline:webkit:recovery-404:1280x800",
+      "category": "baseline",
+      "role": "recovery-404",
+      "route": "/__ws06a_missing_route__/",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "javascript": true,
+      "reducedMotion": "no-preference",
+      "assertion": "recovery-navigation",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "footer-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "skip-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "navigation-keyboard",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    },
+    {
+      "caseId": "no-js:webkit:shell-nav:390x844",
+      "category": "no-js",
+      "role": "shell-nav",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javascript": false,
+      "reducedMotion": "no-preference",
+      "assertion": "target-size",
+      "disposition": "ENVIRONMENT_PROFILE_BLOCKED"
+    }
+  ],
+  "meaning": "Exact initial residual comparison input; not Safari PASS, capability waiver or active development authorization."
+}

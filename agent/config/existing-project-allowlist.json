@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "bodycam": {
+      "path": "/Users/randyz/work/coding/hot_words_web/gameweb/game_bodycam",
+      "repository": "randyzer/game_bodycam",
+      "protectedPaths": ["background_information", "backgroundinformation"]
+    }
+  }
+}

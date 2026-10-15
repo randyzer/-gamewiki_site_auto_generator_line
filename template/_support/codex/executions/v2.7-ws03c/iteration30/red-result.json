@@ -1,0 +1,10 @@
+{
+  "exitCode": 1,
+  "failed": 18,
+  "passed": 217,
+  "tests": 235,
+  "files": 4,
+  "implementationWrittenBeforeRed": false,
+  "evidence": "red-complete.log",
+  "initialRed": "red-targeted.log:14FAIL217PASS"
+}

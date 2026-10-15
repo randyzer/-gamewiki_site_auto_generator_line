@@ -1,0 +1,16 @@
+{
+  "capturedAt": "2026-10-06T02:52:18.048Z",
+  "reportExistedAtCapture": false,
+  "actualQualificationBuildRoot": "/private/var/folders/sx/0vw4jt396yj64d3ydl1qls9h0000gn/T/starter-adoption-verification-ZWqOu4",
+  "observed": {
+    "fixtureSourceSha256": "896cbdccc0728d4360ea273c39c00b70e5ee8181d0e8ac5cff9df3bbb7dae17e",
+    "distSha256": "69861a59fc25eec05f77f66cd543785481d9b9b08d56634ea07c3583a9606c24"
+  },
+  "preparedManualBuild": {
+    "sourceSha256": "896cbdccc0728d4360ea273c39c00b70e5ee8181d0e8ac5cff9df3bbb7dae17e",
+    "distSha256": "cee1b78600bd88279ffb9dfbcf6e92bc980269f4da6e571a8eb327ed60872151"
+  },
+  "fixtureSourceEqual": true,
+  "distEqual": false,
+  "method": "Read actual independently produced fixture/source/dist while unchanged runner executes, before raw report exists. Engine identities captured independently in session preparation."
+}

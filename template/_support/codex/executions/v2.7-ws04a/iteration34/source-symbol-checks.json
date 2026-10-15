@@ -1,0 +1,335 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "const visualRolesSchema",
+      "exists": true
+    },
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "font: z.enum([\"editorial\", \"interface\"])",
+      "exists": true
+    },
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "density: z.enum([\"comfortable\", \"compact\"])",
+      "exists": true
+    },
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "shape: z.enum([\"square\", \"soft\"])",
+      "exists": true
+    },
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "state: z.enum([\"lifted\", \"quiet\"])",
+      "exists": true
+    },
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "visualRoles: visualRolesSchema.optional()",
+      "exists": true
+    },
+    {
+      "path": "src/config/schema.ts",
+      "symbolOrField": "features: z.object(featureFlagsShape).strict()",
+      "exists": true
+    },
+    {
+      "path": "src/core/theme-roles.ts",
+      "symbolOrField": "export const DEFAULT_VISUAL_ROLES",
+      "exists": true
+    },
+    {
+      "path": "src/core/theme-roles.ts",
+      "symbolOrField": "export function resolveVisualRoles",
+      "exists": true
+    },
+    {
+      "path": "src/core/theme-roles.ts",
+      "symbolOrField": "export type ResolvedVisualRoles",
+      "exists": true
+    },
+    {
+      "path": "src/layouts/BaseLayout.astro",
+      "symbolOrField": "data-theme-font",
+      "exists": true
+    },
+    {
+      "path": "src/layouts/BaseLayout.astro",
+      "symbolOrField": "data-theme-density",
+      "exists": true
+    },
+    {
+      "path": "src/layouts/BaseLayout.astro",
+      "symbolOrField": "data-theme-shape",
+      "exists": true
+    },
+    {
+      "path": "src/layouts/BaseLayout.astro",
+      "symbolOrField": "data-theme-state",
+      "exists": true
+    },
+    {
+      "path": "src/layouts/BaseLayout.astro",
+      "symbolOrField": "resolveShareMetadata(siteConfig, mediaCatalog.getShareMedia(page.pageId))",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "export const mediaManifestSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "export const imageAssetSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "export const videoAssetSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "export function parseMediaManifest",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "dimensions: dimensionsSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "rightsRef: z.string().trim().min(1)",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "credit: creditSchema.optional()",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "accessibleEquivalent: accessibleEquivalentSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "share: mediaIdSchema.optional()",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/media.ts",
+      "symbolOrField": "defaultShare: mediaIdSchema.optional()",
+      "exists": true
+    },
+    {
+      "path": "src/data/media/catalog.ts",
+      "symbolOrField": "export function createMediaCatalog",
+      "exists": true
+    },
+    {
+      "path": "src/data/media/catalog.ts",
+      "symbolOrField": "export const mediaCatalog",
+      "exists": true
+    },
+    {
+      "path": "src/data/media/catalog.ts",
+      "symbolOrField": "getShareMedia(pageId: string)",
+      "exists": true
+    },
+    {
+      "path": "src/data/media/catalog.ts",
+      "symbolOrField": "getPageMedia(pageId: string)",
+      "exists": true
+    },
+    {
+      "path": "src/data/media/catalog.ts",
+      "symbolOrField": "getPresentation(id: string)",
+      "exists": true
+    },
+    {
+      "path": "src/core/media-presentation.ts",
+      "symbolOrField": "export function resolveMediaPresentation",
+      "exists": true
+    },
+    {
+      "path": "src/components/media/GameMedia.astro",
+      "symbolOrField": "resolveMediaPresentation",
+      "exists": true
+    },
+    {
+      "path": "src/components/media/VideoEmbed.astro",
+      "symbolOrField": "resolveMediaPresentation",
+      "exists": true
+    },
+    {
+      "path": "src/components/media/ScreenshotGallery.astro",
+      "symbolOrField": "GameMedia",
+      "exists": true
+    },
+    {
+      "path": "src/core/seo.ts",
+      "symbolOrField": "export function resolveShareMetadata",
+      "exists": true
+    },
+    {
+      "path": "scripts/media-validation.ts",
+      "symbolOrField": "export function collectMediaHtmlErrors",
+      "exists": true
+    },
+    {
+      "path": "scripts/media-validation.ts",
+      "symbolOrField": "export function collectShareHtmlErrors",
+      "exists": true
+    },
+    {
+      "path": "src/core/search-state.ts",
+      "symbolOrField": "export interface SearchProvider",
+      "exists": true
+    },
+    {
+      "path": "src/core/search-state.ts",
+      "symbolOrField": "export type SearchOutcome",
+      "exists": true
+    },
+    {
+      "path": "src/core/search-state.ts",
+      "symbolOrField": "export async function runSearchProvider",
+      "exists": true
+    },
+    {
+      "path": "src/core/search-state.ts",
+      "symbolOrField": "export function normalizeSearchResult",
+      "exists": true
+    },
+    {
+      "path": "src/core/pagefind-search-adapter.ts",
+      "symbolOrField": "export async function createPagefindSearchProvider",
+      "exists": true
+    },
+    {
+      "path": "src/core/pagefind-search-adapter.ts",
+      "symbolOrField": "export async function loadPagefindSearchProvider",
+      "exists": true
+    },
+    {
+      "path": "src/components/islands/SearchIsland.tsx",
+      "symbolOrField": "loadPagefindSearchProvider",
+      "exists": true
+    },
+    {
+      "path": "src/components/islands/SearchIsland.tsx",
+      "symbolOrField": "runSearchProvider",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/page-inventory.ts",
+      "symbolOrField": "export const liveStatusSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/page-inventory.ts",
+      "symbolOrField": "export const pageInventoryEntrySchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/page-inventory.ts",
+      "symbolOrField": "publishedAt: isoDateSchema.optional()",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/page-inventory.ts",
+      "symbolOrField": "updatedAt: isoDateSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/page-inventory.ts",
+      "symbolOrField": "liveStatus: liveStatusSchema.optional()",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/provenance.ts",
+      "symbolOrField": "export const provenanceSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/provenance.ts",
+      "symbolOrField": "accessedAt: isoDateSchema",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/facts.ts",
+      "symbolOrField": "patch:",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/facts.ts",
+      "symbolOrField": "updatedAt:",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/tools.ts",
+      "symbolOrField": "patch:",
+      "exists": true
+    },
+    {
+      "path": "src/data/schemas/tools.ts",
+      "symbolOrField": "updatedAt:",
+      "exists": true
+    },
+    {
+      "path": "src/core/freshness.ts",
+      "symbolOrField": "export interface VersionContext",
+      "exists": true
+    },
+    {
+      "path": "src/core/freshness.ts",
+      "symbolOrField": "export function latestSourceAccessedAt",
+      "exists": true
+    },
+    {
+      "path": "src/core/freshness.ts",
+      "symbolOrField": "export function resolvePageFreshness",
+      "exists": true
+    },
+    {
+      "path": "src/components/EditorialArticle.astro",
+      "symbolOrField": "resolvePageFreshness",
+      "exists": true
+    },
+    {
+      "path": "src/components/wiki/WikiArticle.astro",
+      "symbolOrField": "resolvePageFreshness",
+      "exists": true
+    },
+    {
+      "path": "src/components/wiki/Sources.astro",
+      "symbolOrField": "latestSourceAccessedAt",
+      "exists": true
+    },
+    {
+      "path": "src/components/EntityDetail.astro",
+      "symbolOrField": "Recorded version",
+      "exists": true
+    },
+    {
+      "path": "src/components/EntityDetail.astro",
+      "symbolOrField": "Recorded patch",
+      "exists": true
+    },
+    {
+      "path": "src/pages/index.astro",
+      "symbolOrField": "Ordered by recorded update date",
+      "exists": true
+    },
+    {
+      "path": "src/core/media-readiness.ts",
+      "symbolOrField": "MEDIA_DECISION_TABLE.md",
+      "exists": true
+    }
+  ]
+}

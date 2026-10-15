@@ -1,0 +1,34 @@
+[
+  {
+    "name": "root-check",
+    "command": "npm run check",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T01:22:19.894Z",
+    "finishedAt": "2026-10-08T01:22:41.279Z"
+  },
+  {
+    "name": "unadopted-final",
+    "command": "npm run verify:unadopted-final",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T01:22:41.279Z",
+    "finishedAt": "2026-10-08T01:22:42.055Z"
+  },
+  {
+    "name": "adopted-final",
+    "command": "npm run verify:adopted-final",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T01:22:42.055Z",
+    "finishedAt": "2026-10-08T01:23:05.165Z"
+  },
+  {
+    "name": "git-diff-check",
+    "command": "git diff --check",
+    "cwd": "/Users/randyz/work/coding/hot_words_web/Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T01:23:05.166Z",
+    "finishedAt": "2026-10-08T01:23:05.194Z"
+  }
+]

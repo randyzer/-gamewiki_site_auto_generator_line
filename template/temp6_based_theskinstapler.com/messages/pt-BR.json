@@ -1,0 +1,281 @@
+{
+  "nav": [
+    "Início",
+    "Wiki",
+    "Detonado",
+    "Final",
+    "Guias",
+    "Guia iniciante"
+  ],
+  "homeTitle": "Midnight Evidence",
+  "homeDescription": "Siga uma hora desaparecida pelas ruas chuvosas de Blackwater City nos anos 1980, como a detetive Mara Vale e outros personagens jogáveis. Investigue cenas de crime, resolva enigmas inquietantes, sobreviva a turnos comuns que saem do controle e rastreie as gravações anônimas deixadas pelo Guardião do Sinal.",
+  "badge": "Wiki de Horror Analógico Feita por Fãs",
+  "buttons": [
+    "Começar guia iniciante",
+    "Explorar personagens",
+    "Ver todos os guias"
+  ],
+  "trailer": "▶ Explorar as Notas do Projeto",
+  "stats": [
+    "14 Capítulos de História",
+    "4 Perspectivas Jogáveis",
+    "12 Gravações Ocultas",
+    "16 Arquivos de Caso",
+    "Horror para Um Jogador"
+  ],
+  "start": [
+    "Comece aqui",
+    "Sua Jornada por Blackwater City"
+  ],
+  "mechanicsHeading": [
+    "Dentro da investigação",
+    "Mecânicas Principais"
+  ],
+  "mechanicsIntro": "Quatro sistemas definem uma noite em Blackwater City: investigação de cenas baseada em evidências, gravações de áudio anônimas, várias perspectivas jogáveis e uma apresentação de horror analógico construída com cenários low-poly e rotinas noturnas inquietantes.",
+  "mechanics": [
+    {
+      "title": "Investigação de Cenas de Crime",
+      "description": "Explore salas silenciosas, compare depoimentos e acompanhe as evidências pelas ruas de Blackwater City."
+    },
+    {
+      "title": "Gravações de Áudio Anônimas",
+      "description": "Escute além da voz. Os sons de fundo conectam cada gravação a um lugar e à hora desaparecida."
+    },
+    {
+      "title": "Várias Perspectivas Jogáveis",
+      "description": "Saia da mesa da detetive e viva a mesma noite pelos olhos dos trabalhadores esquecidos da cidade."
+    },
+    {
+      "title": "Apresentação de Horror Analógico",
+      "description": "Cenários low-poly, transmissões noturnas e silêncios inquietantes dão a cada capítulo sua própria identidade."
+    }
+  ],
+  "popular": [
+    "Guias populares",
+    "Personagens, Elenco e História"
+  ],
+  "aboutTitle": "O que é Midnight Evidence?",
+  "about": [
+    "Midnight Evidence é uma aventura de horror fictícia e original, imaginada pelo estúdio Hollow Signal e sua parceira de publicação Lantern House. Ambientada em Blackwater City nos anos 1980, acompanha Mara Vale e Ellis Reed na investigação de uma hora ausente nos registros de emergência. Um remetente anônimo deixa vozes gravadas e sons de fundo que não correspondem à cronologia oficial.",
+    "O conceito destaca atmosfera, observação e tensão. Os jogadores comparam evidências, resolvem enigmas ambientais e alternam perspectivas em lanchonetes, cinemas, salas de rádio e plataformas ferroviárias desertas. Mudanças na rotina, diálogos contidos e uma linguagem visual low-poly transformam espaços familiares em lugares inquietantes.",
+    "Esta é uma demonstração funcional de website com um universo original, não um jogo comercial lançado. O arquivo organiza seu material fictício como um guia prático: rotas iniciais primeiro, revelações opcionais em páginas próprias e avisos claros para notas ainda incompletas. A wiki cobre:",
+    "Todas as informações do jogo, nomes de estúdios e ilustrações são conteúdo original de demonstração. Não se afirmam lançamentos, vendas, avaliações ou parcerias reais. As notas seguem uma cronologia fictícia consistente e separam observações das revelações finais. Use a busca no cabeçalho ou abra o índice para encontrar rapidamente uma nota de caso."
+  ],
+  "aboutList": [
+    "Uma rota de capítulos com spoilers nos guias correspondentes",
+    "Dicas de enigmas que começam pela observação antes da solução",
+    "Dezesseis arquivos de caso e depoimentos opcionais",
+    "A transmissão final com limite de spoilers bem identificado",
+    "Papéis dos personagens e a proposta criativa do projeto"
+  ],
+  "facts": [
+    [
+      "Desenvolvedor",
+      "Hollow Signal"
+    ],
+    [
+      "Publicadora",
+      "Lantern House"
+    ],
+    [
+      "Formato",
+      "Conceito Fictício de Jogo"
+    ],
+    [
+      "Gênero",
+      "Aventura de Horror Analógico"
+    ],
+    [
+      "Capítulos",
+      "14"
+    ],
+    [
+      "Arquivos de Caso",
+      "16"
+    ],
+    [
+      "Gravações",
+      "12"
+    ],
+    [
+      "Idiomas do Arquivo",
+      "5"
+    ]
+  ],
+  "faqHeading": [
+    "Respostas rápidas",
+    "Perguntas Frequentes"
+  ],
+  "faq": [
+    [
+      "O que é Midnight Evidence?",
+      "Uma aventura de horror fictícia e original para esta demonstração de website. Mara Vale e outros personagens seguem gravações anônimas por Blackwater City."
+    ],
+    [
+      "Quando Midnight Evidence foi lançado?",
+      "O projeto é uma demonstração de website, não um jogo lançado comercialmente. As datas registram a publicação das notas originais do arquivo."
+    ],
+    [
+      "Em quais plataformas está disponível?",
+      "O conceito fictício imagina uma aventura para Windows PC. Esta demonstração não oferece versões para consoles, celular ou macOS, nem arquivos para download."
+    ],
+    [
+      "Midnight Evidence tem multiplayer?",
+      "O conceito é para um jogador. As perspectivas acompanham personagens diferentes na mesma noite, sem cooperação ou modos competitivos."
+    ],
+    [
+      "Quantos arquivos de caso existem?",
+      "O plano fictício inclui dezesseis casos, doze gravações e quatorze capítulos. Depoimentos opcionais ampliam os detalhes da investigação principal."
+    ],
+    [
+      "Existe uma demo gratuita?",
+      "Não há demo de jogo para baixar. O website de guias funciona, com rota iniciante, notas de capítulos e referências originais de história."
+    ]
+  ],
+  "sidebarTitle": "Links do Projeto",
+  "sidebarLinks": [
+    "Visão geral do projeto",
+    "Estúdio e produção",
+    "Rota dos capítulos",
+    "Gravações e evidências",
+    "Perfis dos personagens"
+  ],
+  "languageNote": [
+    "Idioma do jogo",
+    "O projeto fictício usa pistas e áudio em inglês. Este arquivo de guias está disponível em cinco idiomas."
+  ],
+  "cta": [
+    "Pronto para Explorar Blackwater City?",
+    "Acompanhe o caso sem perder o fio e use ajuda consciente de spoilers quando uma cena, gravação, objetivo ou enigma interromper sua investigação. Os guias separam observações de revelações para você decidir quanto do mistério deseja conhecer.",
+    "Ler o Guia Iniciante",
+    "Explorar o Arquivo de Casos"
+  ],
+  "guidesTitle": "Guias de Investigação",
+  "guidesDescription": "Rotas práticas e páginas de referência de Midnight Evidence, com spoilers e detalhes incompletos claramente identificados.",
+  "openGuide": "Abrir guia →",
+  "categories": {
+    "Guide": "Guia",
+    "Release": "Lançamento",
+    "Platforms": "Plataformas",
+    "Community": "Comunidade",
+    "Cast": "Elenco",
+    "Story": "História",
+    "Reviewed": "Revisado",
+    "Draft": "Faltam detalhes"
+  },
+  "article": {
+    "guide": "Guia de jogo",
+    "spoilers": "História · spoilers",
+    "note": "Spoilers e dúvidas identificados",
+    "caption": "Ilustração conceitual original de Blackwater City.",
+    "credit": "Projeto fictício · Arte original",
+    "related": "Guias relacionados",
+    "continue": "Continue explorando Blackwater City"
+  },
+  "callout": [
+    "Primeira Reunião do Caso",
+    "Uma rota com poucos spoilers pela sua primeira noite na cidade.",
+    "Guia iniciante",
+    "Explore o arquivo de casos",
+    "Leia a rota inicial ou explore o arquivo completo de casos.",
+    "Todos os guias de investigação"
+  ],
+  "footerDescription": "Midnight Evidence Wiki é um arquivo independente de demonstração com detonados, personagens, gravações, enigmas, casos, capítulos e informações de história de Blackwater City. Mantemos revelações separadas da ajuda iniciante e distinguimos observações de hipóteses. O universo, nomes de estúdios, histórico de produção e ilustrações locais são conteúdo fictício original. Não há afiliação com desenvolvedores ou publicadoras reais.",
+  "footerNote": "Conteúdo original de demonstração; sem jogo comercial, números de vendas ou downloads.",
+  "footerGroups": [
+    "Guias",
+    "Links do Projeto",
+    "Legal"
+  ],
+  "footerGuides": [
+    "Central da Wiki",
+    "Personagens",
+    "Detonado",
+    "Final",
+    "Todos os Guias",
+    "Guia Iniciante"
+  ],
+  "footerProject": [
+    "Visão Geral",
+    "Notas do Estúdio",
+    "Gravações",
+    "Perguntas e Respostas"
+  ],
+  "legal": [
+    "Privacidade",
+    "Termos de Uso",
+    "Sobre",
+    "Contato"
+  ],
+  "copyright": "Arquivo independente de demonstração.",
+  "credits": "Midnight Evidence, Hollow Signal e Lantern House são nomes de projetos fictícios.",
+  "search": {
+    "label": "Buscar nesta wiki",
+    "placeholder": "Buscar na Midnight Evidence Wiki",
+    "popular": "Buscas populares",
+    "results": "Guias encontrados",
+    "empty": "Nenhuma nota encontrada. Tente outro título ou assunto.",
+    "keyboard": "↑↓ Navegar · Enter Abrir",
+    "close": "Fechar busca"
+  },
+  "menuLabel": "Alternar menu móvel",
+  "skip": "Pular para o conteúdo principal",
+  "notFound": [
+    "Arquivo de caso não encontrado",
+    "Esta página não está no arquivo. Volte ao índice para encontrar uma nota existente.",
+    "Ver todos os guias"
+  ],
+  "previewGuide": "Prévia →",
+  "aboutSections": [
+    {
+      "title": "A história e o cenário de Blackwater City",
+      "paragraphs": [
+        "Mara Vale e Ellis Reed encontram uma falha nos registros de emergência: uma hora inteira desapareceu. As testemunhas lembram de um trem, de uma transmissão de rádio e de um cliente que chegou depois do fechamento, mas nada disso consta no relatório. Gravações anônimas levam os detetives de volta a lugares comuns à luz do dia.",
+        "A história alterna a investigação com as pessoas que trabalhavam naquela noite. Um recibo, uma programação de cinema e um relógio da estação descrevem a mesma hora de formas diferentes. Cada capítulo acrescenta contexto antes de pedir que você decida se deve confiar em uma lembrança ou em um documento."
+      ]
+    },
+    {
+      "title": "Como funciona a investigação",
+      "paragraphs": [
+        "O conceito reúne pequenos cenários, conversas e quebra-cabeças ambientais. Leia o objetivo atual, examine objetos de vários ângulos e compare os detalhes com seu caderno. Os desafios normalmente começam com algo que você pode ver ou ouvir, em vez de uma senha escondida sem explicação. Uma etiqueta alterada pode importar tanto quanto uma porta trancada.",
+        "Os trechos civis começam com tarefas rotineiras: atender um pedido, verificar a sala de projeção ou concluir uma ronda de manutenção. Essas tarefas mostram como o lugar costuma funcionar. Quando a rotina muda, você entende o problema. A proposta valoriza atmosfera e observação paciente, sem combate ou gerenciamento de um inventário enorme."
+      ]
+    },
+    {
+      "title": "Personagens e notas de interpretação",
+      "paragraphs": [
+        "Mara acompanha o caso na delegacia, enquanto Ellis compara registros e depoimentos. Nina Hart lembra do restaurante por meio dos pedidos e recibos. Cass Rowan identifica um rolo de filme com a etiqueta errada. Owen Park conhece os equipamentos que deveriam ficar desligados na estação. Esse conhecimento revela detalhes que escapariam aos detetives.",
+        "As notas de elenco descrevem papéis fictícios e orientações de interpretação. Não afirmam que atores reais gravaram falas ou que existe um jogo comercial em produção. As prévias apresentam locais e perspectivas; perfis incompletos permanecem no índice até que um artigo completo seja publicado."
+      ]
+    },
+    {
+      "title": "A rota inicial e o conceito completo",
+      "paragraphs": [
+        "A abertura imaginada passa pela delegacia, pelo restaurante noturno e pela Blackwater Station. Ela apresenta o caderno, a inspeção de objetos e a primeira gravação anônima. Depois a investigação alcança um cinema e uma sala de rádio. Os primeiros capítulos explicam os sistemas sem revelar o motivo final da hora desaparecida.",
+        "Capítulos posteriores voltam aos mesmos locais por outros pontos de vista. Um detalhe que parecia decoração vira evidência quando surge em um segundo relato. Este site demonstra a estrutura de guias desse conceito; não oferece demo jogável, download, data de lançamento ou loja para um jogo real."
+      ]
+    },
+    {
+      "title": "Plataformas, idiomas e materiais",
+      "paragraphs": [
+        "O planejamento imagina uma aventura individual para PC, com objetivos legíveis, legendas opcionais e interações simples. É uma proposta criativa, não uma lista de requisitos técnicos. O projeto fictício não apresenta instalador para Windows, versão para consoles ou celular, nem suporte de idiomas de um jogo lançado.",
+        "O site funciona em inglês, alemão, português do Brasil, espanhol e chinês simplificado. As versões compartilham o mesmo layout e usam textos próprios. As cenas SVG originais ficam armazenadas localmente, e os artigos vêm de arquivos MDX, sem serviços remotos ou imagens copiadas da referência."
+      ]
+    },
+    {
+      "title": "Ajuda para sua primeira visita",
+      "paragraphs": [
+        "Comece pelos cartões iniciais para entender a organização do arquivo. O índice oferece prévias de enigmas, gravações, objetivos e perfis. Uma prévia indica que o texto completo ainda não foi publicado. Assim os assuntos mantêm seu espaço sem fingir respostas prontas ou criar páginas de artigos vazias.",
+        "O artigo do desenvolvedor é o exemplo completo. Ele explica o estúdio fictício, a parceria editorial e as ideias de Blackwater City. A busca no cabeçalho encontra esse artigo ou direciona você a uma prévia no índice. Observações, acontecimentos inventados e material pendente permanecem claramente identificados."
+      ]
+    }
+  ],
+  "menuOpen": "Abrir menu",
+  "menuClose": "Fechar menu",
+  "languageLabel": "Idioma",
+  "headerCommunity": "Notas",
+  "headerAction": "Arquivo",
+  "overviewBefore": "Nossa ",
+  "overviewAfter": " visão geral apresenta Blackwater City, a investigação, os personagens e o conceito original do projeto.",
+  "previewLabel": "Prévia"
+}

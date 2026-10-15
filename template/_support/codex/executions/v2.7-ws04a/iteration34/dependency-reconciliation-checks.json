@@ -1,0 +1,50 @@
+{
+  "rows": [
+    {
+      "concern": "页面引用",
+      "present": true,
+      "classification": "NO_INTERFACE_REQUIRED"
+    },
+    {
+      "concern": "主题语义",
+      "present": true,
+      "classification": "OBSOLETE_ASSUMPTION"
+    },
+    {
+      "concern": "媒体尺寸/权利引用",
+      "present": true,
+      "classification": "OBSOLETE_ASSUMPTION"
+    },
+    {
+      "concern": "视频等价与失败状态",
+      "present": true,
+      "classification": "MATCH"
+    },
+    {
+      "concern": "分享图",
+      "present": true,
+      "classification": "MATCH"
+    },
+    {
+      "concern": "搜索选择/状态",
+      "present": true,
+      "classification": "MATCH"
+    },
+    {
+      "concern": "时间/标签",
+      "present": true,
+      "classification": "OBSOLETE_ASSUMPTION"
+    },
+    {
+      "concern": "媒体生命周期引用",
+      "present": true,
+      "classification": "PARTIAL"
+    },
+    {
+      "concern": "组合意图",
+      "present": true,
+      "classification": "PARTIAL"
+    }
+  ],
+  "status": "PASS"
+}

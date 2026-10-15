@@ -1,0 +1,2242 @@
+{
+  "kind": "WS03D_SYNTHETIC_SEARCH_STATES",
+  "qualificationAttempts": 1,
+  "retryCount": 0,
+  "rows": [
+    {
+      "enabled": true,
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "enabled-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "idle-form-present",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "idle-guidance",
+          "passed": true,
+          "detail": "Enter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "idle-does-not-load-provider",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js",
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "results-url-query",
+          "passed": true,
+          "detail": "choices"
+        },
+        {
+          "name": "results-state-nonempty",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "results-count-guidance",
+          "passed": true,
+          "detail": "1 result for “choices”."
+        },
+        {
+          "name": "results-safe-local-urls",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "results-visible-title-excerpt",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "loading-observed-before-results",
+          "passed": true,
+          "detail": [
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:46.268Z"
+            },
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:46.646Z"
+            }
+          ]
+        },
+        {
+          "name": "empty-url-query",
+          "passed": true,
+          "detail": "zzzxqvws03dneverfound731"
+        },
+        {
+          "name": "empty-explicit-guidance",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "empty-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "empty-not-error",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "error-only-loader-aborted",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "error-explicit-guidance",
+          "passed": true,
+          "detail": "The local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "error-url-query-preserved",
+          "passed": true,
+          "detail": "choices"
+        }
+      ],
+      "states": {
+        "idle": {
+          "observation": {
+            "state": "idle",
+            "formCount": 1,
+            "note": "Enter a guide title, game term, or question.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": null
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:46.146Z",
+              "state": "idle",
+              "formCount": 1,
+              "note": "Enter a guide title, game term, or question.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": null
+            }
+          ]
+        },
+        "results": {
+          "observation": {
+            "state": "results",
+            "formCount": 1,
+            "note": "1 result for “choices”.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+            "results": [
+              {
+                "url": "/guides/getting-started/",
+                "title": "Getting Started with Field Notes",
+                "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+              }
+            ],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:46.268Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:46.371Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:46.474Z",
+              "state": "results",
+              "formCount": 1,
+              "note": "1 result for “choices”.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "results": [
+                {
+                  "url": "/guides/getting-started/",
+                  "title": "Getting Started with Field Notes",
+                  "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+                }
+              ],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ]
+        },
+        "empty": {
+          "observation": {
+            "state": "empty",
+            "formCount": 1,
+            "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "zzzxqvws03dneverfound731"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:46.505Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:46.608Z",
+              "state": "empty",
+              "formCount": 1,
+              "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            }
+          ]
+        },
+        "error": {
+          "observation": {
+            "state": "error",
+            "formCount": 1,
+            "note": "The local search index is unavailable. Try refreshing this page.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:47.149Z",
+              "state": "error",
+              "formCount": 1,
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ],
+          "simulation": "Fresh document with only the exact Pagefind loader aborted; previous document had results/empty evidence."
+        }
+      },
+      "loaderRequests": [
+        "http://127.0.0.1:58873/pagefind/pagefind.js",
+        "http://127.0.0.1:58873/pagefind/pagefind.js"
+      ],
+      "overall": "PASS"
+    },
+    {
+      "enabled": true,
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "assertions": [
+        {
+          "name": "enabled-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "idle-form-present",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "idle-guidance",
+          "passed": true,
+          "detail": "Enter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "idle-does-not-load-provider",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js",
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "results-url-query",
+          "passed": true,
+          "detail": "choices"
+        },
+        {
+          "name": "results-state-nonempty",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "results-count-guidance",
+          "passed": true,
+          "detail": "1 result for “choices”."
+        },
+        {
+          "name": "results-safe-local-urls",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "results-visible-title-excerpt",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "loading-observed-before-results",
+          "passed": true,
+          "detail": [
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:47.810Z"
+            },
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "error",
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "observedAt": "2026-10-08T01:34:48.186Z"
+            }
+          ]
+        },
+        {
+          "name": "empty-url-query",
+          "passed": true,
+          "detail": "zzzxqvws03dneverfound731"
+        },
+        {
+          "name": "empty-explicit-guidance",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "empty-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "empty-not-error",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "error-only-loader-aborted",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "error-explicit-guidance",
+          "passed": true,
+          "detail": "The local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "error-url-query-preserved",
+          "passed": true,
+          "detail": "choices"
+        }
+      ],
+      "states": {
+        "idle": {
+          "observation": {
+            "state": "idle",
+            "formCount": 1,
+            "note": "Enter a guide title, game term, or question.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": null
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:47.746Z",
+              "state": "idle",
+              "formCount": 1,
+              "note": "Enter a guide title, game term, or question.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": null
+            }
+          ]
+        },
+        "results": {
+          "observation": {
+            "state": "results",
+            "formCount": 1,
+            "note": "1 result for “choices”.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+            "results": [
+              {
+                "url": "/guides/getting-started/",
+                "title": "Getting Started with Field Notes",
+                "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+              }
+            ],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:47.810Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:47.912Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:48.015Z",
+              "state": "results",
+              "formCount": 1,
+              "note": "1 result for “choices”.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "results": [
+                {
+                  "url": "/guides/getting-started/",
+                  "title": "Getting Started with Field Notes",
+                  "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+                }
+              ],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ]
+        },
+        "empty": {
+          "observation": {
+            "state": "empty",
+            "formCount": 1,
+            "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "zzzxqvws03dneverfound731"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:48.053Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:48.156Z",
+              "state": "empty",
+              "formCount": 1,
+              "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            }
+          ]
+        },
+        "error": {
+          "observation": {
+            "state": "error",
+            "formCount": 1,
+            "note": "The local search index is unavailable. Try refreshing this page.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:48.689Z",
+              "state": "error",
+              "formCount": 1,
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ],
+          "simulation": "Fresh document with only the exact Pagefind loader aborted; previous document had results/empty evidence."
+        }
+      },
+      "loaderRequests": [
+        "http://127.0.0.1:58873/pagefind/pagefind.js",
+        "http://127.0.0.1:58873/pagefind/pagefind.js"
+      ],
+      "overall": "PASS"
+    },
+    {
+      "enabled": true,
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "enabled-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "idle-form-present",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "idle-guidance",
+          "passed": true,
+          "detail": "Enter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "idle-does-not-load-provider",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js",
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "results-url-query",
+          "passed": true,
+          "detail": "choices"
+        },
+        {
+          "name": "results-state-nonempty",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "results-count-guidance",
+          "passed": true,
+          "detail": "1 result for “choices”."
+        },
+        {
+          "name": "results-safe-local-urls",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "results-visible-title-excerpt",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "loading-observed-before-results",
+          "passed": true,
+          "detail": [
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:50.780Z"
+            },
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "error",
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "observedAt": "2026-10-08T01:34:50.954Z"
+            }
+          ]
+        },
+        {
+          "name": "empty-url-query",
+          "passed": true,
+          "detail": "zzzxqvws03dneverfound731"
+        },
+        {
+          "name": "empty-explicit-guidance",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "empty-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "empty-not-error",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "error-only-loader-aborted",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "error-explicit-guidance",
+          "passed": true,
+          "detail": "The local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "error-url-query-preserved",
+          "passed": true,
+          "detail": "choices"
+        }
+      ],
+      "states": {
+        "idle": {
+          "observation": {
+            "state": "idle",
+            "formCount": 1,
+            "note": "Enter a guide title, game term, or question.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": null
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:50.698Z",
+              "state": "idle",
+              "formCount": 1,
+              "note": "Enter a guide title, game term, or question.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": null
+            }
+          ]
+        },
+        "results": {
+          "observation": {
+            "state": "results",
+            "formCount": 1,
+            "note": "1 result for “choices”.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+            "results": [
+              {
+                "url": "/guides/getting-started/",
+                "title": "Getting Started with Field Notes",
+                "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+              }
+            ],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:50.780Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:50.883Z",
+              "state": "results",
+              "formCount": 1,
+              "note": "1 result for “choices”.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "results": [
+                {
+                  "url": "/guides/getting-started/",
+                  "title": "Getting Started with Field Notes",
+                  "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+                }
+              ],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ]
+        },
+        "empty": {
+          "observation": {
+            "state": "empty",
+            "formCount": 1,
+            "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "zzzxqvws03dneverfound731"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:50.916Z",
+              "state": "empty",
+              "formCount": 1,
+              "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            }
+          ]
+        },
+        "error": {
+          "observation": {
+            "state": "error",
+            "formCount": 1,
+            "note": "The local search index is unavailable. Try refreshing this page.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:51.455Z",
+              "state": "error",
+              "formCount": 1,
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ],
+          "simulation": "Fresh document with only the exact Pagefind loader aborted; previous document had results/empty evidence."
+        }
+      },
+      "loaderRequests": [
+        "http://127.0.0.1:58873/pagefind/pagefind.js",
+        "http://127.0.0.1:58873/pagefind/pagefind.js"
+      ],
+      "overall": "PASS"
+    },
+    {
+      "enabled": true,
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "assertions": [
+        {
+          "name": "enabled-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "idle-form-present",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "idle-guidance",
+          "passed": true,
+          "detail": "Enter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "idle-does-not-load-provider",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js",
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "results-url-query",
+          "passed": true,
+          "detail": "choices"
+        },
+        {
+          "name": "results-state-nonempty",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "results-count-guidance",
+          "passed": true,
+          "detail": "1 result for “choices”."
+        },
+        {
+          "name": "results-safe-local-urls",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "results-visible-title-excerpt",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "loading-observed-before-results",
+          "passed": true,
+          "detail": [
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:52.217Z"
+            },
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "error",
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "observedAt": "2026-10-08T01:34:52.397Z"
+            }
+          ]
+        },
+        {
+          "name": "empty-url-query",
+          "passed": true,
+          "detail": "zzzxqvws03dneverfound731"
+        },
+        {
+          "name": "empty-explicit-guidance",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "empty-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "empty-not-error",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "error-only-loader-aborted",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "error-explicit-guidance",
+          "passed": true,
+          "detail": "The local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "error-url-query-preserved",
+          "passed": true,
+          "detail": "choices"
+        }
+      ],
+      "states": {
+        "idle": {
+          "observation": {
+            "state": "idle",
+            "formCount": 1,
+            "note": "Enter a guide title, game term, or question.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": null
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:52.130Z",
+              "state": "idle",
+              "formCount": 1,
+              "note": "Enter a guide title, game term, or question.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": null
+            }
+          ]
+        },
+        "results": {
+          "observation": {
+            "state": "results",
+            "formCount": 1,
+            "note": "1 result for “choices”.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+            "results": [
+              {
+                "url": "/guides/getting-started/",
+                "title": "Getting Started with Field Notes",
+                "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+              }
+            ],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:52.217Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:52.320Z",
+              "state": "results",
+              "formCount": 1,
+              "note": "1 result for “choices”.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "results": [
+                {
+                  "url": "/guides/getting-started/",
+                  "title": "Getting Started with Field Notes",
+                  "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+                }
+              ],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ]
+        },
+        "empty": {
+          "observation": {
+            "state": "empty",
+            "formCount": 1,
+            "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "zzzxqvws03dneverfound731"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:52.358Z",
+              "state": "empty",
+              "formCount": 1,
+              "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            }
+          ]
+        },
+        "error": {
+          "observation": {
+            "state": "error",
+            "formCount": 1,
+            "note": "The local search index is unavailable. Try refreshing this page.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:52.898Z",
+              "state": "error",
+              "formCount": 1,
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ],
+          "simulation": "Fresh document with only the exact Pagefind loader aborted; previous document had results/empty evidence."
+        }
+      },
+      "loaderRequests": [
+        "http://127.0.0.1:58873/pagefind/pagefind.js",
+        "http://127.0.0.1:58873/pagefind/pagefind.js"
+      ],
+      "overall": "PASS"
+    },
+    {
+      "enabled": true,
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "enabled-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "idle-form-present",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "idle-guidance",
+          "passed": true,
+          "detail": "Enter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "idle-does-not-load-provider",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js",
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "results-url-query",
+          "passed": true,
+          "detail": "choices"
+        },
+        {
+          "name": "results-state-nonempty",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "results-count-guidance",
+          "passed": true,
+          "detail": "1 result for “choices”."
+        },
+        {
+          "name": "results-safe-local-urls",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "results-visible-title-excerpt",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "loading-observed-before-results",
+          "passed": true,
+          "detail": [
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:55.175Z"
+            },
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:55.499Z"
+            }
+          ]
+        },
+        {
+          "name": "empty-url-query",
+          "passed": true,
+          "detail": "zzzxqvws03dneverfound731"
+        },
+        {
+          "name": "empty-explicit-guidance",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "empty-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "empty-not-error",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "error-only-loader-aborted",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "error-explicit-guidance",
+          "passed": true,
+          "detail": "The local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "error-url-query-preserved",
+          "passed": true,
+          "detail": "choices"
+        }
+      ],
+      "states": {
+        "idle": {
+          "observation": {
+            "state": "idle",
+            "formCount": 1,
+            "note": "Enter a guide title, game term, or question.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": null
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:54.445Z",
+              "state": "idle",
+              "formCount": 1,
+              "note": "Enter a guide title, game term, or question.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": null
+            }
+          ]
+        },
+        "results": {
+          "observation": {
+            "state": "results",
+            "formCount": 1,
+            "note": "1 result for “choices”.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+            "results": [
+              {
+                "url": "/guides/getting-started/",
+                "title": "Getting Started with Field Notes",
+                "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+              }
+            ],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:55.175Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:55.318Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:55.422Z",
+              "state": "results",
+              "formCount": 1,
+              "note": "1 result for “choices”.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "results": [
+                {
+                  "url": "/guides/getting-started/",
+                  "title": "Getting Started with Field Notes",
+                  "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+                }
+              ],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ]
+        },
+        "empty": {
+          "observation": {
+            "state": "empty",
+            "formCount": 1,
+            "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "zzzxqvws03dneverfound731"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:55.458Z",
+              "state": "empty",
+              "formCount": 1,
+              "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            }
+          ]
+        },
+        "error": {
+          "observation": {
+            "state": "error",
+            "formCount": 1,
+            "note": "The local search index is unavailable. Try refreshing this page.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:56.006Z",
+              "state": "error",
+              "formCount": 1,
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ],
+          "simulation": "Fresh document with only the exact Pagefind loader aborted; previous document had results/empty evidence."
+        }
+      },
+      "loaderRequests": [
+        "http://127.0.0.1:58873/pagefind/pagefind.js",
+        "http://127.0.0.1:58873/pagefind/pagefind.js"
+      ],
+      "overall": "PASS"
+    },
+    {
+      "enabled": true,
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "assertions": [
+        {
+          "name": "enabled-route-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "idle-form-present",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "idle-guidance",
+          "passed": true,
+          "detail": "Enter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question."
+        },
+        {
+          "name": "idle-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "idle-does-not-load-provider",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js",
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "results-url-query",
+          "passed": true,
+          "detail": "choices"
+        },
+        {
+          "name": "results-state-nonempty",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "name": "results-count-guidance",
+          "passed": true,
+          "detail": "1 result for “choices”."
+        },
+        {
+          "name": "results-safe-local-urls",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "results-visible-title-excerpt",
+          "passed": true,
+          "detail": [
+            {
+              "url": "/guides/getting-started/",
+              "title": "Getting Started with Field Notes",
+              "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+            }
+          ]
+        },
+        {
+          "name": "loading-observed-before-results",
+          "passed": true,
+          "detail": [
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:56.748Z"
+            },
+            {
+              "url": "http://127.0.0.1:58873/pagefind/pagefind.js",
+              "state": "loading",
+              "note": "Searching the local index…",
+              "observedAt": "2026-10-08T01:34:56.909Z"
+            }
+          ]
+        },
+        {
+          "name": "empty-url-query",
+          "passed": true,
+          "detail": "zzzxqvws03dneverfound731"
+        },
+        {
+          "name": "empty-explicit-guidance",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "empty-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "empty-not-error",
+          "passed": true,
+          "detail": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term."
+        },
+        {
+          "name": "error-only-loader-aborted",
+          "passed": true,
+          "detail": [
+            "http://127.0.0.1:58873/pagefind/pagefind.js"
+          ]
+        },
+        {
+          "name": "error-explicit-guidance",
+          "passed": true,
+          "detail": "The local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-online-claim",
+          "passed": true,
+          "detail": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page."
+        },
+        {
+          "name": "error-no-results",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "error-url-query-preserved",
+          "passed": true,
+          "detail": "choices"
+        }
+      ],
+      "states": {
+        "idle": {
+          "observation": {
+            "state": "idle",
+            "formCount": 1,
+            "note": "Enter a guide title, game term, or question.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": null
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:56.697Z",
+              "state": "idle",
+              "formCount": 1,
+              "note": "Enter a guide title, game term, or question.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchEnter a guide title, game term, or question.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": null
+            }
+          ]
+        },
+        "results": {
+          "observation": {
+            "state": "results",
+            "formCount": 1,
+            "note": "1 result for “choices”.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+            "results": [
+              {
+                "url": "/guides/getting-started/",
+                "title": "Getting Started with Field Notes",
+                "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+              }
+            ],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:56.748Z",
+              "state": "loading",
+              "formCount": 1,
+              "note": "Searching the local index…",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchSearching the local index…",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            },
+            {
+              "observedAt": "2026-10-08T01:34:56.850Z",
+              "state": "results",
+              "formCount": 1,
+              "note": "1 result for “choices”.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearch1 result for “choices”.01Getting Started with Field NotesSet the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide.",
+              "results": [
+                {
+                  "url": "/guides/getting-started/",
+                  "title": "Getting Started with Field Notes",
+                  "excerpt": "Set the brand, feature flags, page inventory, and sourced facts before publishing your first production game guide."
+                }
+              ],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ]
+        },
+        "empty": {
+          "observation": {
+            "state": "empty",
+            "formCount": 1,
+            "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "zzzxqvws03dneverfound731"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:56.879Z",
+              "state": "empty",
+              "formCount": 1,
+              "note": "No matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchNo matching results for “zzzxqvws03dneverfound731”. Try a shorter or broader term.00No matching dispatches. Try a shorter or broader term.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "zzzxqvws03dneverfound731"
+            }
+          ]
+        },
+        "error": {
+          "observation": {
+            "state": "error",
+            "formCount": 1,
+            "note": "The local search index is unavailable. Try refreshing this page.",
+            "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+            "results": [],
+            "searchNav": [
+              "/search/",
+              "/search/"
+            ],
+            "query": "choices"
+          },
+          "samples": [
+            {
+              "observedAt": "2026-10-08T01:34:57.411Z",
+              "state": "error",
+              "formCount": 1,
+              "note": "The local search index is unavailable. Try refreshing this page.",
+              "consoleText": "Local site searchQueries stay in this browser and run against the static build.Search published dispatchesSearchThe local search index is unavailable. Try refreshing this page.",
+              "results": [],
+              "searchNav": [
+                "/search/",
+                "/search/"
+              ],
+              "query": "choices"
+            }
+          ],
+          "simulation": "Fresh document with only the exact Pagefind loader aborted; previous document had results/empty evidence."
+        }
+      },
+      "loaderRequests": [
+        "http://127.0.0.1:58873/pagefind/pagefind.js",
+        "http://127.0.0.1:58873/pagefind/pagefind.js"
+      ],
+      "overall": "PASS"
+    },
+    {
+      "enabled": false,
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "disabled-static-route-absent",
+          "passed": true,
+          "detail": false
+        },
+        {
+          "name": "disabled-search-http404",
+          "passed": true,
+          "detail": 404
+        },
+        {
+          "name": "disabled-no-search-ui",
+          "passed": true,
+          "detail": {
+            "state": null,
+            "formCount": 0,
+            "note": "",
+            "consoleText": "",
+            "results": [],
+            "searchNav": [],
+            "query": null
+          }
+        },
+        {
+          "name": "disabled-home-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "disabled-no-search-navigation",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "states": {
+        "missing": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        },
+        "home": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        }
+      },
+      "loaderRequests": [],
+      "overall": "PASS"
+    },
+    {
+      "enabled": false,
+      "engine": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "assertions": [
+        {
+          "name": "disabled-static-route-absent",
+          "passed": true,
+          "detail": false
+        },
+        {
+          "name": "disabled-search-http404",
+          "passed": true,
+          "detail": 404
+        },
+        {
+          "name": "disabled-no-search-ui",
+          "passed": true,
+          "detail": {
+            "state": null,
+            "formCount": 0,
+            "note": "",
+            "consoleText": "",
+            "results": [],
+            "searchNav": [],
+            "query": null
+          }
+        },
+        {
+          "name": "disabled-home-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "disabled-no-search-navigation",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "states": {
+        "missing": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        },
+        "home": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        }
+      },
+      "loaderRequests": [],
+      "overall": "PASS"
+    },
+    {
+      "enabled": false,
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "disabled-static-route-absent",
+          "passed": true,
+          "detail": false
+        },
+        {
+          "name": "disabled-search-http404",
+          "passed": true,
+          "detail": 404
+        },
+        {
+          "name": "disabled-no-search-ui",
+          "passed": true,
+          "detail": {
+            "state": null,
+            "formCount": 0,
+            "note": "",
+            "consoleText": "",
+            "results": [],
+            "searchNav": [],
+            "query": null
+          }
+        },
+        {
+          "name": "disabled-home-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "disabled-no-search-navigation",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "states": {
+        "missing": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        },
+        "home": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        }
+      },
+      "loaderRequests": [],
+      "overall": "PASS"
+    },
+    {
+      "enabled": false,
+      "engine": "firefox",
+      "browserVersion": "155.0",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "assertions": [
+        {
+          "name": "disabled-static-route-absent",
+          "passed": true,
+          "detail": false
+        },
+        {
+          "name": "disabled-search-http404",
+          "passed": true,
+          "detail": 404
+        },
+        {
+          "name": "disabled-no-search-ui",
+          "passed": true,
+          "detail": {
+            "state": null,
+            "formCount": 0,
+            "note": "",
+            "consoleText": "",
+            "results": [],
+            "searchNav": [],
+            "query": null
+          }
+        },
+        {
+          "name": "disabled-home-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "disabled-no-search-navigation",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "states": {
+        "missing": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        },
+        "home": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        }
+      },
+      "loaderRequests": [],
+      "overall": "PASS"
+    },
+    {
+      "enabled": false,
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "assertions": [
+        {
+          "name": "disabled-static-route-absent",
+          "passed": true,
+          "detail": false
+        },
+        {
+          "name": "disabled-search-http404",
+          "passed": true,
+          "detail": 404
+        },
+        {
+          "name": "disabled-no-search-ui",
+          "passed": true,
+          "detail": {
+            "state": null,
+            "formCount": 0,
+            "note": "",
+            "consoleText": "",
+            "results": [],
+            "searchNav": [],
+            "query": null
+          }
+        },
+        {
+          "name": "disabled-home-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "disabled-no-search-navigation",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "states": {
+        "missing": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        },
+        "home": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        }
+      },
+      "loaderRequests": [],
+      "overall": "PASS"
+    },
+    {
+      "enabled": false,
+      "engine": "webkit",
+      "browserVersion": "26.6",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "assertions": [
+        {
+          "name": "disabled-static-route-absent",
+          "passed": true,
+          "detail": false
+        },
+        {
+          "name": "disabled-search-http404",
+          "passed": true,
+          "detail": 404
+        },
+        {
+          "name": "disabled-no-search-ui",
+          "passed": true,
+          "detail": {
+            "state": null,
+            "formCount": 0,
+            "note": "",
+            "consoleText": "",
+            "results": [],
+            "searchNav": [],
+            "query": null
+          }
+        },
+        {
+          "name": "disabled-home-http200",
+          "passed": true,
+          "detail": 200
+        },
+        {
+          "name": "disabled-no-search-navigation",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "states": {
+        "missing": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        },
+        "home": {
+          "state": null,
+          "formCount": 0,
+          "note": "",
+          "consoleText": "",
+          "results": [],
+          "searchNav": [],
+          "query": null
+        }
+      },
+      "loaderRequests": [],
+      "overall": "PASS"
+    }
+  ],
+  "overall": "PASS",
+  "errors": [],
+  "safariProof": 0,
+  "capabilityPromotion": "NONE"
+}

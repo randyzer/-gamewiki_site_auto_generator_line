@@ -1,0 +1,6 @@
+runs/*
+!runs/.gitkeep
+workspaces/
+config/skill-manifest.json
+.pipeline-test-*/
+.agent-test-*/

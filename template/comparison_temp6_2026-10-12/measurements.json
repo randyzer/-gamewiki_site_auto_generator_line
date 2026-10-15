@@ -1,0 +1,1611 @@
+{
+  "records": [
+    {
+      "site": "reference",
+      "type": "home",
+      "width": 1440,
+      "heading": "The Skin Stapler",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 6290,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 72.5,
+          "y": 216,
+          "w": 1280,
+          "h": 60
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 1425,
+          "h": 763.5
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 5824.640625,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": "https://theskinstapler.com/",
+      "robots": "index, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/detective-cruiser.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/police-station.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/vhs-tape.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/storefront-chase.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/grindhouse-stage.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 18,
+      "mainExternalLinks": 7,
+      "shot": {
+        "type": "browser_screenshot",
+        "captureId": "shot-be48bb3b-2151-4e07-8aa8-9230668c533b",
+        "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-be48bb3b-2151-4e07-8aa8-9230668c533b.png",
+        "mimeType": "image/png",
+        "requestedFullPage": false,
+        "capturedFullPage": false,
+        "width": 1440,
+        "height": 900,
+        "bytes": 592558,
+        "sha256": "7bde2d4942dacee27fd71b868fb8d4396a93b4820a62ea88fb01de0b4854ec46",
+        "requiresImageLoad": true,
+        "nextAction": {
+          "type": "load_image",
+          "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-be48bb3b-2151-4e07-8aa8-9230668c533b.png",
+          "mimeType": "image/png"
+        },
+        "screenshotCount": 3,
+        "recommendedLimitExceeded": false,
+        "warnings": [],
+        "issuesDelta": []
+      }
+    },
+    {
+      "site": "reference",
+      "type": "guides",
+      "width": 1440,
+      "heading": "Investigation Guides",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4934,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 136.5,
+          "y": 167,
+          "w": 1152,
+          "h": 48
+        },
+        "hero": null,
+        "list": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 920,
+          "h": 3780.75
+        },
+        "firstCard": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 450,
+          "h": 189.25
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 4468.25,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": "https://theskinstapler.com/guides",
+      "robots": "index, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 33,
+      "mainExternalLinks": 1,
+      "shot": null
+    },
+    {
+      "site": "reference",
+      "type": "article",
+      "width": 1440,
+      "heading": "The Skin Stapler Developer: Tainted Pact & Assemble",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4935,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 264.5,
+          "y": 206,
+          "w": 896,
+          "h": 96
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 264.5,
+          "y": 170,
+          "w": 896,
+          "h": 206.5
+        },
+        "articleFigure": {
+          "x": 264.5,
+          "y": 416.5,
+          "w": 896,
+          "h": 544.875
+        },
+        "footer": {
+          "x": 0,
+          "y": 4469.34375,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": "https://theskinstapler.com/guides/the-skin-stapler-developer",
+      "robots": "index, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/carrion-city-promo.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 9,
+      "mainExternalLinks": 3,
+      "shot": null
+    },
+    {
+      "site": "origin",
+      "type": "home",
+      "width": 1440,
+      "heading": "The Skin Stapler",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 6290,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 72.5,
+          "y": 216,
+          "w": 1280,
+          "h": 60
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 1425,
+          "h": 763.5
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 5824.640625,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": null,
+      "robots": null,
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/detective-cruiser.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/police-station.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/vhs-tape.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/storefront-chase.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/grindhouse-stage.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 3,
+      "mainExternalLinks": 22,
+      "shot": {
+        "type": "browser_screenshot",
+        "captureId": "shot-a2b59b09-3ff5-4aec-a09e-8ce79f3135c0",
+        "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-a2b59b09-3ff5-4aec-a09e-8ce79f3135c0.png",
+        "mimeType": "image/png",
+        "requestedFullPage": false,
+        "capturedFullPage": false,
+        "width": 1440,
+        "height": 900,
+        "bytes": 592517,
+        "sha256": "4a5d2d475b9d4a344d3844863589be19188ec4e24de8c621ee31cc428611543f",
+        "requiresImageLoad": true,
+        "nextAction": {
+          "type": "load_image",
+          "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-a2b59b09-3ff5-4aec-a09e-8ce79f3135c0.png",
+          "mimeType": "image/png"
+        },
+        "screenshotCount": 4,
+        "recommendedLimitExceeded": true,
+        "warnings": [
+          "Recommended screenshot limit of 3 exceeded"
+        ],
+        "issuesDelta": []
+      }
+    },
+    {
+      "site": "origin",
+      "type": "guides",
+      "width": 1440,
+      "heading": "Investigation Guides",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4934,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 136.5,
+          "y": 167,
+          "w": 1152,
+          "h": 48
+        },
+        "hero": null,
+        "list": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 920,
+          "h": 3780.75
+        },
+        "firstCard": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 450,
+          "h": 189.25
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 4468.25,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": null,
+      "robots": null,
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 1,
+      "mainExternalLinks": 33,
+      "shot": null
+    },
+    {
+      "site": "origin",
+      "type": "article",
+      "width": 1440,
+      "heading": "The Skin Stapler Developer: Tainted Pact & Assemble",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4935,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 264.5,
+          "y": 206,
+          "w": 896,
+          "h": 96
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 264.5,
+          "y": 170,
+          "w": 896,
+          "h": 206.5
+        },
+        "articleFigure": {
+          "x": 264.5,
+          "y": 416.5,
+          "w": 896,
+          "h": 544.875
+        },
+        "footer": {
+          "x": 0,
+          "y": 4469.34375,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": null,
+      "robots": null,
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/carrion-city-promo.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 2,
+      "mainExternalLinks": 10,
+      "shot": null
+    },
+    {
+      "site": "v1",
+      "type": "home",
+      "width": 1440,
+      "heading": "Midnight Evidence",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 6191,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 72.5,
+          "y": 216,
+          "w": 1280,
+          "h": 60
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 1425,
+          "h": 763.5
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 5724.25,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": null,
+      "robots": "noindex, nofollow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/precinct.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/recording.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/diner.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/station.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 24,
+      "mainExternalLinks": 0,
+      "shot": {
+        "type": "browser_screenshot",
+        "captureId": "shot-95f4752f-6086-4b45-a2cd-c74353984b90",
+        "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-95f4752f-6086-4b45-a2cd-c74353984b90.png",
+        "mimeType": "image/png",
+        "requestedFullPage": false,
+        "capturedFullPage": false,
+        "width": 1440,
+        "height": 900,
+        "bytes": 334157,
+        "sha256": "48b8f69f8e58aa473cdd5191459b2b3cae9a154e67d213f4e9fa8460ae26f0be",
+        "requiresImageLoad": true,
+        "nextAction": {
+          "type": "load_image",
+          "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-95f4752f-6086-4b45-a2cd-c74353984b90.png",
+          "mimeType": "image/png"
+        },
+        "screenshotCount": 5,
+        "recommendedLimitExceeded": true,
+        "warnings": [
+          "Recommended screenshot limit of 3 exceeded"
+        ],
+        "issuesDelta": []
+      }
+    },
+    {
+      "site": "v1",
+      "type": "guides",
+      "width": 1440,
+      "heading": "Investigation Guides",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4946,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 136.5,
+          "y": 167,
+          "w": 1152,
+          "h": 48
+        },
+        "hero": null,
+        "list": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 920,
+          "h": 3791.25
+        },
+        "firstCard": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 450,
+          "h": 189.25
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 4478.75,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": null,
+      "robots": "noindex, nofollow",
+      "language": "en",
+      "images": [],
+      "overflow": [],
+      "mainLocalLinks": 34,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v1",
+      "type": "article",
+      "width": 1440,
+      "heading": "Midnight Evidence Developer: Hollow Signal & Lantern",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 5134,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 264.5,
+          "y": 206,
+          "w": 896,
+          "h": 96
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 264.5,
+          "y": 170,
+          "w": 896,
+          "h": 206.5
+        },
+        "articleFigure": {
+          "x": 264.5,
+          "y": 416.5,
+          "w": 896,
+          "h": 544.875
+        },
+        "footer": {
+          "x": 0,
+          "y": 4667.5,
+          "w": 1425,
+          "h": 465.75
+        }
+      },
+      "canonical": null,
+      "robots": "noindex, nofollow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 15,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v3",
+      "type": "home",
+      "width": 1440,
+      "heading": "Midnight Evidence",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 6296,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 72.5,
+          "y": 216,
+          "w": 1280,
+          "h": 60
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 1425,
+          "h": 763.5
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 5807.25,
+          "w": 1425,
+          "h": 488.5
+        }
+      },
+      "canonical": "http://localhost:3007/",
+      "robots": "noindex, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/precinct.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/recording.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/diner.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/station.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 24,
+      "mainExternalLinks": 0,
+      "shot": {
+        "type": "browser_screenshot",
+        "captureId": "shot-5f79bef4-bf2c-4340-a86f-4fcb60a18d0e",
+        "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-5f79bef4-bf2c-4340-a86f-4fcb60a18d0e.png",
+        "mimeType": "image/png",
+        "requestedFullPage": false,
+        "capturedFullPage": false,
+        "width": 1440,
+        "height": 900,
+        "bytes": 350999,
+        "sha256": "989858922e816cfa1025e424a73d374f0cf5de379f3800e47d1344d8991fae62",
+        "requiresImageLoad": true,
+        "nextAction": {
+          "type": "load_image",
+          "path": "/Users/randyz/Library/Application Support/Tabbit/LocalAgent/Runtime/artifacts/task-ce8e3b45-c8b2-48e2-9d56-3aa18dc0e15c/screenshot-shot-5f79bef4-bf2c-4340-a86f-4fcb60a18d0e.png",
+          "mimeType": "image/png"
+        },
+        "screenshotCount": 6,
+        "recommendedLimitExceeded": true,
+        "warnings": [
+          "Recommended screenshot limit of 3 exceeded"
+        ],
+        "issuesDelta": []
+      }
+    },
+    {
+      "site": "v3",
+      "type": "guides",
+      "width": 1440,
+      "heading": "Investigation Guides",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4967,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 136.5,
+          "y": 167,
+          "w": 1152,
+          "h": 48
+        },
+        "hero": null,
+        "list": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 920,
+          "h": 3791.25
+        },
+        "firstCard": {
+          "x": 252.5,
+          "y": 337.5,
+          "w": 450,
+          "h": 189.25
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 4478.75,
+          "w": 1425,
+          "h": 488.5
+        }
+      },
+      "canonical": "http://localhost:3007/guides",
+      "robots": "noindex, follow",
+      "language": "en",
+      "images": [],
+      "overflow": [],
+      "mainLocalLinks": 34,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v3",
+      "type": "article",
+      "width": 1440,
+      "heading": "Midnight Evidence Developer: Hollow Signal & Lantern",
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "height": 4959,
+      "geometry": {
+        "header": {
+          "x": 72.5,
+          "y": 0,
+          "w": 1280,
+          "h": 64
+        },
+        "title": {
+          "x": 264.5,
+          "y": 206,
+          "w": 896,
+          "h": 96
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 264.5,
+          "y": 170,
+          "w": 896,
+          "h": 206.5
+        },
+        "articleFigure": {
+          "x": 264.5,
+          "y": 416.5,
+          "w": 896,
+          "h": 544.875
+        },
+        "footer": {
+          "x": 0,
+          "y": 4470.34375,
+          "w": 1425,
+          "h": 488.5
+        }
+      },
+      "canonical": "http://localhost:3007/guides/midnight-evidence-developer",
+      "robots": "noindex, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 15,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "reference",
+      "type": "home",
+      "width": 390,
+      "heading": "The Skin Stapler",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 10747,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 184,
+          "w": 343,
+          "h": 40
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 375,
+          "h": 1085
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 9871.28125,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": "https://theskinstapler.com/",
+      "robots": "index, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/detective-cruiser.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/police-station.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/vhs-tape.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/storefront-chase.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/grindhouse-stage.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 18,
+      "mainExternalLinks": 7,
+      "shot": null
+    },
+    {
+      "site": "reference",
+      "type": "guides",
+      "width": 390,
+      "heading": "Investigation Guides",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 9457,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 167,
+          "w": 343,
+          "h": 38
+        },
+        "hero": null,
+        "list": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 7854.75
+        },
+        "firstCard": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 212
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 8581.5,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": "https://theskinstapler.com/guides",
+      "robots": "index, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 33,
+      "mainExternalLinks": 1,
+      "shot": null
+    },
+    {
+      "site": "reference",
+      "type": "article",
+      "width": 390,
+      "heading": "The Skin Stapler Developer: Tainted Pact & Assemble",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 8047,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 206,
+          "w": 343,
+          "h": 114
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 16,
+          "y": 170,
+          "w": 343,
+          "h": 283
+        },
+        "articleFigure": {
+          "x": 16,
+          "y": 493,
+          "w": 343,
+          "h": 256.8125
+        },
+        "footer": {
+          "x": 0,
+          "y": 7170.75,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": "https://theskinstapler.com/guides/the-skin-stapler-developer",
+      "robots": "index, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/carrion-city-promo.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 9,
+      "mainExternalLinks": 3,
+      "shot": null
+    },
+    {
+      "site": "origin",
+      "type": "home",
+      "width": 390,
+      "heading": "The Skin Stapler",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 10747,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 184,
+          "w": 343,
+          "h": 40
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 375,
+          "h": 1085
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 9871.28125,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": null,
+      "robots": null,
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/detective-cruiser.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/police-station.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/vhs-tape.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/storefront-chase.webp",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/grindhouse-stage.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 3,
+      "mainExternalLinks": 22,
+      "shot": null
+    },
+    {
+      "site": "origin",
+      "type": "guides",
+      "width": 390,
+      "heading": "Investigation Guides",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 9457,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 167,
+          "w": 343,
+          "h": 38
+        },
+        "hero": null,
+        "list": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 7854.75
+        },
+        "firstCard": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 212
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 8581.5,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": null,
+      "robots": null,
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 1,
+      "mainExternalLinks": 33,
+      "shot": null
+    },
+    {
+      "site": "origin",
+      "type": "article",
+      "width": 390,
+      "heading": "The Skin Stapler Developer: Tainted Pact & Assemble",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 8047,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 206,
+          "w": 343,
+          "h": 114
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 16,
+          "y": 170,
+          "w": 343,
+          "h": 283
+        },
+        "articleFigure": {
+          "x": 16,
+          "y": 493,
+          "w": 343,
+          "h": 256.8125
+        },
+        "footer": {
+          "x": 0,
+          "y": 7170.75,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": null,
+      "robots": null,
+      "language": "en",
+      "images": [
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        },
+        {
+          "source": "/images/official/carrion-city-promo.webp",
+          "loaded": true
+        },
+        {
+          "source": "/android-chrome-192x192.png",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 2,
+      "mainExternalLinks": 10,
+      "shot": null
+    },
+    {
+      "site": "v1",
+      "type": "home",
+      "width": 390,
+      "heading": "Midnight Evidence",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 10702,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 184,
+          "w": 343,
+          "h": 40
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 375,
+          "h": 1085
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 9825.609375,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": null,
+      "robots": "noindex, nofollow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/precinct.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/recording.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/diner.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/station.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 24,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v1",
+      "type": "guides",
+      "width": 390,
+      "heading": "Investigation Guides",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 9679,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 167,
+          "w": 343,
+          "h": 38
+        },
+        "hero": null,
+        "list": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 8075.75
+        },
+        "firstCard": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 212
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 8802.5,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": null,
+      "robots": "noindex, nofollow",
+      "language": "en",
+      "images": [],
+      "overflow": [],
+      "mainLocalLinks": 34,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v1",
+      "type": "article",
+      "width": 390,
+      "heading": "Midnight Evidence Developer: Hollow Signal & Lantern",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 8332,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 206,
+          "w": 343,
+          "h": 114
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 16,
+          "y": 170,
+          "w": 343,
+          "h": 283
+        },
+        "articleFigure": {
+          "x": 16,
+          "y": 493,
+          "w": 343,
+          "h": 256.8125
+        },
+        "footer": {
+          "x": 0,
+          "y": 7455.125,
+          "w": 375,
+          "h": 875.75
+        }
+      },
+      "canonical": null,
+      "robots": "noindex, nofollow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 15,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v3",
+      "type": "home",
+      "width": 390,
+      "heading": "Midnight Evidence",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 10727,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 184,
+          "w": 343,
+          "h": 40
+        },
+        "hero": {
+          "x": 0,
+          "y": 65,
+          "w": 375,
+          "h": 1114.25
+        },
+        "list": null,
+        "firstCard": null,
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 9813.09375,
+          "w": 375,
+          "h": 913.5
+        }
+      },
+      "canonical": "http://localhost:3007/",
+      "robots": "noindex, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/precinct.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/recording.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/diner.svg",
+          "loaded": true
+        },
+        {
+          "source": "/illustrations/station.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 24,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v3",
+      "type": "guides",
+      "width": 390,
+      "heading": "Investigation Guides",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 9716,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 167,
+          "w": 343,
+          "h": 38
+        },
+        "hero": null,
+        "list": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 8075.75
+        },
+        "firstCard": {
+          "x": 16,
+          "y": 356.75,
+          "w": 343,
+          "h": 212
+        },
+        "articleHeader": null,
+        "articleFigure": null,
+        "footer": {
+          "x": 0,
+          "y": 8802.5,
+          "w": 375,
+          "h": 913.5
+        }
+      },
+      "canonical": "http://localhost:3007/guides",
+      "robots": "noindex, follow",
+      "language": "en",
+      "images": [],
+      "overflow": [],
+      "mainLocalLinks": 34,
+      "mainExternalLinks": 0,
+      "shot": null
+    },
+    {
+      "site": "v3",
+      "type": "article",
+      "width": 390,
+      "heading": "Midnight Evidence Developer: Hollow Signal & Lantern",
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "height": 8161,
+      "geometry": {
+        "header": {
+          "x": 16,
+          "y": 0,
+          "w": 343,
+          "h": 64
+        },
+        "title": {
+          "x": 16,
+          "y": 206,
+          "w": 343,
+          "h": 114
+        },
+        "hero": null,
+        "list": null,
+        "firstCard": null,
+        "articleHeader": {
+          "x": 16,
+          "y": 170,
+          "w": 343,
+          "h": 283
+        },
+        "articleFigure": {
+          "x": 16,
+          "y": 493,
+          "w": 343,
+          "h": 256.8125
+        },
+        "footer": {
+          "x": 0,
+          "y": 7247.875,
+          "w": 375,
+          "h": 913.5
+        }
+      },
+      "canonical": "http://localhost:3007/guides/midnight-evidence-developer",
+      "robots": "noindex, follow",
+      "language": "en",
+      "images": [
+        {
+          "source": "/illustrations/blackwater-city.svg",
+          "loaded": true
+        }
+      ],
+      "overflow": [],
+      "mainLocalLinks": 15,
+      "mainExternalLinks": 0,
+      "shot": null
+    }
+  ],
+  "applicationErrors": []
+}

@@ -1,0 +1,2355 @@
+{
+  "scopes": [
+    "template",
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE"
+  ],
+  "files": [
+    {
+      "path": "template/5_SITE_PATTERN_CAPABILITY_AUDIT.md",
+      "bytes": 64747,
+      "sha256": "579ad63a6662f2ad2c2d937346538d914381cacf042a89cb3d905f6685c50abf"
+    },
+    {
+      "path": "template/COMMERCIAL_GAME_SITE_PRODUCT_CONTRACT_V0.2.md",
+      "bytes": 55438,
+      "sha256": "3fe0c98d7e98f963de37fd80b3f2dbe33a822b810a1f268ec4aaef8dad90682a"
+    },
+    {
+      "path": "template/CORE_SAFETY_CONTRACT_DESIGN_V0.1.md",
+      "bytes": 72694,
+      "sha256": "7fc4ccddc9522ce179005c29729a39e5efb09b5e522fef0ed83b26cd3b0d887c"
+    },
+    {
+      "path": "template/GAME_SITE_STARTER_V2.6.5_CAPABILITY_GAP_AUDIT_V0.2.md",
+      "bytes": 69471,
+      "sha256": "094d5980af15fffbf841a9001f8260b8745db22b721b876ad916dd1f919cf985"
+    },
+    {
+      "path": "template/LIVE_SITE_VALIDATION_2026-10-01.md",
+      "bytes": 2999,
+      "sha256": "fbc14494b4e5e46271baba72f3f41e9ae074d5a367365a44a03a279f6e80e8da"
+    },
+    {
+      "path": "template/PHASE1_CORE_SAFETY_CANDIDATE_CREATION_VERIFICATION.md",
+      "bytes": 7504,
+      "sha256": "85ed263f2345154e52bfbc607abb3602f099c7e81fc4cf8607654b6f484b179c"
+    },
+    {
+      "path": "template/PHASE1_CORE_SAFETY_IMPLEMENTATION_CANDIDATE_PLAN_V0.1.md",
+      "bytes": 93050,
+      "sha256": "60a0c5f2c4432d5102378200f167c1d901caec26ba218167a473c3446760a32e"
+    },
+    {
+      "path": "template/PHASE1_S1_TL01_COMMIT_VERIFICATION.md",
+      "bytes": 9195,
+      "sha256": "b6e52ffec36415dab1cf117594b6d62467509d67c39512659338acc8a7a1fad6"
+    },
+    {
+      "path": "template/PHASE1_S1_TL01_FINAL_PROVENANCE_VERIFICATION.md",
+      "bytes": 4828,
+      "sha256": "1e8782db62d1f50c1dd828220ab4fa29cc45d3d313ea85a8e0aa63db5472c2e4"
+    },
+    {
+      "path": "template/PHASE1_S1_TL01_IMPLEMENTATION_EVIDENCE.md",
+      "bytes": 17062,
+      "sha256": "bd57a306c8e61c0133918835535d59adf713d23252d8d23470cee5aac991135a"
+    },
+    {
+      "path": "template/PHASE1_S1_TL01_MICROFIX_EVIDENCE.md",
+      "bytes": 13582,
+      "sha256": "6f0484e2cd50f4ead9d9f7adf0d8b8b4f0f98d485ce3ee16d8443ae00ddef519"
+    },
+    {
+      "path": "template/PHASE1_S2_TL02_IMPLEMENTATION_PLAN_V0.1.md",
+      "bytes": 41436,
+      "sha256": "bfc7b58d2192b31a5eef1ba4601464f52f1ae1ac618f2ff25d02cb3a49169bc1"
+    },
+    {
+      "path": "template/PROJECT_STATE.md",
+      "bytes": 4187,
+      "sha256": "fd3f1a6c9389835bba8cba1fda8b3e80d38468e421071f18905383db7d995358"
+    },
+    {
+      "path": "template/archive/pre-sync/temp4_based_miniwars.art.pre-sync-backup-20260929/package.json",
+      "bytes": 238,
+      "sha256": "bae8449d6c4361b8dbef09ab00e24e90d2655f321c8cf54366bf8553a96b1ba6"
+    },
+    {
+      "path": "template/archive/pre-sync/temp4_based_miniwars.art.pre-sync-backup-20260929/pnpm-lock.yaml",
+      "bytes": 114,
+      "sha256": "17c814b167307942d3609c7b9d916ceddb85839573ab39baa114e30edb132a1a"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/.gitignore",
+      "bytes": 397,
+      "sha256": "dceb051ca8cb728088abe2f92c399ea49cd444c0d863132559ca46de2f6523a6"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/eslint.config.mjs",
+      "bytes": 425,
+      "sha256": "f66b04ec3c3325412df74fc8b09951f268c9691f60495568879bd22585897981"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/next-env.d.ts",
+      "bytes": 211,
+      "sha256": "f2b3bca04d1bfe583daae1e1f798c92ec24bb6693bd88d0a09ba6802dee362a8"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/next.config.mjs",
+      "bytes": 164,
+      "sha256": "8514277cc7a196e2307ce01c975a16cc15e467ff74ba91546fbff89e42e39f88"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/package-lock.json",
+      "bytes": 369372,
+      "sha256": "4333de2709ba8c8c6ce0f82c165796ff685a881d225bd9684667c07605c979c7"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/package.json",
+      "bytes": 1333,
+      "sha256": "efd13098870001146433b1f1ccb8e1b64fb5b5e6b5c7b36f9dfca322db02a753"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/playwright.config.ts",
+      "bytes": 691,
+      "sha256": "140ec3aa24706bd3a95744b98728bfd4c8ab06fac635ef946bf2a1b07ebb66fa"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/pnpm-lock.yaml",
+      "bytes": 222419,
+      "sha256": "98b36b331a2eb07763c92ce59db776c7ee9be8451556154e9bb71b7c93edfa18"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/pnpm-workspace.yaml",
+      "bytes": 35,
+      "sha256": "2b6e91c5ba53abcb24fe30aaf344575f3c759f58173639afe5edb907d17e6619"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/postcss.config.mjs",
+      "bytes": 94,
+      "sha256": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tsconfig.json",
+      "bytes": 667,
+      "sha256": "00bfcf949b1717aaa87ffd63675bcd269cb2634f4c007935fdbbc8d55d706ea9"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/vitest.config.ts",
+      "bytes": 426,
+      "sha256": "6e00c99a85140935bba81df86fd70accf1c62661e521a615f35986d12a762303"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/vitest.setup.ts",
+      "bytes": 43,
+      "sha256": "9b328c4843431fa76d8de00008fc159e95f99a840211085ff3b8f25e53d14409"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/app/globals.css",
+      "bytes": 43119,
+      "sha256": "feadfdc612d4e3a65f2d2cc48d573c9cdd80f5e3ac2c2af83471ee15d3fbcbc5"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/app/layout.tsx",
+      "bytes": 990,
+      "sha256": "d0f3b5d0871ffddab9e58d33cc56aeb879650bafa6eb9180bcc50f09994efd01"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/app/not-found.tsx",
+      "bytes": 1095,
+      "sha256": "1a7d97489b67b1271f2483d8b642d0e65b6b5f21c75712393eedbac6bdcdd8ba"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/app/page.tsx",
+      "bytes": 10694,
+      "sha256": "290fc12551e86c30b8ff0d8c7be140184a7e1a7060e7b2f4f7a25f930cb76f1e"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/app/races/page.tsx",
+      "bytes": 4204,
+      "sha256": "47055d2eee7217cd7abc7ef1a86cfd53a756ce55999f611f0e9d43376edbd0b1"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/app/races/[slug]/page.tsx",
+      "bytes": 5917,
+      "sha256": "d45d646a0a10f5f4941128a612c466600db2046f87663c7f13a76bd9c63f0d2b"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/content.test.ts",
+      "bytes": 4493,
+      "sha256": "251764911b3ede1f51970f28561dd5a1e1b4c6c4fc43e44dd9249ccf6ba6ab2d"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/guide-card.test.tsx",
+      "bytes": 2189,
+      "sha256": "66654d0d86f0ae62e4b0bf1e7cf4068f071763f006b13ce33faa424cf89ceee1"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/home-page.test.tsx",
+      "bytes": 8492,
+      "sha256": "7c64009eb443694cb55eaf700030f528b92ca80fced18284b73df0417c592f3d"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/layout.test.tsx",
+      "bytes": 360,
+      "sha256": "da933303144d878dc32a6978d823dd1cb4339a5006b9013168b4164f0713bce2"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/navigation.test.tsx",
+      "bytes": 9528,
+      "sha256": "ef6afa6570f14213a407373c0fc5b176fd94061a9fbedf9c1997a973f51d6547"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/race-detail.test.tsx",
+      "bytes": 7789,
+      "sha256": "c5b9acf8d8e91b7056c3eb3f3cee2d0a91aacf34a746236dbce744f8edcd718a"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/races-page.test.tsx",
+      "bytes": 5719,
+      "sha256": "45c568591702d2ed35e09b273498d566903ba0d64f7c996fcb0b7f2ef5bdfae1"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/tests/routes.spec.ts",
+      "bytes": 6338,
+      "sha256": "6d9484f85ae664330a72224467062279e8827b44807b0b3ce1e2abcbf3a69ff6"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/content/races/shinigami.mdx",
+      "bytes": 9037,
+      "sha256": "daec0c5e69c7d807ecb30500f16a164d9121144d855451d1a8bf5974dd365688"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/docs/superpowers/plans/2026-09-28-game-wiki-replica.md",
+      "bytes": 23856,
+      "sha256": "521286afac18c351990840851c78bed9c1170fa5996eb1447a25091df2161565"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/docs/superpowers/specs/2026-09-28-game-wiki-replica-design.md",
+      "bytes": 10258,
+      "sha256": "54497bd7dc8cab9aa1ed01caf764130bf2c536072f589ebb077dbe9ab4236c12"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/callout.tsx",
+      "bytes": 478,
+      "sha256": "c0b67840f5353f01acad81722ca0c867075e2ad11381bde2ae0e781d6f64a629"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/faq.tsx",
+      "bytes": 1738,
+      "sha256": "1c98c2106b2055ebdb95759ef9e6444f6f16be05a8793ea97786ead57ec13829"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/guide-card.tsx",
+      "bytes": 1531,
+      "sha256": "a26040553d3dd07f59bf891fbdabc9a3544b4235b952f17f6ada3da8101d49bc"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/mdx-components.tsx",
+      "bytes": 2146,
+      "sha256": "730f28b8d7e088c9ced789927da8d8d604e626a8fde7a8e3d6b7adfc26022d35"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/media-art.tsx",
+      "bytes": 759,
+      "sha256": "a1ca3bd2cb7934304a7914bcb60e4caa0717733c9b7713300fa00ad4af73d778"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/page-shell.tsx",
+      "bytes": 575,
+      "sha256": "19603268619c523a1af41beef381ced31f459381e920d1914368bdbc73febc0b"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/site-footer.tsx",
+      "bytes": 2634,
+      "sha256": "11a4f4d9f80cb177f639ecb4e4e0057f8373e9a81f98e29cdb62774fab55b2be"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/site-header.tsx",
+      "bytes": 2700,
+      "sha256": "bfd0104f621afadf7e269aa9e72c5348d15f2831aa0497929ec941ef858d0920"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/trending-gallery.tsx",
+      "bytes": 2643,
+      "sha256": "5b6bbff5ed7261ba2d88e9831266bc85b75b9e6afb6aaa5293403a31e222c987"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/components/wiki-sidebar.tsx",
+      "bytes": 1900,
+      "sha256": "83db9741fc92002ba80eb8310e33c35f92c2320144c584dc5328fc9ba5006b23"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/lib/content.ts",
+      "bytes": 3533,
+      "sha256": "0b35cd595057053d111f9514049aaf6fb6d10f38ea1b48c61b79cbc1dbbf17fc"
+    },
+    {
+      "path": "template/temp1_based_vvultimatum.net/lib/site-data.ts",
+      "bytes": 9520,
+      "sha256": "7731a8d8275f7497f3f7c893f94fc49bfe0efc2d1b27d64aa7b4f5a078bfdf98"
+    },
+    {
+      "path": "template/roadmap/GAME_SITE_SYSTEM_EVOLUTION_ROADMAP_V1.md",
+      "bytes": 4049,
+      "sha256": "f485e7d2a25c4d8a78e0e938490119f9e907e7a52d18f565be71a4c5065b2b82"
+    },
+    {
+      "path": "template/roadmap/PHASE_A_IMPLEMENTATION_PLAN_V1.md",
+      "bytes": 11151,
+      "sha256": "d086691f94ded47d0f660957fbb0cb93349e7f447e84d5eb56bb99ae50d056bc"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/.gitignore",
+      "bytes": 60,
+      "sha256": "d56e80f8b669858a4d6463ef3aec29b60d6fc248d3c1b9312c516f04172c65c6"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/eslint.config.mjs",
+      "bytes": 320,
+      "sha256": "5f6021aeffa50ca13a3cd9e6ef3a1bdac05b7f8dcdf03cad28f93b79e8ec673b"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/next-env.d.ts",
+      "bytes": 296,
+      "sha256": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/next.config.mjs",
+      "bytes": 139,
+      "sha256": "18e5f100564b91925862a6a4fb9718e07bdeb0fc1c1eab5dfa201adc9ab49196"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/package.json",
+      "bytes": 965,
+      "sha256": "d9704bdfc543596fc5f9eb5cc64975fb0472d2d07cb74ce2ab8e45d498144d93"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/pnpm-lock.yaml",
+      "bytes": 221981,
+      "sha256": "aa81448796d61ea11c305fb6875a319e76ccc647d026382c00d29536fc3272a5"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/pnpm-workspace.yaml",
+      "bytes": 54,
+      "sha256": "f813ea66182ade1ee918eb35495568f9cffd85cc6eb9c60a5e247ae64b557175"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/postcss.config.mjs",
+      "bytes": 108,
+      "sha256": "b8cd36495468ea54e029eb4b2e0e98f0feff6f95d6513e70db37a71c0e3bfba4"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/tsconfig.json",
+      "bytes": 631,
+      "sha256": "9a7bf229a67398124143dddf98eb8ffd711b64b4fff3b87a8665d0cc05653683"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/vitest.config.ts",
+      "bytes": 251,
+      "sha256": "71245b5402c911b453ad2ce07c8995091b0844947aabe96fdb1b5a2a4d204e51"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/vitest.setup.ts",
+      "bytes": 43,
+      "sha256": "9b328c4843431fa76d8de00008fc159e95f99a840211085ff3b8f25e53d14409"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/beginner-guide-1440.png",
+      "bytes": 1305053,
+      "sha256": "1cd30a788a6cb36a90e465b6abb3cb774dcbdd6af67b04e1cbea8b3e8bbc25da"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/beginner-guide-390.png",
+      "bytes": 4113934,
+      "sha256": "1012653e7c206aa763d51d20423f578e8ffe9291d47539d067d3eac3b05cf380"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/guide-1440.png",
+      "bytes": 934442,
+      "sha256": "abfa06ff82aee25bfa234751855c2d5ae4759c7d1e786f68f26d640a72a74288"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/guide-390.png",
+      "bytes": 3790638,
+      "sha256": "015c489489ec855b00c18b95e968296b31c0c9fadad978a0cf229ea2ea309d63"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/home-1440.png",
+      "bytes": 999261,
+      "sha256": "b23bc45fc59e388b0e8c860850c3dbb0339f2f54d16443b561312f14ac8fb763"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/home-390.png",
+      "bytes": 4018665,
+      "sha256": "72504675a54b52d79c99196caaa450261e1f2f8b899835df94a16d32f91c8b2d"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/artifacts/screenshots/mobile-menu-390.png",
+      "bytes": 425771,
+      "sha256": "9ceb8e56352a9d69ac13959688521ce15febd52e2e7d41ef6db9b13ef692e613"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/types/fontsource.d.ts",
+      "bytes": 182,
+      "sha256": "97a45001d9239ace52abcab671e5b4422ac8ff4cc09ba4a1f3ceb6f9aa9b157f"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/app/globals.css",
+      "bytes": 14095,
+      "sha256": "948ff91c4287e03bb33c429c53f11450eae45fe1c38ab5a9e14d9b0c5c6b5b15"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/app/layout.tsx",
+      "bytes": 789,
+      "sha256": "eaf88ab816fa9510fea0ba2e00fd5598efc6cbf56e9c4a0cc50bd89d269dc917"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/app/page.tsx",
+      "bytes": 4642,
+      "sha256": "2b0b2341cf3d9051a089b17a412b10dbb6c3bfe6af4b51e88b134600c0d74203"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/app/guide/page.tsx",
+      "bytes": 2988,
+      "sha256": "98c4bc8040eafbc2f4ab4f0ba03059f28b2ef9875e9e0c4763d6a2964d8958e6"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/app/[slug]/page.tsx",
+      "bytes": 1397,
+      "sha256": "025e34914fbe44d9c5f86397b080efa138ea01402c3cdccc275632d216533878"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/tests/content.test.ts",
+      "bytes": 2308,
+      "sha256": "7a1dabd796b4ee39603366dd46ca172f408f974f119492c703123190fa00374c"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/tests/mdx-source.test.ts",
+      "bytes": 652,
+      "sha256": "b726597aaa07e812a17dd0751a9844b639f962be3a5de336f1c87791bc13beaa"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/tests/mobile-menu.test.tsx",
+      "bytes": 906,
+      "sha256": "54a514da03450b7279260d1a1e5f73fa61fe21a6e19260e4c980c2c5b6937531"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/content/guides/bankroll-rules.mdx",
+      "bytes": 864,
+      "sha256": "a51d943c7786f469f562944d909721f4958230ad1105333a0e3037745082a713"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/content/guides/beginner-guide.mdx",
+      "bytes": 7209,
+      "sha256": "8b8c6fe1a1753c18dc0e9666b702ad48e6267cf93893f2bdd8f6cb94876021f0"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/content/guides/recovery-routes.mdx",
+      "bytes": 792,
+      "sha256": "a35215e85e753f8571a7e71c035fd7a58b51321848db749475c1d07b38eca4b0"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/content/guides/table-selection.mdx",
+      "bytes": 774,
+      "sha256": "be24662ceb11e3f2170140d50a88683febb78d0bb3f323342aa2d9ced2a9edc9"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/content/guides/team-roles.mdx",
+      "bytes": 785,
+      "sha256": "8b938f4a6937c2f7b530c4ab80b2b45c9655c72934205ecc2e55120e26ddcbee"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/content/guides/utility-items.mdx",
+      "bytes": 755,
+      "sha256": "ec4833e23f2e8179b8b0b8da8d1910565c38f4e5d4e941fbe1ddc6c0d461082a"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/docs/superpowers/plans/2026-09-29-neon-stakes-guide.md",
+      "bytes": 5055,
+      "sha256": "2bbecaa0d88f4cfdabdd2fadd4835e74e3ba0ce5e69023d59b14ed5ffab0b137"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/docs/superpowers/specs/2026-09-29-neon-stakes-guide-design.md",
+      "bytes": 2997,
+      "sha256": "0d779e17f2aae383966dd8b9d7b86fb3a679988dd1c38959680cdd1d57f64853"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/article-hero.tsx",
+      "bytes": 541,
+      "sha256": "69603386bc9844425c318c0a4293868738daef567089edeef4837de8cc4cd35e"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/checklist-grid.tsx",
+      "bytes": 963,
+      "sha256": "26e92f9f7193fb8a487312125e0bc333811c314b714e88d6ebc5a5cfa3c96385"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/content-figure.tsx",
+      "bytes": 486,
+      "sha256": "a3e112a87cc396da1bf664f5ce52d1107340158c9c805715d98cf7895d35b1ac"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/faq-list.tsx",
+      "bytes": 527,
+      "sha256": "cafef56cc79874123ff3fcaca93addf07bcf11097f8e0922918a9d8ccb67f967"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/guide-card.tsx",
+      "bytes": 1130,
+      "sha256": "4a04a9d1d2f73a5e19763be859d6226ff6755288c0b7439fa833954ec7529afb"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/help-links.tsx",
+      "bytes": 641,
+      "sha256": "df9404219e11a6af7c37a7f48bbd79d88fa6bbed8e6f0a0ce0e1b3ddd3ee1324"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/home-hero.tsx",
+      "bytes": 2150,
+      "sha256": "715ed8c716705bd8c9e21efdd4bab22d55c2e4b13bda7b3dcb070492c1923899"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/mdx-components.tsx",
+      "bytes": 3458,
+      "sha256": "6c2c0154c7da310870085626edde50bdf25097bded46ed0e9fee14ac074e85ec"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/mobile-menu.tsx",
+      "bytes": 1825,
+      "sha256": "2c2254aaada6f8174f4efaf4fdfa97cfd015d42b20f6c034f2c17e9457d20858"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/page-hero.tsx",
+      "bytes": 1381,
+      "sha256": "69597ae84c5fa5795529f7f86898ff8cc8887dd9205bd73db3d86497d79c6bf0"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/quick-start.tsx",
+      "bytes": 1294,
+      "sha256": "c2bfe4ed199586e113d817d59b874bec146196dd88d1f9e142ae80d86acaa795"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/related-guides.tsx",
+      "bytes": 593,
+      "sha256": "6718e88ed057486a349cbf9b1011ceb0a1b26508ed22aeeb712043d306ed408d"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/site-footer.tsx",
+      "bytes": 2340,
+      "sha256": "f7dc437eeed34ceaa25d07d0acdb3aeaf09b9c176fc26c2651b016a9f704853f"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/site-header.tsx",
+      "bytes": 1825,
+      "sha256": "a5df81aad08ee467c58d028801a46474db82c616bf650f5dda0f57c984bebdd0"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/stat-grid.tsx",
+      "bytes": 656,
+      "sha256": "47385c9f664561058e7337b8b9c924cc2c18ed18fc4c87a8f9c5e56bf75b6fcf"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/components/tip-list.tsx",
+      "bytes": 990,
+      "sha256": "2199ed784b5c1d9c6c36f7db6b83f7441a1fa2462884a369a77491af3708a39d"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/public/images/logo-mark.svg",
+      "bytes": 887,
+      "sha256": "d87e852c93a6c6a3ed794ab038c592ffeb19cc99e5c25f3695f5968da958d513"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/public/images/neon-casino.svg",
+      "bytes": 2733,
+      "sha256": "5c084a5732277d0dbe1ba98c6fc51290535eaf3bc242f2564e7a59ea08b56a91"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/public/images/team-table.svg",
+      "bytes": 1969,
+      "sha256": "c6579e9d472ed307da5626e53a53891f7288547e01088c97260d3daa79567c13"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/public/images/token-vault.svg",
+      "bytes": 2049,
+      "sha256": "6eb4fad197aec69f7e16cbc2297aa18a04934ebf403edcc0c6b3db93d39cf42d"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/lib/content.ts",
+      "bytes": 2268,
+      "sha256": "59b742f4012ec9ca37b6bce5e6c34f533ddba4ebaacf87e5f26e39c9ef311bcf"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/lib/mdx-options.ts",
+      "bytes": 98,
+      "sha256": "db694e4035e3bb82fcd4dfeefdafb9597bff65c20b8e661a60d848cc7ff6bf8f"
+    },
+    {
+      "path": "template/temp3_based_gamblewithyourfriends.net/lib/site.ts",
+      "bytes": 1533,
+      "sha256": "29631efb3a6fde9cdda4253fdc9111844251b8f63eedf45ee6269b8ad20d71b2"
+    },
+    {
+      "path": "template/codex/README.md",
+      "bytes": 1204,
+      "sha256": "e59b07687e34199f364345d9ced1a71a2efb9edcc74b10ea529d90a46b11438e"
+    },
+    {
+      "path": "template/codex/verifications/phase-a/01_TL02/verification.md",
+      "bytes": 2088,
+      "sha256": "22bd2796c9883cf217f6f561abda1552fae1e1e704984053e4b0aba77091b529"
+    },
+    {
+      "path": "template/codex/verifications/phase-a/03_AX01/verification.md",
+      "bytes": 6288,
+      "sha256": "a33c78ca55704793ffeac534283a14b7882d1a269ab79b0be243f3f7d483b882"
+    },
+    {
+      "path": "template/codex/verifications/phase-a/00_PLANNING/verification.md",
+      "bytes": 1713,
+      "sha256": "348c17a9b226ce5866dca7bf1d7f007f1d8580f59f2b8c09f40f7b16e6539c6f"
+    },
+    {
+      "path": "template/codex/verifications/phase-a/02_PP02/verification.md",
+      "bytes": 4119,
+      "sha256": "c359751b454f30fe33c21711dc3fd03a27df6fadba0f031f98e1d0f6002fab71"
+    },
+    {
+      "path": "template/codex/verifications/phase1/ARCHITECTURE_BLUEPRINT_VERIFICATION.md",
+      "bytes": 1148,
+      "sha256": "53ea50fe694d0482dbb4398d4b23dcfce30e1eb95f9a65c1223689175dbbf19e"
+    },
+    {
+      "path": "template/codex/executions/phase-a/01_TL02/result.md",
+      "bytes": 2256,
+      "sha256": "19151c7a365d9323f709e6b9e3c8786eb717ac49d7149808b12d8c2abf6db78d"
+    },
+    {
+      "path": "template/codex/executions/phase-a/03_AX01/candidate.diff",
+      "bytes": 14891,
+      "sha256": "4009f4e979aa69be58e35b483a2c8abd014816f97907292b487c091a99b127eb"
+    },
+    {
+      "path": "template/codex/executions/phase-a/03_AX01/provenance.json",
+      "bytes": 821,
+      "sha256": "3e1788fe6e2d8f089d772a2c50883b3369907d50a27829a6b6a2e16ab3c721e9"
+    },
+    {
+      "path": "template/codex/executions/phase-a/03_AX01/result.md",
+      "bytes": 2722,
+      "sha256": "6bdec29cc16ccdf26364429a87bb23d5d3bec482d1b3abb89174d0fc96c09834"
+    },
+    {
+      "path": "template/codex/executions/phase-a/02_PP02/candidate.diff",
+      "bytes": 80931,
+      "sha256": "c42c7700171b3b8b52c522eafc61ca7656385b96510a216a407b9780b8d02742"
+    },
+    {
+      "path": "template/codex/executions/phase-a/02_PP02/provenance.json",
+      "bytes": 2233,
+      "sha256": "1f5d6bbe517c9bcee586bedcb5cb7952fbe1d931efa974dd11a3381c5c86c95f"
+    },
+    {
+      "path": "template/codex/executions/phase-a/02_PP02/result.md",
+      "bytes": 3458,
+      "sha256": "63bcbcdce8a1aa5d6312e850f0281a8c88f7c1b36c5e7df4f25d2aa3751e4043"
+    },
+    {
+      "path": "template/codex/prompts/phase-a/05_TRIAD_SYNC/prompt.md",
+      "bytes": 3904,
+      "sha256": "b9782e8e3910385670b3bed6ce9f97fe6909501b8762b3d37c67d08d94948e6e"
+    },
+    {
+      "path": "template/codex/prompts/phase-a/01_TL02/prompt.md",
+      "bytes": 4014,
+      "sha256": "57cdc1958004a3bf98a6b90461c6f900a5e8f5bb7cf74eec57fe0f267db49b4d"
+    },
+    {
+      "path": "template/codex/prompts/phase-a/03_AX01/prompt.md",
+      "bytes": 3497,
+      "sha256": "79e4211fa572e54c056ebf3f25328344132289f35d0c8cac553240ac86ace1f2"
+    },
+    {
+      "path": "template/codex/prompts/phase-a/04_AX03/prompt.md",
+      "bytes": 4278,
+      "sha256": "57917d5a378a6a24ade3400e2f0ae4636c3365e461b7e8b721f91c7a58349f65"
+    },
+    {
+      "path": "template/codex/prompts/phase-a/02_PP02/prompt.md",
+      "bytes": 4183,
+      "sha256": "92bb05b540c60f80a6edd33052f755ca22748f6b5e70c907410b54057e382485"
+    },
+    {
+      "path": "template/codex/prompts/phase1/ARCHITECTURE_BLUEPRINT_READONLY.md",
+      "bytes": 1121,
+      "sha256": "792d3c224eb72526744778bc809b2d48f67280c3b94d6638449f6dfd47c76c20"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/eslint.config.mjs",
+      "bytes": 397,
+      "sha256": "cff60295d8509a3fc617ba4b2fe734be5593cafffb762de78fbb6d63ad621f5a"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/mdx-components.tsx",
+      "bytes": 550,
+      "sha256": "c2c0146eec155a56decbbc447bc451d6d461e084e1845896eae9010151020e46"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/mdx.d.ts",
+      "bytes": 164,
+      "sha256": "6862c82fb38581f32ff23c213501a5018bdc7967ffb03e569fa6f02908428fb3"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/next-env.d.ts",
+      "bytes": 296,
+      "sha256": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/next.config.mjs",
+      "bytes": 150,
+      "sha256": "06aa1965894e2da424d48f1b12dd64497aae3c32c4d93048cd37eabd7747d266"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/package.json",
+      "bytes": 832,
+      "sha256": "cd5f873829746e494e8e3b0f5e19c3d216f4802ffc5f3d7b0d10c87afd9944f6"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/pnpm-lock.yaml",
+      "bytes": 175802,
+      "sha256": "c88a810a64c7ffbf04ddd3683afe2d9ab3f2986e73b1fb4dbc9912aaeaca10aa"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/pnpm-workspace.yaml",
+      "bytes": 497,
+      "sha256": "9588cbc708cea3c22f4606fdfcf3129f311b1f856e6e05f119d9cac15475522d"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/postcss.config.mjs",
+      "bytes": 94,
+      "sha256": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/tsconfig.json",
+      "bytes": 725,
+      "sha256": "b370893de2080eeacfed47fcad6c2144319f06f44010e2512db88be0bdccbee1"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/globals.css",
+      "bytes": 29751,
+      "sha256": "aff25322d023db51e885292d74425b1531e8daeaab921b43b51d7720bd0a1f41"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/icon.svg",
+      "bytes": 520,
+      "sha256": "bf819b977ba3c713e5602f1b638ae924130c4d3ec2f104fd957f68f4abcfb9df"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/layout.tsx",
+      "bytes": 1161,
+      "sha256": "fd9cc4ef5a67b2b4984352da7826772e74026077c9f530c192fbc91744929520"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/not-found.tsx",
+      "bytes": 661,
+      "sha256": "c8bfe0624024530fac8e2e82a2ac7468942fe922443e372fc2d923adaea6c64d"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/page.tsx",
+      "bytes": 10525,
+      "sha256": "7775ee4bcc5cd62dc44cf31bfa9638e36a606f2137ced59d40eb068ca146d044"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/guides/page.tsx",
+      "bytes": 510,
+      "sha256": "ec2874a614f0dcee4d6595ad572b47d4ede3c1302227dbb53b68915feebe6790"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/app/guides/[slug]/page.tsx",
+      "bytes": 1083,
+      "sha256": "4fa81c43ced5e2af4917c47b47b56d664ebd3330b79e3043150380630f43106d"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/controls.mdx",
+      "bytes": 3516,
+      "sha256": "0feb317bfb8e8855bab53d99d072972ef2415b127a1d08ebba73039235876265"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/gear-forging.mdx",
+      "bytes": 3732,
+      "sha256": "ed62f0c84eb0fbbda2bf3e625c6074c31068c0e6c1bd180d7d12f69c3203496a"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/getting-started.mdx",
+      "bytes": 3646,
+      "sha256": "927003444590ea1e3be36ccd58e293050cc707c77a9492b6c9797ae183f9f48b"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/how-to-play.mdx",
+      "bytes": 9842,
+      "sha256": "0325810cf1b396635ecbd0b842116d965e0b0fe5ee57a32629e41523c2a031f5"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/overview.mdx",
+      "bytes": 7121,
+      "sha256": "7b93c3a0855c2220e53e1fae06a13e55c5ce0ade6530b763eb8fab2547b5f439"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/squad-building.mdx",
+      "bytes": 3741,
+      "sha256": "6615b88b27a16397224b504699ed140f8370ee73f9be35de9e48c3fdc8252682"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/content/guides/world-progress.mdx",
+      "bytes": 3785,
+      "sha256": "72083df2048da3f824d9cf476895e3bbc15ed72af2e0545b6959f9b850499b0c"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/docs/superpowers/plans/2026-09-29-game-wiki-replica.md",
+      "bytes": 23473,
+      "sha256": "4c21c2b4077d72a2741996b6476f8ee537f2458618c70a56ccdc9eecbed5f368"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/docs/superpowers/specs/2026-09-29-game-wiki-replica-design.md",
+      "bytes": 7869,
+      "sha256": "c5c59acffbfe30d6ed9427a753ee8c709f6f2e649fd316371b5559085165a8c9"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/article-shell.tsx",
+      "bytes": 2876,
+      "sha256": "77698be5d7646c73ac7bdbcd6ab37715d9b4063c11022c08286893f15e74630e"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/button-link.tsx",
+      "bytes": 502,
+      "sha256": "a8ca06caa6e0a49aa855830032732dd27050a16330a42628aed5edccc5bb799f"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/faq-list.tsx",
+      "bytes": 946,
+      "sha256": "64934bcc58b8a3004369f4fc6d037ddeabf0e3b0e09612186f022d004018f5ba"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/mobile-menu.tsx",
+      "bytes": 4042,
+      "sha256": "60066affd5f9b62cb648a1b1bfe5cdad4790e9a13225d04159fab92042e6f56f"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/section-heading.tsx",
+      "bytes": 569,
+      "sha256": "44a91f8ed2d9388cd21ebe0b1db8fec6f5977ca0eec97bbebbfb7e47ddb9b548"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/site-footer.tsx",
+      "bytes": 2106,
+      "sha256": "ed9baddb177517578dd1b7a269a9aed7615bd905f9a1aa60016972565136eace"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/site-header.tsx",
+      "bytes": 2068,
+      "sha256": "8f3cd152510c88ae851afe9122f277c0d3df6d78588fac520a0bda9049b29b7f"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/table-of-contents.tsx",
+      "bytes": 537,
+      "sha256": "65398a3f66431b4cbd40595301fabf938242a69ac9e2118bb23dee24bc1a318f"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/components/wiki-card.tsx",
+      "bytes": 729,
+      "sha256": "bb7b52b0ceee8b7c133840f6ec8361ff6a66dd7a6838f2dd7aeee0700b1becaa"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/public/illustrations/guide-cover.svg",
+      "bytes": 10261,
+      "sha256": "d1383d77306a773fd1de1972f325d21a57929808c6e98fba63bae3530e8fb390"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/public/illustrations/hero-grid.svg",
+      "bytes": 11812,
+      "sha256": "c9657516b2a706b1e0ceac570a614acb50451b3678fc7a5c6828f93d8a93ca9e"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/public/illustrations/map-panel.svg",
+      "bytes": 10844,
+      "sha256": "3739e2caf06d983dce2154a4cb847f8feb0cffb51d0434e16d95eaf377d0b780"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/lib/articles.ts",
+      "bytes": 7984,
+      "sha256": "0d6e6e282f1264a48519dff76d05d7a4bc0cfc483b82fd89946aa56ca2208fd7"
+    },
+    {
+      "path": "template/temp5_based_bombfarm.wiki/lib/site-data.ts",
+      "bytes": 10013,
+      "sha256": "375d691027a44af207395817b7f9b865903327afbf0a3e1d6e59d7c33897c021"
+    },
+    {
+      "path": "template/architecture/GAME_SITE_SYSTEM_ARCHITECTURE_BLUEPRINT_V1.md",
+      "bytes": 5733,
+      "sha256": "1e770cfd1148f633a200d14c0a2e96ad3dbbca0575933bc1f63f537f9a100db1"
+    },
+    {
+      "path": "template/architecture/GAME_SITE_SYSTEM_EVOLUTION_MODEL.md",
+      "bytes": 2868,
+      "sha256": "dc914425cf7c93d33369357e292f3446320f1bef70be3d827e20f2af4f4383c5"
+    },
+    {
+      "path": "template/architecture/THREE_ARTIFACT_IMPACT_MATRIX_V1.md",
+      "bytes": 2933,
+      "sha256": "46613fc900d130e6a9e96406960b5dc12206a087c6c79d696a81d004aa94302f"
+    },
+    {
+      "path": "template/cleanup/CLEANUP_PLAN_V0.1.md",
+      "bytes": 1184,
+      "sha256": "db68f1d67aedbb6950de0ef27aaee87bc66549476622141b97451c7aa4c6d007"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/.gitignore",
+      "bytes": 89,
+      "sha256": "b2c65c25cd8a4d5527770bc943aef12a1c8074bd4c727eba3261f49ae8049ed4"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/eslint.config.mjs",
+      "bytes": 358,
+      "sha256": "b09500a2e9d678f4e9850834e183b32c21a40e1108ebb67c177ff198796a45b4"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/mdx-components.tsx",
+      "bytes": 2075,
+      "sha256": "39694a8024504be8cd9410972c5d6e99d3052b3375bfa9d2f02268d6badcd0f4"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/next-env.d.ts",
+      "bytes": 288,
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/next.config.mjs",
+      "bytes": 221,
+      "sha256": "3b9874d704acdec6f8afa9454a23826e9be5151c7d7913ab11ffe3ef351d4580"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/package.json",
+      "bytes": 996,
+      "sha256": "1d4070d46ff30f4b802d6f80a0c106cb22db80085309c142bcf568eaec34501d"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/pnpm-lock.yaml",
+      "bytes": 222437,
+      "sha256": "04bf34bb7c599b25019bdb409b77b8f98ec3d77700bb22c1730597f6bf66ff32"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/pnpm-workspace.yaml",
+      "bytes": 36,
+      "sha256": "44fd1f2aefbb5fafbb86a23df9ce6092e0dd9a3db3654901b58e5d21de371136"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/postcss.config.mjs",
+      "bytes": 108,
+      "sha256": "b8cd36495468ea54e029eb4b2e0e98f0feff6f95d6513e70db37a71c0e3bfba4"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tsconfig.json",
+      "bytes": 699,
+      "sha256": "49411303374ef6835deb09fa9a4d03fe4e16d139b28aba5bcba2d86009d2b16a"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/vitest.config.ts",
+      "bytes": 421,
+      "sha256": "494e743ea507383d890ac36d8f9fb478be05fae4dac5e09d1449df1f08842ab7"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/types/mdx.d.ts",
+      "bytes": 135,
+      "sha256": "3d6e8459174c2ebfd396d67aac1b4c2074a11c7593748d0c3f1363ad0b44f437"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/app/globals.css",
+      "bytes": 47646,
+      "sha256": "e35799df6d2bfe51b72283bf2cf8c2018b1a249c178efdea7060f0b122dcdc25"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/app/icon.svg",
+      "bytes": 404,
+      "sha256": "3530c52326ba339200bb08a43d0c3f5cccf788da850c95bc99fde6a5065ff9b1"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/app/layout.tsx",
+      "bytes": 1314,
+      "sha256": "91d40c0f394ad8cbe52989c99c165cae3ddb5ae5811d92490452c8a766d04899"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/app/page.tsx",
+      "bytes": 508,
+      "sha256": "03a278c454d08d28f8db297c5724c7ac7ab13a0b0d5c1996f04d66fcb715884b"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/app/guides/page.tsx",
+      "bytes": 5769,
+      "sha256": "6f20d1fd9adc96148e4bc56ec625610d266b37b6d5592f383345822578f7241e"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/app/guides/[slug]/page.tsx",
+      "bytes": 1323,
+      "sha256": "45d309ca41ac0a2e14d335d96a721d84ec38a2ed61569c0071a697d93c66419a"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/article-shell.test.tsx",
+      "bytes": 1928,
+      "sha256": "a6b367a025fb0b751b92aa5f71b8006698a51f37a0866747489ac724f6758483"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/guide-card.test.tsx",
+      "bytes": 1399,
+      "sha256": "b7e7b92e1a05774f204ecbc515cc867f64c020cc5ae3a405baa181d7f2f53f59"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/guide-route.test.ts",
+      "bytes": 908,
+      "sha256": "452b05a22576db7aaa7e198bd383f272e6f911745318be0eddc456113f0bba79"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/guide-utils.test.ts",
+      "bytes": 2028,
+      "sha256": "12cc67c8469b6b9f8234631fd4a36c87ad1755e41cf92f5eb0171572bb9938ba"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/guides-integration.test.ts",
+      "bytes": 1679,
+      "sha256": "0f1cb8ed9ef30bd5dbbccddd01cfc7f99044679bd7a8dbbd5fffc3ab0031763b"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/home-sections.test.tsx",
+      "bytes": 3492,
+      "sha256": "ab4d4b81eb2cd6eb78d75a398c6db514910cae3f04d87ddac49dc83140c3d7e6"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/icon.test.ts",
+      "bytes": 553,
+      "sha256": "b9af7a6e06452ad1f6279533bfee32869f2698082def6a2e77e7c35a29205354"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/mdx-components.test.tsx",
+      "bytes": 1507,
+      "sha256": "2ff3d37880685d1f19b444fd585a4bd8b543819a15811d121fc391e3f8f4a8c3"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/mobile-nav.test.tsx",
+      "bytes": 1564,
+      "sha256": "7bfe5162307ff4287bc35dbe34d3f15e33fc743d34f51f3eac3a6e467e80e085"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/root-layout.test.ts",
+      "bytes": 456,
+      "sha256": "db7c42fda525fe340b5f8ae71051ed407c3fb4a42911658b129eca6024d0d45d"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/tests/setup.ts",
+      "bytes": 43,
+      "sha256": "9b328c4843431fa76d8de00008fc159e95f99a840211085ff3b8f25e53d14409"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/beginner-opening-guide.mdx",
+      "bytes": 9239,
+      "sha256": "a7e30269081d9cfeaa301158bad48df66e8a9e5b2509a1b64ce5fd1b63628555"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/command-point-snowball.mdx",
+      "bytes": 3052,
+      "sha256": "311563aff3470e53af616245d119848d66724682e5ebf2f95461d0452c23ecd0"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/fortress-line-defense.mdx",
+      "bytes": 3422,
+      "sha256": "3e7468132805a5c816d4c999e583e324f4b605f147c9fc3a7576ee8e46d3d538"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/late-campaign-scaling.mdx",
+      "bytes": 3878,
+      "sha256": "fdae544e6a6a4102203254f0dcd9fb335103e03f89f20aadd36937fc1938d81c"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/recon-rush-playbook.mdx",
+      "bytes": 3096,
+      "sha256": "f9a8d4bf1be45783f9e20f8bf5f8b2ece523ae0de07f1435c925a649ddb71f77"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/registry.ts",
+      "bytes": 532,
+      "sha256": "809e24fb8d2db487ab80e6139f83edfd196707cf85f0ca28fe437f751d1057e2"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/content/guides/supply-chain-foundations.mdx",
+      "bytes": 4029,
+      "sha256": "da7308f81b5e4d06ba25fa122f88092ed201f2306947ed7feb7515b2b3c9b36b"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/docs/superpowers/plans/2026-09-29-tactical-game-codex-implementation.md",
+      "bytes": 27391,
+      "sha256": "5f391dc4a1f31cb92309feb57565e3d5c123733555879b8d8166418cbd2b62c5"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/docs/superpowers/specs/2026-09-29-tactical-game-codex-design.md",
+      "bytes": 8848,
+      "sha256": "aef9321db777d52160206fee17c794f1215c3f49e645571c50893313ed8597ba"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/article-shell.tsx",
+      "bytes": 3852,
+      "sha256": "93580836858eb74eefedf5d7371f9a96e577f134d11aa28eb2ac2d2e8dcd0a09"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/corner-card.tsx",
+      "bytes": 315,
+      "sha256": "9467e15b98604e34ae72916010a976c8f8796c960f6d0fe60b157c5094c662f7"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/guide-card.tsx",
+      "bytes": 1093,
+      "sha256": "0943be48f7f684f0467c04c46f73f852063b6179ed2f3a13f1f9db23f4c5c9aa"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/home-sections.tsx",
+      "bytes": 21559,
+      "sha256": "eff2a967479fe8fb415285c40a466e8cd0f9e32b16fd71cc3372782d850f6b44"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/mobile-nav.tsx",
+      "bytes": 1801,
+      "sha256": "3e7df553aca2383b6c84d968d3f252b7025fdd3ccd678969914a3e0e05a24e1b"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/section-heading.tsx",
+      "bytes": 786,
+      "sha256": "44d335022be0dec5af2ddef30bc1252bc398f6b6be6d0d13726c268de1694375"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/site-footer.tsx",
+      "bytes": 1444,
+      "sha256": "f1a2c905934e9a991e0c9d3cfbef64899f35c1833c854eef615b1ba26f6d9e97"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/components/site-header.tsx",
+      "bytes": 1846,
+      "sha256": "71bb477ad07fee8ebc04f956e4daf80f04611a3e3873c8bdac074f032c431e5e"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/lib/guide-types.ts",
+      "bytes": 238,
+      "sha256": "44d5eeaa9d41199f77b9f54ae86aedc1ed5021d882af4bb928b08c668ec9c3f7"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/lib/guide-utils.ts",
+      "bytes": 1090,
+      "sha256": "2c42e3b5af8009cd22572d6b80155d312f10f0191c7459888f2a3274116158e6"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/lib/guides.ts",
+      "bytes": 3769,
+      "sha256": "f6b9cabc82beb2e8b646c1fb220c7b4c92353673aa3877b7f72be8b00bf1f698"
+    },
+    {
+      "path": "template/temp4_based_miniwars.art/lib/navigation.ts",
+      "bytes": 302,
+      "sha256": "891724a40b3f8b0778e29723abb3cecc3c5b3bb24ba6685e5cf0290cca0f2a1d"
+    },
+    {
+      "path": "template/inventory/GAME_SITE_SYSTEM_V2.6.5_INVENTORY.md",
+      "bytes": 4035,
+      "sha256": "9003500a3547a9fd785dc9590782309903ee41340b5ed5cf93c10b538e893ab9"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/.gitignore",
+      "bytes": 58,
+      "sha256": "0f53de7c725c62d0afbf0acdaeab84c0647f1c990d58c75cb6f23bcbb1773081"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/eslint.config.mjs",
+      "bytes": 320,
+      "sha256": "5f6021aeffa50ca13a3cd9e6ef3a1bdac05b7f8dcdf03cad28f93b79e8ec673b"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/next-env.d.ts",
+      "bytes": 296,
+      "sha256": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/next.config.mjs",
+      "bytes": 92,
+      "sha256": "1e3206cb200e264fdddb4dbb2e4772daebc839fdbc94b78316d74892a0de6fa2"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/package-lock.json",
+      "bytes": 365462,
+      "sha256": "7569ec121c62554b00781ae3abc9770fb5a85c048d44e4984e87b461928b0390"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/package.json",
+      "bytes": 859,
+      "sha256": "b5740391dc811b953a7eac8023150609c93fcffc1190d35584e596048cb8737f"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/pnpm-lock.yaml",
+      "bytes": 213987,
+      "sha256": "75ea979beff0b6286e9295147851e92ae9fdc4745254a1e75835a1156b07cb0f"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/pnpm-workspace.yaml",
+      "bytes": 56,
+      "sha256": "2e5b4af2b50fd1473b32da7ef80fea706bddf9a963ef496fb5b803accf6fae14"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/postcss.config.mjs",
+      "bytes": 108,
+      "sha256": "b8cd36495468ea54e029eb4b2e0e98f0feff6f95d6513e70db37a71c0e3bfba4"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tsconfig.json",
+      "bytes": 715,
+      "sha256": "cb35398260812a24d6ff67ecb76df8c5101c77fd65f62aa7e1af597642195f82"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/vitest.config.ts",
+      "bytes": 161,
+      "sha256": "9f1ec5ee73aad0c44ca41ee0871e7bdcce66ba69167e38f12dd075a211527b48"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/vitest.setup.ts",
+      "bytes": 158,
+      "sha256": "9408a30df297f52f573665036d4dd2b8f0b324c7b5ed37e2bd83fa6587065ae5"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/globals.css",
+      "bytes": 29644,
+      "sha256": "8487441804698d17876b528700ee1eece3983f6194973655d925ff5aaff677d5"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/icon.svg",
+      "bytes": 842,
+      "sha256": "6cc6c7d99359804985cf164a8449889ec47ce34c74890cead60551560d64e77a"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/layout.tsx",
+      "bytes": 770,
+      "sha256": "191346d539c932a5144e26b6749369ab33611a0f8d34c144ac1c48c567461315"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/not-found.tsx",
+      "bytes": 611,
+      "sha256": "609d640bb8419468b83e1e82130d52cd2dc410b67a20464336c44e03f70c7e60"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/page.tsx",
+      "bytes": 11954,
+      "sha256": "30dc07d868600b6a35f1235873a42a6dd5c573066f57cc6f6da1e607640ec4f7"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/guide/page.tsx",
+      "bytes": 972,
+      "sha256": "f34cb5a95d1388c7d573be6ceffd656b1377c9a594f2bf39b81f6a604ce75c8f"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/app/guide/[slug]/page.tsx",
+      "bytes": 1581,
+      "sha256": "2528b43295bdc796d18f53beec49efda107b9bbba6876384033b34d60184a59c"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tests/guide-card.test.tsx",
+      "bytes": 606,
+      "sha256": "a2d92a0a6da448ea70854406110c4d2ff21b57063df7ecb7d3ad361b49203643"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tests/guides.test.ts",
+      "bytes": 1536,
+      "sha256": "78064df9c29f073340bfe443eafbd10a5b4c19f221a9696772966294276d287a"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tests/navigation.test.tsx",
+      "bytes": 624,
+      "sha256": "a183352e851b61ce24bb1bf18152acd9db437edfeb93b4e9504db567dfdce9f2"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tests/fixtures/invalid/missing-title.mdx",
+      "bytes": 154,
+      "sha256": "9a27e023b13bacacca8205d6f41be1823710e6c58cabe156b24740cfe33c1532"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tests/fixtures/guides/newer.mdx",
+      "bytes": 222,
+      "sha256": "5059365969c2f96f738419a9f99f825e74b93332ba3ca8c5ec5d502f0a4ad504"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/tests/fixtures/guides/older.mdx",
+      "bytes": 223,
+      "sha256": "40a14e296fa3cc530450e6d7766d4c7bbb64eca97d5d94fec42a001abca861c4"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/content/guides/choosing-a-path.mdx",
+      "bytes": 886,
+      "sha256": "2965916231026881b2941134e3af35ba35f857a30d8a05fc6eb300c0deb0783b"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/content/guides/first-light.mdx",
+      "bytes": 1088,
+      "sha256": "019dce07a94dcfa7fb0a86abd9a8d298866a1473a3e4e37afc5e3f2d947ce99f"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/content/guides/relic-crafting.mdx",
+      "bytes": 858,
+      "sha256": "e32e968320b96e57424508c2ec4146930da9a0342e4e3910778e17d98367123b"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/content/guides/ruined-observatory.mdx",
+      "bytes": 909,
+      "sha256": "9dd4eb1bc67906d59689565ba1741f21d6b1ef6436bbf79aeec66aad6259cffe"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/content/guides/travel-and-camps.mdx",
+      "bytes": 859,
+      "sha256": "da8d91a96bc36bc63456376fa63f8fd51d1ec7f72ce75d03676389c244a3adb8"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/content/guides/warden-hunt.mdx",
+      "bytes": 900,
+      "sha256": "6a32babbd9521733d16ff3f774977f934addc2e3b6bb5d9660bd2c4d0c8bcd9e"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/docs/superpowers/plans/2026-09-28-fantasy-wiki-implementation.md",
+      "bytes": 19125,
+      "sha256": "fc38a44275a7990e3aad4de936dc261dd805ff0dfd29f7f73d09112cf1cb511f"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/docs/superpowers/specs/2026-09-28-fantasy-wiki-design.md",
+      "bytes": 11339,
+      "sha256": "356f9ecbb24aef12f1050ce6d77cd23ec72d7fb5bc40b0964609115a5d246f37"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/article-layout.tsx",
+      "bytes": 1630,
+      "sha256": "5ee1c93a12b7fec198bad101e9abd23445247cc95454fdd97b1cc4e9f4e03eb1"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/fantasy-art.tsx",
+      "bytes": 847,
+      "sha256": "3db7768d7b267ec4a48928da16961c2c7c0484227d3e8255ee60ba6a6d8c951d"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/feature-card.tsx",
+      "bytes": 1031,
+      "sha256": "7a1703b0ee880c3e103daaece111b7d7d3faced657dc487ba42719e2dd950cc3"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/guide-card.tsx",
+      "bytes": 1103,
+      "sha256": "e9749fa39ab2783b8b0d557407eb1991b53d47049efa873c5940178c3f699506"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/page-hero.tsx",
+      "bytes": 547,
+      "sha256": "5e0c1712bc8564bf40cd51e8e899acd77e2d14e21f5ebc055b832129f83c1c6c"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/section-heading.tsx",
+      "bytes": 593,
+      "sha256": "5c4191c82edc17cde083402cad7f1d3f0708940120c3d28e5173b696a9ac4883"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/site-footer.tsx",
+      "bytes": 1919,
+      "sha256": "e3929c949ce88a92ecb0051c697bffac056042fd20e61e251491a5b6f89d4c0e"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/components/site-header.tsx",
+      "bytes": 2006,
+      "sha256": "421a7f1c580379c0f5c45e63a23b6ef2c39eebb2c2c8b5acc1c14fda1843f019"
+    },
+    {
+      "path": "template/temp2_based_farevergame.wiki/lib/guides.ts",
+      "bytes": 3565,
+      "sha256": "a995e2e766fe172e257db74485c695cee14ab9bbc4e20270ee4cd22431c6a58e"
+    },
+    {
+      "path": "template/case-evidence/case-vv.json",
+      "bytes": 3870,
+      "sha256": "c188de7d24f403bfb5b16547000c6258bb8cc2e627f55f53528172f193787da9"
+    },
+    {
+      "path": "template/case-evidence/case-vv.md",
+      "bytes": 4860,
+      "sha256": "404bcacceb88f395a80290cb7051c8366f1b534615a0265695fd25d4747cb369"
+    },
+    {
+      "path": "template/case-evidence/cases-a.json",
+      "bytes": 9153,
+      "sha256": "03fc95c9b1634f7e28d3ea85300f0877ec6afb36a3237d33f04f823cda62da38"
+    },
+    {
+      "path": "template/case-evidence/cases-a.md",
+      "bytes": 2241,
+      "sha256": "513cea25f6c1d4efca3e87768b4de755fd017e4eb7fe19d9c2e7701e15466719"
+    },
+    {
+      "path": "template/case-evidence/cases-b.json",
+      "bytes": 9487,
+      "sha256": "700e0cafe87eec5be037008f5ffab0f9b892c207cc59d664032d350ce43245e1"
+    },
+    {
+      "path": "template/case-evidence/cases-b.md",
+      "bytes": 2536,
+      "sha256": "49692fec475679dc6ea2fa07e152a41d1010efa81dd6dfb8c910620ca3e749c3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.gitignore",
+      "bytes": 85,
+      "sha256": "0d540003eb586be1729bca6dbbada59313c66cd9ca98501966caf331c8780dc3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.nvmrc",
+      "bytes": 8,
+      "sha256": "4137094e7792cb49fe1afddc3f87208f0ef4adfef7d3acd1def0198786d393c2"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/README.md",
+      "bytes": 16147,
+      "sha256": "4d881fe6c2c26ca159ab7e75169abd8b6cc9de8b5eb32c88c0e42c66cc8c97cf"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/V2.6.1_STARTER_IMPLEMENTATION_REPORT.md",
+      "bytes": 40851,
+      "sha256": "d8b94f3cdf02fd18732a523bc1380a634b19f573a453472184309f4455b20e62"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/V2.6_STARTER_IMPLEMENTATION_REPORT.md",
+      "bytes": 14269,
+      "sha256": "6061d7c95b118f83a941a4ca9b7b325d13bc2afc2b5ec561d0262ba4be030d92"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/astro.config.ts",
+      "bytes": 746,
+      "sha256": "825a18f031c22ff88c5441fdf68717780440ab2061551bc3bf11816463644fe3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/game.config.ts",
+      "bytes": 1132,
+      "sha256": "a9208d174981cdc56f17f9f71486c95a1eb85e554fc3099dfd0044f3d188dbed"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package-lock.json",
+      "bytes": 291709,
+      "sha256": "690e72f860880acd72bab8beb81d611b2d8d4b8c59cd6a14a4a0680893768793"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/package.json",
+      "bytes": 1144,
+      "sha256": "3a5ad72e25fa53e7ffbff7ac14bd417178e50516a73046ceae6c39071e5a6ccf"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tsconfig.json",
+      "bytes": 214,
+      "sha256": "74fd35ab193dc7e218b330714133a7dd040cfeb8dd8ef831988781749ddfea4c"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/vitest.config.ts",
+      "bytes": 245,
+      "sha256": "7760f541ccb5ff37329e1f7aa233c9ff526536e090dba4b4cdcea14acf3fed73"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/wrangler.jsonc",
+      "bytes": 284,
+      "sha256": "a462cdbb7268db59c0fee4d8f717ded54dbe3428ab6c9402baa4cab2b67b9dfe"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/archive/v2.6/V2.6_STARTER_BASELINE_AUDIT.md",
+      "bytes": 15137,
+      "sha256": "19ae32a10f2568bb09e38b8fc507bc9657e6daab0631539a63f26af1a86d149a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/archive/v2.6/V2.6_STARTER_CHANGE_PLAN.md",
+      "bytes": 16033,
+      "sha256": "1a29d137653ee3d874b8d79c1df20b32b5ee0bd6ac07c6247bf1c7ae2ab7b3b5"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/ads.test.ts",
+      "bytes": 11654,
+      "sha256": "f713dd15f16828e30b1b752ae6bb91f49df26b57b26e995be829e2a55655fe7b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/brand.test.ts",
+      "bytes": 1763,
+      "sha256": "27e8639cb3a13b53ec1dd44cd4721adb8bf141fc0517b087719a379aa1e5a98b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/catalog.test.ts",
+      "bytes": 7713,
+      "sha256": "09da84a62b0f961cb960375f098c00e3f7def7a7c15989be78abd4b4d2fd41e6"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/config.test.ts",
+      "bytes": 7039,
+      "sha256": "f1e53ddf19717b58abdefd76e51e85e99bc518b4a1b12f1951b00cdec5942af2"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/content-files.test.ts",
+      "bytes": 1127,
+      "sha256": "ff3c7811ed88175ab6b6fbbcff22d0dbf04ab9e2ec1ef6bd4b36f96246b81645"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-build.test.ts",
+      "bytes": 3913,
+      "sha256": "fb7f7bbc26743b256010e0080a6b7de3321aec590d99cc2f4f7b203acec0bbce"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-sentinels.test.ts",
+      "bytes": 7981,
+      "sha256": "6abdf02e153f311012598579f53f4def0fd52f84890779d7ceed57fad54dfd48"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/editorial-article.test.ts",
+      "bytes": 1177,
+      "sha256": "747ccc1d1b9ef25615aa3b38b9e6055e0643fac3dd69b58a5df1ffa803aeb760"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/entity-modules.test.ts",
+      "bytes": 2725,
+      "sha256": "a996e9261f7519bba51530a597b3ea4340c8f89422c0b1abb387a339e1eb0188"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/entity-route-model.test.ts",
+      "bytes": 2992,
+      "sha256": "ad20fd048aabf503758ad068275e98d5b24b43b5d8d348f7178950152f8e6558"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/evidence-build.test.ts",
+      "bytes": 9451,
+      "sha256": "ba8b6f4b8c9956c2859f124b7b298984f279bc7668bea5f3c82befea03ed94e1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/fact-loader.test.ts",
+      "bytes": 2883,
+      "sha256": "06f7483471a86a7c9dac807bbca4c6568b7854c7dbb7e5a83f387f12e7fd7430"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/facts.test.ts",
+      "bytes": 3030,
+      "sha256": "f9952014f9a430a19a99faad032d67269989491e947fe9e9cc4438272a5e87b3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/filter-state.test.ts",
+      "bytes": 1793,
+      "sha256": "ab7722c1848a134af9efc83b422302e64594882d866aba0b761ef89b3d75d909"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/homepage.test.ts",
+      "bytes": 20190,
+      "sha256": "6a9437c1557c2b6a25943302259254fb2f61621330ba007ca45c95281910cfd0"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/html-audit.test.ts",
+      "bytes": 16725,
+      "sha256": "a5a19b871f8833d276ec04f6ab1b99820c93bbcfa30ab7e8c16985b62f5f28d5"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/legal-safety.test.ts",
+      "bytes": 16916,
+      "sha256": "156979495d6fa80892eb6629fd4866607cd95959ee8f1de7f3b921c32593a8c9"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts",
+      "bytes": 8983,
+      "sha256": "388d980dadc20b0e0498d9215166aba2af8f5145184c7c2b61129990cfb6a38f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-build.test.ts",
+      "bytes": 5377,
+      "sha256": "d642ea86df9f6814ad7d830fe8499954918ce39a7673a463caaada3ddf9d3988"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-readiness.test.ts",
+      "bytes": 30698,
+      "sha256": "13e35d482c22286f1d72eaa62eb24a955b1d0502eac7d24339ec229f45790570"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-rendering.test.ts",
+      "bytes": 11808,
+      "sha256": "9eb5a904fe725529e2602d9fd4d688e9944eb5e5665667df6a4eefd32ac24b07"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media.test.ts",
+      "bytes": 15488,
+      "sha256": "07015fe2428fd197e949708953f93ebd755bd4ebd64bccc7d6401aa8dfae2dd0"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/navigation-behavior.test.ts",
+      "bytes": 8642,
+      "sha256": "238ae2843caaf3e5a80cc60fb91e4db608ebf4871776bb72612ec14860444855"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/navigation.test.ts",
+      "bytes": 3619,
+      "sha256": "40a7efa4425ee3b02f3e27c02babfa5bf7255a4c5dfb6309dfcad15cc9c18bef"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/optional-routes.test.ts",
+      "bytes": 2819,
+      "sha256": "cc4d6b072864848192cbcd5d8d8e5fdcfd7cc0f12d30763fa0530be564aad4e0"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/output-reconciliation.test.ts",
+      "bytes": 3241,
+      "sha256": "17e0f83bf28d91efcb3d3d899ada916e6eebd614617a33f13f8c786e3d794f40"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/page-models.test.ts",
+      "bytes": 5321,
+      "sha256": "0ead07e5752b8c2fe115f5411671905b86f274cf369c10c022ec740b0ce72868"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/page-resolution.test.ts",
+      "bytes": 2400,
+      "sha256": "b62545a007cf15838dee69a84c0ebdbb94376a0dffbb9ea54fc85c9d078a5d2f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/pagefind-artifacts.test.ts",
+      "bytes": 13889,
+      "sha256": "9000b65176589423e1116238c5a65ac55a67a2c93afb73c71ae6f7613efb0294"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/patch-impact.test.ts",
+      "bytes": 1840,
+      "sha256": "8cd3456c3f1f0b6521df01449a4f6ae4ee7fb8b85b0e8df918bd981b11f90294"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/player-facing-metadata.test.ts",
+      "bytes": 5286,
+      "sha256": "961bc4f773a0bc1bc9f58267254c9b70c5fdd3826dc85244511119a11d81fa7f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/public-sources.test.ts",
+      "bytes": 1114,
+      "sha256": "c3dac963e27b8943cc4cd0c9d5146de94d67a3ef4abc74321afec2a90565b138"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/release-identity.test.ts",
+      "bytes": 4322,
+      "sha256": "6fd50e2d9b29f1e68393b6398a870d3a62a3b68791c173722035c260637c57ca"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/residue-build.test.ts",
+      "bytes": 6321,
+      "sha256": "1bdc663ecbba8c378625c9d3086f6db0b467fb551247512ba47990245fda520d"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/runtime-contract.test.ts",
+      "bytes": 1643,
+      "sha256": "ce53bbe2284ab4d118c2428d3989cf03abb889d4b73093f4a4125bb583ab039a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/search-state.test.ts",
+      "bytes": 2197,
+      "sha256": "b9f614a4ab7a4cedaa3eab7dc8fc7497df554a72915ee7e0c5efb196f2015d70"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/seo.test.ts",
+      "bytes": 10426,
+      "sha256": "f5f2f89eff6d1b0cd931979b4db7be4e6098acd6d7d65e1c5a40517f72b38087"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/site-data.test.ts",
+      "bytes": 3748,
+      "sha256": "9fbad26dbbe5b802f5559474b9abe6bf7355b037fbaa24819a031ac309f7453b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/site-validation.test.ts",
+      "bytes": 9628,
+      "sha256": "1baeb616cbb269d07a5005547acf4c8e088e4c7e16558fb9aa50b0df08873741"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/static-page-copy.test.ts",
+      "bytes": 659,
+      "sha256": "e979f9912c56aa091daeb250194c3251dbe1963725d835ca11c1402f1c9cdcc7"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/theme.test.ts",
+      "bytes": 8918,
+      "sha256": "6997ae3dc9dc1a5719b3c88472ea73a02fbb7a4feef2e93727e43e5265a151f3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/tool-definitions.test.ts",
+      "bytes": 6191,
+      "sha256": "5d56eeb512f90c39a223d666112a83eb258b11c734588e08b6795663990f16ad"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/tool-island-boundary.test.ts",
+      "bytes": 2734,
+      "sha256": "0876a79695ff9f98f267b35903b8e11576483493b4228ff95e64c12bcf0a0f1f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/wiki-article.test.ts",
+      "bytes": 6041,
+      "sha256": "2b0fb91d3baa99ea0c29de6b7c8fddf9cbfa16143e2bc6e2cd9cc0e61e8c1e33"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/fixtures/ads/TestAdProvider.astro",
+      "bytes": 574,
+      "sha256": "a895df91f41115af31ece12fe1383e00bc03becbf2bdab1779beb3e19133972e"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/fixtures/media/media-decision-table-sop-v2.6.1.md",
+      "bytes": 8542,
+      "sha256": "564144337a03d9e5dc48c5b37b462d746343d7d136458efb4c7a826bece88f7f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/fixtures/media/media-rich.json",
+      "bytes": 1280,
+      "sha256": "5bd2747d2ee70e0af0a15900a4a4f4b681c8554d41a15cdac2fae548efaf0992"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/fixtures/media/qa-detail.svg",
+      "bytes": 830,
+      "sha256": "64b9a4ca1edfcf44e9b353a9bb1243120e0ec45fa01cae0706616c0bb98cd716"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/fixtures/media/qa-overview.svg",
+      "bytes": 892,
+      "sha256": "ce904484a26533ba97ff807e43ccc4b0bd8ca8f68d269bab1c0debed88156256"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-browser/coverage.test.ts",
+      "bytes": 1470,
+      "sha256": "06be3a171b689dad8ab4c862a0770254969c84835622cecbe03ff19ea33beaad"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/helpers/core-build-fixture.ts",
+      "bytes": 4499,
+      "sha256": "727c83b18cab0d5dfeed3502a3974761f261046c4cc2d754835b6f2bab12c01b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/ARCHITECTURE_GAP_ANALYSIS.md",
+      "bytes": 21165,
+      "sha256": "5cb5fa6e980d55cfac88a2963cb078311a8dc4fc124ba72669992e94a9f30e85"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/ARCHITECTURE_PROPOSAL.md",
+      "bytes": 38957,
+      "sha256": "cedf3f4fa86b9ab1299e318336a6f52b693331e4a19ca518b8522b8729492892"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/ARCHITECTURE_REFACTOR_REPORT.md",
+      "bytes": 7733,
+      "sha256": "d78367e34474313bb8908a68d8436800eef526026855ed975655db24caa3c663"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CODE_REVIEW_REPORT.md",
+      "bytes": 11501,
+      "sha256": "b13ab3c1e232c8b6839140be835de6b8450a2029f8ec8cff886bf686a7a77b89"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md",
+      "bytes": 13664,
+      "sha256": "04724f778338718e02940de76dcfee607cb51e13642cdd18ca91407ca50c22c1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/DEPLOYMENT.md",
+      "bytes": 2578,
+      "sha256": "9a05b019e9c06a8adf875142cbc1431bc508910b2fa099e4912afc7575d55716"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/PATCH_WORKFLOW.md",
+      "bytes": 971,
+      "sha256": "e9ec1f66ae4c4fbb93ad8adb2e18f0b52b4ed55c11b61244117b8ae6630de0cd"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/PP02_PRODUCTION_RESIDUE.md",
+      "bytes": 4875,
+      "sha256": "465944636e7721818935945b428af8e2c05b28d4c8d60456afce283cbfa3beb7"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/QA_CHECKLIST.md",
+      "bytes": 19339,
+      "sha256": "edeaa600a021b04e39810a90fb595e08ee82e021915cddcb1c8b115e75602e3f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/RELEASE_AUDIT.md",
+      "bytes": 4368,
+      "sha256": "e3e6eaf369af1c891bea1f880379c3100f0d1554d704f1313fe049c4b297c88a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/SOP_READING_REPORT.md",
+      "bytes": 8126,
+      "sha256": "6cd3b48806ad94249fa36475d66c06b43f683de963beb49f5843c42c058481d4"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_2.0_ARCHITECTURE_PROPOSAL.md",
+      "bytes": 78788,
+      "sha256": "ada7abb0743843e3d4fe0f66d6c7dffc20076ef4403fa73b3f887ce5a4bb1beb"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_2.0_MIGRATION.md",
+      "bytes": 11777,
+      "sha256": "ec3b1b5e32aefc741171919fd4a9cc110157710b0d6a84fb47149a123d491d6a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_2.0_PHASE_B_REPORT.md",
+      "bytes": 13389,
+      "sha256": "1e560abe06c2982db7512785e60be82d6068f90291f667f0920edb3e68c81b09"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_2.0_PHASE_C_REPORT.md",
+      "bytes": 10543,
+      "sha256": "e923a311830b5c614cb306bb40a1ea31fcbf50384bf594806160105a9da0d8e2"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_2.0_PHASE_D_REPORT.md",
+      "bytes": 18350,
+      "sha256": "7c362b15d4221083ad97096a7a8faccee0f42f65ffe7c9c09aa7735eeb2f7218"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_2.0_RELEASE_AUDIT.md",
+      "bytes": 15690,
+      "sha256": "98f005ac4421db04b26e0c4268d9530e87d6d0a33b9b030853f989c7349b5f8f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/STARTER_V2.5_CHANGE_PROPOSAL.md",
+      "bytes": 53097,
+      "sha256": "3b430d915f5db5d49856df5fe5d4500ecdce6b12080bebc80fc1b9bf54e8b540"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/superpowers/plans/2026-09-01-game-site-starter-foundation.md",
+      "bytes": 10710,
+      "sha256": "aecb6ab72b491df6013023a86c78232d4ad166dc8497cc84721b6b18b556419b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/superpowers/plans/2026-09-01-page-models-and-static-routes.md",
+      "bytes": 8878,
+      "sha256": "caf63656d19b455857543edc6b551aa9c40db96bba7ab25c39d0905d5eacc91a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/superpowers/plans/2026-09-01-production-seo-interaction-delivery.md",
+      "bytes": 11235,
+      "sha256": "ea3ae2a5c8e2c718d7881bdd59d6cfe76b2eb43882e41b1ddda23d1c531d16d1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/media/README.md",
+      "bytes": 5431,
+      "sha256": "37a81f5eea9db4311117f577ccf693e39e7f248e4c7512a632d366ba528fe4fb"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/public/favicon.svg",
+      "bytes": 329,
+      "sha256": "3a725ff215654ea3c74dabb0bb491407b88fe382e1cc46ac867506cd6081051c"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/public/logo.svg",
+      "bytes": 300,
+      "sha256": "375068e496560945db7e0c0037d97196f7e9cf26f206bf58f92507892315866f"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/audit-build.ts",
+      "bytes": 9948,
+      "sha256": "703333216c45c0fdc21e31e88e5f561571779b2b46d6173596696f74692496d1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/build-site.ts",
+      "bytes": 4091,
+      "sha256": "07f4f5024f737f27415f421a5ec9c43d61851548ec1523724280a63248f4c23a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/core-safety-sentinels.ts",
+      "bytes": 13022,
+      "sha256": "a23ee8df90a702d68b21434a6d5def9702dbc191d0043a014992eaed4d8a018a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+      "bytes": 9471,
+      "sha256": "42c56ac789187e3c7f449441c1f05cec1551c1c42c913f5583860d439c67ef37"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/normalize-pagefind-output.ts",
+      "bytes": 7739,
+      "sha256": "b0202114b173cb19c1cc6db4e47ea66b5570979b88d969413c849e4f6cda913e"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/patch-impact.ts",
+      "bytes": 753,
+      "sha256": "11c87852f5c5938135a71d147ee1edfc60b8ed769c02f8c27b25a0eda49b39ff"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/reconcile-output.ts",
+      "bytes": 632,
+      "sha256": "00d1f7a51fc19ca283a0c2af77ea60a524f46e6d42b25b46bc49bb0c05a8b3a8"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/residue-artifacts.ts",
+      "bytes": 8586,
+      "sha256": "bf6eec5b2de4a2a264e545b77f72ed8913e0e552dbaa14c25fb9661827ec5295"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/validate-site.ts",
+      "bytes": 6231,
+      "sha256": "4db62b38ace38628d4208e9cabaa3aeaf12c5bcbcddf0029fcc4ebc87968a4da"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.github/workflows/ci.yml",
+      "bytes": 577,
+      "sha256": "ed1f21c64b5ddd9cfb0ea79bd0415aa3be3581ae5c95e714df0d9e1ef71684e3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/content.config.ts",
+      "bytes": 785,
+      "sha256": "46d650736ae661a5dfd05eb7ed4270e765e11a5e6cf6bcae462b5f449ed7d2a2"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/brand.ts",
+      "bytes": 570,
+      "sha256": "3ebb9c0d75e569c1c4b33f3e454f2f2d6259dbdf4e9ac3411d66745e17d8ceb0"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/catalog.ts",
+      "bytes": 795,
+      "sha256": "d38f92df0d93495c21e41914d9c95af40d0449e5c703eac47b45239ba7a8b4bb"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/content-files.ts",
+      "bytes": 1602,
+      "sha256": "383be91f9a7f085379a22fb2172c28407f5b5e7087944f1f08e89d391898b350"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/entity-route-model.ts",
+      "bytes": 2756,
+      "sha256": "1b0ae72d175ed370d1491cb373356d9045ace172506e2c34bd698bf7fe5583b1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/fact-loader.ts",
+      "bytes": 1273,
+      "sha256": "981b9a16f5a100eba1553cc3047c2b3693a15b702eb26cd021efc9c1671bb634"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/filter-state.ts",
+      "bytes": 1635,
+      "sha256": "73c8ebe9eb86f1549ec8e401603065425f9630f3106f196cbf137acab73a52d3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/html-audit.ts",
+      "bytes": 18272,
+      "sha256": "eeb3440b1ca8fc6d0473fa03068f1f8df3a99f5ba886430932e3037c030ae3db"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/legal-safety.ts",
+      "bytes": 4435,
+      "sha256": "75ffe35dde7bfa296153621906a74fec999df4a669d515472702bfbbd19095d9"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/media-readiness.ts",
+      "bytes": 20680,
+      "sha256": "570b1abcb6f46e75dcc27a478c96dca7622668a6a51848d679e3df1cae484f84"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/optional-routes.ts",
+      "bytes": 2693,
+      "sha256": "509da0cac4aeb7c3ddabbf99c26039d05bea65cc1b1c103638c45905a8f1aa26"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/output-reconciliation.ts",
+      "bytes": 1887,
+      "sha256": "ea3e836b76fc374d00295964e1e1a270b0e5dd688f86d60078a8844825bb6c15"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/page-models.ts",
+      "bytes": 2328,
+      "sha256": "dbd0c63f6dedb18636fa7bbe1f3fd61d52f9b7d3d42b66179fc525e63b028930"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/page-resolution.ts",
+      "bytes": 1179,
+      "sha256": "6c96562fe6819828401c6e84b827b3c8ac148259159be1d7f81c166256bfde00"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/pagefind-artifacts.ts",
+      "bytes": 16783,
+      "sha256": "a98815d6a6bc255b54161eef4e17d00568941c4b0b48080d5e7e16fefa539542"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/patch-impact.ts",
+      "bytes": 1950,
+      "sha256": "69b8afa1017e42874c2e4bb1ea117e95dd9d6ddc0a114be9ee03cea83bf53fa5"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/public-sources.ts",
+      "bytes": 675,
+      "sha256": "994eb93f19b8a79e6515b37b43b1949ab49b52ec2742039b7fe58eab119f651e"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/search-state.ts",
+      "bytes": 2419,
+      "sha256": "bb8ca0c5a671fef336bd046533bd6887afe1c02ea1e6f79fd7796b8748740c67"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts",
+      "bytes": 12791,
+      "sha256": "25b12273995bd259102e41dfa8d0528934729b22701ffde27510d2610fa5be2b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/site-data.ts",
+      "bytes": 3384,
+      "sha256": "06314e2bc5c2a6b8306a26e8198d147a4eab54937f2016a8fd1c083aabb9c1e0"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/site-validation.ts",
+      "bytes": 8221,
+      "sha256": "8473d0fd04b056c39c018185fc005e70b982bd14f211519fadc3ca35c15463f4"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/static-page-copy.ts",
+      "bytes": 3940,
+      "sha256": "6bfea92a82afd47ee17ca184900cf10f41c30c694364e2da10d23d11dc7f7b03"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/tool-definitions.ts",
+      "bytes": 6510,
+      "sha256": "e58b23700e8b4e84076d39ab79d743b41035fd103e7508c910d7e34df4dadd91"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/tool-loader.ts",
+      "bytes": 1364,
+      "sha256": "aed03d16bb3c24dff0898126feafeb69b21c86fc36019d926bbc5c6405c61659"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/ads.ts",
+      "bytes": 2781,
+      "sha256": "4ad13b9a28da849b3f39e6823f201370f358046a16d261fa3491eb8eb251bd7d"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/load-config.ts",
+      "bytes": 160,
+      "sha256": "b72f19dbef9b030d9d2c426027fbb25c02e112141bf295b7e01de6d3e4fa7669"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/config/schema.ts",
+      "bytes": 5311,
+      "sha256": "f56fdf95fdcceee4c69de98967dea6542b6901c1603e29f5c5598585aa4b0beb"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/content/meta/README.txt",
+      "bytes": 216,
+      "sha256": "32f9e75ed6de16ccf84c22ddf2f10a7b545a709ce925b6f59e4cf534a6bd4069"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/content/news/README.txt",
+      "bytes": 214,
+      "sha256": "9e4d2dad5fee511f7c2daded0d61f6be1312e08e162073f558e7fc750f33d932"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/content/guides/getting-started.mdx",
+      "bytes": 1640,
+      "sha256": "91901f32e14a86bc44c667b0ea641daf8952f2f61916c1023adca870239e3196"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/styles/global.css",
+      "bytes": 48273,
+      "sha256": "68d2411bfab2fafec93758182afc4c5e79d6ad4654358916170a9240dface0b4"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/styles/page-families.css",
+      "bytes": 869,
+      "sha256": "fbc025172bd681a10dedbc3edd118c81438bcf8c25a98cf2093a22d4c0868016"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/styles/theme.css",
+      "bytes": 1192,
+      "sha256": "9361db9a3a1376621eea8b7b88b2019c6465e47cd54ef215e455d03bb0235174"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EditorialArticle.astro",
+      "bytes": 2988,
+      "sha256": "d0544aa61bf90834cb38715da262d955f87fb65d0c1c228e0104202c2d0241d6"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDatabase.astro",
+      "bytes": 1631,
+      "sha256": "38e20153439ebb6371bd8618221a07f5522befd1a43b2f27635c175be30cf444"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/EntityDetail.astro",
+      "bytes": 3538,
+      "sha256": "aac656b750df14e3284949796a96f0ab8d06d0cd6fa22c8bef274b8cb8daa13c"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/Footer.astro",
+      "bytes": 828,
+      "sha256": "71b0a89c1efb022819ca7fbf2007d302bf8af431a314393e73f5aa0c5ff00721"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/Header.astro",
+      "bytes": 1142,
+      "sha256": "101f1769b252fe359e1633c9a55f7c68b0b9d5a609ec975975ee78e5c581fd2b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/LegalPage.astro",
+      "bytes": 2319,
+      "sha256": "62d8bb85b3c6d5046a976f8e37d75045dcc8ee85542f342e877df9cfbf2956b7"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/StaticWikiPage.astro",
+      "bytes": 1728,
+      "sha256": "37e37eafbb4489731758c112349a6218883e88f7f46d07c05a8689cf5dae0782"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/ToolShell.astro",
+      "bytes": 3971,
+      "sha256": "0af7f4e889bbb2a17e7228e468d9809a528d57297a203eebc151aa75d096d9c6"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/ads/AdSlot.astro",
+      "bytes": 999,
+      "sha256": "9a77b99822c59aaaf56a2654432389c5d2bdae17df04ed2997c1cf4b9ded7311"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/ads/ProjectAd.astro",
+      "bytes": 213,
+      "sha256": "f1970b3ee01784a74737d720c640b767112f87b855b8d27e67c8388c2eb8a5b1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/home/GameHero.astro",
+      "bytes": 1650,
+      "sha256": "01ab66321396edd7366b2fac614b3f69503d64954592dd6b268979946cc99d39"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/home/PageCollection.astro",
+      "bytes": 1107,
+      "sha256": "8d73e93ac080839d183b41cd527af5c53d5ea43e6364fc8956dafdff68c7fc67"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/home/WikiCategories.astro",
+      "bytes": 985,
+      "sha256": "0da4d197dca51e9a6dd024e90c39c130b9f395cd1bed1a845a246f27ab6eb781"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/home/home-model.ts",
+      "bytes": 2958,
+      "sha256": "f80b886c9a3e785273b137ccbc0c3881341bc243994479038d83057baf13f059"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/navigation/DesktopNav.astro",
+      "bytes": 1542,
+      "sha256": "5e1b7be9c3942672a56fffd2c84fbe4da82227759cb824714bac19b06df7194a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/navigation/MobileNav.astro",
+      "bytes": 6716,
+      "sha256": "2dba29ceacb31b0d4089afed1c847a9e0e4c1ae78338df8cad7d78d7b08fc6b1"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/CalculatorIsland.tsx",
+      "bytes": 2466,
+      "sha256": "d9d4d71ddb9fed8e65add286233a596eedcbb41d11ca401845bc30eb5e4174b7"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/EntityFilterIsland.tsx",
+      "bytes": 3187,
+      "sha256": "591f43d8d3e43baaffb0669d67b2933e7d74ad90b4a1b91cafe6db6f0ec6bf90"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/PlannerIsland.tsx",
+      "bytes": 2054,
+      "sha256": "e26b4e70e6f6a92b45e8cca10933be124cb9eec5ced6300596e8bebd6667e639"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/islands/SearchIsland.tsx",
+      "bytes": 4887,
+      "sha256": "ea0ec16cafa269a80d053907d5b7bce35a227e62deaf3aa64dd9fd241ad5b483"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/FAQ.astro",
+      "bytes": 600,
+      "sha256": "08a6e0378e2bd7f195bbdc18f6b5b1a7862b416259b8963e07c2ce8b966ca760"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/QuickFacts.astro",
+      "bytes": 547,
+      "sha256": "538f7d22d8dccc29bfea5fc8fbe492c8f656bed5e6ae60ca51c8c88bc59dd3f7"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/RelatedPages.astro",
+      "bytes": 557,
+      "sha256": "1e06764543a4bb53502d5f0a8a4214e168cf1de6c921897f0c99f6fc9edfb36b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/Sources.astro",
+      "bytes": 1337,
+      "sha256": "ac5814f51f530432a5a2d40623cc5729e46fd91047630ed7e9a9dc65832d92c9"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/WikiArticle.astro",
+      "bytes": 5008,
+      "sha256": "87f330448a1f89b51f0e6abdbf83f20c7c43167865daeb405e215f0cef506b41"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/wiki/wiki-article.ts",
+      "bytes": 205,
+      "sha256": "902ceea4adebff46547acaea24af4578a1ebd682fe5fdc7ae7052ae06d7f8b53"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/GameMedia.astro",
+      "bytes": 712,
+      "sha256": "09a783dcc0ffc5d90a24645cae3f460e74b8742fe972e680978cea66b2426161"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/ScreenshotGallery.astro",
+      "bytes": 385,
+      "sha256": "d6f0ccb7b9fa98da2f13eb8595af5e02387acce85b8a89e1af75456c5cdb2fe8"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/components/media/VideoEmbed.astro",
+      "bytes": 1046,
+      "sha256": "d7dd811209976e3391adb1f3b35e6227aa7954f0165576005a22de4b226993cd"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro",
+      "bytes": 2682,
+      "sha256": "93fad97ad8ba018a881f5da9175300a35db87ff41271688bbb04fe70547f1c2d"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/entity-modules.ts",
+      "bytes": 2495,
+      "sha256": "726c13b855cca7a43999f545ceda541a2deb98f7d81d0c93e7aee7518030e2ec"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/legal-content.ts",
+      "bytes": 186,
+      "sha256": "ece5c206349e0c9211e30956c90bf58985e7900f4e3bf05103ee3590fb661722"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/page-inventory.json",
+      "bytes": 9846,
+      "sha256": "464224e0c0dca6fa37cdd7a1a7197e3ffe86a7e81285d6f580e56dd95c6d0aa6"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/tools/README.md",
+      "bytes": 489,
+      "sha256": "038a628f49d92527c564d996512fc96946c7ea05e5c45643e25ac90c4f9c841a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/facts.ts",
+      "bytes": 3357,
+      "sha256": "c4fd3ffb42f9323a0082f2b475332477aea30ad74bebf11595190449dc8964d2"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+      "bytes": 5584,
+      "sha256": "68e11bf8f697097d6381dc6de509ecb7a9cbc1444eccb33a8bc113cf81353009"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/page-inventory.ts",
+      "bytes": 5592,
+      "sha256": "830b01c93da63e02c7fddfbee3c8294994da72fa711b4da68ce2648445fddbc6"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/provenance.ts",
+      "bytes": 843,
+      "sha256": "4f501fc774387a47043aa38ecc59836d0dc801b7de0ab10148afb8a2f96059c3"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/tools.ts",
+      "bytes": 5546,
+      "sha256": "0c4f5276141dd1e4985ca105a155f28d0373d10e6b37e93effda3adddd3b7ba5"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/facts/README.md",
+      "bytes": 793,
+      "sha256": "014bce80c2b5a1245d903512246ceb084c52f062885b0c82966f74c6db990130"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts",
+      "bytes": 2519,
+      "sha256": "f39b960d53a84a703d8e2204b569c2db78e44cdc4e1898cb168b186725547a0d"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/media.json",
+      "bytes": 34,
+      "sha256": "d4d3085c8b38b834198eb020d82fdb567cb5e53320b67c2f9d50a992c686be01"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/404.astro",
+      "bytes": 831,
+      "sha256": "762955630f6dce67d0c418448df12d76f749f66324ff1bb90480380d16157c63"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/about.astro",
+      "bytes": 228,
+      "sha256": "c853158856f24bbace3442564a786520d07b10659c09b60ada79e966861edd36"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/index.astro",
+      "bytes": 4174,
+      "sha256": "5cafae5ded69109c9d929c8e65f79c8a89c1d53e95c7b6a200f19e7f864a980b"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/robots.txt.ts",
+      "bytes": 315,
+      "sha256": "75b545c278113532c4e91eb2467dffabcaaa78d5adeb84b22bf9a37ae7f4ded0"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/maps/[...path].astro",
+      "bytes": 2160,
+      "sha256": "09b3beccbf85310c2575188b77d26b464b83fa4ad46e5f1c4938e3d208071a6e"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/tools/[slug].astro",
+      "bytes": 861,
+      "sha256": "f64801fd647a35c2b58be0f5746264e78ea034d35b439a10999d405a4308486a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/privacy/[...path].astro",
+      "bytes": 643,
+      "sha256": "1049e3dc07340935cfb965e59f79796656b97835ffefc42041c7e2ec2dd090a5"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/heroes/[...path].astro",
+      "bytes": 2249,
+      "sha256": "9aab7b9e2ed1fa9b3f35085437b4c41e241d78447b941bacd029798612583834"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/terms/[...path].astro",
+      "bytes": 633,
+      "sha256": "0365b10200b899e1f808a8182f50c11c3ca52d398d15c0dd84fbc4f34138dd93"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/meta/[slug].astro",
+      "bytes": 1226,
+      "sha256": "9d71fa768c44a2ba5a12ab44db02ed186e8707793b4418b4f3276d2dbbec7f19"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/weapons/[...path].astro",
+      "bytes": 2197,
+      "sha256": "358b270a92c9b405ebdcc34f3771c57cd4e731a00e3df06178dd56dae699d98d"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/search/[...path].astro",
+      "bytes": 1089,
+      "sha256": "bf009b55e15e52a5c8431f293df68b2d385af8c0107c10367d076881ab47455a"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/news/[slug].astro",
+      "bytes": 1210,
+      "sha256": "bb752b772635e3e1ae3cb30383de122b754cd008bfac21972c80933c59d60e1e"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/guides/[...slug].astro",
+      "bytes": 2985,
+      "sha256": "efe5c15a47d60e142020998b9e5e98bbba9b37f41fdf435a32e7a32a0e17e511"
+    },
+    {
+      "path": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/pages/items/[...path].astro",
+      "bytes": 2118,
+      "sha256": "178937abd543544db8455e9ef2016ffbe8cace7898ad29f535ac6073de7dff6f"
+    }
+  ],
+  "excluded": [
+    "template/temp4_based_miniwars.art/.git",
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.astro",
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/dist",
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/node_modules",
+    "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/.git"
+  ]
+}

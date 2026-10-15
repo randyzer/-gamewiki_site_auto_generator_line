@@ -1,0 +1,11 @@
+{
+  "gameIdentity": "Offline Fixture / synthetic validation only",
+  "objective": "Validate orchestration offline; no factual research or deployment",
+  "canonicalRequired": false,
+  "siteRevision": "offline-fixture-v1",
+  "domain": "fixture.test",
+  "repo": "offline/fixture",
+  "branch": "main",
+  "dns": { "provider": "offline fixture", "recordsReviewed": true },
+  "deploymentPlanAuthorized": true
+}

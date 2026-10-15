@@ -1,0 +1,110 @@
+[
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/schemas/media.ts",
+    "changed": true,
+    "added": 15,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/data/media/catalog.ts",
+    "changed": true,
+    "added": 8,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/core/seo.ts",
+    "changed": true,
+    "added": 13,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/src/layouts/BaseLayout.astro",
+    "changed": true,
+    "added": 12,
+    "removed": 1
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/media-validation.ts",
+    "changed": true,
+    "added": 38,
+    "removed": 1
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/scripts/audit-build.ts",
+    "changed": true,
+    "added": 8,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media.test.ts",
+    "changed": true,
+    "added": 41,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/seo.test.ts",
+    "changed": true,
+    "added": 11,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-audit.test.ts",
+    "changed": true,
+    "added": 34,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/media-build.test.ts",
+    "changed": true,
+    "added": 44,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/helpers/core-build-fixture.ts",
+    "changed": true,
+    "added": 17,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/media/README.md",
+    "changed": true,
+    "added": 40,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/docs/CONTENT_AND_DATA_GUIDE.md",
+    "changed": true,
+    "added": 40,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/NEW_GAME_SITE_SOP_v2.7.md",
+    "changed": true,
+    "added": 39,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/QA_CHECKLIST.md",
+    "changed": true,
+    "added": 10,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SOP_V2.7_CANDIDATE/docs/EXECUTION_PROMPT.md",
+    "changed": true,
+    "added": 39,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_CODEX_MASTER_PROMPT_V2.7_CANDIDATE/CodexMasterPrompt_v2.7Candidate.md",
+    "changed": true,
+    "added": 39,
+    "removed": 0
+  },
+  {
+    "file": "Repo_hotgameweb/GAME_SITE_STARTER_PHASE1_CORE_SAFETY_CANDIDATE/tests/core-safety-sentinels.test.ts",
+    "changed": true,
+    "added": 3,
+    "removed": 2
+  }
+]

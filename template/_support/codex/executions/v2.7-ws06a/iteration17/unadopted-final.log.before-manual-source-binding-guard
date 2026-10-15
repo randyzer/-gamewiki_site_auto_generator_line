@@ -1,0 +1,64 @@
+
+> game-site-starter@0.1.0 verify:unadopted-final
+> tsx scripts/verify-adoption.ts unadopted
+
+ADOPTION unadopted: npm run validate
+
+> game-site-starter@0.1.0 validate
+> tsx scripts/validate-site.ts
+
+Site validation failed:
+- PP-02 core.brand residue on config:name.
+- PP-02 core.short-name residue on config:shortName.
+- PP-02 core.social residue on config:social.
+- PP-02 core.brand residue on config:title.
+- PP-02 core.brand residue on config:template.
+- PP-02 core.domain residue on config:site.
+- PP-02 core.domain residue on page:home:urls.
+- PP-02 core.brand residue on page:home:title.
+- PP-02 core.domain residue on page:hub.guides:urls.
+- PP-02 core.brand residue on page:hub.guides:title.
+- PP-02 core.setup-title residue on page:guide.getting-started:copy.
+- PP-02 core.setup-intro residue on page:guide.getting-started:copy.
+- PP-02 core.setup-brand residue on page:guide.getting-started:copy.
+- PP-02 core.domain residue on page:guide.getting-started:urls.
+- PP-02 core.domain residue on page:search:urls.
+- PP-02 core.brand residue on page:search:title.
+- PP-02 core.about-intro residue on page:about:copy.
+- PP-02 core.domain residue on page:about:urls.
+- PP-02 core.brand residue on page:about:title.
+- PP-02 core.domain residue on page:not-found:urls.
+- PP-02 core.brand residue on page:not-found:title.
+- PP-02 core.brand residue on asset:logo.svg:branding.
+- PP-02 core.logo-name residue on asset:logo.svg:branding.
+ADOPTION unadopted: validate exit=1; EXPECTED_PP02_REJECTION
+ADOPTION unadopted: npm run build
+
+> game-site-starter@0.1.0 build
+> tsx scripts/build-site.ts final
+
+Site validation failed:
+- PP-02 core.brand residue on config:name.
+- PP-02 core.short-name residue on config:shortName.
+- PP-02 core.social residue on config:social.
+- PP-02 core.brand residue on config:title.
+- PP-02 core.brand residue on config:template.
+- PP-02 core.domain residue on config:site.
+- PP-02 core.domain residue on page:home:urls.
+- PP-02 core.brand residue on page:home:title.
+- PP-02 core.domain residue on page:hub.guides:urls.
+- PP-02 core.brand residue on page:hub.guides:title.
+- PP-02 core.setup-title residue on page:guide.getting-started:copy.
+- PP-02 core.setup-intro residue on page:guide.getting-started:copy.
+- PP-02 core.setup-brand residue on page:guide.getting-started:copy.
+- PP-02 core.domain residue on page:guide.getting-started:urls.
+- PP-02 core.domain residue on page:search:urls.
+- PP-02 core.brand residue on page:search:title.
+- PP-02 core.about-intro residue on page:about:copy.
+- PP-02 core.domain residue on page:about:urls.
+- PP-02 core.brand residue on page:about:title.
+- PP-02 core.domain residue on page:not-found:urls.
+- PP-02 core.brand residue on page:not-found:title.
+- PP-02 core.brand residue on asset:logo.svg:branding.
+- PP-02 core.logo-name residue on asset:logo.svg:branding.
+ADOPTION unadopted: build exit=1; EXPECTED_PP02_REJECTION

@@ -1,0 +1,16 @@
+{
+  "recordedFixture": "/var/folders/sx/0vw4jt396yj64d3ydl1qls9h0000gn/T/starter-adoption-verification-CgRiFy",
+  "recordedPid": 89278,
+  "capturedAt": "2026-10-07T15:21:30.528Z",
+  "pidAliveBefore": true,
+  "stopAttempted": true,
+  "fallbackSignalUsed": false,
+  "fixtureExistedBefore": true,
+  "fixtureSourceSha256": "f0a8cf3768b761c4f5ed6c7e73f06da353f1c36f2dcb6f7266a50d246af6cbac",
+  "distSha256": "5af57170dac4c473f46a3893352c81aba2193b50140dc47be657d52e52f42d48",
+  "pidCwd": "/private/var/folders/sx/0vw4jt396yj64d3ydl1qls9h0000gn/T/starter-adoption-verification-CgRiFy",
+  "astroStopExit": 0,
+  "pidAliveAfter": false,
+  "fixtureRemaining": false,
+  "status": "PASS"
+}

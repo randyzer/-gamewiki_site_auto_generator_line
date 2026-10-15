@@ -1,0 +1,106 @@
+{
+  "classification": "HARNESS_LAZY_LOAD_CONFIRMED",
+  "diagnosticSessions": 1,
+  "qualificationAttempts": 0,
+  "productDelta": 0,
+  "rows": [
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "nativeActivationProven": true,
+      "additionalEventsAfterScroll": [],
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0
+    },
+    {
+      "engine": "chromium",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "nativeActivationProven": true,
+      "additionalEventsAfterScroll": [],
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "nativeActivationProven": true,
+      "additionalEventsAfterScroll": [],
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0
+    },
+    {
+      "engine": "firefox",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "classification": "COMPARISON_IMAGE_ALREADY_LOADED",
+      "nativeActivationProven": true,
+      "additionalEventsAfterScroll": [],
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "classification": "HARNESS_LAZY_LOAD_CONFIRMED",
+      "nativeActivationProven": true,
+      "additionalEventsAfterScroll": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+          "at": "2026-10-08T00:03:02.126Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:03:02.128Z"
+        }
+      ],
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "classification": "HARNESS_LAZY_LOAD_CONFIRMED",
+      "nativeActivationProven": true,
+      "additionalEventsAfterScroll": [
+        {
+          "kind": "request",
+          "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+          "at": "2026-10-08T00:03:02.896Z"
+        },
+        {
+          "kind": "response",
+          "url": "http://127.0.0.1:64954/media/qa-contract.svg",
+          "status": 200,
+          "at": "2026-10-08T00:03:02.899Z"
+        }
+      ],
+      "galleryScrollCount": 1,
+      "qualificationAttempts": 0
+    }
+  ],
+  "source": "diagnostic-browser-evidence.json",
+  "iteration28FailPreserved": true
+}

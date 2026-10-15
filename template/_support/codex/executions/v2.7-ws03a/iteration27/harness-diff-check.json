@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "normalizationMatchesFrozenIteration25": true,
+  "assertionNamesUnchanged": true,
+  "assertionLogicUnchanged": true,
+  "selectorsUnchanged": true,
+  "profileUnchanged": true,
+  "enginesUnchanged": true,
+  "viewportsUnchanged": true,
+  "hoverArticleLogicUnchanged": true,
+  "allowedChanges": [
+    "add readonly PhaseA settled diagnosis",
+    "wait natural settlement before original home observation",
+    "execution output paths"
+  ],
+  "oracleDelta": 0
+}
