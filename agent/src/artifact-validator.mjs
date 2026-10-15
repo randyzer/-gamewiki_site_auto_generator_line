@@ -32,10 +32,7 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     await python('validate_outputs.py', [
       '--markdown', get('HOMEPAGE_RESEARCH.md').path,
       '--zip', get('ICON.zip').path,
-      '--game-name', context.inputs.gameIdentity,
-      '--conversion-mode', context.localFaviconHandoff ? 'local' : 'favicon-io',
-      ...(context.localFaviconHandoff
-        ? ['--conversion-receipt',context.localFaviconHandoff.receiptPath] : [])
+      '--game-name', context.inputs.gameIdentity
     ]);
     // The upstream Skill validator only verifies ZIP filenames/CRC. Reject
     // placeholder bytes that happen to be wrapped in a seven-member archive.

@@ -56,7 +56,7 @@ function md(){
  return '# Dual path fixture\n\n' + String.fromCharCode(96).repeat(3) +
   'json\n' + JSON.stringify(obj) + '\n' + String.fromCharCode(96).repeat(3)+'\n';
 }
-test('original Skill validator accepts an actually validated host local receipt and rejects missing/mismatched modes',async t=>{
+test('original Skill validator remains standalone and rejects controller-only arguments',async t=>{
  const f=await context(t), {receipt}=await convert(f);
  const dir=join(f.runDirectory,'backgroundinformation');
  await mkdir(dir);
@@ -65,16 +65,9 @@ test('original Skill validator accepts an actually validated host local receipt 
  await writeFile(markdown,md());
  await copyFile(receipt.receiptPath.replace('CONVERSION_RECEIPT.json','output/favicon.zip'),zip);
  const base=[validator,'--markdown',markdown,'--zip',zip,'--game-name',f.gameIdentity];
- const local=[...base,'--conversion-mode','local','--conversion-receipt',receipt.receiptPath];
- assert.equal(invoke('python3',local).status,0);
+ assert.equal(invoke('python3',base).status,0);
  assert.notEqual(invoke('python3',[...base,'--conversion-mode','local']).status,0);
- assert.notEqual(invoke('python3',[...base,'--conversion-mode','favicon-io',
-  '--conversion-receipt',receipt.receiptPath]).status,0);
- const bad=join(f.runDirectory,'wrong-game-receipt.json');
- const forged=JSON.parse(await readFile(receipt.receiptPath));
- forged.gameIdentity='Other Game';
- await writeFile(bad,JSON.stringify(forged));
- assert.notEqual(invoke('python3',[...base,'--conversion-mode','local','--conversion-receipt',bad]).status,0);
+ assert.notEqual(invoke('python3',[...base,'--conversion-receipt',receipt.receiptPath]).status,0);
 });
 test('local host holds until user approved source and completed converter receipt',async t=>{
  const f=await context(t);
