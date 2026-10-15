@@ -34,14 +34,15 @@ inputs.json 的路径部分示例（其他字段见 README，示例须替换为�
 
 ```json
 "paths": {
-  "projectRoot": "/用户确认的绝对路径/游戏目录",
-  "siteDirectory": "{projectRoot}/site",
-  "researchDirectory": "{projectRoot}/backgroundinformation",
-  "rawKeywordsFile": "{projectRoot}/backgroundinformation/keyword-materials/关键词.md"
+  "siteDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine",
+  "researchDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation",
+  "rawKeywordsFile": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation/keyword-materials/关键词.md"
 }
 ```
 
-projectRoot 可省略，但只支持 `{projectRoot}` 这一种替换；解析后全部须为绝对路径。research 最后一层必须叫 backgroundinformation（首页 Skill validate_outputs.py:49 要求）。site 与 research 不得嵌套、不得与 agent/、codex-skills/、.template-cache/、runs/ 重叠，不得经过符号链接；新站目录须不存在或为空。顶层 rawKeywordsFile 在 paths 内未填写时仍可用。无 paths 的旧 manifest 保持原恢复行为；新 run 不回退到 agent/workspaces。retry 的路径变化会使受影响阶段失效；同名异内容研究文件须由用户处理冲突，原关键词不覆盖。研究产物先落在指定 research，stage 4 才复制到 site/backgroundinformation。worker 仅 stage 1/2 可写 research，stage 3/4 和部署 execute 可写 site，其他阶段只读。
+paths 只接受上述三个绝对路径，不支持 projectRoot 或任何占位符；siteDirectory 填什么，网站就建在哪里，不追加 site/。research 最后一层必须叫 backgroundinformation（首页 Skill validate_outputs.py:49 要求）。允许 research 位于 site 内，反向嵌套拒绝；不得与 agent/、codex-skills/、.template-cache/、runs/、模板来源重叠，不得经过符号链接。新 site 须不存在或仅包含指定 research 及 .DS_Store；其他条目列出最多 10 项后拒绝。顶层 rawKeywordsFile 仍兼容。旧 manifest（无 paths 或含 projectRoot/site 子目录）按记录路径恢复。
+
+stage 3 worker 只写 run/template-copy/ 与原生输出区，对 site/research 只读；copy_template.py 的目标为 run/template-copy/site。宿主预检全部冲突，再核验哈希、保留文件权限逐个合并到 site，已有文件拒绝、目录可复用；模板不得写 backgroundinformation 或 research。仅将模板 manifest.destination 改为 site，其他字段原样保留。run/TEMPLATE_MERGE_RECEIPT.json 记录前后哈希、文件数与已写入或尝试的路径；失败保留临时目录与回执，不回滚、不删除用户文件，成功才删除临时 site。stage 4 交接直接使用 site；research 在 site/backgroundinformation 时复用原位置。worker 仅 stage 1/2 可写 research，stage 4 和部署 execute 可写 site，其余只读。
 
 ## 读取进度和部署确认
 

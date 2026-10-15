@@ -135,7 +135,7 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
     const site = inputs.projectPath, research = configured.researchDirectory;
     const researchWrites = [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(skill);
     const siteWrites = deploying || (context.permissions?.siteWrites === true &&
-      [STAGE.TEMPLATE_SELECTION, STAGE.CONTENT_INTEGRATION].includes(skill));
+      skill === STAGE.CONTENT_INTEGRATION);
     for (const value of new Set([configured.rawKeywordsFile, inputs.keywordSourceLineageFile, ...(context.readOnlyInputPaths ?? [])]))
       if (value) originalInputs.push(value);
     // Discard parent grants and out-of-stage descendant grants before building the profile.
@@ -148,6 +148,7 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
     readPaths.push(site, research);
     if (researchWrites) writePaths.push(research);
     if (siteWrites) writePaths.push(site);
+    if (skill === STAGE.TEMPLATE_SELECTION) writePaths.push(join(runDirectory, 'template-copy'));
   }
   if (deploying) {
     for (const artifact of context.approvedPlan.artifacts ?? [])

@@ -40,10 +40,9 @@ npx playwright install chromium
   "objective": "用户确认的平台、版本、语言及攻略站目标",
   "gameMetadata": {},
   "paths": {
-    "projectRoot": "/用户确认的绝对路径/游戏目录",
-    "siteDirectory": "{projectRoot}/site",
-    "researchDirectory": "{projectRoot}/backgroundinformation",
-    "rawKeywordsFile": "{projectRoot}/backgroundinformation/keyword-materials/关键词.md"
+    "siteDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine",
+    "researchDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation",
+    "rawKeywordsFile": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation/keyword-materials/关键词.md"
   },
   "canonicalRequired": true,
   "canonicalOrigin": "https://guides.example.com",
@@ -59,13 +58,15 @@ npx playwright install chromium
 }
 ```
 
-`projectPath` 不填，由 `paths.siteDirectory` 解析得到。新 run 必须填写 site、research 和关键词文件路径，不再自动分配站点目录；只有 `projectRoot` 可省略，此时其余路径须直接写绝对路径。只支持 `{projectRoot}` 替换，其他 `{...}`、相对路径和缺少 projectRoot 的替换都会报出错误值。不要添加 `schemaVersion`、密钥或不在白名单里的字段。
+`projectPath` 不填，由 `paths.siteDirectory` 直接得到；网站就建在这个目录，不自动增加 site/。paths 只接受 siteDirectory、researchDirectory、rawKeywordsFile 三个绝对路径；不支持 projectRoot 或任何占位符。填了相对路径、projectRoot 或占位符时，错误会包含该值。顶层 rawKeywordsFile 在 paths 内未填写时仍兼容。不要添加 schemaVersion、密钥或白名单外字段。
 
-`researchDirectory` 最后一层必须准确命名为 `backgroundinformation`，这是首页 Skill 的 `validate_outputs.py:49` 要求。site 与 research 不得相互嵌套，也不得位于 `agent/`、`codex-skills/`、`.template-cache/`、`runs/` 或成为这些目录的祖先；路径不得经过符号链接。新 run 的 site 必须不存在或为空。
+researchDirectory 最后一层必须准确命名为 backgroundinformation，这是首页 Skill validate_outputs.py:49 的要求。research 可以位于 site 内；site 不得位于 research 内，也不得与 agent/、codex-skills/、.template-cache/、runs/ 或模板来源双向重叠；路径不得经过符号链接。新 run 的 site 必须不存在，或仅包含指定 research（含通往嵌套 research 的目录）及 .DS_Store；其他条目会列出最多 10 项并拒绝。
 
-`paths.rawKeywordsFile` 必须指向用户实际准备的非空 Markdown 原件；仍兼容顶层 `rawKeywordsFile`（当 paths 内未填写时使用）。第 2 阶段通过 run 内只读副本读取关键词和 lineage，原件不修改。第 1 阶段把首页资料和图标 ZIP 复制到 research，第 2 阶段产物放在 research 的 `keyword-materials/`；同名同内容复用，异内容拒绝覆盖。第 4 阶段再把 research 复制到 `<site>/backgroundinformation/`。
+第 1、2 阶段在 research 发布首页、图标和 keyword-materials/ 产物；同名同内容复用，异内容拒绝覆盖。关键词与 lineage 原件保持不变，worker 读取 run 内只读副本。第 3 阶段 worker 只在 run/template-copy/ 中复制模板和写报告，对 site 和 research 只读。宿主检查所有冲突后将模板合并到 site：已有文件一律拒绝，已有同名目录可复用，模板不得写 backgroundinformation 或 research；复制核对 SHA256 和文件权限，仅改写 docs/template-copy-manifest.json 的 destination 字段。
 
-manifest 记录解析后的 `paths`；retry 修改路径会触发现有输入变化失效逻辑，不自动清理站点或覆盖研究冲突。无 `paths` 的旧 manifest 继续按原 `agent/workspaces/RUN_ID/site` 和原交接行为恢复。research 仅第 1、2 阶段可写，site 仅第 3、4 阶段和已批准的部署执行轮可写；其他阶段 worker 只读，审计报告由宿主发布。
+run/TEMPLATE_MERGE_RECEIPT.json 记录来源、目标、文件数、前后哈希及每个已写入或尝试写入的路径。仅在合并成功后删除临时 site；中途失败保留临时目录与回执，不自动回滚、不删除用户文件。stage 4 的报告与交接直接使用 site；research 已经在 site/backgroundinformation 时复用原位置。worker 仅 stage 1/2 可写 research，stage 4 和已批准部署 execute 可写 site；其余阶段只读 site，审计报告由宿主发布。
+
+manifest 记录 paths；retry 修改路径会触发现有输入变化失效逻辑，不自动清理站点或覆盖冲突。旧 manifest（无 paths，或保留 projectRoot 与 site 子目录）仍按记录路径恢复；新输入不能再引入 projectRoot。
 
 `canonicalRequired` 必须为布尔值；为 false 时可不填 `canonicalOrigin`，否则需无尾斜杠、无凭据的 HTTPS origin。`uiMode` 可省略（默认只审计），`siteRevision` 不能省略。第 6/7 阶段需要合法域名；第 7 阶段需要已复核 DNS 和计划授权。`deploymentProvider` 是允许输入，但不在 `missingInputs` 的必填检查中；具体能力仍由部署 Skill 判断。
 

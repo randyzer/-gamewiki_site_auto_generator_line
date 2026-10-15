@@ -10,12 +10,13 @@ Prepare inputs.json only from user-confirmed game identity, platform/version/lan
 
 Include this paths object in the full inputs.json, replacing the example root with the user's confirmed absolute directory:
 "paths": {
-  "projectRoot": "/user-confirmed/absolute/game directory",
-  "siteDirectory": "{projectRoot}/site",
-  "researchDirectory": "{projectRoot}/backgroundinformation",
-  "rawKeywordsFile": "{projectRoot}/backgroundinformation/keyword-materials/关键词.md"
+  "siteDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine",
+  "researchDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation",
+  "rawKeywordsFile": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation/keyword-materials/关键词.md"
 }
-projectRoot is optional; {projectRoot} is the only placeholder and requires that root. All resolved paths must be absolute. researchDirectory must end in exactly backgroundinformation because homepage Skill validate_outputs.py:49 requires it. Site and research must not be nested or overlap agent/, codex-skills/, .template-cache/ or runs/ in either direction, and paths must have no symlinks. A new site's directory must be absent or empty. Top-level rawKeywordsFile is still accepted when omitted from paths. Old manifests without paths resume with their original workspace behavior; new runs never fall back to agent/workspaces. Path changes on retry invalidate affected stages. Research files with identical names and bytes are reused; conflicting bytes are rejected and keyword originals never overwritten. Stages 1/2 publish to research, stage 4 copies it into site/backgroundinformation. Workers may write research only in stages 1/2 and site only in stages 3/4 or approved deployment execute; other stages read only.
+paths accepts only these three absolute paths. No projectRoot or placeholders. Build directly in siteDirectory without adding site/. researchDirectory must end in exactly backgroundinformation (homepage validate_outputs.py:49). Research may be inside site; site inside research is rejected. No symlinks or overlap with agent/, codex-skills/, .template-cache/, runs/ or template sources. A new site must be absent or contain only the designated research directory and .DS_Store; reject other entries, listing at most 10. Top-level rawKeywordsFile remains compatible. Old manifests without paths or with projectRoot/site subdirectory resume their recorded paths; new inputs cannot introduce projectRoot.
+
+Stage 3 worker writes only run/template-copy/ and its native output area; site and research are read-only. Invoke the unchanged copy_template.py with destination run/template-copy/site, return temporary report paths and leave merging to the host. The host prechecks all conflicts before site writes, reuses directories, rejects existing files and all template entries under backgroundinformation/research, checks SHA256 and preserves modes, changes only manifest.destination to siteDirectory, and relocates stage 3 artifacts to site/docs. run/TEMPLATE_MERGE_RECEIPT.json records file count, before/after hashes and every written/attempted path. On failure retain the temporary tree and receipt; never roll back or delete user files. Remove the temporary site only after success. Stage 4 handoff uses site directly, reusing site/backgroundinformation if already the research location. Workers may write research in stages 1/2 only and site in stage 4 or approved deploy execute only; other stages are read-only.
 
 After the user confirms the input, tell the user to run this command from the agent root in their own interactive terminal:
 node src/cli.mjs run inputs.json RUN_ID

@@ -6,7 +6,7 @@ import { AGENT_ROOT } from './skill-lock.mjs';
 const fail = (value, reason) => { throw Error(`Invalid path ${JSON.stringify(value)}: ${reason}`); };
 const overlaps = (a, b) => inside(a, b) || inside(b, a);
 
-export function resolveInputPaths(inputs, { required = false } = {}) {
+export function resolveInputPaths(inputs, { required = false, legacyPaths } = {}) {
   if (inputs.paths === undefined) {
     if (required) fail(inputs.paths, 'fill in paths.siteDirectory, paths.researchDirectory and paths.rawKeywordsFile');
     return { ...inputs };
@@ -14,29 +14,26 @@ export function resolveInputPaths(inputs, { required = false } = {}) {
   const paths = inputs.paths;
   if (!paths || typeof paths !== 'object' || Array.isArray(paths)) fail(paths, 'paths must be an object');
   for (const key of Object.keys(paths))
-    if (!['projectRoot', 'siteDirectory', 'researchDirectory', 'rawKeywordsFile'].includes(key)) fail(paths[key], `unknown paths.${key}`);
+    if (!['siteDirectory', 'researchDirectory', 'rawKeywordsFile'].includes(key) &&
+        !(key === 'projectRoot' && legacyPaths?.projectRoot === paths[key])) fail(paths[key], `unknown paths.${key}`);
   for (const key of ['siteDirectory', 'researchDirectory'])
     if (paths[key] === undefined) fail(paths[key], `fill in paths.${key}`);
-  const absolute = (value, projectRoot) => {
+  const absolute = (value, key) => {
     if (typeof value !== 'string' || !value.trim()) fail(value, 'absolute path required');
-    let expanded = value;
-    if (expanded.includes('{projectRoot}')) {
-      if (!projectRoot) fail(value, '{projectRoot} requires paths.projectRoot');
-      expanded = expanded.replaceAll('{projectRoot}', projectRoot);
-    }
-    if (/[{}]/.test(expanded)) fail(value, 'only {projectRoot} is supported');
-    if (!isAbsolute(expanded)) fail(value, 'absolute path required');
-    return resolve(expanded);
+    // Resume accepts an old input spelling only when it resolves to the exact recorded path.
+    if (legacyPaths?.projectRoot && paths.projectRoot === legacyPaths.projectRoot && key &&
+        value.replaceAll('{projectRoot}', legacyPaths.projectRoot) === legacyPaths[key]) return legacyPaths[key];
+    if (/[{}]/.test(value)) fail(value, 'placeholders are not supported; absolute path required');
+    if (!isAbsolute(value)) fail(value, 'absolute path required');
+    return resolve(value);
   };
-  const projectRoot = paths.projectRoot === undefined ? undefined : absolute(paths.projectRoot);
-  const resolved = { ...(projectRoot ? { projectRoot } : {}),
-    siteDirectory: absolute(paths.siteDirectory, projectRoot),
-    researchDirectory: absolute(paths.researchDirectory, projectRoot),
-    rawKeywordsFile: absolute(paths.rawKeywordsFile ?? inputs.rawKeywordsFile, projectRoot) };
+  const resolved = { ...(paths.projectRoot ? { projectRoot: absolute(paths.projectRoot) } : {}),
+    siteDirectory: absolute(paths.siteDirectory, 'siteDirectory'), researchDirectory: absolute(paths.researchDirectory, 'researchDirectory'),
+    rawKeywordsFile: absolute(paths.rawKeywordsFile ?? inputs.rawKeywordsFile, 'rawKeywordsFile') };
   if (basename(resolved.researchDirectory) !== 'backgroundinformation')
     fail(paths.researchDirectory, 'researchDirectory must end in backgroundinformation; homepage Skill validate_outputs.py:49 requires this directory name');
-  if (overlaps(resolved.siteDirectory, resolved.researchDirectory))
-    fail(`${paths.siteDirectory} / ${paths.researchDirectory}`, 'siteDirectory and researchDirectory must not be nested');
+  if (inside(resolved.researchDirectory, resolved.siteDirectory))
+    fail(paths.siteDirectory, 'siteDirectory must not be inside researchDirectory');
   return { ...inputs, paths: resolved, projectPath: resolved.siteDirectory, rawKeywordsFile: resolved.rawKeywordsFile };
 }
 
@@ -59,9 +56,21 @@ export async function validateInputPaths(inputs, { workspace, protectedRoots = [
     try { if (!(await lstat(value)).isFile()) fail(value, 'regular file required for keyword input'); }
     catch (error) { if (error.code !== 'ENOENT') throw error; }
   }
-  if (emptySite) {
-    const site = inputs.paths.siteDirectory;
-    try { if ((await readdir(site)).length) fail(site, 'new run siteDirectory must be empty or absent'); }
-    catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (emptySite) await validateSiteIntake(inputs);
+}
+
+export async function validateSiteIntake(inputs) {
+  const { siteDirectory: site, researchDirectory: research } = inputs.paths;
+  const forbidden = [];
+  async function walk(directory) {
+    for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a,b) => a.name.localeCompare(b.name))) {
+      const path = join(directory, entry.name); await safePath(path, [site]);
+      if (entry.name === '.DS_Store' && entry.isFile()) continue;
+      if (entry.isDirectory() && path === research) continue;
+      if (entry.isDirectory() && inside(site, research) && inside(path, research)) await walk(path);
+      else if (forbidden.length < 10) forbidden.push(path);
+    }
   }
+  try { await walk(site); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (forbidden.length) fail(site, `siteDirectory must be empty except researchDirectory and .DS_Store; forbidden entries (up to 10): ${forbidden.join(', ')}`);
 }

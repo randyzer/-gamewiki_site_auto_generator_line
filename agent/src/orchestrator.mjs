@@ -94,7 +94,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     }
     const previous = resume ? JSON.parse(await readFile(manifest, 'utf8')).inputs : null;
     const inputs = resolveInputPaths(previous?.paths && !supplied.paths ? { ...supplied, paths: previous.paths } : supplied,
-      { required: (!resume && !freshApproval) || Boolean(previous?.paths) });
+      { required: (!resume && !freshApproval) || Boolean(previous?.paths), legacyPaths: previous?.paths });
     if (!inputs.paths && previous) inputs.projectPath = previous.projectPath;
     const guardedExecutor = localPermit ? async (skill, context) => {
       await permit.verify({ stage: skill });

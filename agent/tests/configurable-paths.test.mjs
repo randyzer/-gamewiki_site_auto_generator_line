@@ -31,9 +31,7 @@ async function fixture(t) {
   const researchDirectory = join(projectRoot, 'backgroundinformation');
   const rawKeywordsFile = join(researchDirectory, 'keyword-materials', '关键词.md');
   await mkdir(dirname(rawKeywordsFile), { recursive: true }); await writeFile(rawKeywordsFile, '# User keywords');
-  const paths = { projectRoot, siteDirectory: '{projectRoot}/site',
-    researchDirectory: '{projectRoot}/backgroundinformation',
-    rawKeywordsFile: '{projectRoot}/backgroundinformation/keyword-materials/关键词.md' };
+  const paths = { siteDirectory: join(projectRoot, 'site'), researchDirectory, rawKeywordsFile };
   const inputs = { gameIdentity: 'Path fixture', objective: 'offline', canonicalRequired: false, paths };
   const configuration = { workspace, inventoryPath, templateRoots: [] };
   const contexts = [];
@@ -68,12 +66,12 @@ test('external user paths resolve and publish research before stage 4 handoff', 
 });
 
 const invalid = [
-  ['missing projectRoot', p => { delete p.projectRoot; }, '{projectRoot}/site'],
+  ['removed projectRoot', p => { p.projectRoot = '/legacy/root'; }, '/legacy/root'],
   ['relative path', p => { p.siteDirectory = 'relative/site'; }, 'relative/site'],
   ['unknown placeholder', p => { p.siteDirectory = '/game/{unknown}/site'; }, '/game/{unknown}/site'],
-  ['research basename', p => { p.researchDirectory = '{projectRoot}/research'; }, '{projectRoot}/research'],
-  ['site inside research', p => { p.siteDirectory = '{projectRoot}/backgroundinformation/site'; }, '{projectRoot}/backgroundinformation/site'],
-  ['research inside site', p => { p.siteDirectory = '{projectRoot}'; }, '{projectRoot}'],
+  ['research basename', p => { p.researchDirectory = '/game/research'; }, '/game/research'],
+  ['site inside research', (p, f) => { p.siteDirectory = join(f.researchDirectory, 'site'); }, null],
+  ['site equals research', (p, f) => { p.siteDirectory = f.researchDirectory; }, null],
   ['agent overlap', (p, f) => { p.siteDirectory = join(f.configuration.workspace, 'site'); }, null],
   ['skill overlap', (p, f) => { p.siteDirectory = join(f.root, 'codex-skills/site'); }, null],
   ['ancestor overlap', (p, f) => { p.siteDirectory = f.root; }, null],
@@ -160,7 +158,7 @@ test('permission matrix restricts research and site writes to their stages', asy
     const profile = await stageWorkerPermissions(skill, context, { writePaths: [f.projectRoot, site, f.researchDirectory, f.rawKeywordsFile] });
     const rules = JSON.parse(profile.config.match(/filesystem=\{(.*?)\},network/)[1].replaceAll('=', ':').replace(/^/, '{') + '}');
     assert.equal(rules[f.researchDirectory], [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(skill) ? 'write' : 'read', skill);
-    assert.equal(rules[site], [STAGE.TEMPLATE_SELECTION, STAGE.CONTENT_INTEGRATION].includes(skill) || mode === 'execute' ? 'write' : 'read', skill);
+    assert.equal(rules[site], skill === STAGE.CONTENT_INTEGRATION || mode === 'execute' ? 'write' : 'read', skill);
     assert.notEqual(rules[f.projectRoot], 'write', skill);
     assert.equal(rules[f.rawKeywordsFile], 'read', skill);
   }
@@ -223,6 +221,7 @@ test('external site native artifacts are reverified before stage 4', async t => 
     const result = await goodResult(skill, context);
     if (skill === STAGE.TEMPLATE_SELECTION) {
       const item = result.artifacts[0];
+      await mkdir(context.inputs.projectPath, { recursive: true });
       item.sourcePath = join(context.inputs.projectPath, 'template-report.md');
       item.sourceSha256 = sha256(item.content); await writeFile(item.sourcePath, item.content);
     }
@@ -232,15 +231,16 @@ test('external site native artifacts are reverified before stage 4', async t => 
   assert.equal(p.snapshot().stages[3].status, 'PASSED', p.snapshot().stages[3].evidence.join(' '));
 });
 
-test('template executor stages atomic copy inside site without a parent write grant', async t => {
+test('template executor stages atomic copy inside run without a site write grant', async t => {
   const f = await fixture(t), site = join(f.projectRoot, 'site');
   let seen = false;
   const execute = createSkillExecutor({ run: async (_command, args, options) => {
     const context = JSON.parse(options.input.split('Task context: ')[1].split('\n')[0]);
-    assert.equal(dirname(dirname(context.templateCopyDestination)), site);
+    assert.equal(dirname(dirname(context.templateCopyDestination)), context.runDirectory);
     assert.match(options.input, /templateCopyDestination/);
     const config = args.find(value => value.startsWith('permissions.agent-worker='));
-    assert.ok(config.includes(JSON.stringify(site) + '="write"'));
+    assert.ok(config.includes(JSON.stringify(site) + '="read"'));
+    assert.ok(config.includes(JSON.stringify(join(context.runDirectory, 'template-copy')) + '="write"'));
     assert.ok(!config.includes(JSON.stringify(dirname(site)) + '="write"'));
     seen = true;
     await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'BLOCKED', artifacts: [],

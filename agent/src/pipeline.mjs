@@ -7,7 +7,8 @@ import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './
 import { parseArtifactJson } from './files.mjs';
 import { verifySkillSource } from './skill-lock.mjs';
 import { verifyTemplateSnapshot } from './template-snapshot.mjs';
-import { resolveInputPaths, validateInputPaths } from './paths.mjs';
+import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './paths.mjs';
+import { isDeepStrictEqual } from 'node:util';
 import { publishResearchArtifacts } from './handoff.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
@@ -112,7 +113,7 @@ function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
     m.inventoryPath === inventoryPath && JSON.stringify(m.templateRoots) === JSON.stringify(templateRoots), 'Run manifest configuration mismatch');
   checkInputs(m.inputs);
   if (m.inputs.paths) {
-    assert(JSON.stringify(resolveInputPaths(m.inputs)) === JSON.stringify(m.inputs) &&
+    assert(isDeepStrictEqual(resolveInputPaths(m.inputs, { legacyPaths: m.inputs.paths }), m.inputs) &&
       JSON.stringify(m.paths) === JSON.stringify(m.inputs.paths), 'Run manifest paths mismatch');
   } else assert(m.paths === undefined, 'Run manifest paths mismatch');
   if (m.inputCopies !== undefined) {
@@ -549,7 +550,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         await save(); return clone(state);
       }
       if (stage.skill === STAGE.TEMPLATE_SELECTION) {
-        try { assert((await readdir(state.inputs.projectPath)).length === 0, 'Template target is not empty'); }
+        try {
+          if (state.inputs.paths) await validateSiteIntake(state.inputs);
+          else assert((await readdir(state.inputs.projectPath)).length === 0, 'Template target is not empty');
+        }
         catch (error) {
           if (error.code !== 'ENOENT') { await recordFailure(stage, error, 'check-template-target', 'BLOCKED'); await save(); return clone(state); }
         }
@@ -583,7 +587,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           ...(executing ? { approvedPlan: { digest: stage.checkpoint.approvedPlanDigest, artifacts: stage.artifacts } } : {}),
           permissions: { uiChanges: stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize',
             gitPush: executing, dns: executing, productionDeployment: executing, gsc: executing, ga4: executing, advertisingScripts: false,
-            siteWrites: siteWrites && (executing || stage.skill === STAGE.TEMPLATE_SELECTION || stage.skill === STAGE.CONTENT_INTEGRATION || (!state.inputs.paths && stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
+            siteWrites: siteWrites && (executing || (!state.inputs.paths && stage.skill === STAGE.TEMPLATE_SELECTION) || stage.skill === STAGE.CONTENT_INTEGRATION || (!state.inputs.paths && stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
         // Unknown external effects: from the moment an approved deployment starts, never report "nothing deployed".
         if (executing) { state.deploymentExecuted = true; await save(); }
         operation = 'execute-skill';
@@ -657,7 +661,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       // A legacy top-level keyword update still updates the effective configured path.
       if (merged.paths && Object.hasOwn(patch, 'rawKeywordsFile') && !Object.hasOwn(patch, 'paths'))
         merged.paths = { ...merged.paths, rawKeywordsFile: patch.rawKeywordsFile };
-      const updated = resolveInputPaths(merged);
+      const updated = resolveInputPaths(merged, { legacyPaths: state.inputs.paths });
       if (updated.paths) {
         await validateInputPaths(updated, { workspace, protectedRoots,
           emptySite: updated.projectPath !== state.inputs.projectPath });

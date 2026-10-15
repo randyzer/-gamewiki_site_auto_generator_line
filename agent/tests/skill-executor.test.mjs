@@ -58,7 +58,7 @@ test('real adapter rejects fabricated empty directories as PASSED', async t => {
   } });
   await assert.rejects(executor(STAGES[2], { runId: 'fake', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
     outputDirectory, requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [],
-    mode: 'audit-only', permissions: { siteWrites: false } }), /outside allowed roots|regular artifact/);
+    mode: 'audit-only', permissions: { siteWrites: false } }), /outside temporary directory|outside allowed roots|regular artifact/);
 });
 
 test('worker result failures identify parsing and native validation separately', async t => {
@@ -69,7 +69,7 @@ test('worker result failures identify parsing and native validation separately',
     upstream: [], mode: 'audit-only', permissions: { siteWrites: false } };
   for (const [bytes, operation] of [
     ['invalid-json', 'read-worker-result'],
-    [JSON.stringify({ status: 'PASSED', evidence: ['fixture'], missing_inputs: [], artifacts: [] }), 'validate-native-artifacts'],
+    [JSON.stringify({ status: 'PASSED', evidence: ['fixture'], missing_inputs: [], artifacts: [] }), 'validate-template-copy'],
   ]) {
     const executor = createSkillExecutor({ run: async (_command, args) => {
       await writeFile(args[args.indexOf('--output-last-message') + 1], bytes);

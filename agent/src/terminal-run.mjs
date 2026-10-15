@@ -27,7 +27,7 @@ export async function describeRun({ command, runId, inputs, configuration }) {
   const previous = command === 'retry'
     ? JSON.parse(await readFile(join(configuration.workspace, 'runs', runId, 'manifest.json'), 'utf8')).inputs : null;
   inputs = resolveInputPaths(previous?.paths && !inputs.paths ? { ...inputs, paths: previous.paths } : inputs,
-    { required: command === 'run' || Boolean(previous?.paths) });
+    { required: command === 'run' || Boolean(previous?.paths), legacyPaths: previous?.paths });
   let keywords = `${inputs.rawKeywordsFile ?? '(not provided)'}`;
   if (inputs.rawKeywordsFile) {
     try { keywords += `\n  SHA256: ${sha256(await readFile(inputs.rawKeywordsFile))}`; }

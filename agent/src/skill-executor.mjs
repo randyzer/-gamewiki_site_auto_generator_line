@@ -1,5 +1,5 @@
 import { chmod, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
 import { installDependencies, buildAndServe } from './site-preview-host.mjs';
@@ -7,7 +7,8 @@ import { collectSiteAudit } from './site-audit-host.mjs';
 import { collectPrelaunch } from './prelaunch-host.mjs';
 import { verifySiteEvidence } from './site-evidence.mjs';
 import { collectHomepageSources } from './homepage-source-host.mjs';
-import { safePath, readArtifact, parseArtifactJson } from './files.mjs';
+import { safePath, readArtifact, parseArtifactJson, inside } from './files.mjs';
+import { templateCopyDirectory, mergeTemplateCopy } from './template-merge.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, stageDefinition } from './stages.mjs';
 import { prepareResearchHandoff, publishDeploymentPlan } from './handoff.mjs';
@@ -60,14 +61,18 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     await mkdir(context.nativeDirectory, { recursive: true });
     const project = context.inputs.projectPath;
     // Source-writing phases have a per-task parent so template copy can atomically rename staging.
-    const writable = !homepageResearch && !hostReview && context.permissions.siteWrites
+    const stagedTemplate = context.inputs.paths && skill === STAGE.TEMPLATE_SELECTION;
+    const writable = !stagedTemplate && !homepageResearch && !hostReview && context.permissions.siteWrites
       ? (context.inputs.paths || skill === STAGE.CONTENT_INTEGRATION || deploying ? project : dirname(project)) : null;
     if (writable) {
       await safePath(writable, [dirname(project)]);
       await mkdir(writable, { recursive: true });
     }
-    if (context.inputs.paths && skill === STAGE.TEMPLATE_SELECTION)
-      context.templateCopyDestination = join(project, '.template-staging', 'site');
+    if (stagedTemplate) {
+      context.templateCopyDestination = templateCopyDirectory(context.runDirectory);
+      await safePath(context.templateCopyDestination, [context.runDirectory]);
+      await mkdir(dirname(context.templateCopyDestination), { recursive: true });
+    }
     if (skill === STAGE.CONTENT_INTEGRATION) {
       if (context.inputs.mode === 'existing-project') {
         try {
@@ -178,10 +183,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
       'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.',
-      'Template phase: only use a configured template root and copy to projectPath. Never modify the template source.',
+      `Template phase: only use a configured template root and copy to ${stagedTemplate ? 'context.templateCopyDestination' : 'projectPath'}. Never modify the template source.`,
       ...(context.templateCopyDestination ? [
-        'For the locked copy_template.py dry-run and copy commands, use context.templateCopyDestination as --destination. Its atomic staging sibling stays inside the writable site; projectPath parent is read-only.',
-        'After a verified copy, move every copied entry (including dotfiles) from templateCopyDestination into the otherwise empty projectPath without overwriting anything, then remove only the empty staging directories. In docs/template-copy-manifest.json retain the original destination as staging_destination and set destination to the final projectPath. Verify all manifest file hashes at projectPath. Write and return the final reports under projectPath/docs, with the actual final projectPath as their identity.'
+        'Use context.templateCopyDestination as --destination for the locked copy_template.py dry-run and copy. Its atomic staging sibling stays under runDirectory/template-copy. projectPath and researchDirectory are read-only.',
+        'Write TEMPLATE_SELECTION_REPORT.md and TEMPLATE_RESIDUE_SCAN.json under templateCopyDestination/docs. Return these and templateCopyDestination/docs/template-copy-manifest.json as artifacts. Leave the manifest and copied files unchanged. The host checks and merges the complete temporary tree into projectPath, rewrites only manifest.destination, then removes the temporary directory. Never merge, rename or delete any site files yourself.'
       ] : []),
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
       ...(context.inputs.keywordSourceLineageFile ? [
@@ -276,6 +281,15 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         const latest = join(root, 'LATEST'); await safePath(latest, [project]);
         await writeFile(latest, context.runId, { mode: 0o600 });
       }
+    }
+    if (stagedTemplate && result.status === 'PASSED') {
+      for (const descriptor of result.artifacts)
+        if (!inside(context.templateCopyDestination, descriptor.path)) throw Error(`Template artifact outside temporary directory: ${descriptor.path}`);
+      await diagnosticStep('validate-template-copy', () => validateNativeArtifacts(skill,
+        { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } }, result, validationOptions));
+      await diagnosticStep('merge-template-copy', () => mergeTemplateCopy(context));
+      for (const descriptor of result.artifacts)
+        descriptor.path = join(project, relative(context.templateCopyDestination, descriptor.path));
     }
     const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, context, result, validationOptions));
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
