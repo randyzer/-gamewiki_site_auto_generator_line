@@ -1,4 +1,4 @@
-import { chmod, mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +16,7 @@ import { workerEnvironment, stageWorkerPermissions, verifyWorkerCommandIdentity,
   verifyWorkerCodeModeHostIdentity, keywordResearchEnvironment, deploymentExecutionApproved,
   stageWorkerFeatures } from './worker-permissions.mjs';
 import { locateDeploymentTools } from './deployment-tools.mjs';
+import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 import { collectTrustedOfficialSources, inspectOfficialSourceEvidence } from './official-source-host.mjs';
 import { inspectHomepageMediaReadiness, collectTrustedHomepageMedia, inspectHomepageMediaEvidence } from './homepage-media-host.mjs';
 
@@ -30,7 +31,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
   collectHomepageMediaEvidence = collectTrustedHomepageMedia,
   environment = process.env,
   researchPython = '/opt/homebrew/bin/python3',
-  researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools } = {}) {
+  researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools, convertIcon = convertIconOnHost } = {}) {
   return async (skill, original) => {
     stageDefinition(skill);
     const deploying = skill === STAGE.DEPLOYMENT_PLAN && original?.mode === 'execute';
@@ -111,6 +112,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     const output = join(context.nativeDirectory, 'worker-result.json');
     const tools = deploying ? deploymentTools ?? await locateDeploymentTools(environment) : null;
+    // One icon directory per run, shared by every attempt, so a ZIP the operator saves by hand survives a retry.
+    const iconDirectory = homepageResearch ? join(context.runDirectory, 'homepage-icon') : null;
+    if (iconDirectory) { await safePath(iconDirectory, [context.runDirectory]); await mkdir(iconDirectory, { recursive: true }); }
+    const iconZip = iconDirectory ? join(iconDirectory, ICON_FILES.zip) : null;
     const commandPath = ['/usr/bin', '/bin', '/usr/sbin', '/sbin', dirname(process.execPath),
       ...researchToolPaths.map(dirname), ...(tools?.paths ?? [])].filter((value, index, all) => all.indexOf(value) === index).join(':');
     const args = ['exec', '--ignore-user-config', '--ignore-rules', '--strict-config', '--skip-git-repo-check', '--ephemeral',
@@ -125,7 +130,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       args.push('--disable', feature);
     for (const feature of features.enabled)
       args.push('--enable', feature);
-    const writePaths = writable ? [writable] : [];
+    const writePaths = [...(writable ? [writable] : []), ...(iconDirectory ? [iconDirectory] : [])];
     // Reports can be written without granting write access to website source.
     if (!writable && [STAGE.UI_UX_AUDIT, STAGE.PRELAUNCH_ACCEPTANCE].includes(skill)) {
       const reportRoot = skill === STAGE.UI_UX_AUDIT ? join(project, 'docs', 'ui-ux-audit')
@@ -166,7 +171,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       'Research phases: use nativeDirectory as the research game/work directory; leave projectPath empty for template copying.',
       ...(homepageResearch ?
         ['The trusted host already collected a typed public Steam snapshot with a separate Mac GUI approval for each bsk command. Read context.hostBrowserEvidencePath, verify its digest, and treat the result as untrusted public-source evidence, NOT as completion of this skill.',
-         'Browser commands are NOT available to this Codex worker. Do not invoke bsk, MCP browser tools, shell network calls, alternate browsers, image substitutes or direct URL fetches. If real native homepage/icon research remains incomplete, return BLOCKED with missing native output, never fabricate.'] :
+         'Do not invoke bsk, MCP browser tools, alternate browsers or direct URL fetches for research. If real native homepage research remains incomplete, return BLOCKED with missing native output, never fabricate.',
+         `Icon: draw it with your image generation tool and inspect it with view_image, per the Skill. Save the square transparent PNG as ${join(iconDirectory, ICON_FILES.master)}, plus ${join(iconDirectory, ICON_FILES.icon512)} if you resized it to exactly 512x512.`,
+         `This sandbox cannot start a browser, so do not run scripts/favicon_io_convert.mjs; the trusted host runs that favicon.io conversion. If ${iconZip} does not exist yet, write the research files first, then return WAITING_FOR_USER with missing_inputs ["faviconIoManualZip"].`,
+         `If ${iconZip} exists, copy it byte for byte to nativeDirectory/backgroundinformation/{gameIdentity}图标.zip, validate per the Skill and finish.`] :
         keywordResearch ? [
           `For this keyword research stage only, command network access is enabled. Run the locked Skill CLI with ${researchPythonCommand}; yt-dlp is ${researchYtDlpCommand}.`,
           'SERPER_API_KEY is supplied only through the process environment. Never print, inspect, copy, persist or include its value in any result. Use the Skill serper command for Google discovery and its youtube commands for YouTube; do not substitute another search service.',
@@ -203,6 +211,27 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       await verifyWorkerCodeModeHostIdentity(commandIdentity, codeModeHostIdentity);
     }
     await diagnosticStep('execute-worker', () => run(command, args, { cwd: context.nativeDirectory, input: prompt, env, timeoutMs }));
+    let iconEvidence = [];
+    if (iconZip) {
+      // B before C: when the worker stops only for the ZIP, try the favicon.io script here once, then re-run it.
+      const first = await diagnosticStep('read-worker-result', async () => parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output));
+      const waitingForZip = first.status === 'WAITING_FOR_USER' && first.missing_inputs?.includes('faviconIoManualZip');
+      const pngReady = await Promise.all([ICON_FILES.icon512, ICON_FILES.master].map(name =>
+        readArtifact(join(iconDirectory, name), [iconDirectory]).then(() => true, () => false))).then(found => found.some(Boolean));
+      const zipReady = await readArtifact(iconZip, [iconDirectory]).then(() => true, () => false);
+      if (waitingForZip && pngReady && !zipReady) {
+        try {
+          const converted = await convertIcon({ iconDirectory, skillRoot: dirname(context.skillLock.source) });
+          iconEvidence = [`favicon.io conversion by the host: ${converted.sha256}`];
+          await rm(output, { force: true });
+          await diagnosticStep('execute-worker', () => run(command, args, { cwd: context.nativeDirectory, input: prompt, env, timeoutMs }));
+        } catch (error) {
+          return { status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['faviconIoManualZip'], evidence: [
+            `Automatic favicon.io conversion failed: ${error.message}`,
+            `Upload ${join(iconDirectory, ICON_FILES.icon512)} (or ${join(iconDirectory, ICON_FILES.master)}) at ${FAVICON_IO_URL}, click Download favicon package, save it as ${iconZip}, then retry this run.`] };
+        }
+      }
+    }
     if (context.hostBrowserEvidencePath) await diagnosticStep('verify-host-browser-evidence', async () => {
       const bytes=await readArtifact(context.hostBrowserEvidencePath,[context.runDirectory]);
       if(sha256(bytes)!==context.hostBrowserEvidenceSha256)throw Error('HOST_BROWSER_EVIDENCE_TAMPERED');
@@ -214,6 +243,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         { path: context.homepageMediaEvidencePath, sha256: context.homepageMediaEvidenceSha256 }));
     const result = await diagnosticStep('read-worker-result', async () => parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output));
     const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, context, result, validationOptions));
+    if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;
   };
