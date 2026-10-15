@@ -54,7 +54,7 @@
 
 用户在第三次获批工具复验结束后，再次要求开发前审视目标和偏离；本节优先于此前待续编码或运行提案。本次只核对证据和更新规划，不继续代码修改、新模型运行、测试扩展或建站，也不再立即发起第四次验收申请。
 
-第三次报告为[96ecc14a实际报告](../runs/TEST-host-tool-smoke-96ecc14a-af42-412b-89e9-b4746cd95c36/HOST_TOOL_SMOKE_REPORT.json)：BLOCKED / SMOKE_EVENT_STREAM_REJECTED，错误ITEM_OUTSIDE_TURN；CLI退出码null，已校验命令/patch完成数均为0，宿主终止了不符合预期的事件流。不能把缺完成事件解释成已证明没有工具副作用，也不能将此报告当成认证或权限通过。两次先前报告仍保留；所有单次授权已经消耗。
+第三次报告为[96ecc14a实际报告](../../runs/TEST-host-tool-smoke-96ecc14a-af42-412b-89e9-b4746cd95c36/HOST_TOOL_SMOKE_REPORT.json)：BLOCKED / SMOKE_EVENT_STREAM_REJECTED，错误ITEM_OUTSIDE_TURN；CLI退出码null，已校验命令/patch完成数均为0，宿主终止了不符合预期的事件流。不能把缺完成事件解释成已证明没有工具副作用，也不能将此报告当成认证或权限通过。两次先前报告仍保留；所有单次授权已经消耗。
 
 已明确的推进问题：通用文档中的tools.view_image覆盖项与固定0.153.0不兼容，本可在首次真实运行前用版本Schema发现；JSONL验收器也仍依赖未完全核实的严格事件预期。配置修复有价值，但三次验收均未解锁真实G1，说明验证顺序与交付节奏仍须纠正，不能用398项回归或局部ACCEPT_SCOPED冲淡这一事实。
 

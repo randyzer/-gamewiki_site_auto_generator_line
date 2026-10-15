@@ -20,10 +20,10 @@
 | 完整回归首次 | 364 PASS / 1 FAIL | `/private/tmp/c2c_e714_i2_full.log`；旧测试仍断言 workspace-write 参数，修为命名 profile 范围断言 |
 | 最终完整回归 | 365 PASS / 0 FAIL / 0 SKIP | `/private/tmp/c2c_e714_i2_full_verified.log`，exit 0 |
 | 15 个实现模块语法 | PASS | `/private/tmp/c2c_e714_i2_syntax.log`，exit 0 |
-| 同一 stage-policy 的真实 Seatbelt 固定脚本 | PARTIAL；内层 exit 0 | [报告](../runs/TEST-worker-isolation-5feb77bd-13bf-4797-ad3b-729bad789f31/ISOLATION_REPORT.json)；五类保护文件拒绝读写、Skill/输入只读、子进程继承、外层可达本机回环在内层拒绝 |
-| 真实 Codex exec / 同一 executor 参数 | PARTIAL；CLI exit 0 | [实际 worker 报告](../runs/TEST-real-worker-profile-d0be2da2-0887-42c6-8cb9-ce61dc859979/REAL_WORKER_PROFILE_PROBE.json)；固定命令事件恰好一次、匹配成功、nonce 写入及脚本摘要核验，五类保护样本拒绝读写 |
+| 同一 stage-policy 的真实 Seatbelt 固定脚本 | PARTIAL；内层 exit 0 | [报告](../../runs/TEST-worker-isolation-5feb77bd-13bf-4797-ad3b-729bad789f31/ISOLATION_REPORT.json)；五类保护文件拒绝读写、Skill/输入只读、子进程继承、外层可达本机回环在内层拒绝 |
+| 真实 Codex exec / 同一 executor 参数 | PARTIAL；CLI exit 0 | [实际 worker 报告](../../runs/TEST-real-worker-profile-d0be2da2-0887-42c6-8cb9-ce61dc859979/REAL_WORKER_PROFILE_PROBE.json)；固定命令事件恰好一次、匹配成功、nonce 写入及脚本摘要核验，五类保护样本拒绝读写 |
 
-实际 worker 使用合成测试 Skill 和固定 canary 脚本，不使用 Wallpaper Engine 原件、不运行七阶段或模板复制。第一次 worker 的命令证据未匹配，保留 [初次报告](../runs/TEST-real-worker-profile-7facd593-f268-4730-95ca-dd95fa7672cb/REAL_WORKER_PROFILE_PROBE.json) 为 BLOCKED；第二次仅增加脱敏事件诊断，取得精确命令匹配。没有放宽策略或改用无沙箱探测。
+实际 worker 使用合成测试 Skill 和固定 canary 脚本，不使用 Wallpaper Engine 原件、不运行七阶段或模板复制。第一次 worker 的命令证据未匹配，保留 [初次报告](../../runs/TEST-real-worker-profile-7facd593-f268-4730-95ca-dd95fa7672cb/REAL_WORKER_PROFILE_PROBE.json) 为 BLOCKED；第二次仅增加脱敏事件诊断，取得精确命令匹配。没有放宽策略或改用无沙箱探测。
 
 这里的真实 worker 证明一条 shell 命令遵守文件 profile；**不证明任意模型工具、客户端、GUI/连接器、认证存储与宿主进程身份均已隔离**。本机回环拒绝不作为全面网络/进程身份认证。整体生产激活为 BLOCKED；不得把 PARTIAL 写成生产完成。
 
@@ -34,8 +34,8 @@
 - 原件：`/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/background_information/keyword-materials/关键词.md`。
 - 原件 SHA256：`d79c1bd48c75553bda5c056b8adc898bfb5065b4648b64637e0a1bdca4824aa4`；预检前后字节摘要一致。
 - **40 个完整可读词**；**11 个截断词**；缺失 **52–82 行**待补。仅解析明示来源表格，不沿用原文未经 SERP 验证的建议分组作为真实调研结论。
-- [实际预检](../runs/PREFLIGHT-wallpaper-engine-e714-i2-20261014/REAL_RUN_PREFLIGHT.json)、[来源追溯](../runs/PREFLIGHT-wallpaper-engine-e714-i2-20261014/KEYWORD_SOURCE_LINEAGE.json)、[派生词集](../runs/PREFLIGHT-wallpaper-engine-e714-i2-20261014/complete-readable-keywords.md)。模板目录可读，具体选择和源完整性仍待 G3。
-- [标准入口草稿](../runs/wallpaper-engine-e714-draft-20261014/ENTRY_INTAKE_V1.json)：revision 2，READY_FOR_APPROVAL，approvedToRun=false，没有 Pipeline manifest。
+- [实际预检](../../runs/PREFLIGHT-wallpaper-engine-e714-i2-20261014/REAL_RUN_PREFLIGHT.json)、[来源追溯](../../runs/PREFLIGHT-wallpaper-engine-e714-i2-20261014/KEYWORD_SOURCE_LINEAGE.json)、[派生词集](../../runs/PREFLIGHT-wallpaper-engine-e714-i2-20261014/complete-readable-keywords.md)。模板目录可读，具体选择和源完整性仍待 G3。
+- [标准入口草稿](../../runs/wallpaper-engine-e714-draft-20261014/ENTRY_INTAKE_V1.json)：revision 2，READY_FOR_APPROVAL，approvedToRun=false，没有 Pipeline manifest。
 - 用户确认正式域名 `wallpaperenginewiki.best`、仓库 `randyzer/game_wallpaperengine`、分支 `main`、Cloudflare 管理域名/DNS、Vercel 托管。草稿只存计划输入，未访问 GitHub/Vercel/Cloudflare、未验证当前 DNS。
 - Application / Utilities、Windows 与 Android 信息目前是用户提供的身份材料，最新 Steam/官网/帮助文档需真实 G1 重新取得。旧图标批准不自动转移给新 run。
 

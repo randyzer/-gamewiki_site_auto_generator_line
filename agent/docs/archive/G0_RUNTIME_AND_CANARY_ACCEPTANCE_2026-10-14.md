@@ -25,8 +25,8 @@
 | `npm run test:entry-host` | 56 PASS / 0 FAIL / 0 SKIP，exit 0 | `/private/tmp/c2c_e714_entry_host.log` |
 | 最终 `npm test` | **359 PASS / 0 FAIL / 0 SKIP，exit 0** | `/private/tmp/c2c_e714_full.log`；包含上述新增 profile 用例及现有飞书离线测试，无飞书服务调用 |
 | 六个修改/新增模块 `node --check` | PASS，exit 0 | `/private/tmp/c2c_e714_syntax.log` |
-| 内嵌 `codex sandbox` | BLOCKED / exit 71 | [外层限制报告](../runs/TEST-worker-isolation-edbc088e-9d74-4515-a90c-fee178221011/ISOLATION_REPORT.json)：Seatbelt sandbox_apply EPERM，canary 未执行 |
-| 外层沙箱外运行相同内层 profile | **文件访问 PARTIAL / child exit 0** | [真实 OS 报告](../runs/TEST-worker-isolation-6268452a-4532-49c5-ac8e-2e73fb4d7736/ISOLATION_REPORT.json)；工具授权通过，仅合成文件，CLI 0.153.0，macOS |
+| 内嵌 `codex sandbox` | BLOCKED / exit 71 | [外层限制报告](../../runs/TEST-worker-isolation-edbc088e-9d74-4515-a90c-fee178221011/ISOLATION_REPORT.json)：Seatbelt sandbox_apply EPERM，canary 未执行 |
+| 外层沙箱外运行相同内层 profile | **文件访问 PARTIAL / child exit 0** | [真实 OS 报告](../../runs/TEST-worker-isolation-6268452a-4532-49c5-ac8e-2e73fb4d7736/ISOLATION_REPORT.json)；工具授权通过，仅合成文件，CLI 0.153.0，macOS |
 
 实际 OS 测试：允许目录 read/write=true；模拟 host-approval、synthetic-credential、other-run、template-source、original-site 的五类 canary 全部 read/write=false。同 UID 的 0600 权限只作为样本条件，不作为隔离机制。没有读取真实凭据、没有模型/网络/浏览器调用。报告脚本退出 2 是有意表示整体激活仍未通过；不能当成 canary 子进程失败。
 

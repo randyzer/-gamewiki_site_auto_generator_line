@@ -51,7 +51,7 @@ ChatGPT核对执行输出51–65后接受主体接线，要求修补工具事件
 
 用户明确答复“批准一次90秒受限CLI验收（推荐）”后，执行一次 `node scripts/entry-host-runtime-smoke.mjs --execute`，未重试、未降级。宿主脚本退出2；CLI子进程退出1，未收到工具事件，commandCount=0、patchCount=0、checks为空。结果为BLOCKED / SMOKE_CLI_FAILED，事件错误为RUN_TERMINATION_MISSING及EXPECTED_TOOL_SEQUENCE_MISSING，不能作为隔离通过证据。
 
-报告：[HOST_TOOL_SMOKE_REPORT.json](../runs/TEST-host-tool-smoke-3a56d1b7-04b1-442b-b3a5-62b0bd1ea5f0/HOST_TOOL_SMOKE_REPORT.json)，SHA256 `257ab1365c77549e4042c4a6f037f5b1ee9c777fbdb15f8dbcf7201f503bda03`。报告CLI与实现摘要记录获批代码的实际身份。businessPipelineStarted=false、deploymentExecuted=false；宿主策略runtimeEvidence仍为空，G1继续关闭。
+报告：[HOST_TOOL_SMOKE_REPORT.json](../../runs/TEST-host-tool-smoke-3a56d1b7-04b1-442b-b3a5-62b0bd1ea5f0/HOST_TOOL_SMOKE_REPORT.json)，SHA256 `257ab1365c77549e4042c4a6f037f5b1ee9c777fbdb15f8dbcf7201f503bda03`。报告CLI与实现摘要记录获批代码的实际身份。businessPipelineStarted=false、deploymentExecuted=false；宿主策略runtimeEvidence仍为空，G1继续关闭。
 
 原始stderr按已审查脚本被丢弃，报告不足以区分参数解析、配置加载、客户端认证或其他启动失败。不得将本次结果描述为账号未登录、工具越权或成功拒绝；目前仅确认该CLI未产生可验收事件。允许的后续为静态配置及只读help核对、独立复审；任何新模型验收需要准确的新批准，不得自动再执行。
 
@@ -73,7 +73,7 @@ C2C e714通过指定工作区读取源码、五文件摘要、原报告及输出
 
 ## 第二次单独获批诊断：配置类提示
 
-用户答复“批准新的一次90秒受限诊断（推荐）”后，执行上述命令一次，宿主退出2、CLI退出1、零命令/patch事件；未重试。实际报告为[第二次HOST_TOOL_SMOKE_REPORT.json](../runs/TEST-host-tool-smoke-1b4766c9-309d-4dd0-b50a-442c4e7e17a9/HOST_TOOL_SMOKE_REPORT.json)，SHA256 `929849332cab10e1a158e900c0a56652ca02b357c10b7a622634b34cf7a20973`。
+用户答复“批准新的一次90秒受限诊断（推荐）”后，执行上述命令一次，宿主退出2、CLI退出1、零命令/patch事件；未重试。实际报告为[第二次HOST_TOOL_SMOKE_REPORT.json](../../runs/TEST-host-tool-smoke-1b4766c9-309d-4dd0-b50a-442c4e7e17a9/HOST_TOOL_SMOKE_REPORT.json)，SHA256 `929849332cab10e1a158e900c0a56652ca02b357c10b7a622634b34cf7a20973`。
 
 startupDiagnostic.observed=true、truncated=false，唯一类别为CLI_CONFIG_ERROR_HINT；状态仍BLOCKED / SMOKE_CLI_FAILED。它只说明文本匹配到配置错误提示，未保存具体错误字段，不能认定认证失败、权限有效或工具越权。下一步仅核实固定0.153.0的配置契约，避免再盲目重复模型运行。已登记执行记录并交同一C2C对话复核。两次报告保持原字节；runtimeEvidence=null，businessPipelineStarted=false、deploymentExecuted=false，真实G1关闭。
 
@@ -97,6 +97,6 @@ C2C读取输出74–76、五文件摘要及当前源码后返回ACCEPT_SCOPED：
 
 ## 第三次单独获批复验与用户再次纠偏
 
-用户答复“批准修复后一次90秒受限复验（推荐）”后，执行一次原命令，宿主退出2；结果BLOCKED / SMOKE_EVENT_STREAM_REJECTED。报告：[第三次HOST_TOOL_SMOKE_REPORT.json](../runs/TEST-host-tool-smoke-96ecc14a-af42-412b-89e9-b4746cd95c36/HOST_TOOL_SMOKE_REPORT.json)，SHA256 `5fad8474d39f9bedaa36f3f54fe8b947ce25ee521baddd3f9d2967552814236f`。事件错误ITEM_OUTSIDE_TURN、RUN_TERMINATION_MISSING、EXPECTED_TOOL_SEQUENCE_MISSING；CLI退出码null，stderr未观测；已校验命令/patch完成数0。报告的unexpectedToolEvents=3是错误枚举数，不能解释为三次实际未授权工具调用。原始事件未存储，无法仅凭此报告确定具体item类型或实际顺序差异。没有自动重试；businessPipelineStarted=false、deploymentExecuted=false，runtimeEvidence=null。
+用户答复“批准修复后一次90秒受限复验（推荐）”后，执行一次原命令，宿主退出2；结果BLOCKED / SMOKE_EVENT_STREAM_REJECTED。报告：[第三次HOST_TOOL_SMOKE_REPORT.json](../../runs/TEST-host-tool-smoke-96ecc14a-af42-412b-89e9-b4746cd95c36/HOST_TOOL_SMOKE_REPORT.json)，SHA256 `5fad8474d39f9bedaa36f3f54fe8b947ce25ee521baddd3f9d2967552814236f`。事件错误ITEM_OUTSIDE_TURN、RUN_TERMINATION_MISSING、EXPECTED_TOOL_SEQUENCE_MISSING；CLI退出码null，stderr未观测；已校验命令/patch完成数0。报告的unexpectedToolEvents=3是错误枚举数，不能解释为三次实际未授权工具调用。原始事件未存储，无法仅凭此报告确定具体item类型或实际顺序差异。没有自动重试；businessPipelineStarted=false、deploymentExecuted=false，runtimeEvidence=null。
 
 运行结束后用户再次要求先复盘核心目标和偏离。按[再次纠偏](CORE_GOAL_AND_DEVELOPMENT_REALIGNMENT_2026-10-15.md)暂停自动推进：本轮只作证据核对、规划更新与独立复核，不继续代码修补、测试扩展或新模型验收提案。下一技术交付仅为固定版本事件契约的静态核实和可审查最小方案，不放松验收条件，不追加通用框架。首个业务交付仍是同一Pipeline的真实Wallpaper Engine G1 PASSED。
