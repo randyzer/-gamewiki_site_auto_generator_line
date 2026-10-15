@@ -11,7 +11,6 @@ from typing import Any
 from urllib.parse import urlparse
 
 
-TEMPLATE_ROOT = Path("/Users/randyz/work/coding/hot_words_web/template")
 PAGE_ROOTS = ("app", "src/app", "pages", "src/pages")
 UPSTREAM_DOCS = (
     "docs/TEMPLATE_SELECTION_REPORT.md",
@@ -215,6 +214,11 @@ def main() -> None:
     parser.add_argument("--allow-dirty-after-confirmation", action="store_true")
     parser.add_argument("--browser-tool-available", action="store_true")
     parser.add_argument("--url")
+    parser.add_argument(
+        "--template-root",
+        required=True,
+        help="Template subtree of the commit-pinned GitHub snapshot used by template-selector",
+    )
     parser.add_argument("--route", action="append", default=[])
     parser.add_argument("--output")
     args = parser.parse_args()
@@ -232,7 +236,7 @@ def main() -> None:
     if not workspace.is_dir():
         errors.append(f"workspace does not exist: {workspace}")
 
-    if is_within(workspace, TEMPLATE_ROOT.resolve(strict=False)):
+    if is_within(workspace, Path(args.template_root).expanduser().resolve(strict=False)):
         errors.append("workspace is inside the immutable template library")
 
     package_path = workspace / "package.json"

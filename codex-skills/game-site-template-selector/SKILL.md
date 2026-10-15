@@ -74,6 +74,8 @@ TEMPLATE_ROOT="$SNAPSHOT_DIR/repo/template"
 
 Resolve and record the full `COMMIT_SHA` once. Do not refresh `main` during a run. A clone/auth/network failure is `BLOCKED`; do not use a pre-existing local library as fallback. The clone must remain outside the target workspace, with no source mutations. Remove the temporary checkout after the run unless retention is explicitly approved.
 
+**Orchestrator-provided snapshot.** When the task context supplies `templateSnapshot` (repository, ref, subtree, full `commit`, `templateRoot`), the orchestrator has already materialized that fixed GitHub source at that commit. Do not clone again. Confirm that `templateSnapshot.repository` is the fixed repository above, `templateSnapshot.ref` is `main`, `templateSnapshot.subtree` is `template`, and `commit` is a full 40-character SHA; otherwise return `BLOCKED`. Then set `TEMPLATE_ROOT` to `templateSnapshot.templateRoot` and `COMMIT_SHA` to `templateSnapshot.commit`, and do not delete that snapshot.
+
 Confirm:
 
 1. The fetched repository and `template/` subtree are readable, the Git origin matches the fixed URL, and the recorded commit SHA matches the checkout HEAD.

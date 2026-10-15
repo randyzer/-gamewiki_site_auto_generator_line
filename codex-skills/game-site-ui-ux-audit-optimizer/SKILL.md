@@ -127,8 +127,11 @@ From this skill directory:
 python3 scripts/preflight.py \
   --game "Game Name" \
   --workspace "/absolute/game/workspace" \
+  --template-root "$TEMPLATE_ROOT" \
   --mode audit-only
 ```
+
+`TEMPLATE_ROOT` is the `template/` subtree of the commit-pinned GitHub snapshot recorded in `docs/template-copy-manifest.json` (`templateSnapshot.templateRoot` when supplied by the orchestrator).
 
 Add `--url "http://localhost:3000"` when a server is already running.
 

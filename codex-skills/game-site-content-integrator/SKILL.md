@@ -83,8 +83,11 @@ Run:
 ```bash
 python3 scripts/preflight.py \
   --game "Game Name" \
-  --workspace "/absolute/game/workspace"
+  --workspace "/absolute/game/workspace" \
+  --template-root "$TEMPLATE_ROOT"
 ```
+
+`TEMPLATE_ROOT` is the `template/` subtree of the commit-pinned GitHub snapshot recorded in `docs/template-copy-manifest.json` (`templateSnapshot.templateRoot` when supplied by the orchestrator).
 
 The preflight must confirm:
 

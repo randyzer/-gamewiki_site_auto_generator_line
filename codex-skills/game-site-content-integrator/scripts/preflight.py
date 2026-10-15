@@ -247,7 +247,8 @@ def main() -> None:
     parser.add_argument("--materials-dir")
     parser.add_argument(
         "--template-root",
-        default="/Users/randyz/work/coding/hot_words_web/template",
+        required=True,
+        help="Template subtree of the commit-pinned GitHub snapshot used by template-selector",
     )
     parser.add_argument("--allow-dirty-after-confirmation", action="store_true")
     parser.add_argument("--output")
