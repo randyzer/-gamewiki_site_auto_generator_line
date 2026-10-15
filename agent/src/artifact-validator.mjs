@@ -97,6 +97,7 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
   if (skill === STAGE.UI_UX_AUDIT) {
     await python('validate_audit.py', ['--workspace', context.inputs.projectPath, '--run-dir', dirname(get('UI_UX_AUDIT.json').path), ...(context.mode === 'optimize' ? ['--expect-optimization'] : [])]);
     const audit = parseArtifactJson(get('UI_UX_AUDIT.json').bytes, get('UI_UX_AUDIT.json').path);
+    assert(JSON.stringify(audit.viewports) === '[360,390,768,1024,1440,1920]', 'UI audit viewport coverage mismatch');
     assert(['SHIP', 'SHIP_WITH_FIXES'].includes(audit.verdict), 'UI audit is not ready for prelaunch');
     for (const file of await treeFiles(join(dirname(get('UI_UX_AUDIT.json').path), 'screenshots'))) {
       artifacts.push({ kind: 'screenshot:' + file, path: file, bytes: await readArtifact(file, roots) });

@@ -9,14 +9,15 @@ export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'b
   'skill_mcp_dependency_install', 'skill_search', 'request_permissions_tool', 'shell_snapshot',
   'workspace_dependencies', 'auth_elicitation', 'tool_suggest', 'goals', 'view_image']);
 export const ENABLED_WORKER_FEATURES = Object.freeze(['code_mode_host']);
-// The homepage Skill draws its own icon (image_generation) and inspects it (view_image); no other stage may.
-const IMAGE_FEATURES = Object.freeze(['image_generation', 'view_image']);
+// Only homepage research generates images; audit workers can inspect host screenshots.
 
 export function stageWorkerFeatures(skill) {
   const images = skill === STAGE.HOMEPAGE_RESEARCH;
+  const viewing = images || skill === STAGE.UI_UX_AUDIT;
+  const enabled = [...ENABLED_WORKER_FEATURES, ...(images ? ['image_generation'] : []), ...(viewing ? ['view_image'] : [])];
   return {
-    disabled: DISABLED_WORKER_FEATURES.filter(feature => !(images && IMAGE_FEATURES.includes(feature))),
-    enabled: [...ENABLED_WORKER_FEATURES, ...(images ? IMAGE_FEATURES : [])],
+    disabled: DISABLED_WORKER_FEATURES.filter(feature => !enabled.includes(feature)),
+    enabled,
   };
 }
 

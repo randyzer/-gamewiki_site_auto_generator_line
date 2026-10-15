@@ -3,13 +3,15 @@ import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
-import { installDependencies } from './site-preview-host.mjs';
+import { installDependencies, buildAndServe } from './site-preview-host.mjs';
+import { collectSiteAudit } from './site-audit-host.mjs';
+import { verifySiteEvidence } from './site-evidence.mjs';
 import { safePath, readArtifact, parseArtifactJson, sha256 } from './files.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, stageDefinition } from './stages.mjs';
 import { prepareResearchHandoff, publishDeploymentPlan } from './handoff.mjs';
 import { prepareExistingContent } from './existing-content-adapter.mjs';
-import { diagnosticStep } from './diagnostics.mjs';
+import { diagnosticStep, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { AGENT_ROOT } from './skill-lock.mjs';
 import { askMacBrowserLaunch } from './macos-human-approval.mjs';
 import { collectTrustedSteamEvidence } from './trusted-browser-host.mjs';
@@ -32,7 +34,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
   collectHomepageMediaEvidence = collectTrustedHomepageMedia,
   environment = process.env,
   researchPython = '/opt/homebrew/bin/python3',
-  researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools, convertIcon = convertIconOnHost } = {}) {
+  researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools, convertIcon = convertIconOnHost,
+  previewSite = buildAndServe, auditSite = collectSiteAudit } = {}) {
   const executor = async (skill, original) => {
     stageDefinition(skill);
     const deploying = skill === STAGE.DEPLOYMENT_PLAN && original?.mode === 'execute';
@@ -56,7 +59,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       nativeDirectory: join(original.outputDirectory, 'native') };
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
     const keywordResearch = skill === STAGE.KEYWORD_RESEARCH;
-    if (needsBrowser && !keywordResearch && (!browserHumanDialog || !homepageResearch)) {
+    const hostAudit = skill === STAGE.UI_UX_AUDIT && original.mode !== 'optimize';
+    if (needsBrowser && !keywordResearch && !hostAudit && (!browserHumanDialog || !homepageResearch)) {
       return {status:'BLOCKED',artifacts:[],missing_inputs:[],
         evidence:['APPROVAL_CAPABILITY_UNAVAILABLE: no supported host per-command approval broker; browser-dependent worker launch is disabled',
           ...(browserLaunchApproval?['A supplied launch permission cannot approve individual browser commands']:[]),
@@ -134,11 +138,24 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     const writePaths = [...(writable ? [writable] : []), ...(iconDirectory ? [iconDirectory] : [])];
     // Reports can be written without granting write access to website source.
     if (!writable && [STAGE.UI_UX_AUDIT, STAGE.PRELAUNCH_ACCEPTANCE].includes(skill)) {
-      const reportRoot = skill === STAGE.UI_UX_AUDIT ? join(project, 'docs', 'ui-ux-audit')
+      const reportRoot = skill === STAGE.UI_UX_AUDIT ? join(project, 'docs', 'ui-ux-audit', context.runId)
         : skill === STAGE.PRELAUNCH_ACCEPTANCE ? join(project, 'docs', 'prelaunch', context.runId) : context.nativeDirectory;
       await safePath(reportRoot, [project, context.nativeDirectory]);
       await mkdir(reportRoot, { recursive: true });
-      writePaths.push(reportRoot);
+      writePaths.push(...context.requiredArtifacts.map(name => join(reportRoot, name)));
+      if (hostAudit) writePaths.push(join(project, 'docs/ui-ux-audit/LATEST'));
+    }
+    let preview;
+    try {
+    if (hostAudit) {
+      try {
+        preview = await previewSite(project);
+        context.hostEvidence = await auditSite(context, { url: preview.url });
+        await verifySiteEvidence(context.hostEvidence);
+      } catch (error) {
+        return { status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['sitePreviewEvidence'], evidence: [
+          sanitizeDiagnosticText(error.message), `Repair the production build/browser capability for ${project}, then retry this stage. No substitute browser or deployment was used.`] };
+      }
     }
     const env = keywordResearch ? keywordResearchEnvironment(environment) : workerEnvironment(environment);
     if (needsBrowser && homepageResearch) {
@@ -182,7 +199,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           'After Serper discovery, open only selected public result URLs needed as evidence. YouTube platform search, metadata and subtitles must use the Skill yt-dlp commands. Do not use browser automation, login, cookies unless YTDLP_COOKIES_FILE is already configured, or unrelated network tools.',
           'Complete every eligible final keyword or return the truthful non-PASSED status. Preserve the supplied keyword lineage and pending truncated/missing rows.'
         ] :
-        ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
+        hostAudit ? [
+          'Host browser evidence is in context.hostEvidence, with a SHA256 for every screenshot and automated evidence file. Read these files and use view_image to inspect the screenshots. Do not invoke browser commands or network requests.',
+          'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
+        ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
       ...(context.homepageSourceEvidencePath ? ['Read the approved homepageSourceEvidencePath, verify its SHA256, and cite only those bounded public fields. This bundle is source evidence, not a completed homepage or an image approval. Do not perform direct browser or network commands.'] : []),
       ...(context.homepageMediaEvidencePath ? ['Read homepageMediaEvidencePath and verify homepageMediaEvidenceSha256. It contains bounded primary webpage evidence for one officially linked video. Respect officialChannelStatus NOT_CONFIRMED; never infer an official channel from its name. No playback, download, popularity or whole-video viewing was verified. This is source material, not skill completion.'] : []),
       'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.',
@@ -242,11 +262,13 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (context.homepageMediaEvidencePath) await diagnosticStep('verify-homepage-media-evidence', () =>
       inspectHomepageMediaEvidence({ ...context, stage: skill },
         { path: context.homepageMediaEvidencePath, sha256: context.homepageMediaEvidenceSha256 }));
+    if (context.hostEvidence) await verifySiteEvidence(context.hostEvidence);
     const result = await diagnosticStep('read-worker-result', async () => parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output));
     const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, context, result, validationOptions));
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;
+    } finally { if (preview) await preview.stop(); }
   };
   executor.installDependencies = installDependencies;
   return executor;

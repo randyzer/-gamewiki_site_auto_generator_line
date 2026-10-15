@@ -111,7 +111,7 @@ test('scoped browser launch permission cannot substitute for a supported command
 
 test('browser stages without a stage adapter block before worker launch', async t=>{
   const f=await fixture(t);let calls=0;
-  for(const index of [0,4,5])for(const approval of [null,{type:'invalid'},
+  for(const index of [0,5])for(const approval of [null,{type:'invalid'},
     {type:'scoped-bsk-launch',runId:'browser',expiresAt:Date.now()-1},
     {type:'scoped-bsk-launch',runId:'browser',expiresAt:Date.now()+10000}]) {
     const result=await createSkillExecutor({run:async()=>{calls++;throw Error('Unauthorized worker launch');},browserLaunchApproval:approval})(STAGES[index],{
