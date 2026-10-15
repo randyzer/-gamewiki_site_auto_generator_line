@@ -133,7 +133,7 @@ export async function recoverDeadRunLock(lockPath) {
 
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
-  expectedManifestSha256, deploymentExecution = false } = {}) {
+  expectedManifestSha256, deploymentExecution = false, installSiteDependencies = executor?.installDependencies } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
@@ -498,6 +498,11 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         // Unknown external effects: from the moment an approved deployment starts, never report "nothing deployed".
         if (executing) { state.deploymentExecuted = true; await save(); }
         operation = 'execute-skill';
+        if (stage.skill === STAGE.CONTENT_INTEGRATION && installSiteDependencies && !stage.checkpoint.dependencies) {
+          stage.checkpoint.dependencies = await installSiteDependencies(state.inputs.projectPath,
+            { manifestPath: join(runDirectory, 'site-dependencies.json') });
+          await save();
+        }
         const result = await executor(stage.skill, context);
         operation = 'verify-upstream-after-execution';
         await verifyLock();

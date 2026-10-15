@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=22.13" },
+  "dependencies": { "playwright": "1.56.1" },
   "scripts": {
     "test": "node --test tests/*.test.mjs feishu-ai-employee/tests/*.test.mjs",
     "inventory": "node src/cli.mjs inventory",

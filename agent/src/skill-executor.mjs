@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
+import { installDependencies } from './site-preview-host.mjs';
 import { safePath, readArtifact, parseArtifactJson, sha256 } from './files.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, stageDefinition } from './stages.mjs';
@@ -32,7 +33,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
   environment = process.env,
   researchPython = '/opt/homebrew/bin/python3',
   researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools, convertIcon = convertIconOnHost } = {}) {
-  return async (skill, original) => {
+  const executor = async (skill, original) => {
     stageDefinition(skill);
     const deploying = skill === STAGE.DEPLOYMENT_PLAN && original?.mode === 'execute';
     if (deploying && !deploymentExecutionApproved(skill, original))
@@ -247,4 +248,6 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;
   };
+  executor.installDependencies = installDependencies;
+  return executor;
 }

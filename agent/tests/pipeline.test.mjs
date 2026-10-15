@@ -52,6 +52,7 @@ async function fixture(t, overrides = {}) {
     })),
   });
   const options = { workspace, inventoryPath, templateRoots: [template], inputs,
+    installSiteDependencies: async () => ({ exitCode: 0, synthetic: true }),
     executor: async (skill, context) => { calls.push({ skill, context }); return good(skill, context); } };
   return { root, source, workspace, template, inputs, calls, options, good,
     create: extra => api.createPipeline({ ...options, ...extra }) };
@@ -60,6 +61,25 @@ async function advance(pipeline, count) {
   for (let i = 0; i < count; i++) await pipeline.advance();
   return pipeline.snapshot();
 }
+
+test('host installs once after template passes, before content; retry preserves installation manifest', async t => {
+  const f = await fixture(t), order = [];
+  const p = await f.create({ installSiteDependencies: async (project, options) => {
+    order.push('install'); assert.equal(project, f.inputs.projectPath);
+    assert.ok(options.manifestPath.endsWith('site-dependencies.json'));
+    return { exitCode: 0, command: ['pnpm', 'install', '--frozen-lockfile'] };
+  }, executor: async (skill, context) => {
+    order.push(skill);
+    if (skill === api.STAGES[3]) return { status: 'WAITING_FOR_USER', evidence: ['fixture'], missing_inputs: ['canonicalOrigin'], artifacts: [] };
+    return f.good(skill, context);
+  } });
+  await advance(p, 4);
+  assert.deepEqual(order.slice(-3), [api.STAGES[2], 'install', api.STAGES[3]]);
+  assert.equal(p.snapshot().stages[3].checkpoint.dependencies.exitCode, 0);
+  await p.updateUserInputs({ canonicalOrigin: 'https://example.test' }, { retry: true });
+  await p.advance();
+  assert.equal(order.filter(item => item === 'install').length, 1);
+});
 
 test('seven stages are ordered and missing startup inputs never call executor or create site', async t => {
   const f = await fixture(t, { gameIdentity: '', objective: '' });
