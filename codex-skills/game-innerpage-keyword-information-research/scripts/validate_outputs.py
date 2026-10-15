@@ -20,10 +20,47 @@ REQUIRED_HEADINGS = (
     "## 调研限制",
 )
 STATUS_RE = re.compile(r"^- 状态: (COMPLETED|PARTIAL|BLOCKED)$", re.MULTILINE)
+# Deliberately broad: a lookalike must still be recorded (as 非盗版意图) rather than silently pass.
+PIRACY_RE = re.compile(
+    r"\b(crack(?:ed|s)?|keygen|hack(?:ed)?|pirat(?:ed|e|es)?|torrent|steamunlocked|mediafire|"
+    r"free download|full gratis|gratis|descargar|repack|warez)\b|破解|盗版|免费下载|пират|взлом",
+    re.IGNORECASE,
+)
+DOWNLOAD_HOST_RE = re.compile(
+    r"https?://[^\s)]*(mediafire\.com|mega\.nz|steamunlocked|thepiratebay|1337x|rutracker|"
+    r"igg-games|fitgirl|uploadhaven|zippyshare|torrent)[^\s)]*",
+    re.IGNORECASE,
+)
 
 
 def safe_filename(keyword: str) -> str:
     return re.sub(r'[\\/:*?"<>|\x00]', "-", keyword) + "素材.md"
+
+
+def raw_terms(text: str) -> list[str]:
+    """Keyword-like lines of the raw file: list items and first table cells, minus headers."""
+    terms: list[str] = []
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith(("- ", "* ")):
+            terms.append(line[2:].strip())
+        elif line.startswith("|") and not re.fullmatch(r"\|[\s:|-]+\|", line):
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            terms.extend(cell for cell in cells[:2] if cell)
+    return [term.replace("*", "").strip() for term in terms if term]
+
+
+def piracy_rows(audit: str) -> dict[str, str]:
+    """Map raw keyword -> target keyword from the ## 盗版意图处理 table."""
+    section = audit.split("## 盗版意图处理", 1)
+    if len(section) < 2:
+        return {}
+    rows: dict[str, str] = {}
+    for line in section[1].split("\n## ", 1)[0].splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) >= 2 and cells[0] and cells[0] != "原始关键词" and not set(cells[0]) <= set("-: "):
+            rows[cells[0].casefold()] = cells[1]
+    return rows
 
 
 def main() -> None:
@@ -99,6 +136,33 @@ def main() -> None:
         for heading in REQUIRED_HEADINGS:
             if heading not in content:
                 errors.append(f"Missing heading '{heading}' in {material.name}")
+
+    audit_path = root / "关键词处理记录.md"
+    if raw.is_file() and audit_path.is_file():
+        audit = audit_path.read_text(encoding="utf-8")
+        rows = piracy_rows(audit)
+        finals = {keyword.casefold(): keyword for keyword in all_keywords}
+        for term in raw_terms(raw.read_text(encoding="utf-8")):
+            if not PIRACY_RE.search(term):
+                continue
+            target = rows.get(term.casefold())
+            if target is None:
+                errors.append(f"Piracy-intent raw keyword '{term}' is missing from the ## 盗版意图处理 table")
+                continue
+            if "非盗版意图" in audit.split(term, 1)[-1].split("\n", 1)[0]:
+                continue
+            final = finals.get(target.casefold())
+            if final is None:
+                errors.append(f"Piracy-intent raw keyword '{term}' points to '{target}', which is not a final keyword")
+                continue
+            material = root / safe_filename(final)
+            if material.is_file() and "## 盗版风险提示" not in material.read_text(encoding="utf-8"):
+                errors.append(f"Material for '{final}' needs a ## 盗版风险提示 section (target of '{term}')")
+    for keyword in all_keywords:
+        material = root / safe_filename(keyword)
+        if material.is_file():
+            for match in DOWNLOAD_HOST_RE.finditer(material.read_text(encoding="utf-8")):
+                errors.append(f"Download or file-hosting link in {material.name}: {match.group(0)}")
 
     for warning in warnings:
         print(f"WARNING: {warning}")
