@@ -41,7 +41,8 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
   }
   if (skill === STAGE.KEYWORD_RESEARCH) {
     const workdir = dirname(get('keywords.json').path);
-    await python('validate_outputs.py', ['--workdir', workdir, '--raw-keywords', context.inputs.rawKeywordsFile]);
+    const rawKeywordsCopy = context.inputCopyPaths?.rawKeywordsFile ?? context.inputs.rawKeywordsFile;
+    await python('validate_outputs.py', ['--workdir', workdir, '--raw-keywords', rawKeywordsCopy]);
     const data = parseArtifactJson(get('keywords.json').bytes, get('keywords.json').path);
     const keywords = data.categories.flatMap(c => c.keywords);
     assert(keywords.length > 0, 'No researched keywords');

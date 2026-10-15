@@ -1,6 +1,6 @@
 import { readFile, writeFile, mkdir, lstat, readdir, open, rename, unlink } from 'node:fs/promises';
 import { createHash, randomUUID } from 'node:crypto';
-import { isAbsolute, resolve, relative, dirname, join, parse } from 'node:path';
+import { isAbsolute, resolve, relative, dirname, join, parse, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hostname } from 'node:os';
 import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './diagnostics.mjs';
@@ -33,6 +33,14 @@ const inside = (root, path) => {
 const overlaps = (a, b) => inside(a, b) || inside(b, a);
 const now = () => new Date().toISOString();
 const assert = (ok, message) => { if (!ok) throw new Error(message); };
+const INPUT_COPY_PREFIX = Object.freeze({ rawKeywordsFile: 'raw', keywordSourceLineageFile: 'lineage' });
+
+export function inputCopyFilename(prefix, originalFilename) {
+  assert(['raw', 'lineage'].includes(prefix) && typeof originalFilename === 'string' && originalFilename.length > 0 &&
+    !/[\/\\\x00-\x1f\x7f]/.test(originalFilename) && !originalFilename.includes('..'),
+  `Invalid keyword input filename: ${JSON.stringify(originalFilename)}`);
+  return `${prefix}-${originalFilename}`;
+}
 
 // Check each existing component, including ancestors outside the workspace.
 async function noLinks(path) {
@@ -101,6 +109,14 @@ function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
   assert(m?.schemaVersion === 1 && m.runId === runId && m.workspace === workspace &&
     m.inventoryPath === inventoryPath && JSON.stringify(m.templateRoots) === JSON.stringify(templateRoots), 'Run manifest configuration mismatch');
   checkInputs(m.inputs);
+  if (m.inputCopies !== undefined) {
+    assert(m.inputCopies && typeof m.inputCopies === 'object' && !Array.isArray(m.inputCopies), 'Invalid inputCopies manifest field');
+    for (const [key, copy] of Object.entries(m.inputCopies)) {
+      assert(Object.hasOwn(INPUT_COPY_PREFIX, key) && copy && typeof copy === 'object' && !Array.isArray(copy) &&
+        copy.originalPath === m.inputs[key] && isAbsolute(copy.originalPath ?? '') && isAbsolute(copy.copyPath ?? '') &&
+        /^[a-f0-9]{64}$/.test(copy.sha256 ?? ''), `Invalid inputCopies entry: ${key}`);
+    }
+  }
   assert(Number.isSafeInteger(m.sequence) && m.sequence >= 0 && typeof m.deploymentExecuted === 'boolean', 'Invalid run manifest');
   const names = ALL_STAGES;
   assert(Array.isArray(m.stages) && m.stages.length === names.length, 'Invalid stage count');
@@ -172,6 +188,49 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     catch (error) { if (error.code !== 'ENOENT') throw error; }
   }
 
+  async function verifyInputCopies() {
+    const inputDirectory = join(runDirectory, 'inputs');
+    for (const [key, copy] of Object.entries(state.inputCopies ?? {})) {
+      const copyPath = resolve(copy.copyPath);
+      assert(inside(inputDirectory, copyPath) && copyPath !== inputDirectory,
+        `Keyword input copy is outside ${inputDirectory}: ${copy.copyPath}`);
+      await safeOutput(copyPath);
+      assert(hash(await regularFile(copyPath)) === copy.sha256,
+        `Keyword input copy SHA256 changed: ${copy.copyPath}`);
+      assert(copy.originalPath === state.inputs[key], `Keyword input copy source mismatch: ${copy.copyPath}`);
+    }
+  }
+
+  async function prepareKeywordInputCopies() {
+    state.inputCopies ??= {};
+    const inputDirectory = join(runDirectory, 'inputs');
+    await safeOutput(inputDirectory); await mkdir(inputDirectory, { recursive: true, mode: 0o700 });
+    for (const [key, prefix] of Object.entries(INPUT_COPY_PREFIX)) {
+      const originalPath = state.inputs[key];
+      if (!nonempty(originalPath)) { delete state.inputCopies[key]; continue; }
+      const originalFilename = basename(originalPath);
+      const copyPath = join(inputDirectory, inputCopyFilename(prefix, originalFilename));
+      const temporary = join(inputDirectory, `.input-${randomUUID()}.tmp`);
+      const originalBytes = await regularFile(originalPath), sourceSha256 = hash(originalBytes);
+      let handle;
+      try {
+        handle = await open(temporary, 'wx', 0o600);
+        await handle.writeFile(originalBytes); await handle.sync(); await handle.chmod(0o400); await handle.close(); handle = null;
+        assert(hash(await regularFile(originalPath)) === sourceSha256,
+          `Keyword input changed while copying: ${originalPath}`);
+        assert(hash(await regularFile(temporary)) === sourceSha256,
+          `Keyword input copy SHA256 mismatch: ${copyPath}`);
+        await rename(temporary, copyPath);
+        assert(hash(await regularFile(copyPath)) === sourceSha256,
+          `Keyword input copy SHA256 mismatch: ${copyPath}`);
+      } finally {
+        if (handle) await handle.close();
+        try { await unlink(temporary); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+      }
+      state.inputCopies[key] = { originalPath, copyPath, sha256: sourceSha256 };
+    }
+  }
+
   async function save() {
     await safeOutput(manifestPath);
     const temporary = join(runDirectory, `.manifest-${randomUUID()}.tmp`);
@@ -237,7 +296,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     }
     state = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots,
       ...(templateSnapshot ? { templateSnapshot: clone(templateSnapshot) } : {}), createdAt: now(),
-      sequence: 0, inputs, lock: null, lockError: null, deploymentExecuted: false,
+      sequence: 0, inputs, inputCopies: {}, lock: null, lockError: null, deploymentExecuted: false,
       stages: ALL_STAGES.map(skill => ({ skill,
         status: (skill === STAGE.ADVERTISING_PLAN && inputs.adsEnabled !== true) || (skill === STAGE.TEMPLATE_SELECTION && inputs.mode === 'existing-project') ? 'SKIPPED' : 'NOT_STARTED',
         artifacts: [], evidence: skill === STAGE.TEMPLATE_SELECTION && inputs.mode === 'existing-project' ? ['NOT_APPLICABLE: existing source snapshot; template copy not performed; see BASELINE.json'] : [], missing_inputs: [], history: [],
@@ -443,6 +502,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
 
   async function advance() {
     return exclusive(async () => {
+      state.inputCopies ??= {};
       const index = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
       if (index < 0) return clone(state);
       const stage = state.stages[index];
@@ -453,6 +513,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       }
       try {
         await verifyLock(); await validateProject(state.inputs.projectPath);
+        await verifyInputCopies();
         if (state.templateSnapshot) await verifyTemplateSnapshot(state.templateSnapshot);
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         await verifyProjectFreshness(index);
@@ -481,7 +542,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       transition(stage, 'IN_PROGRESS'); await save();
       let operation = 'prepare-stage-workspace';
       try {
-        if (stage.skill === STAGE.KEYWORD_RESEARCH) stage.checkpoint.keywordSha256 = hash(await regularFile(state.inputs.rawKeywordsFile));
+        if (stage.skill === STAGE.KEYWORD_RESEARCH) {
+          operation = 'copy-keyword-inputs';
+          await prepareKeywordInputCopies();
+          stage.checkpoint.keywordSha256 = hash(await regularFile(state.inputs.rawKeywordsFile));
+          await save();
+        }
         const outputDirectory = join(runDirectory, 'artifacts', String(index), String(stage.checkpoint.attempt));
         await safeOutput(outputDirectory); await mkdir(outputDirectory, { recursive: true });
         // Production permissions open only for the execute pass of an approved plan; the Skill keeps its own gates.
@@ -489,7 +555,9 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const mode = stage.skill === STAGE.DEPLOYMENT_PLAN ? (executing ? 'execute' : 'plan')
           : stageDefinition(stage.skill).planOnly ? 'plan-only'
           : stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? 'optimize' : 'audit-only';
-        const context = clone({ runId, stage: stage.skill, inputs: state.inputs, outputDirectory, templateRoots,
+        const inputCopyPaths = Object.fromEntries(Object.entries(state.inputCopies ?? {}).map(([key, copy]) => [key, copy.copyPath]));
+        const workerInputs = { ...state.inputs, ...inputCopyPaths };
+        const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths, outputDirectory, templateRoots,
           templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
           skillLock: state.lock.skills.find(s => s.name === stage.skill),
           upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint, mode,
@@ -554,6 +622,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
 
   async function updateUserInputs(patch, { retry = false } = {}) {
     return exclusive(async () => {
+      state.inputCopies ??= {};
       patch = checkInputs(patch);
       assert(!state.stages.some(s => s.status === 'IN_PROGRESS'), 'Interrupted invocation must be reconciled with advance before updating');
       for (const key of ['gameIdentity', 'projectPath', 'objective', 'adsEnabled', 'mode', 'targetId', 'sourceProjectPath', 'taskCardDigest']) {
@@ -590,12 +659,19 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         try { digest = hash(await regularFile(patch.rawKeywordsFile)); } catch { digest = null; }
         if (digest !== findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256 && !changed.includes('rawKeywordsFile')) changed.push('rawKeywordsFile');
       }
+      for (const key of Object.keys(INPUT_COPY_PREFIX)) if ((retry || Object.hasOwn(patch, key)) && state.inputCopies[key] && nonempty(updated[key])) {
+        let digest;
+        try { digest = hash(await regularFile(updated[key])); } catch { digest = null; }
+        if (digest !== state.inputCopies[key].sha256 && !changed.includes(key)) changed.push(key);
+      }
       let start = changed.length ? Math.min(...changed.map(k => stageIndex(INPUT_STAGE[k]))) : retry ? current : Infinity;
       // Supplying a currently requested fact is the only automatic resume trigger.
       if (current >= 0 && state.stages[current].status === 'WAITING_FOR_USER' &&
         state.stages[current].missing_inputs.some(key => Object.hasOwn(patch, key))) start = Math.min(start, current);
       if (!changed.length && !Object.keys(patch).length && !retry) return clone(state);
       state.inputs = updated;
+      if (start <= stageIndex(STAGE.KEYWORD_RESEARCH))
+        for (const key of Object.keys(INPUT_COPY_PREFIX)) delete state.inputCopies[key];
       if (start >= 0) for (let i = start; i < state.stages.length; i++) {
         const stage = state.stages[i];
         if (stage.status === 'SKIPPED' || stage.status === 'NOT_STARTED') continue;

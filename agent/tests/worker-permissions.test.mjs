@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, rm, writeFile, readFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { AGENT_ROOT } from '../src/skill-lock.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
@@ -83,6 +83,37 @@ test('worker environment excludes host approval and research credentials', async
     SERPER_API_KEY: 'SYNTHETIC_CANARY', ENTRY_TICKET: 'DO_NOT_COPY' });
   assert.equal(research.SERPER_API_KEY, 'SYNTHETIC_CANARY');
   assert.equal(research.ENTRY_TICKET, undefined);
+});
+
+test('approved deployment writes only the resolved project .git directory', async t => {
+  const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
+  const runId = 'TEST-deploy-git-' + randomUUID(), runDirectory = join(AGENT_ROOT, 'runs', runId);
+  const nativeDirectory = join(runDirectory, 'artifacts/6/1/native');
+  const projectPath = join(AGENT_ROOT, 'workspaces', runId, 'site');
+  await mkdir(nativeDirectory, { recursive: true }); await mkdir(projectPath, { recursive: true });
+  t.after(async () => {
+    await rm(runDirectory, { recursive: true, force: true });
+    await rm(join(AGENT_ROOT, 'workspaces', runId), { recursive: true, force: true });
+  });
+  const base = { runDirectory, nativeDirectory, inputs: { projectPath }, upstream: [],
+    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') },
+    permissions: { productionDeployment: true }, approvedPlan: { digest: 'a'.repeat(64), artifacts: [] } };
+  const profile = async (skill, context, writePaths = [projectPath]) =>
+    (await stageWorkerPermissions(skill, context, { writePaths })).config;
+  const execute = await profile('game-site-deploy-and-measurement', { ...base, mode: 'execute' },
+    [resolve(projectPath, '..'), runDirectory, projectPath]);
+  assert.ok(execute.includes(JSON.stringify(resolve(projectPath, '.git')) + '="write"'));
+  assert.ok(execute.includes(JSON.stringify(resolve(projectPath, '..', '.git')) + '="read"'));
+  assert.ok(execute.includes(JSON.stringify(resolve(runDirectory, '.git')) + '="read"'));
+  for (const protectedName of ['.agents', '.codex', '.aws'])
+    assert.ok(execute.includes(JSON.stringify(resolve(projectPath, protectedName)) + '="read"'));
+  const plan = await profile('game-site-deploy-and-measurement', { ...base, mode: 'plan' });
+  assert.ok(plan.includes(JSON.stringify(resolve(projectPath, '.git')) + '="read"'));
+  for (const skill of ['game-site-content-integrator', 'game-site-ui-ux-audit-optimizer']) {
+    const ordinary = await profile(skill, { ...base, mode: 'audit-only',
+      permissions: { productionDeployment: false } });
+    assert.ok(ordinary.includes(JSON.stringify(resolve(projectPath, '.git')) + '="read"'));
+  }
 });
 
 test('actual executor retains sandbox/approval bounds and grants only task-owned writes', async t => {

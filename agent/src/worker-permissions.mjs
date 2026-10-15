@@ -67,7 +67,7 @@ export function keywordResearchEnvironment(source = process.env) {
   return env;
 }
 
-export function permissionProfileConfig(name, { readPaths = [], writePaths = [], denyPaths = [], network = false } = {}) {
+export function permissionProfileConfig(name, { readPaths = [], writePaths = [], writeGitPaths = [], denyPaths = [], network = false } = {}) {
   if (!/^agent-[a-z-]+$/.test(name)) throw Error('WORKER_PERMISSION_PROFILE_INVALID');
   if (typeof network !== 'boolean') throw Error('WORKER_PERMISSION_NETWORK_INVALID');
   const rules = new Map([[':root', 'deny'], [':minimal', 'read']]);
@@ -80,6 +80,11 @@ export function permissionProfileConfig(name, { readPaths = [], writePaths = [],
   // Preserve the built-in workspace protections without broad temporary-directory access.
   for (const path of writePaths) for (const entry of ['.git', '.agents', '.codex', '.aws'])
     rules.set(join(path, entry), 'read');
+  for (const gitPath of writeGitPaths) {
+    if (!isAbsolute(gitPath) || resolve(gitPath) !== gitPath ||
+        !writePaths.some(path => resolve(path, '.git') === gitPath)) throw Error('WORKER_PERMISSION_GIT_PATH_INVALID');
+    rules.set(gitPath, 'write');
+  }
   const table = [...rules].map(([path, access]) => `${JSON.stringify(path)}=${JSON.stringify(access)}`).join(',');
   return `permissions.${name}={filesystem={${table}},network={enabled=${network}}}`;
 }
@@ -133,7 +138,9 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
   if (process.env.CODEX_HOME) denyPaths.push(resolve(process.env.CODEX_HOME));
   const commandNetworkAllowed = skill === STAGE.KEYWORD_RESEARCH || deploying;
   const config = permissionProfileConfig('agent-worker', { readPaths,
-    writePaths: [nativeDirectory, ...writePaths], denyPaths, network: commandNetworkAllowed });
+    writePaths: [nativeDirectory, ...writePaths],
+    writeGitPaths: deploying ? [resolve(inputs.projectPath, '.git')] : [],
+    denyPaths, network: commandNetworkAllowed });
   return { config, args: ['-c', 'default_permissions="agent-worker"', '-c', config],
     kind: 'STAGE_WORKER_PERMISSIONS_V1', commandNetworkAllowed,
     clientAuthenticationIsSeparate: true, productionActivationAuthorized: false };

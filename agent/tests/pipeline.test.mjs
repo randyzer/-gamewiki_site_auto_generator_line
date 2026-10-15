@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, rm, symlink, readdir } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm, symlink, readdir, chmod, stat } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
@@ -579,6 +579,103 @@ test('same keyword path with new bytes invalidates keyword stage and downstream'
   await p.updateUserInputs({ rawKeywordsFile: f.inputs.rawKeywordsFile }, { retry: true });
   assert.equal(p.snapshot().stages[0].status, 'PASSED');
   assert.equal(p.snapshot().stages[1].status, 'NOT_STARTED');
+});
+
+test('keyword worker receives immutable run-local copies without original source paths', async t => {
+  const f = await fixture(t);
+  const lineage = join(f.root, 'source-lineage.md');
+  await writeFile(lineage, '# Source lineage\n- synthetic source\n');
+  f.inputs.keywordSourceLineageFile = lineage;
+  const p = await f.create(); await advance(p, 2);
+  const state = p.snapshot(), context = f.calls[1].context;
+  const raw = state.inputCopies.rawKeywordsFile;
+  const sourceLineage = state.inputCopies.keywordSourceLineageFile;
+  assert.equal(raw.originalPath, f.inputs.rawKeywordsFile);
+  assert.equal(sourceLineage.originalPath, lineage);
+  assert.equal(raw.copyPath, join(f.workspace, 'runs', state.runId, 'inputs', 'raw-raw.md'));
+  assert.equal(sourceLineage.copyPath, join(f.workspace, 'runs', state.runId, 'inputs', 'lineage-source-lineage.md'));
+  assert.equal(context.inputs.rawKeywordsFile, raw.copyPath);
+  assert.equal(context.inputs.keywordSourceLineageFile, sourceLineage.copyPath);
+  assert.equal(context.inputCopyPaths.rawKeywordsFile, raw.copyPath);
+  assert.equal(JSON.stringify(context).includes(f.inputs.rawKeywordsFile), false);
+  assert.equal(JSON.stringify(context).includes(lineage), false);
+  assert.equal(await readFile(raw.copyPath, 'utf8'), await readFile(f.inputs.rawKeywordsFile, 'utf8'));
+  assert.equal(await readFile(sourceLineage.copyPath, 'utf8'), await readFile(lineage, 'utf8'));
+  assert.equal((await stat(raw.copyPath)).mode & 0o777, 0o400);
+  assert.equal((await stat(sourceLineage.copyPath)).mode & 0o777, 0o400);
+  assert.equal(raw.sha256, hash(await readFile(raw.copyPath)));
+  assert.equal(sourceLineage.sha256, hash(await readFile(sourceLineage.copyPath)));
+});
+
+test('resume blocks on a changed or out-of-run keyword input copy and names the file', async t => {
+  for (const failure of ['changed', 'outside']) {
+    const f = await fixture(t), p = await f.create(); await advance(p, 2);
+    const disk = JSON.parse(await readFile(p.manifestPath, 'utf8'));
+    const copy = disk.inputCopies.rawKeywordsFile.copyPath;
+    if (failure === 'changed') {
+      await chmod(copy, 0o600); await writeFile(copy, 'tampered copy'); await chmod(copy, 0o400);
+    } else {
+      const outside = join(f.root, 'outside-copy.md');
+      await writeFile(outside, await readFile(copy));
+      disk.inputCopies.rawKeywordsFile.copyPath = outside;
+      await writeFile(p.manifestPath, JSON.stringify(disk));
+    }
+    const restored = await f.create({ runId: disk.runId, resume: true, inputs: {} });
+    await restored.advance();
+    const blocked = restored.snapshot().stages[2];
+    assert.equal(blocked.status, 'BLOCKED');
+    assert.match(blocked.evidence.join('\n'), new RegExp(failure === 'changed' ? 'raw-raw\\.md' : 'outside-copy\\.md'));
+  }
+});
+
+test('manifest validation rejects a malformed inputCopies field', async t => {
+  const f = await fixture(t), p = await f.create();
+  const disk = JSON.parse(await readFile(p.manifestPath, 'utf8'));
+  disk.inputCopies = [];
+  await writeFile(p.manifestPath, JSON.stringify(disk));
+  await assert.rejects(f.create({ runId: disk.runId, resume: true, inputs: {} }), /Invalid inputCopies manifest field/);
+});
+
+test('legacy manifest without inputCopies remains resumable', async t => {
+  const f = await fixture(t), p = await f.create();
+  const disk = JSON.parse(await readFile(p.manifestPath, 'utf8'));
+  delete disk.inputCopies;
+  await writeFile(p.manifestPath, JSON.stringify(disk));
+  const restored = await f.create({ runId: disk.runId, resume: true, inputs: {} });
+  await advance(restored, 2);
+  assert.equal(restored.snapshot().stages[1].status, 'PASSED');
+  assert.ok(restored.snapshot().inputCopies.rawKeywordsFile);
+});
+
+test('retry after original keyword bytes change rebuilds the run-local copy', async t => {
+  const f = await fixture(t), p = await f.create(); await advance(p, 2);
+  const before = p.snapshot().inputCopies.rawKeywordsFile.sha256;
+  await writeFile(f.inputs.rawKeywordsFile, '# Revised user keywords\n- changed\n');
+  await p.updateUserInputs({ rawKeywordsFile: f.inputs.rawKeywordsFile }, { retry: true });
+  assert.equal(p.snapshot().stages[1].status, 'NOT_STARTED');
+  await p.advance();
+  const after = p.snapshot().inputCopies.rawKeywordsFile;
+  assert.notEqual(after.sha256, before);
+  assert.equal(await readFile(after.copyPath, 'utf8'), '# Revised user keywords\n- changed\n');
+});
+
+test('original keyword changes still block downstream stages even when the copy is unchanged', async t => {
+  const f = await fixture(t), p = await f.create(); await advance(p, 2);
+  await writeFile(f.inputs.rawKeywordsFile, '# changed outside the run');
+  await p.advance();
+  assert.equal(p.snapshot().stages[2].status, 'BLOCKED');
+  assert.match(p.snapshot().stages[2].evidence.join('\n'), /Raw keywords changed/);
+  assert.equal(f.calls.length, 2);
+});
+
+test('keyword input copy filename rejects traversal-like and control characters with the value', () => {
+  for (const value of ['bad/name.md', 'bad..name.md', 'bad\nname.md']) {
+    assert.throws(() => api.inputCopyFilename('raw', value), error => {
+      assert.match(error.message, /Invalid keyword input filename/);
+      assert.ok(error.message.includes(JSON.stringify(value)));
+      return true;
+    });
+  }
 });
 
 test('READY checkpoint resumes without invalid READY-to-READY transition', async t => {
