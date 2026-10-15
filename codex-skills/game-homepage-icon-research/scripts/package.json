@@ -1,0 +1,9 @@
+{
+  "name": "game-homepage-icon-research-scripts",
+  "private": true,
+  "type": "module",
+  "description": "favicon.io conversion helper for the homepage icon Skill",
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}
