@@ -111,23 +111,30 @@ test('host-bound homepage scope pauses the same Pipeline before G2 and appears i
   assert.deepEqual(audit.stages, [homepage]);
 });
 
-test('real material preflight yields a legal WAITING manifest and resumes the same run with fresh human approval', async t => {
+test('offline homepage planning yields a legal WAITING manifest and resumes with fresh human approval', async t => {
   const { createSkillExecutor } = await import('../src/skill-executor.mjs');
   let browser = 0, worker = 0, approvals = 0;
   const stageExecutor = createSkillExecutor({ browserHumanDialog: true,
-    requestBrowserLaunch: async () => { browser++; return true; }, run: async () => { worker++; } });
+    requestBrowserLaunch: async () => { browser++; return true; },
+    captureHomepageSources: async () => { throw Error('FETCH_REQUEST fixture not supplied'); },
+    run: async (_command, args) => {
+      worker++;
+      assert.match(args.join(' '), /network=\{enabled=false\}/);
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['homepageSourceCaptures'], evidence: ['offline planning fixture'] }));
+    } });
   const f = await fixture(t, async ({ challenge }) => { approvals++; return { stdout: challenge }; },
     undefined, stageExecutor, ['game-homepage-icon-research']);
   const first = await f.execute(f.request);
   assert.equal(first.status, 'WAITING_FOR_USER');
-  assert.ok(first.missing_inputs.includes('homepageSourceIndex'));
+  assert.deepEqual(first.missing_inputs, ['homepageSourceCaptures']);
   const snapshot = await previewEntryResume(f.request.executionRunId, await loadConfiguration());
   const second = await f.execute.resume({ runId: f.request.executionRunId, expectedManifestSha256: snapshot.manifestSha256 });
   assert.equal(second.status, 'WAITING_FOR_USER'); assert.equal(approvals, 2);
   assert.equal(second.run_id, first.run_id);
   assert.ok(second.stages.slice(1, 7).every(stage => stage.status === 'NOT_STARTED'));
   assert.equal(second.deployment_executed, false);
-  assert.equal(browser, 0); assert.equal(worker, 0);
+  assert.equal(browser, 0); assert.equal(worker, 2);
   await assert.rejects(f.execute(f.request));
 });
 
@@ -205,16 +212,17 @@ test('approved production trust model verifies fixed client identities and ignor
 });
 
 
-test('fixed createSkillExecutor wiring preserves browser gate before mock process runner', async t => {
+test('fixed createSkillExecutor wiring starts the offline worker and preserves runner failure', async t => {
   let calls = 0;
-  const f = await fixture(t, undefined, async () => {
+  const f = await fixture(t, undefined, async (_command, args) => {
     calls++;
+    assert.match(args.join(' '), /network=\{enabled=false\}/);
     throw Error('TEST_MOCK_PROCESS_STOP');
   });
   const result = await f.execute(f.request);
-  assert.equal(calls, 0);
-  assert.equal(result.status, 'BLOCKED');
-  assert.match(result.summary, /APPROVAL_CAPABILITY_UNAVAILABLE/);
+  assert.equal(calls, 1);
+  assert.equal(result.status, 'FAILED');
+  assert.match(result.summary, /TEST_MOCK_PROCESS_STOP/);
 });
 
 test('offline bootstrap requires explicit dialog and executor dependencies', async () => {

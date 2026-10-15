@@ -2,6 +2,7 @@ import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { realpath, readFile, stat } from 'node:fs/promises';
 import { inside, safePath, sha256 } from './files.mjs';
 import { STAGE } from './stages.mjs';
+import { verifySiteEvidence } from './site-evidence.mjs';
 
 export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'browser_use_external',
   'browser_use_full_cdp_access', 'computer_use', 'in_app_browser', 'in_app_local_automation',
@@ -100,6 +101,12 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
     if (artifact.path && inside(runDirectory, artifact.path)) readPaths.push(artifact.path);
   for (const path of [context.hostBrowserEvidencePath, context.homepageSourceEvidencePath])
     if (path && inside(runDirectory, path)) readPaths.push(path);
+  if (context.homepageSourceCaptures) {
+    const bundle = context.homepageSourceCaptures;
+    if (bundle.directory !== join(runDirectory, 'homepage-sources/captures')) throw Error('WORKER_HOMEPAGE_CAPTURES_INVALID');
+    await verifySiteEvidence(bundle);
+    readPaths.push(bundle.directory);
+  }
   if (context.homepageMediaEvidencePath) {
     const path = context.homepageMediaEvidencePath;
     if (path !== join(runDirectory, 'homepage-media/MEDIA_EVIDENCE.json') ||

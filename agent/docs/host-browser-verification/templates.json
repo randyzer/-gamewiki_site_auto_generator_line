@@ -1,0 +1,132 @@
+[
+  {
+    "template": "temp1_based_vvultimatum.net",
+    "snapshot": "5c1bcaf3378c24fd219464092383fcdb32dff855",
+    "area": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-real-browser-FZymeZ",
+    "nodeModulesInitiallyAbsent": true,
+    "install": {
+      "projectPath": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-real-browser-FZymeZ/site",
+      "lockfile": {
+        "path": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-real-browser-FZymeZ/site/pnpm-lock.yaml",
+        "sha256": "27539afeb5e81dc73b84e5a50e5e16d57521b249f3bfda6cee19479ea27198a9"
+      },
+      "command": [
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "exitCode": 0
+    },
+    "audit": {
+      "files": 8,
+      "screenshots": 6
+    },
+    "prelaunch": {
+      "files": 33,
+      "screenshots": 32,
+      "coverage": {
+        "routes_expected": 15,
+        "routes_checked": 15
+      },
+      "httpRequests": 18,
+      "links": 16,
+      "checks": [
+        {
+          "script": "typecheck",
+          "command": [
+            "pnpm",
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0
+        },
+        {
+          "script": "test",
+          "command": [
+            "pnpm",
+            "run",
+            "test"
+          ],
+          "exitCode": 0
+        },
+        {
+          "script": "build",
+          "command": [
+            "pnpm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0
+        }
+      ],
+      "browserPageFailures": 0
+    },
+    "status": "VERIFIED",
+    "cleaned": true
+  },
+  {
+    "template": "temp3_based_gamblewithyourfriends.net",
+    "snapshot": "5c1bcaf3378c24fd219464092383fcdb32dff855",
+    "area": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-real-browser-2nYUyM",
+    "nodeModulesInitiallyAbsent": true,
+    "install": {
+      "projectPath": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-real-browser-2nYUyM/site",
+      "lockfile": {
+        "path": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-real-browser-2nYUyM/site/pnpm-lock.yaml",
+        "sha256": "dc4a8f97d8a10fa87dd0fd9d69ae2c8bbce1b3e3a5779a4ba24d57f7e736af82"
+      },
+      "command": [
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "exitCode": 0
+    },
+    "audit": {
+      "files": 8,
+      "screenshots": 6
+    },
+    "prelaunch": {
+      "files": 33,
+      "screenshots": 32,
+      "coverage": {
+        "routes_expected": 15,
+        "routes_checked": 15
+      },
+      "httpRequests": 17,
+      "links": 15,
+      "checks": [
+        {
+          "script": "typecheck",
+          "command": [
+            "pnpm",
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0
+        },
+        {
+          "script": "test",
+          "command": [
+            "pnpm",
+            "run",
+            "test"
+          ],
+          "exitCode": 0
+        },
+        {
+          "script": "build",
+          "command": [
+            "pnpm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0
+        }
+      ],
+      "browserPageFailures": 0
+    },
+    "status": "VERIFIED",
+    "cleaned": true
+  }
+]
