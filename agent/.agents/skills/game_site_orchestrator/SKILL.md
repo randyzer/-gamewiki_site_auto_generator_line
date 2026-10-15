@@ -1,96 +1,47 @@
 ---
 name: game_site_orchestrator
-description: "Explicit Codex entrypoint for the existing seven-stage game website orchestrator CLI. Use to inspect, prepare, or (only after approval) run/resume a project; do not create a parallel orchestration implementation."
+description: "Prepare inputs for the existing seven-stage game-site CLI, ask the operator to run it in an interactive terminal, and report progress from evidence."
 ---
 
-# Unified game-site orchestrator invocation adapter
+# Codex 游戏站总控入口适配说明
 
-This Skill is an INVOCATION ADAPTER for the real application. It is NOT another homepage research Skill, a parallel state machine, or a substitute for project-level `.codex/agents/game_site_orchestrator.toml`.
+工作根目录为 `/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent`。本 Skill 负责整理输入和汇报，业务实现使用既有 CLI / orchestrator / pipeline，不在提示词中复制状态机，不手动逐个调用 Skill 绕过总控。
 
-Work from `/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent`. Read `README.md`, `src/cli.mjs`, `src/orchestrator.mjs`, `src/pipeline.mjs` and the canonical workflow spec before selecting an action.
+先阅读 [README](../../../README.md)、[路线图](../../../docs/MASTER_AGENT_EXECUTION_ROADMAP_V1.md)、[阶段矩阵](../../../docs/SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)，核对 [CLI](../../../src/cli.mjs)、[终端门](../../../src/terminal-run.mjs)、[阶段字段](../../../src/stages.mjs) 和 [pipeline](../../../src/pipeline.mjs) 的 missingInputs。链接均相对本文件；后续命令以 agent 根目录为 cwd。
 
-## Unified Entry V1: natural-language project intake (safe, no worker)
+## 整理输入和启动
 
-When the user says something like "帮我为 Hood Warfare 2 建一个攻略站",
-FIRST use the pre-execution entry desk instead of invoking `run` or `retry`.
-Translate **only explicitly provided** game name, Steam store URL/App ID,
-objective, new-vs-existing mode, and user-confirmed paths to the versioned
-entry input object. Never guess a Steam App ID, content materials, project
-path, domain, or approval. If the intent is unclear, preview with missing
-fields and ask the user. Do not paste credentials into an entry card.
+1. 只根据用户确认的事实整理 inputs.json：准确游戏身份、平台/版本/语言与目标、原始关键词 Markdown 绝对路径、canonical、siteRevision、域名、仓库/分支、DNS 与部署计划授权。按 README 给出完整 JSON，并列出缺项和条件项；不要猜 Steam App ID、关键词、域名、路径或批准。projectPath 由新站总控分配。
+2. 给用户查看输入、文件范围和将调用真实 worker 的操作，请用户确认。密钥不进入输入文件或对话；SERPER_API_KEY 由用户通过环境变量提供。不得索取或输出 token、密码、cookie、凭据文件内容。
+3. 用户确认后，告诉用户在自己的交互终端切换到上述 agent 根目录，再执行：
 
-From the trusted `agent/` project root, pipe the bounded JSON to
-`node src/cli.mjs entry-preview -` using a **pipe**, not a heredoc.
-A read-only zsh sandbox cannot create the temporary file underlying a
-heredoc. Correct, temp-file-free example for already confirmed facts:
+   ```sh
+   node src/cli.mjs run inputs.json RUN_ID
+   ```
 
-```sh
-printf '%s\n' '{"mode":"new-site","gameIdentity":"Hood Warfare 2","objective":"English guide site","gameMetadata":{"steam":"https://store.steampowered.com/app/5155360/"}}' | node src/cli.mjs entry-preview -
-```
+   RUN_ID 必须符合 `[a-zA-Z0-9_-]{1,100}`。inputs.json 是用户确认后准备的运行时文件，非仓库预置文件。终端先打印摘要，用户核对后亲自输入单独的小写 `y` 才会启动。Codex 不得代输 y，不得用伪 TTY、管道、脚本或改代码绕过操作者确认；管道 stdin 会被拒绝。
+4. 恢复同一 run 时先据记录说明缺项、失败环节及输入变化，再展示更新后的完整 JSON 请用户确认；由用户在交互终端执行并亲自输入 y：
 
-Shell-quote any supplied string safely as data; do not interpolate arbitrary
-user text into unescaped shell code. If exact safe quoting is unavailable,
-return BLOCKED instead of creating a file or bypassing the read-only sandbox.
-This command is
-**read-only** and must be used before any draft creation. The output
-validates the local eight-Skill hashes against the current manifest; do NOT
-call `inventory` to conceal drift. Present the entire staged checklist
-ordered by Skill, clearly marking "now", "later", "conditional" and
-"verified" along with any BLOCKED reason.
+   ```sh
+   node src/cli.mjs retry inputs.json RUN_ID
+   ```
 
-If the user explicitly permits saving a run-scoped draft (no site changes),
-choose a unique safe RUN_ID and call
-`node src/cli.mjs entry-create - RUN_ID` with the exact reviewed card.
-It saves only `agent/runs/RUN_ID/ENTRY_INTAKE_V1.json`, never a
-pipeline manifest and never calls Codex or BrowserSkill.
-`node src/cli.mjs entry-status RUN_ID` is read-only.
-When the user adds information, propose a patch first, then call
-`node src/cli.mjs entry-update - RUN_ID EXPECTED_REVISION`. Use the
-revision reported by status; never overwrite a stale revision.
-The same run ID is recoverable; only a new approved action can eventually
-start the existing orchestrator.
+   run 要求新 manifest，retry 要求已有 manifest；retry 会重验受影响阶段，不保证自动清理已有站点或覆盖冲突。
 
-Interpret entry states precisely:
-- WAITING_FOR_USER: ask for only current missing facts. Late-stage inputs
-  (especially the user's RAW keyword Markdown) appear in the staged
-  checklist; never invent them. A later 10-minute reminder is not
-  scheduled merely by creating a draft; no daemon timer is started.
-- BLOCKED: missing/outdated Skill inventory or unsupported existing-project
-  path; explain and request separate review. Do not update Skills silently.
-- READY_FOR_APPROVAL: material-check entry gate passed, **NOT** a
-  permission to execute any Skill or to publish a site.
+不要先走 entry-preview/create/update 草稿或可信宿主票据流程；这些代码已冻结。已有项目、飞书、G0/bsk/m3 不属于当前新站主线。不得修改 `codex-skills/`、模板来源、凭据或全局 Codex 配置。仅做文档/检查不授权真实建站或生产操作。
 
-Existing projects MUST use the separate versioned intake-card/allowlist
-workflow. The current Entry V1 deliberately provides only a safe entry
-preview for existing projects; it cannot bypass source protection.
+## 读取进度和部署确认
 
-DO NOT promote the saved Entry V1 document to a `manifest.json` or
-automatically call `run/retry`. A separately approved execution plan must
-identify the exact new project inputs, workspace, Skill lock and side
-effects before the original orchestrator can be launched.
+可读取运行时 `agent/runs/RUN_ID/manifest.json` 与同目录 `AGENT_RUN_REPORT.md`，以 manifest、实际产物和诊断为依据汇报 run_id、当前阶段/状态、missing_inputs、产物路径和阻断原因；运行前这些文件不一定存在。不要把 CLI 退出码 2 当作必然崩溃，WAITING_FOR_USER/BLOCKED 就会返回 2；也不能仅凭退出 0 声称 PASSED。
 
-## Read-only inspection
+第 7 阶段先生成站点 `docs/DEPLOYMENT_PLAN.md` 与 `docs/DEPLOYMENT_PLAN.json`（运行时文件），进入 WAITING_FOR_USER。向用户展示准确仓库/分支/文件、托管、DNS、Google 服务、成本、回滚和 plan_digest；由用户确认批准范围。只在原 inputs.json 中增加 `deploymentPlanApproval: {"approved": true, "digest": "准确plan_digest"}`，其他值不改，再让用户执行上述 retry 并亲自输入 y。这一轮会按批准计划执行 push、部署、DNS、GSC/GA4；计划变化、账号登录、OAuth 或范围变化须停止并请用户处理。
 
-For a health check, use `node --check src/cli.mjs` and inspect existing manifests/docs. `node src/cli.mjs review-card VALID_CARD.json` only reads its supplied input file and returns a summary; validate which card is used. Never execute `inventory` during read-only checks: it WRITES `config/skill-manifest.json`.
+deploymentExecuted 在执行开始前已置 true，失败也可能保留，不能单独证明部署成功。只生成计划不表示部署、收录、测量或广告接入完成；核对阶段状态、实际报告及每项服务证据，不能伪造结果、把 GSC 提交写成已收录或把 GA4 标签写成已有数据。
 
-State the exact commands actually run and cite local evidence. If a command cannot execute, say BLOCKED; never invent results.
+## 工具和证据边界
 
-## When the user explicitly asks to create or resume a site task
+worker 文件权限与命令网络由现有执行器控制；第 2 阶段和批准后的第 7 阶段执行轮开放命令网络，真实浏览器由总控宿主调用。UI 仅支持 audit-only，optimize 当前 BLOCKED。证据带 SHA256，截图或合成产物不能替代实际验证。
 
-First enumerate required game identity/platform/version, objective and user-provided original keyword Markdown. Obtain explicit approval for actual execution and affected workspace.
+遇到失败先诊断具体环节，说明当前进程是否取得凭据/登录态、工具版本/连接/网络是否可用；保留 BLOCKED、WAITING_FOR_USER、PARTIAL、FAILED，不声称已完成。未经用户明确同意，不换工具、来源、provider 或放宽沙箱；不能把当前进程未取得凭据说成用户本机未登录。
 
-Use ONLY the existing program entrypoint:
-- `node src/cli.mjs run INPUTS.json RUN_ID`
-- `node src/cli.mjs retry INPUTS.json RUN_ID`
-
-Never call individual Skills to bypass the pipeline; never implement another pipeline or duplicate approval workflow. Inputs and outputs must be placed in the agent root's allowed workspace and run directories; never modify existing game sites or templates by default.
-
-The CLI may invoke a nested Codex worker; if nested execution, browser/network permissions, or approval capability are unavailable, preserve BLOCKED/WAITING_FOR_USER. Do not disable sandbox or silently switch execution providers.
-
-`preflight` writes reports; `inventory` updates a manifest; `run` and `retry` can write files and start real workers. Do not run those without informed user authorization. Production GitHub push, deployment, DNS, GSC/GA4, ads or payments require explicit separate approvals.
-
-Read actual CLI status JSON; exit code 2 may represent WAITING_FOR_USER/BLOCKED/PARTIAL/FAILED, not an application crash. Always report `run_id`, current stage, missing inputs, artifact paths, and approval blockers from existing records. Never claim a plan means deployment has occurred.
-
-## Current scope
-
-Do not modify `feishu-ai-employee/` or the original source Skills. For a smoke test, do ONLY `node --check src/cli.mjs` and inspect the CLI command surface. Name-based invocation syntax: `$game_site_orchestrator`.
+只读检查可运行 `node --check src/cli.mjs` 并读取源码和已有报告。inventory 会更新 config/skill-manifest.json，preflight 会写报告，不属于只读健康检查；不得借重锁掩盖 Skill 漂移。不得为证明入口注册而启动 worker 或发布。

@@ -4,7 +4,7 @@
 
 ## 范围与证据
 
-工作范围仅本 agent；未修改飞书适配器、原始 Skills、真实网站或 inventory。未启动真实 worker、浏览器、部署或生产操作。测试使用独立 `TEST-handoff-<UUID>` 草稿并清理；持久证据仅在 [TEST 证据目录](../runs/TEST-p0-continuation-20261014/)。目录不是 Git 仓库，未宣称完成 Git diff 审计。
+工作范围仅本 agent；未修改飞书适配器、原始 Skills、真实网站或 inventory。未启动真实 worker、浏览器、部署或生产操作。测试使用独立 `TEST-handoff-<UUID>` 草稿并清理；持久证据仅在 [TEST 证据目录](../../runs/TEST-p0-continuation-20261014)。目录不是 Git 仓库，未宣称完成 Git diff 审计。
 
 ## 真实自然语言入口（优先尝试）
 
@@ -14,9 +14,9 @@
 codex exec --ignore-user-config --ephemeral --sandbox workspace-write --skip-git-repo-check --json -
 ```
 
-输入为 [natural-create.prompt.txt](../runs/TEST-p0-continuation-20261014/natural-create.prompt.txt)，明确显式 `$game_site_orchestrator`、Hood Warfare 2 / Steam 5155360、独立 `TEST-p0-natural-20261014`、只允许 entry-preview/create/status，不允许 worker。设置 120 秒超时，实际立即 **exit 1**。
+输入为 [natural-create.prompt.txt](../../runs/TEST-p0-continuation-20261014/natural-create.prompt.txt)，明确显式 `$game_site_orchestrator`、Hood Warfare 2 / Steam 5155360、独立 `TEST-p0-natural-20261014`、只允许 entry-preview/create/status，不允许 worker。设置 120 秒超时，实际立即 **exit 1**。
 
-[stderr](../runs/TEST-p0-continuation-20261014/natural-create.stderr)：`failed to initialize in-process app-server client: Operation not permitted (os error 1)`；另有无法创建 PATH aliases 的权限警告。JSONL 为空。故障发生在本进程 app-server 初始化阶段，未进入模型、Skill 或 CLI 入口调用；没有证据证明账号未登录，也未验证网络与账号凭据。未降级、未提权、未换 provider；已请求用户协助在允许启动该服务的本机会话执行测试或修复工具链。
+[stderr](../../runs/TEST-p0-continuation-20261014/natural-create.stderr)：`failed to initialize in-process app-server client: Operation not permitted (os error 1)`；另有无法创建 PATH aliases 的权限警告。JSONL 为空。故障发生在本进程 app-server 初始化阶段，未进入模型、Skill 或 CLI 入口调用；没有证据证明账号未登录，也未验证网络与账号凭据。未降级、未提权、未换 provider；已请求用户协助在允许启动该服务的本机会话执行测试或修复工具链。
 
 | 项目 | 结果 | 证据/限制 |
 |---|---|---|
@@ -49,7 +49,7 @@ codex exec --ignore-user-config --ephemeral --sandbox workspace-write --skip-git
 | `node --check src/orchestrator.mjs` | 0 | 同上 |
 | `node --check tests/entry-handoff.test.mjs` | 0 | 同上 |
 
-回归的完整、实际展开 argv 和退出码保存在 [regression.result.json](../runs/TEST-p0-continuation-20261014/regression.result.json)。排除 `tests/feishu.test.mjs`、`tests/feishu-existing-project.test.mjs`，也没有运行 `feishu-ai-employee/tests/`；不是全部集成验收。首次交接 6 项版本的受限回归为 275 PASS；补充两项后重新运行，最终上述 277 为准。首次专项 21 PASS，最终 23 为准。红灯与最终绿灯日志均保留。
+回归的完整、实际展开 argv 和退出码保存在 [regression.result.json](../../runs/TEST-p0-continuation-20261014/regression.result.json)。排除 `tests/feishu.test.mjs`、`tests/feishu-existing-project.test.mjs`，也没有运行 `feishu-ai-employee/tests/`；不是全部集成验收。首次交接 6 项版本的受限回归为 275 PASS；补充两项后重新运行，最终上述 277 为准。首次专项 21 PASS，最终 23 为准。红灯与最终绿灯日志均保留。
 
 新增 8 项分别覆盖：只读且不授权；revision/材料变更；批准/范围/路径/锁摘要伪造；非法/复用/占用/链接目录；缺材料/Pipeline 污染；草稿目录启动拒绝；同 revision 篡改/Skill 版本伪造；新 ID 下提交草稿封装拒绝。
 

@@ -23,7 +23,7 @@
 | node --check src/official-source-host.mjs | PASS / exit 0 | `/private/tmp/c2c_e714_i4_syntax.log` |
 | 历史图标 ZIP 二进制复验 | VALIDATED_BINARY_STRUCTURE / exit 0 | `/private/tmp/c2c_e714_i4_icon_binary.log`；不证明版权、原创生成或新 run 批准 |
 | 本机 codex --version / exec --help / features list | 0.153.0，均 exit 0 | 实际 help 明示 ignore-user-config 后 auth 仍使用 CODEX_HOME；没有读取凭据值 |
-| 同一 executor 实际命令快照 | OFFLINE_CAPTURED；模型、GUI、浏览器零启动 | [快照](../runs/TEST-executor-capabilities-6f1d6e58-5a7b-436e-aa4b-a1cd89460e4a/EXECUTOR_CAPABILITY_CONTRACT_SNAPSHOT.json)；通过 executor 的 run seam 捕获真实参数/环境键，未执行命令 |
+| 同一 executor 实际命令快照 | OFFLINE_CAPTURED；模型、GUI、浏览器零启动 | [快照](../../runs/TEST-executor-capabilities-6f1d6e58-5a7b-436e-aa4b-a1cd89460e4a/EXECUTOR_CAPABILITY_CONTRACT_SNAPSHOT.json)；通过 executor 的 run seam 捕获真实参数/环境键，未执行命令 |
 | 官方文档工具再次读取 | BLOCKED / HTTP 403 challenge | 当前通道要求访问挑战；用户随后明确批准内置浏览器；已读取官方 permissions、app-server、managed configuration 和 agent approvals 文档，见下列依据 |
 
 本批没有新真实 worker 隔离探测。第二批实测命名 profile 的文件、只读输入、子进程和回环结果沿用为历史 PARTIAL；命令主体与权限模块未变，新增来源路径仍是只读证据。不能把离线快照、禁用功能参数或命令 canary 推断为所有模型工具、客户端、GUI 和宿主身份均已隔离。
@@ -44,7 +44,7 @@
 
 ## G1 可审查输入
 
-[真实准备清单](../runs/PREFLIGHT-wallpaper-engine-e714-i4-20261014/G0_G1_READINESS_REVIEW.json)保存当前草稿、材料、候选来源、历史图标及各项 SHA256。
+[真实准备清单](../../runs/PREFLIGHT-wallpaper-engine-e714-i4-20261014/G0_G1_READINESS_REVIEW.json)保存当前草稿、材料、候选来源、历史图标及各项 SHA256。
 
 - 草稿 revision 2 / approvedToRun=false，没有新的 execution manifest；域名 wallpaperenginewiki.best，仓库 randyzer/game_wallpaperengine / main，Cloudflare 管理 DNS，Vercel 托管，未做外部配置。
 - 原件 SHA256 再次一致；40 可读词、11 截断词和缺失 52–82 行保留原追溯，不补造。

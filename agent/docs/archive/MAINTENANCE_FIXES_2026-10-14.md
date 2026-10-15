@@ -13,7 +13,7 @@
 
 - `npm test --prefix agent`：172 项通过，0 失败，0 跳过，退出码 0。
 - 新回归先观察失败再修复，包括名称阶段审批、其他游戏识别、诊断持久化与重试、worker 解析与验收环节、飞书 metadata 输入、凭据命令行参数脱敏、阻塞 stdin 超时和初始化解析异常。
-- `node agent/scripts/offline-validation.mjs`：退出码 0；七阶段合成流程停在 game-site-deploy-and-measurement / WAITING_FOR_USER。证据见 [OFFLINE_VALIDATION.json](../runs/offline-7ef09975-fc6b-4f3a-ba4b-6560b82b6561/OFFLINE_VALIDATION.json)。
+- `node agent/scripts/offline-validation.mjs`：退出码 0；七阶段合成流程停在 game-site-deploy-and-measurement / WAITING_FOR_USER。证据见 [OFFLINE_VALIDATION.json](../../runs/offline-7ef09975-fc6b-4f3a-ba4b-6560b82b6561/OFFLINE_VALIDATION.json)。
 - 用修改前的 pipeline.mjs 和临时离线数据生成旧 manifest、产物目录及部署计划；新版恢复后确认相同计划成功，deploymentExecuted=false，临时验证目录已清理。
 - 独立只读复核发现的 metadata 接入、名称覆盖、凭据参数漏过滤、超时误报和初始化解析原文泄露均已修复并复核。
 
