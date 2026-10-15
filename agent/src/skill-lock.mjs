@@ -10,23 +10,29 @@ const git = async (cwd, args) => (await execFileAsync('git', args, { cwd, encodi
 
 export const AGENT_ROOT = fileURLToPath(new URL('../', import.meta.url));
 
-// Skills are only ever changed by a reviewed commit, so the lock pins the repository commit as well as file hashes.
-export async function skillSourceCommit(skillRoot) {
-  try { return await git(skillRoot, ['rev-parse', 'HEAD']); }
+// Skills change only through reviewed commits. The lock pins the committed tree of the Skill
+// directory, so orchestrator commits in the same repository do not invalidate a locked run.
+async function gitOutput(skillRoot, args) {
+  try { return await git(skillRoot, args); }
   catch (error) { throw Error(`SKILL_SOURCE_NOT_GIT: ${skillRoot} is not inside a git repository (${error.message.trim()})`); }
 }
+export const skillSourceTree = skillRoot => gitOutput(skillRoot, ['rev-parse', 'HEAD:./']);
 
-export async function verifySkillSource(skillRoot, lockedCommit) {
-  const head = await skillSourceCommit(skillRoot);
-  if (head !== lockedCommit) throw Error(`SKILL_SOURCE_COMMIT_MISMATCH: locked ${lockedCommit}, current HEAD ${head}`);
-  const changes = await git(skillRoot, ['status', '--porcelain', '--untracked-files=all', '--', '.']);
+export async function verifySkillSource(skillRoot, lockedTree) {
+  const changes = await gitOutput(skillRoot, ['status', '--porcelain', '--untracked-files=all', '--', '.']);
   if (changes) throw Error(`SKILL_SOURCE_DIRTY: uncommitted Skill changes: ${changes.split('\n').map(line => line.slice(3)).join(', ')}`);
+  const current = await skillSourceTree(skillRoot);
+  if (current !== lockedTree) throw Error(`SKILL_SOURCE_TREE_MISMATCH: locked ${lockedTree}, current ${current}`);
 }
 
 export async function generateInventory(configFile = join(AGENT_ROOT, 'config/workflow.json')) {
   const config = JSON.parse(await readFile(configFile, 'utf8'));
   const skillRoot = resolve(dirname(configFile), config.skillRoot);
-  const sourceCommit = await skillSourceCommit(skillRoot);
+  // A dirty tree would lock bytes that no commit records.
+  const changes = await gitOutput(skillRoot, ['status', '--porcelain', '--untracked-files=all', '--', '.']);
+  if (changes) throw Error(`SKILL_SOURCE_DIRTY: commit Skill changes before locking: ${changes.split('\n').map(line => line.slice(3)).join(', ')}`);
+  const sourceTree = await skillSourceTree(skillRoot);
+  const sourceCommit = await gitOutput(skillRoot, ['rev-parse', 'HEAD']);
   const skills = [];
   for (const name of config.skills) {
     const root = join(skillRoot, name);
@@ -37,6 +43,6 @@ export async function generateInventory(configFile = join(AGENT_ROOT, 'config/wo
       contractVersion: 1, version: 'tree-sha256:' + sha256(JSON.stringify(files.map(f => [relative(root, f.path), f.sha256]))) });
   }
   const output = resolve(dirname(configFile), config.inventory);
-  await writeFile(output, JSON.stringify({ skillRoot, sourceCommit, skills }, null, 2) + '\n', { mode: 0o600 });
+  await writeFile(output, JSON.stringify({ skillRoot, sourceTree, sourceCommit, skills }, null, 2) + '\n', { mode: 0o600 });
   return output;
 }

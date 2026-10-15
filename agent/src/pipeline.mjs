@@ -76,7 +76,7 @@ async function readInventory(path, names) {
   const bytes = await regularFile(path);
   const inventory = JSON.parse(bytes.toString('utf8'));
   assert(isAbsolute(inventory.skillRoot ?? '') && Array.isArray(inventory.skills), 'Invalid inventory');
-  if (inventory.sourceCommit !== undefined) await verifySkillSource(resolve(inventory.skillRoot), inventory.sourceCommit);
+  if (inventory.sourceTree !== undefined) await verifySkillSource(resolve(inventory.skillRoot), inventory.sourceTree);
   const skills = [];
   for (const name of names) {
     const matches = inventory.skills.filter(s => s.name === name);
@@ -93,7 +93,7 @@ async function readInventory(path, names) {
       contractVersion: entry.contractVersion ?? null, version: entry.version ?? entry.commit ?? null });
   }
   return { inventoryPath: path, inventorySha256: hash(bytes), skillRoot: resolve(inventory.skillRoot),
-    sourceCommit: inventory.sourceCommit ?? null, skills };
+    sourceTree: inventory.sourceTree ?? null, skills };
 }
 
 function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
