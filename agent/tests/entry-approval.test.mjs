@@ -70,9 +70,11 @@ test('replacement keywords require new approval, use versioned immutable copies 
   const ticket=await host.issue(binding);
   const result=await execute({id:f.task.id,retry:true,inputs:JSON.stringify(binding.inputs),approval:{snapshot,ticket}});
   assert.equal(result.status,'BLOCKED');assert.equal(calls,3);
-  assert.notEqual(observed,newKeywords);assert.ok(observed.includes('approved-input-revisions'));
+  const approvedOriginal=(await previewEntryResume(f.task.id,f.configuration)).inputs.rawKeywordsFile;
+  assert.notEqual(observed,newKeywords);assert.match(observed,/\/runs\/[^/]+\/inputs\/raw-/);
+  assert.ok(approvedOriginal.includes('approved-input-revisions'));
   assert.equal(await readFile(observed,'utf8'),'SYNTHETIC newly supplied');
-  assert.equal((await previewEntryResume(f.task.id,f.configuration)).inputs.rawKeywordsFile,observed);
+  assert.equal(await readFile(approvedOriginal,'utf8'),'SYNTHETIC newly supplied');
   for(const patch of [{gameIdentity:'changed'},{projectPath:'/tmp/other'},{uiMode:'optimize'},
     {deploymentPlanApproval:{approved:true,digest:'x'}},{adsEnabled:true}])
     await assert.rejects(previewEntryResume(f.task.id,f.configuration,{patch}),/SCOPE_REJECTED/);

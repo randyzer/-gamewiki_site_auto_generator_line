@@ -77,6 +77,19 @@ for (let i = 0; i < 7; i++) test('native stage contract accepts structural fixtu
   assert.equal(result.status, 'PASSED'); assert.ok(result.artifacts.length >= ARTIFACTS[i].length);
   assert.ok(result.artifacts.every(a => a.sourcePath && (a.sourceSha256 || a.kind === 'KEYWORD_MATERIALS.md')));
 });
+test('keyword validator reads the same run-local copy as the worker', async t => {
+  const f = await nativeFixture(t, 1);
+  const copy = join(f.context.runDirectory, 'inputs', 'raw-keywords.md');
+  await mkdir(dirname(copy), { recursive: true });
+  await writeFile(copy, '# copied keyword bytes');
+  f.context.inputCopyPaths = { rawKeywordsFile: copy };
+  const calls = [];
+  await validateNativeArtifacts(STAGES[1], f.context, f.result, { run: async (command, args) => {
+    calls.push([command, args]); return { exitCode: 0 };
+  } });
+  const args = calls.find(([, values]) => values.some(value => value.endsWith('validate_outputs.py')))?.[1];
+  assert.equal(args[args.indexOf('--raw-keywords') + 1], copy);
+});
 test('UI report must include the exact six required viewport widths', async t => {
   const f = await nativeFixture(t, 4), path = f.result.artifacts.find(a => a.kind === 'UI_UX_AUDIT.json').path;
   const audit = JSON.parse(await readFile(path)); audit.viewports = [390, 1440];
