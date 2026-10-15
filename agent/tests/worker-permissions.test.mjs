@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { AGENT_ROOT } from '../src/skill-lock.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { sha256 } from '../src/files.mjs';
+import { syntheticOfficialSources, syntheticHomepageReadiness, syntheticHomepageMedia } from './helpers.mjs';
 
 test('worker gets only digest-checked media receipt read access, never media-directory writes', async t => {
   const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
@@ -127,4 +128,44 @@ test('actual executor retains sandbox/approval bounds and grants only task-owned
   assert.equal(captured.options.env.SERPER_API_KEY, undefined);
   assert.equal(captured.options.env.ENTRY_TICKET, undefined);
   assert.ok(!captured.args.some(arg => /dangerously|approve-for-me/.test(arg)));
+});
+
+test('only the homepage stage gets image generation and image viewing', async t => {
+  const runId = 'TEST-worker-image-tools-' + randomUUID();
+  const root = join(AGENT_ROOT, 'runs', runId);
+  t.after(async () => {
+    await rm(root, { recursive: true, force: true });
+    await rm(join(AGENT_ROOT, 'workspaces', runId), { recursive: true, force: true });
+  });
+  const argsFor = async (skill, stage) => {
+    const outputDirectory = join(root, 'artifacts', String(stage), '1');
+    await mkdir(outputDirectory, { recursive: true });
+    let captured;
+    // The homepage stage sits behind the frozen G0 browser gate, so drive it with synthetic host evidence.
+    await createSkillExecutor({ browserHumanDialog: true, requestBrowserLaunch: async () => true,
+      inspectHomepageReadiness: syntheticHomepageReadiness, collectHomepageSourceEvidence: syntheticOfficialSources,
+      collectHomepageMediaEvidence: syntheticHomepageMedia,
+      collectBrowserEvidence: async context => {
+        const path = join(context.runDirectory, 'HOST_APPROVED_STEAM_EVIDENCE_image_test.json');
+        const bytes = '{"sourceType":"HOST_APPROVED_TYPED_STEAM_PUBLIC_V1"}';
+        await writeFile(path, bytes, { mode: 0o400 });
+        return { status: 'EVIDENCE_READY', path, sha256: sha256(bytes) };
+      },
+      run: async (_command, args) => {
+      captured = args;
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC IMAGE TOOL TEST'] }));
+    } })(skill, { runId, outputDirectory, inputs: { gameIdentity: 'SYNTHETIC TEST', projectPath: join(AGENT_ROOT, 'workspaces', runId, 'site') },
+      permissions: { siteWrites: false }, skillLock: { source: join(AGENT_ROOT, 'config', 'workflow.json') }, requiredArtifacts: [] });
+    return captured;
+  };
+  const flag = (args, mode, feature) => args.some((value, i) => value === mode && args[i + 1] === feature);
+  const homepage = await argsFor('game-homepage-icon-research', 0);
+  for (const feature of ['image_generation', 'view_image']) {
+    assert.ok(flag(homepage, '--enable', feature), `homepage enables ${feature}`);
+    assert.equal(flag(homepage, '--disable', feature), false, `homepage does not disable ${feature}`);
+  }
+  for (const feature of ['browser_use', 'computer_use']) assert.ok(flag(homepage, '--disable', feature));
+  const template = await argsFor('game-site-template-selector', 2);
+  for (const feature of ['image_generation', 'view_image']) assert.ok(flag(template, '--disable', feature), `template stage disables ${feature}`);
 });

@@ -67,8 +67,6 @@ export async function inspectHomepageMediaReadiness(context) {
     return missing ? { status: 'WAITING_FOR_USER', missing_inputs: [missing], code: error.message }
       : { status: 'BLOCKED', missing_inputs: [], code: 'HOMEPAGE_MEDIA_MATERIALS_INVALID' };
   }
-  if (!context.localFaviconHandoff && !context.manualFaviconHandoff)
-    return { status: 'WAITING_FOR_USER', missing_inputs: ['localFaviconSourceOrApproval'], code: 'HOMEPAGE_MEDIA_ICON_NOT_READY' };
   return { status: 'READY_FOR_MEDIA_CAPTURE', scopeSha256: snapshot.scopeProof.sha256,
     sourceIndexSha256: snapshot.indexSha256 };
 }

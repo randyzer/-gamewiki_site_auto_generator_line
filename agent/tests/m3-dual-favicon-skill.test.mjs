@@ -1,4 +1,3 @@
-import { syntheticOfficialSources, syntheticHomepageReadiness, syntheticHomepageMedia } from './helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile,readFile,copyFile,rm} from 'node:fs/promises';
@@ -8,8 +7,6 @@ import {randomUUID} from 'node:crypto';
 import {AGENT_ROOT} from '../src/skill-lock.mjs';
 import {sha256} from '../src/files.mjs';
 import {inspectHomepageLocalConversion} from '../src/m3-local-favicon-handoff.mjs';
-import {beginHomepageManualHandoff} from '../src/m3-homepage-manual-handoff.mjs';
-import {createSkillExecutor} from '../src/skill-executor.mjs';
 
 const skillRoot=join(AGENT_ROOT,'../codex-skills/game-homepage-icon-research');
 const cli=join(AGENT_ROOT,'scripts/m3-local-favicon.mjs');
@@ -78,12 +75,6 @@ test('local host holds until user approved source and completed converter receip
  const before=await inspectHomepageLocalConversion(f);
  assert.equal(before.status,'WAITING_FOR_USER');
  assert.equal(before.code,'M3_LOCAL_MASTER_PNG_REQUIRED');
- let browser=0,worker=0;
- const result=await createSkillExecutor({browserHumanDialog:true,
-  requestBrowserLaunch:async()=>{browser++;return true;},
-  run:async()=>{worker++;}})('game-homepage-icon-research',f.ctx);
- assert.equal(result.status,'WAITING_FOR_USER');
- assert.equal(browser,0);assert.equal(worker,0);
 });
 test('approved local binary source is run-bound and never by itself declares homepage stage passed',async t=>{
  const f=await context(t);
@@ -101,62 +92,13 @@ test('approved local binary source is run-bound and never by itself declares hom
  await assert.rejects(inspectHomepageLocalConversion({...f,gameIdentity:'Another Game'}),
    /M3_LOCAL_REQUEST_IDENTITY_MISMATCH/);
 });
-test('local conversion refuses tampered ZIP and simultaneous manual+local paths',async t=>{
+test('local conversion refuses a tampered ZIP',async t=>{
  const f=await context(t);
  await convert(f);
- const manual=await beginHomepageManualHandoff({runDirectory:f.runDirectory,
-  runId:f.runId,gameIdentity:f.gameIdentity});
- const result=await createSkillExecutor({browserHumanDialog:true,
-  requestBrowserLaunch:async()=>{throw Error('MUST_NOT_START');}})(
-  'game-homepage-icon-research',f.ctx);
- assert.equal(result.status,'BLOCKED');
- assert.ok(result.evidence.includes('M3_ICON_CONVERSION_PATH_AMBIGUOUS_USE_ONE'));
  const zip=join(f.runDirectory,'m3-local-favicon/output/favicon.zip');
  const raw=await readFile(zip);
  raw[22]^=1;await writeFile(zip,raw);
  const bad=await inspectHomepageLocalConversion(f);
  assert.equal(bad.status,'BLOCKED');
  assert.equal(bad.code,'M3_LOCAL_RECEIPT_PROVENANCE_INVALID');
-});
-test('local route passes its audited source to worker but fabricated worker icon is rejected',async t=>{
- const f=await context(t);
- await convert(f);
- const handoff=await inspectHomepageLocalConversion(f);
- let called=0;
- const result=await createSkillExecutor({
-  browserHumanDialog:true,
-  requestBrowserLaunch:async()=>true,
-  collectHomepageSourceEvidence:syntheticOfficialSources,
-  inspectHomepageReadiness:syntheticHomepageReadiness,collectHomepageMediaEvidence:syntheticHomepageMedia,
-   collectBrowserEvidence:async context=>{
-   const path=join(context.runDirectory,'HOST_TYPED_EVIDENCE_dual_test.json');
-   const source='{"sourceType":"HOST_APPROVED_TYPED_STEAM_PUBLIC_V1"}';
-   await writeFile(path,source,{mode:0o400});
-   return {status:'EVIDENCE_READY',path,sha256:sha256(source)};
-  },
-  run:async(_command,args,options)=>{
-    called++;
-    assert.ok(options.input.includes('LOCAL_FAVICON_CONVERSION_V1'));
-    assert.ok(options.input.includes(handoff.zipSha256));
-    assert.match(options.input, /Use the available Node\.js runtime/);
-    assert.match(options.input, /Do not invoke python3/);
-    assert.match(options.input, /No original generation prompt was retained/);
-    for (const path of [handoff.requestPath, handoff.approvalPath, handoff.receiptPath,
-      handoff.engineReceiptPath]) assert.ok(options.input.includes(path));
-    const profile=args.find(value=>value.startsWith('permissions.agent-worker='));
-    for (const path of [handoff.requestPath, handoff.approvalPath, handoff.receiptPath,
-      handoff.engineReceiptPath]) assert.ok(profile.includes(JSON.stringify(path)+'="read"'));
-    assert.doesNotMatch(options.input, /Image generation requires an actual callable image-generation tool/,
-      'an already approved local icon must not be blocked by a contradictory missing-generator instruction');
-    const out=args[args.indexOf('--output-last-message')+1];
-    const fake=join(f.outputDirectory,'native','fake.zip');
-    await writeFile(fake,'FAKE ZIP');
-    await writeFile(out,JSON.stringify({status:'PASSED',evidence:['FAKE'],
-      missing_inputs:[],artifacts:[{kind:'ICON.zip',path:fake},
-        {kind:'HOMEPAGE_RESEARCH.md',path:join(f.outputDirectory,'native','fake.md')}]}));
-  }
- })('game-homepage-icon-research',f.ctx);
- assert.equal(called,1);
- assert.equal(result.status,'BLOCKED');
- assert.ok(result.evidence.includes('M3_LOCAL_NATIVE_ICON_DIGEST_MISMATCH'));
 });

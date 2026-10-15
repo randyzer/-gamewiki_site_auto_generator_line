@@ -9,6 +9,16 @@ export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'b
   'skill_mcp_dependency_install', 'skill_search', 'request_permissions_tool', 'shell_snapshot',
   'workspace_dependencies', 'auth_elicitation', 'tool_suggest', 'goals', 'view_image']);
 export const ENABLED_WORKER_FEATURES = Object.freeze(['code_mode_host']);
+// The homepage Skill draws its own icon (image_generation) and inspects it (view_image); no other stage may.
+const IMAGE_FEATURES = Object.freeze(['image_generation', 'view_image']);
+
+export function stageWorkerFeatures(skill) {
+  const images = skill === STAGE.HOMEPAGE_RESEARCH;
+  return {
+    disabled: DISABLED_WORKER_FEATURES.filter(feature => !(images && IMAGE_FEATURES.includes(feature))),
+    enabled: [...ENABLED_WORKER_FEATURES, ...(images ? IMAGE_FEATURES : [])],
+  };
+}
 
 // Identity is supplied by fixed trusted host code, never by a task or model.
 export async function verifyWorkerCommandIdentity(command, identity) {
@@ -87,10 +97,7 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
     if (inputs[key] && inside(runDirectory, inputs[key])) readPaths.push(inputs[key]);
   for (const stage of context.upstream ?? []) for (const artifact of stage.artifacts ?? [])
     if (artifact.path && inside(runDirectory, artifact.path)) readPaths.push(artifact.path);
-  for (const path of [context.hostBrowserEvidencePath, context.homepageSourceEvidencePath,
-    context.localFaviconHandoff?.zipPath, context.localFaviconHandoff?.requestPath,
-    context.localFaviconHandoff?.approvalPath, context.localFaviconHandoff?.receiptPath,
-    context.localFaviconHandoff?.engineReceiptPath, context.manualFaviconHandoff?.zipPath])
+  for (const path of [context.hostBrowserEvidencePath, context.homepageSourceEvidencePath])
     if (path && inside(runDirectory, path)) readPaths.push(path);
   if (context.homepageMediaEvidencePath) {
     const path = context.homepageMediaEvidencePath;

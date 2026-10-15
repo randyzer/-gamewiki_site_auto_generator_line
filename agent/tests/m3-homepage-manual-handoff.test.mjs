@@ -1,4 +1,3 @@
-import { syntheticOfficialSources, syntheticHomepageReadiness, syntheticHomepageMedia } from './helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile,rm,copyFile} from 'node:fs/promises';
@@ -9,7 +8,6 @@ import {AGENT_ROOT} from '../src/skill-lock.mjs';
 import {sha256} from '../src/files.mjs';
 import {beginHomepageManualHandoff,inspectHomepageManualHandoff,
   approveHomepageManualHandoff} from '../src/m3-homepage-manual-handoff.mjs';
-import {createSkillExecutor} from '../src/skill-executor.mjs';
 
 async function example(t){
  const runId='m3-homepage-test-'+randomUUID(),gameIdentity='Offline Fixture Game';
@@ -72,70 +70,4 @@ test('M3 disallows stale approval when even one byte changes after user confirma
  const changed=await inspectHomepageManualHandoff(f.opts);
  assert.equal(changed.status,'BLOCKED');
  assert.equal(changed.stageMayPass,false);
-});
-test('stage executor returns WAITING before browser approval or Codex worker when handoff is incomplete',async t=>{
- const f=await example(t);
- let browser=0,worker=0;
- const result=await createSkillExecutor({
-   browserHumanDialog:true,requestBrowserLaunch:async()=>{browser++;return false;},
-   collectBrowserEvidence:async()=>{browser++;return{};},
-   run:async()=>{worker++;}
- })('game-homepage-icon-research',f.ctx);
- assert.equal(result.status,'WAITING_FOR_USER');
- assert.deepEqual(result.missing_inputs,['faviconManualApproval']);
- assert.equal(browser,0);
- assert.equal(worker,0);
-});
-test('after user attestation, homepage worker receives real manual source but must still produce real research',async t=>{
- const f=await example(t);
- const ready=await placeAndApprove(f);
- let count=0;
- const result=await createSkillExecutor({
-   browserHumanDialog:true,requestBrowserLaunch:async()=>true,
-   collectHomepageSourceEvidence:syntheticOfficialSources,
-   inspectHomepageReadiness:syntheticHomepageReadiness,collectHomepageMediaEvidence:syntheticHomepageMedia,
-   collectBrowserEvidence:async context=>{
-     const path=join(context.runDirectory,'HOST_APPROVED_STEAM_EVIDENCE_fixture.json');
-     const b='{"sourceType":"HOST_APPROVED_TYPED_STEAM_PUBLIC_V1"}';
-     await writeFile(path,b,{mode:0o400});
-     return {status:'EVIDENCE_READY',path,sha256:sha256(b)};
-   },
-   run:async(_cmd,args,opts)=>{
-     count++;
-     assert.equal(opts.input.includes('USER-SUPPLIED_AND_VISUALLY_REVIEWED'),true);
-     assert.ok(opts.input.includes(ready.zipSha256));
-     const resultPath=args[args.indexOf('--output-last-message')+1];
-     await writeFile(resultPath,JSON.stringify({status:'BLOCKED',
-       evidence:['M3_OFFLINE_FIXTURE_RESEARCH_NOT_COMPLETED'],missing_inputs:[],artifacts:[]}));
-   }
- })('game-homepage-icon-research',f.ctx);
- assert.equal(result.status,'BLOCKED');
- assert.equal(count,1);
- assert.deepEqual(result.artifacts,[]);
-});
-test('a worker cannot replace the approved ZIP with different bytes and falsely claim PASSED',async t=>{
- const f=await example(t);
- await placeAndApprove(f);
- const result=await createSkillExecutor({
-   browserHumanDialog:true,requestBrowserLaunch:async()=>true,
-   collectHomepageSourceEvidence:syntheticOfficialSources,
-   inspectHomepageReadiness:syntheticHomepageReadiness,collectHomepageMediaEvidence:syntheticHomepageMedia,
-   collectBrowserEvidence:async context=>{
-     const path=join(context.runDirectory,'HOST_APPROVED_STEAM_EVIDENCE_fixture.json');
-     const b='{"sourceType":"HOST_APPROVED_TYPED_STEAM_PUBLIC_V1"}';
-     await writeFile(path,b,{mode:0o400});
-     return {status:'EVIDENCE_READY',path,sha256:sha256(b)};
-   },
-   run:async(_cmd,args,opts)=>{
-     const destination=join(f.outputDirectory,'native','ICON.zip');
-     await writeFile(destination,'OFFLINE_FAKE_ICON');
-     await writeFile(args[args.indexOf('--output-last-message')+1],JSON.stringify({
-       status:'PASSED',evidence:['FAKE_OFFLINE_WORKER_SUCCESS'],missing_inputs:[],
-       artifacts:[{kind:'ICON.zip',path:destination},
-                  {kind:'HOMEPAGE_RESEARCH.md',path:join(f.outputDirectory,'native','fake.md')}] }));
-   }
- })('game-homepage-icon-research',f.ctx);
- assert.equal(result.status,'BLOCKED');
- assert.deepEqual(result.artifacts,[]);
- assert.ok(result.evidence.includes('M3_MANUAL_NATIVE_ICON_DIGEST_MISMATCH'));
 });
