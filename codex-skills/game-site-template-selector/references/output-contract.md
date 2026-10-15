@@ -8,7 +8,10 @@ Write the final report to `docs/TEMPLATE_SELECTION_REPORT.md` in the copied game
 
 - Game:
 - Selected main template:
-- Template source path:
+- Fixed template repository: https://github.com/randyzer/-gamewiki_site_auto_generator_line
+- Template repository ref: main
+- Resolved template source commit SHA:
+- Template source path (temporary snapshot):
 - Destination path:
 - Decision status: SELECTED / NEEDS USER DECISION / BLOCKED
 - Research date:
@@ -106,7 +109,10 @@ The machine-readable copy record is `docs/template-copy-manifest.json`. It must 
 {
   "schema_version": 1,
   "game": "Game Name",
-  "source": "/absolute/template/path",
+  "source": "/absolute/temporary/snapshot/repo/template/tempX_based_example",
+  "source_repository": "https://github.com/randyzer/-gamewiki_site_auto_generator_line",
+  "source_ref": "main",
+  "source_commit": "40-character-git-commit-sha",
   "destination": "/absolute/game/path",
   "copied_at": "ISO-8601 timestamp",
   "excluded_patterns": [],

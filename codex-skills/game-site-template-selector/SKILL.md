@@ -1,13 +1,13 @@
 ---
 name: game-site-template-selector
-description: Select the best local game-guide site template for a named game, recommend compatible modules from the other templates, and safely copy the chosen main template into a new game workspace without modifying the source templates. Use when the user provides a game name and target game directory and wants to choose among temp-prefixed templates under /Users/randyz/work/coding/hot_words_web/template.
+description: Select the best game-guide template from the fixed GitHub main/template source, recommend compatible modules, and safely copy the selected template into a new game workspace. Materialize a commit-pinned read-only snapshot first; never select templates from an independent local library.
 ---
 
 # Game Site Template Selector
 
 ## Purpose
 
-Choose a defensible design foundation from the user's local game-guide templates. Select one complete main template, recommend a small number of modules from other templates, and copy only the main template into the target workspace. Preserve every source template byte-for-byte.
+Choose a defensible design foundation from the fixed GitHub template library. Select one complete main template, recommend a small number of modules from other templates, and copy only the main template into the target workspace. Preserve every source template byte-for-byte.
 
 This skill performs template selection and safe copying only. It does not redesign the chosen template, replace branding, generate content, merge recommended modules, install dependencies, or deploy a site.
 
@@ -20,15 +20,17 @@ Required:
 
 Defaults:
 
-- Template library: `/Users/randyz/work/coding/hot_words_web/template`
-- Template candidates: immediate child directories whose names begin with `temp`.
+- **Fixed template origin:** `https://github.com/randyzer/-gamewiki_site_auto_generator_line/tree/main/template`.
+- Source repository: `https://github.com/randyzer/-gamewiki_site_auto_generator_line.git`, ref `main`, subtree `template/`.
+- Materialize a commit-pinned temporary checkout; it is only a read-only transport snapshot, not an alternative source.
+- Template candidates: immediate `temp<number>_based_<reference>` directories under that subtree.
 
 Optional evidence:
 
 - Official game URL or store page.
 - Existing homepage research file.
 - Screenshots, trailer, genre, platform, art direction, or intended content plan.
-- A different template library path explicitly provided by the user.
+- No template source override; the remote origin is fixed by this contract.
 
 If the target directory exists and contains any file, stop before copying. Report the contents at a high level and ask the user whether to choose a different empty directory. Never merge into or overwrite a non-empty project.
 
@@ -58,13 +60,23 @@ Read [references/selection-rubric.md](references/selection-rubric.md) before sco
 
 ### 1. Preflight and template-library health gate
 
-Before researching the game, scoring templates, creating the target, or copying files, validate the fixed default template library:
+Before researching, scoring, or copying, materialize and validate the **fixed GitHub source** (never fall back to a local template library):
 
-`/Users/randyz/work/coding/hot_words_web/template`
+```bash
+# Clone to a fresh external temporary directory; never clone into the target workspace.
+SNAPSHOT_DIR="$(mktemp -d)"
+git clone --depth 1 --branch main --single-branch \
+  https://github.com/randyzer/-gamewiki_site_auto_generator_line.git "$SNAPSHOT_DIR/repo"
+COMMIT_SHA="$(git -C "$SNAPSHOT_DIR/repo" rev-parse HEAD)"
+TEMPLATE_ROOT="$SNAPSHOT_DIR/repo/template"
+# Use the SAME immutable snapshot for inventory, scoring, and copying.
+```
+
+Resolve and record the full `COMMIT_SHA` once. Do not refresh `main` during a run. A clone/auth/network failure is `BLOCKED`; do not use a pre-existing local library as fallback. The clone must remain outside the target workspace, with no source mutations. Remove the temporary checkout after the run unless retention is explicitly approved.
 
 Confirm:
 
-1. The template library exists, is readable, and resolves to the expected absolute path.
+1. The fetched repository and `template/` subtree are readable, the Git origin matches the fixed URL, and the recorded commit SHA matches the checkout HEAD.
 2. At least one immediate `temp*` candidate directory exists.
 3. Discover all current candidates dynamically; a changed template count is not an error by itself.
 4. Every candidate name matches `temp<number>_based_<reference>`, with no duplicate number.
@@ -80,13 +92,13 @@ Run:
 
 ```bash
 python3 scripts/inventory_templates.py \
-  --template-root "/Users/randyz/work/coding/hot_words_web/template" \
+  --template-root "$TEMPLATE_ROOT" \
   --output "/tmp/game-template-inventory.json"
 ```
 
-If the template path is missing, inaccessible, redirected, contains no `temp*` candidate, includes an unexpected name/symlink, or a candidate lacks required core files, stop before all other work. Ask one focused question that states the expected condition, observed anomaly, and affected path. Do not guess a replacement path, silently skip a candidate, repair or rename a template, or continue with the remaining templates without explicit user confirmation. A larger or smaller candidate count is accepted when every discovered template passes the health checks.
+If the fetched template subtree is missing, inaccessible, redirected, contains no `temp*` candidate, includes an unexpected name/symlink, or a candidate lacks required core files, stop before all other work. Ask one focused question that states the expected condition, observed anomaly, and affected path. Do not guess a replacement path, silently skip a candidate, repair or rename a template, or continue with the remaining templates without explicit user confirmation. A larger or smaller candidate count is accepted when every discovered template passes the health checks.
 
-Use the generated inventory as structural evidence. Do not use `_support` as a copy source and never write health-check output into the template library.
+Record the repository URL, branch, resolved commit SHA, and `template/` subtree path in the selection report and copy provenance. Use the generated inventory as structural evidence. Do not use `_support` as a copy source and never write health-check output into the template library.
 
 ### 2. Build a game design brief
 
@@ -154,10 +166,11 @@ First run:
 
 ```bash
 python3 scripts/copy_template.py \
-  --template-root "/Users/randyz/work/coding/hot_words_web/template" \
+  --template-root "$TEMPLATE_ROOT" \
   --source "tempX_based_example" \
   --destination "/absolute/game/workspace" \
   --game "Game Name" \
+  --source-commit "$COMMIT_SHA" \
   --dry-run
 ```
 

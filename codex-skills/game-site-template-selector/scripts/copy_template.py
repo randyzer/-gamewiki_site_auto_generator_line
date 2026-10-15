@@ -141,8 +141,11 @@ def main() -> None:
     parser.add_argument("--source", required=True, help="Immediate temp* directory name")
     parser.add_argument("--destination", required=True)
     parser.add_argument("--game", required=True)
+    parser.add_argument("--source-commit", required=True, help="Full 40-character SHA of the fixed GitHub main snapshot")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+    if len(args.source_commit) != 40 or any(c not in "0123456789abcdef" for c in args.source_commit.lower()):
+        fail("source-commit must be a full 40-character Git commit SHA")
 
     template_root = Path(args.template_root).expanduser().resolve()
     if not template_root.is_dir():
@@ -167,6 +170,9 @@ def main() -> None:
     preview = {
         "game": args.game,
         "source": str(source),
+        "source_repository": "https://github.com/randyzer/-gamewiki_site_auto_generator_line",
+        "source_ref": "main",
+        "source_commit": args.source_commit,
         "destination": str(destination),
         "excluded_patterns": EXCLUDED_PATTERNS,
         "eligible_file_count": len(source_files_before),
@@ -204,6 +210,9 @@ def main() -> None:
             "schema_version": 1,
             "game": args.game,
             "source": str(source),
+        "source_repository": "https://github.com/randyzer/-gamewiki_site_auto_generator_line",
+        "source_ref": "main",
+        "source_commit": args.source_commit,
             "destination": str(destination),
             "copied_at": datetime.now(timezone.utc).isoformat(),
             "excluded_patterns": EXCLUDED_PATTERNS,
