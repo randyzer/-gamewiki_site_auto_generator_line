@@ -1,5 +1,5 @@
 import { mkdir, readdir, lstat, readFile, writeFile, copyFile, chmod, rm, constants } from 'node:fs/promises';
-import { join, relative, resolve } from 'node:path';
+import { join, relative, resolve, dirname } from 'node:path';
 import { inside, safePath, sha256, parseArtifactJson } from './files.mjs';
 
 export const templateCopyDirectory = runDirectory => join(runDirectory, 'template-copy', 'site');
@@ -9,7 +9,7 @@ async function exists(path) {
 }
 
 // Preflight the whole tree before creating any destination entry. Failed copies remain for diagnosis.
-export async function mergeTemplateCopy(context, { copy = copyFile } = {}) {
+export async function mergeTemplateCopy(context, { copy = copyFile, remove = rm } = {}) {
   const { runDirectory, inputs } = context;
   const sourceDirectory = templateCopyDirectory(runDirectory), siteDirectory = inputs.projectPath;
   const researchDirectory = inputs.paths.researchDirectory;
@@ -47,21 +47,36 @@ export async function mergeTemplateCopy(context, { copy = copyFile } = {}) {
     if (!file || file.sourceSha256 !== hash || !inside(sourceDirectory, resolve(sourceDirectory, name)))
       throw Error(`Template manifest hash mismatch: ${name}`);
   }
+  const generated = new Set(['docs/template-copy-manifest.json', 'docs/TEMPLATE_SELECTION_REPORT.md', 'docs/TEMPLATE_RESIDUE_SCAN.json']);
+  for (const file of files) if (!Object.hasOwn(manifest.files, file.relativePath) && !generated.has(file.relativePath))
+    throw Error(`Unlisted template file; refusing host merge: ${file.destination}`);
   const rewritten = Buffer.from(JSON.stringify({ ...manifest, destination: siteDirectory }, null, 2) + '\n');
   const receipt = { sourceDirectory, siteDirectory, status: 'COPYING', fileCount: files.length,
     sourceTreeSha256: sha256(JSON.stringify(files.map(f => [f.relativePath, f.sourceSha256]))),
-    destinationTreeSha256: null, files: [] };
+    destinationTreeSha256: null, files: [], directories: [], cleanup: { status: 'PENDING' } };
   await safePath(receiptPath, [runDirectory]);
   if (await exists(receiptPath)) throw Error(`Template merge receipt already exists; reconcile before retry: ${receiptPath}`);
   await writeFile(receiptPath, JSON.stringify(receipt, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
   const save = () => writeFile(receiptPath, JSON.stringify(receipt, null, 2) + '\n', { mode: 0o600 });
-  try {
-    await mkdir(siteDirectory, { recursive: true });
-    for (const dir of directories) {
-      await safePath(dir.destination, [siteDirectory]);
-      try { await mkdir(dir.destination, { mode: dir.mode }); }
-      catch (error) { if (error.code !== 'EEXIST' || !(await lstat(dir.destination)).isDirectory()) throw error; }
+  async function ensureDirectory(path, mode) {
+    await safePath(path, [path]);
+    const existing = await exists(path);
+    if (existing) {
+      if (!existing.isDirectory()) throw Error(`Template merge directory conflict: ${path}`);
+      return;
     }
+    await ensureDirectory(dirname(path), 0o755);
+    const entry = { path, mode, status: 'CREATING' }; receipt.directories.push(entry); await save();
+    try { await mkdir(path, { mode }); entry.status = 'CREATED'; }
+    catch (error) {
+      if (error.code !== 'EEXIST' || !(await lstat(path)).isDirectory()) throw error;
+      entry.status = 'REUSED';
+    }
+    await save();
+  }
+  try {
+    await ensureDirectory(siteDirectory, 0o755);
+    for (const dir of directories) await ensureDirectory(dir.destination, dir.mode);
     for (const file of files) {
       await safePath(file.source, [sourceDirectory]); await safePath(file.destination, [siteDirectory]);
       if (sha256(await readFile(file.source)) !== file.sourceSha256) throw Error(`Template source changed before copy: ${file.source}`);
@@ -76,9 +91,10 @@ export async function mergeTemplateCopy(context, { copy = copyFile } = {}) {
     }
     receipt.destinationTreeSha256 = sha256(JSON.stringify(files.map(f => [f.relativePath, f.destinationSha256])));
     receipt.status = 'MERGED'; await save();
-    await rm(sourceDirectory, { recursive: true });
-    return receipt;
   } catch (error) {
     receipt.status = 'FAILED'; receipt.error = error.message; await save(); throw error;
   }
+  try { await remove(sourceDirectory, { recursive: true }); receipt.cleanup = { status: 'REMOVED' }; }
+  catch (error) { receipt.cleanup = { status: 'FAILED', error: error.message }; }
+  await save(); return receipt;
 }

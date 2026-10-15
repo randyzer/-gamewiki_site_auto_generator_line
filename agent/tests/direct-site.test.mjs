@@ -104,7 +104,43 @@ test('failed merge retains source and a receipt naming every created or attempte
   assert.equal(receipt.files.filter(f => f.status === 'COPYING').length, 1);
   for (const file of receipt.files.filter(f => f.status === 'COPIED')) await stat(file.destination);
   await stat(f.source); assert.equal(await readFile(f.context.inputs.paths.rawKeywordsFile, 'utf8'), '# original user keywords');
+  assert.ok(Array.isArray(receipt.directories), 'receipt must record created directories');
+  assert.ok(receipt.directories.some(dir => dir.path === join(f.context.inputs.projectPath, 'app') && dir.status === 'CREATED'));
+  for (const dir of receipt.directories.filter(dir => dir.status === 'CREATED')) assert.equal((await stat(dir.path)).isDirectory(), true);
 });
+
+test('temporary cleanup failure keeps a MERGED receipt and reports pending cleanup', async t => {
+  const f = await fixture(t);
+  const receipt = await merge(f.context, { remove: async () => { throw Error('synthetic cleanup denied'); } });
+  assert.equal(receipt.status, 'MERGED'); assert.ok(receipt.cleanup, 'receipt must record cleanup independently');
+  assert.equal(receipt.cleanup.status, 'FAILED');
+  assert.match(receipt.cleanup.error, /synthetic cleanup denied/); await stat(f.source);
+  assert.equal(receipt.files.filter(file => file.status === 'COPIED').length, receipt.fileCount);
+  assert.equal(JSON.parse(await readFile(join(f.context.runDirectory, 'TEMPLATE_MERGE_RECEIPT.json'))).status, 'MERGED');
+});
+
+test('unlisted worker files cannot be promoted through the host merge', async t => {
+  const f = await fixture(t); await writeFile(join(f.source, '.env.local'), 'synthetic extra worker file');
+  const before = await snapshot(f.context.inputs.projectPath);
+  await assert.rejects(merge(f.context), /\.env\.local/);
+  assert.deepEqual(await snapshot(f.context.inputs.projectPath), before);
+});
+
+for (const status of ['PARTIAL', 'WAITING_FOR_USER', 'BLOCKED'])
+  test(`stage 3 preserves ${status} evidence and missing inputs with temporary artifacts`, async t => {
+    const f = await fixture(t);
+    const executor = createSkillExecutor({ run: async (_command, args) => {
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status,
+        missing_inputs: status === 'WAITING_FOR_USER' ? ['templateSelection'] : [], evidence: ['worker needs template clarification'],
+        artifacts: [{ kind: 'TEMPLATE_SELECTION_REPORT.md', path: join(f.source, 'docs/TEMPLATE_SELECTION_REPORT.md') }] }));
+    } });
+    const result = await executor(STAGE.TEMPLATE_SELECTION, { ...f.context, runId: 'test',
+      outputDirectory: join(f.context.runDirectory, 'artifacts/2/1'), permissions: { siteWrites: false },
+      requiredArtifacts: ['TEMPLATE_SELECTION_REPORT.md'], skillLock: { source: join(f.root, 'skill/SKILL.md') } });
+    assert.equal(result.status, status); assert.deepEqual(result.evidence, ['worker needs template clarification']);
+    assert.deepEqual(result.missing_inputs, status === 'WAITING_FOR_USER' ? ['templateSelection'] : []);
+    await stat(f.source);
+  });
 
 test('new run accepts only research and .DS_Store in the user root', async t => {
   const f = await pipelineFixture(t), researchDirectory = join(f.root, 'game/backgroundinformation');

@@ -282,16 +282,21 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         await writeFile(latest, context.runId, { mode: 0o600 });
       }
     }
+    let templateMerge;
     if (stagedTemplate && result.status === 'PASSED') {
       for (const descriptor of result.artifacts)
         if (!inside(context.templateCopyDestination, descriptor.path)) throw Error(`Template artifact outside temporary directory: ${descriptor.path}`);
       await diagnosticStep('validate-template-copy', () => validateNativeArtifacts(skill,
         { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } }, result, validationOptions));
-      await diagnosticStep('merge-template-copy', () => mergeTemplateCopy(context));
+      templateMerge = await diagnosticStep('merge-template-copy', () => mergeTemplateCopy(context));
       for (const descriptor of result.artifacts)
         descriptor.path = join(project, relative(context.templateCopyDestination, descriptor.path));
     }
-    const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, context, result, validationOptions));
+    const validationContext = stagedTemplate && result.status !== 'PASSED'
+      ? { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } } : context;
+    const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, validationContext, result, validationOptions));
+    if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
+      `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;
