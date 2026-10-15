@@ -1,0 +1,33 @@
+{
+  "summaries": [
+    {
+      "url": "https://store.steampowered.com/app/431960/Wallpaper_Engine/",
+      "status": "CAPTURED",
+      "title": "Wallpaper Engine on Steam",
+      "finalUrl": "https://store.steampowered.com/app/431960/Wallpaper_Engine/",
+      "httpStatus": 200,
+      "textBytes": 5027,
+      "mentionsWallpaperEngine": true,
+      "jsonLdCount": 0,
+      "metaCount": 23
+    },
+    {
+      "url": "https://www.wallpaperengine.io/en",
+      "status": "CAPTURED",
+      "title": "Wallpaper Engine: Animated Wallpapers on Windows",
+      "finalUrl": "https://www.wallpaperengine.io/en",
+      "httpStatus": 200,
+      "textBytes": 3494,
+      "mentionsWallpaperEngine": true,
+      "jsonLdCount": 3,
+      "metaCount": 53
+    }
+  ],
+  "screenshotCount": 2,
+  "sha256Count": 5,
+  "realWorkerCalled": false,
+  "workerStubCalls": 2,
+  "workerNetworkEnabled": false,
+  "finalStatus": "BLOCKED",
+  "cleaned": true
+}

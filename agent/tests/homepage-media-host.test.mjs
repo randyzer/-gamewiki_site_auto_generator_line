@@ -116,19 +116,23 @@ test('media DOM extraction reads only bounded public links and video identity fi
   assert.equal(relative.content?.channelUrl, channelUrl, 'public relative href resolves against the approved page');
 });
 
-test('missing current-run materials pause before browser approval, Steam or worker', async t => {
+test('missing legacy source index does not gate offline homepage source planning', async t => {
   const f = await fixture(t); await rm(join(f.context.runDirectory, 'source-ownership-reviews/SOURCE_INDEX.json'));
-  let calls = 0;
+  let browserCalls = 0, workers = 0;
   const execute = createSkillExecutor({ browserHumanDialog: true,
-    requestBrowserLaunch: async () => { calls++; return true; },
-    collectBrowserEvidence: async () => { calls++; return { status: 'BLOCKED' }; },
-    run: async () => { calls++; } });
+    requestBrowserLaunch: async () => { browserCalls++; return true; },
+    collectBrowserEvidence: async () => { browserCalls++; return { status: 'BLOCKED' }; },
+    captureHomepageSources: async () => { throw Error('FETCH_REQUEST fixture not supplied'); },
+    run: async (_command, args) => {
+      workers++; await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['homepageSourceCaptures'], evidence: ['offline planning fixture'] }));
+    } });
   const result = await execute(STAGE.HOMEPAGE_RESEARCH, { ...f.context,
     outputDirectory: join(f.context.runDirectory, 'artifacts/0/1'),
     skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') }, permissions: { siteWrites: false }, requiredArtifacts: [] });
   assert.equal(result.status, 'WAITING_FOR_USER');
-  assert.ok(result.missing_inputs.includes('homepageSourceIndex'));
-  assert.equal(calls, 0);
+  assert.deepEqual(result.missing_inputs, ['homepageSourceCaptures']);
+  assert.equal(browserCalls, 0); assert.equal(workers, 1);
 });
 
 test('missing media scope waits, while wrong run, URL or ownership bytes block with zero commands', async t => {
@@ -221,12 +225,18 @@ test('a different public video channel stays NOT_CONFIRMED, and denied approval 
   assert.equal(denied.calls(), 0);
 });
 
-test('missing media scope and damaged ownership proof stop the actual executor before all side effects', async t => {
+test('legacy media readiness remains testable but does not gate the offline executor', async t => {
   const f = await fixture(t), { inspectHomepageMediaReadiness } = await api();
   await rm(f.scopePath);
-  let calls = 0;
-  const executor = createSkillExecutor({ browserHumanDialog: true, requestBrowserLaunch: async () => { calls++; return true; },
-    collectBrowserEvidence: async () => { calls++; }, run: async () => { calls++; } });
+  let browserCalls = 0, workers = 0;
+  const executor = createSkillExecutor({ browserHumanDialog: true,
+    requestBrowserLaunch: async () => { browserCalls++; return true; },
+    collectBrowserEvidence: async () => { browserCalls++; },
+    captureHomepageSources: async () => { throw Error('FETCH_REQUEST fixture not supplied'); },
+    run: async (_command, args) => {
+      workers++; await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['homepageSourceCaptures'], evidence: ['offline planning fixture'] }));
+    } });
   const context = { ...f.context, outputDirectory: join(f.context.runDirectory, 'artifacts/0/1'),
     skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') }, permissions: { siteWrites: false }, requiredArtifacts: [] };
   assert.equal((await executor(STAGE.HOMEPAGE_RESEARCH, context)).status, 'WAITING_FOR_USER');
@@ -234,8 +244,8 @@ test('missing media scope and damaged ownership proof stop the actual executor b
   const index = JSON.parse(await readFile(indexPath)); index.sources[0].ownershipReview.sha256 = '0'.repeat(64);
   await writeFile(indexPath, JSON.stringify(index));
   assert.equal((await inspectHomepageMediaReadiness(f.context)).status, 'BLOCKED');
-  assert.equal((await executor(STAGE.HOMEPAGE_RESEARCH, context)).status, 'BLOCKED');
-  assert.equal(calls, 0);
+  assert.equal((await executor(STAGE.HOMEPAGE_RESEARCH, context)).status, 'WAITING_FOR_USER');
+  assert.equal(browserCalls, 0); assert.equal(workers, 2);
 });
 
 test('every reviewed official target is scope-checked before Steam, including unused private routes', async t => {

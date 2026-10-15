@@ -2,6 +2,7 @@ import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { realpath, readFile, stat } from 'node:fs/promises';
 import { inside, safePath, sha256 } from './files.mjs';
 import { STAGE } from './stages.mjs';
+import { verifySiteEvidence } from './site-evidence.mjs';
 
 export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'browser_use_external',
   'browser_use_full_cdp_access', 'computer_use', 'in_app_browser', 'in_app_local_automation',
@@ -9,14 +10,15 @@ export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'b
   'skill_mcp_dependency_install', 'skill_search', 'request_permissions_tool', 'shell_snapshot',
   'workspace_dependencies', 'auth_elicitation', 'tool_suggest', 'goals', 'view_image']);
 export const ENABLED_WORKER_FEATURES = Object.freeze(['code_mode_host']);
-// The homepage Skill draws its own icon (image_generation) and inspects it (view_image); no other stage may.
-const IMAGE_FEATURES = Object.freeze(['image_generation', 'view_image']);
+// Only homepage research generates images; audit workers can inspect host screenshots.
 
 export function stageWorkerFeatures(skill) {
   const images = skill === STAGE.HOMEPAGE_RESEARCH;
+  const viewing = images || [STAGE.UI_UX_AUDIT, STAGE.PRELAUNCH_ACCEPTANCE].includes(skill);
+  const enabled = [...ENABLED_WORKER_FEATURES, ...(images ? ['image_generation'] : []), ...(viewing ? ['view_image'] : [])];
   return {
-    disabled: DISABLED_WORKER_FEATURES.filter(feature => !(images && IMAGE_FEATURES.includes(feature))),
-    enabled: [...ENABLED_WORKER_FEATURES, ...(images ? IMAGE_FEATURES : [])],
+    disabled: DISABLED_WORKER_FEATURES.filter(feature => !enabled.includes(feature)),
+    enabled,
   };
 }
 
@@ -99,6 +101,12 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
     if (artifact.path && inside(runDirectory, artifact.path)) readPaths.push(artifact.path);
   for (const path of [context.hostBrowserEvidencePath, context.homepageSourceEvidencePath])
     if (path && inside(runDirectory, path)) readPaths.push(path);
+  if (context.homepageSourceCaptures) {
+    const bundle = context.homepageSourceCaptures;
+    if (bundle.directory !== join(runDirectory, 'homepage-sources/captures')) throw Error('WORKER_HOMEPAGE_CAPTURES_INVALID');
+    await verifySiteEvidence(bundle);
+    readPaths.push(bundle.directory);
+  }
   if (context.homepageMediaEvidencePath) {
     const path = context.homepageMediaEvidencePath;
     if (path !== join(runDirectory, 'homepage-media/MEDIA_EVIDENCE.json') ||

@@ -1,0 +1,68 @@
+{
+  "template": "temp3_based_gamblewithyourfriends.net",
+  "snapshot": "5c1bcaf3378c24fd219464092383fcdb32dff855",
+  "realWorkerCalled": false,
+  "uiVerdictSource": "synthetic executor for freshness verification, not a ship verdict",
+  "nodeModulesInitiallyAbsent": true,
+  "install": {
+    "projectPath": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-TGVAf8/workspace/site",
+    "lockfile": {
+      "path": "/Users/randyz/work/coding/hot_words_web/gamewiki_site_auto_generator_line/agent/.agent-test-TGVAf8/workspace/site/pnpm-lock.yaml",
+      "sha256": "dc4a8f97d8a10fa87dd0fd9d69ae2c8bbce1b3e3a5779a4ba24d57f7e736af82"
+    },
+    "command": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "exitCode": 0
+  },
+  "audit": {
+    "scriptExitCode": 0,
+    "screenshots": 6
+  },
+  "digestAfterUi": "d7ef676df9e56567ff949127d9331787645e2bad7c7a95d64afa596f324591d6",
+  "prelaunch": {
+    "coverage": {
+      "routes_expected": 15,
+      "routes_checked": 15
+    },
+    "screenshots": 32,
+    "checks": [
+      {
+        "script": "typecheck",
+        "command": [
+          "pnpm",
+          "run",
+          "typecheck"
+        ],
+        "exitCode": 0
+      },
+      {
+        "script": "test",
+        "command": [
+          "pnpm",
+          "run",
+          "test"
+        ],
+        "exitCode": 0
+      },
+      {
+        "script": "build",
+        "command": [
+          "pnpm",
+          "run",
+          "build"
+        ],
+        "exitCode": 0
+      }
+    ],
+    "browserPageFailures": 0
+  },
+  "tsbuildinfoExists": true,
+  "prelaunchPipelineStatus": "PASSED",
+  "digestAfterPrelaunch": "d7ef676df9e56567ff949127d9331787645e2bad7c7a95d64afa596f324591d6",
+  "digestsEqual": true,
+  "status": "VERIFIED",
+  "cleaned": true
+}

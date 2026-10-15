@@ -97,6 +97,7 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
   if (skill === STAGE.UI_UX_AUDIT) {
     await python('validate_audit.py', ['--workspace', context.inputs.projectPath, '--run-dir', dirname(get('UI_UX_AUDIT.json').path), ...(context.mode === 'optimize' ? ['--expect-optimization'] : [])]);
     const audit = parseArtifactJson(get('UI_UX_AUDIT.json').bytes, get('UI_UX_AUDIT.json').path);
+    assert(JSON.stringify(audit.viewports) === '[360,390,768,1024,1440,1920]', 'UI audit viewport coverage mismatch');
     assert(['SHIP', 'SHIP_WITH_FIXES'].includes(audit.verdict), 'UI audit is not ready for prelaunch');
     for (const file of await treeFiles(join(dirname(get('UI_UX_AUDIT.json').path), 'screenshots'))) {
       artifacts.push({ kind: 'screenshot:' + file, path: file, bytes: await readArtifact(file, roots) });
@@ -109,6 +110,8 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     assert(['可以上线', '可以上线，但有P2待办'].includes(report.disposition), 'Prelaunch does not permit planning');
     assert(Array.isArray(report.pages) && report.pages.length > 0 && report.coverage && typeof report.coverage === 'object', 'Empty prelaunch coverage');
     assert(Number.isInteger(report.coverage.routes_expected) && report.coverage.routes_expected > 0 && report.coverage.routes_checked === report.coverage.routes_expected && report.pages.length === report.coverage.routes_checked, 'Incomplete prelaunch coverage');
+    if (context.hostEvidence) assert(JSON.stringify(report.pages.map(page => page.path).sort()) ===
+      JSON.stringify([...context.hostEvidence.routes].sort()), 'Prelaunch host route coverage mismatch');
   }
   if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute') {
     const report = parseArtifactJson(get('DEPLOYMENT_REPORT.json').bytes, get('DEPLOYMENT_REPORT.json').path);

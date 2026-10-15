@@ -93,34 +93,34 @@ test('real optimize blocks before any worker or broad write grant', async t => {
   assert.equal(result.status, 'BLOCKED'); assert.equal(invoked, false);
 });
 
-test('scoped browser launch permission cannot substitute for a supported command approval broker', async t => {
-  const f=await fixture(t);const {AGENT_ROOT}=await import('../src/skill-lock.mjs');
-  const policy=await readFile(join(AGENT_ROOT,'config/bsk-command-policy.json'));
-  const context={runId:'scoped',inputs:{...f.inputs,projectPath:join(f.configuration.workspace,'site')},
-    outputDirectory:join(f.configuration.workspace,'runs/scoped/artifacts/0/1'),requiredArtifacts:ARTIFACTS[0],checkpoint:{attempt:1},
-    skillLock:{source:join(f.root,'skills',STAGES[0]+'.md')},upstream:[],permissions:{siteWrites:false}};
-  let args;
-  const run=async(_command,argv)=>{args=argv;await writeFile(argv[argv.indexOf('--output-last-message')+1],JSON.stringify({status:'BLOCKED',summary:'OFFLINE TOOL FIXTURE',evidence:['offline'],missing_inputs:[],artifacts:[]}));};
-  const approval={type:'scoped-bsk-launch',runId:'scoped',expiresAt:Date.now()+10000,policySha256:sha256(policy)};
-  const invalid=await createSkillExecutor({run,browserLaunchApproval:{...approval,runId:'wrong'}})(STAGES[0],context);
-  assert.equal(invalid.status,'BLOCKED');assert.equal(args,undefined);
-  const result=await createSkillExecutor({run,browserLaunchApproval:approval})(STAGES[0],context);
-  assert.equal(args,undefined);assert.equal(result.status,'BLOCKED');
-  assert.match(result.evidence[0],/APPROVAL_CAPABILITY_UNAVAILABLE/);assert.deepEqual(result.artifacts,[]);
+test('legacy browser approvals cannot change the offline homepage worker permissions', async t => {
+  const f = await fixture(t);
+  const context = { runId: 'scoped', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+    outputDirectory: join(f.configuration.workspace, 'runs/scoped/artifacts/0/1'), requiredArtifacts: ARTIFACTS[0],
+    skillLock: { source: join(f.root, 'skills', STAGES[0] + '.md') }, permissions: { siteWrites: false } };
+  const calls = [];
+  const run = async (_command, args) => {
+    calls.push(args); await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'BLOCKED', evidence: ['offline native fixture incomplete'], missing_inputs: [], artifacts: [] }));
+  };
+  for (const browserLaunchApproval of [null, { type: 'scoped-bsk-launch', runId: 'wrong' }])
+    assert.equal((await createSkillExecutor({ run, browserLaunchApproval })(STAGES[0], context)).status, 'BLOCKED');
+  assert.equal(calls.length, 2);
+  for (const args of calls) {
+    assert.match(args.join(' '), /network=\{enabled=false\}/);
+    assert.ok(!args.join(' ').includes('mcp_servers.scoped_game_bsk'));
+  }
 });
 
-test('browser stages without a stage adapter block before worker launch', async t=>{
-  const f=await fixture(t);let calls=0;
-  for(const index of [0,4,5])for(const approval of [null,{type:'invalid'},
-    {type:'scoped-bsk-launch',runId:'browser',expiresAt:Date.now()-1},
-    {type:'scoped-bsk-launch',runId:'browser',expiresAt:Date.now()+10000}]) {
-    const result=await createSkillExecutor({run:async()=>{calls++;throw Error('Unauthorized worker launch');},browserLaunchApproval:approval})(STAGES[index],{
-      runId:'browser',mode:'audit-only',inputs:{...f.inputs,projectPath:join(f.configuration.workspace,'site')},
-      outputDirectory:join(f.configuration.workspace,'runs/browser/artifacts/'+index+'/1'),requiredArtifacts:ARTIFACTS[index],
-      skillLock:{source:join(f.root,'skills',STAGES[index]+'.md')},permissions:{siteWrites:false}});
-    assert.equal(result.status,'BLOCKED');assert.match(result.evidence[0],/APPROVAL_CAPABILITY_UNAVAILABLE/);assert.deepEqual(result.artifacts,[]);
+test('browser stages without run-scoped context block before worker launch', async t => {
+  const f = await fixture(t); let calls = 0;
+  for (const index of [0, 4, 5]) {
+    const result = await createSkillExecutor({ run: async () => { calls++; } })(STAGES[index], {
+      runId: '', mode: 'audit-only', outputDirectory: join(f.configuration.workspace, 'artifacts'),
+      inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') } });
+    assert.equal(result.status, 'BLOCKED'); assert.match(result.evidence[0], /APPROVAL_CAPABILITY_UNAVAILABLE/);
   }
-  assert.equal(calls,0);
+  assert.equal(calls, 0);
 });
 
 test('keyword research runs the locked Skill CLI with stage-scoped network and environment credentials', async t => {

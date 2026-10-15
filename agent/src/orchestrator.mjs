@@ -100,7 +100,8 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     const templateSnapshot = await runTemplateSnapshot(config, manifest, runId, resume);
     if (localPermit) await permit.start();
     try {
-      const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor, runId, resume, siteWrites: true,
+      const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor,
+        installSiteDependencies: executor.installDependencies, runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined, inputs: resume ? {} : inputs });
       if (resume) {
@@ -163,7 +164,7 @@ async function executeExisting(task, supplied, config, executor, shouldPause) {
     await verifyBaseline(preflight.baseline, entry);
     return result;
   };
-  const pipeline = await createPipeline({ ...config, executor: wrapped, runId: task.id, inputs: resume ? {} : inputs,
+  const pipeline = await createPipeline({ ...config, executor: wrapped, installSiteDependencies: executor.installDependencies, runId: task.id, inputs: resume ? {} : inputs,
     resume, siteWrites: true, recoverDeadLocks: true });
   if (pipeline.snapshot().inputs.taskCardDigest !== summary.digest) throw Error('Task card changed; use a new run and discard prior approval');
   preflight = await existingProjectPreflight(card, { allowlist: config.existingProjectAllowlist, runDirectory,
