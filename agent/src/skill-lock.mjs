@@ -6,7 +6,7 @@ import { promisify } from 'node:util';
 import { sha256, treeFiles } from './files.mjs';
 
 const execFileAsync = promisify(execFile);
-const git = async (cwd, args) => (await execFileAsync('git', args, { cwd, encoding: 'utf8' })).stdout.trim();
+const git = async (cwd, args) => (await execFileAsync('git', args, { cwd, encoding: 'utf8' })).stdout.trimEnd();
 
 export const AGENT_ROOT = fileURLToPath(new URL('../', import.meta.url));
 

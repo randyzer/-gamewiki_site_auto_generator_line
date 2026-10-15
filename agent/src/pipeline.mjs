@@ -6,6 +6,7 @@ import { hostname } from 'node:os';
 import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { parseArtifactJson } from './files.mjs';
 import { verifySkillSource } from './skill-lock.mjs';
+import { verifyTemplateSnapshot } from './template-snapshot.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -131,8 +132,9 @@ export async function recoverDeadRunLock(lockPath) {
 }
 
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
-  templateRoots = [], runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
+  templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
   expectedManifestSha256 } = {}) {
+  if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
   assert(/^[a-zA-Z0-9_-]{1,100}$/.test(runId), 'Unsafe runId');
@@ -233,7 +235,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       try { await mkdir(runDirectory); }
       catch (error) { if (error.code === 'EEXIST') throw Error('ENTRY_EXECUTION_DESTINATION_EXISTS'); throw error; }
     }
-    state = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots, createdAt: now(),
+    state = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots,
+      ...(templateSnapshot ? { templateSnapshot: clone(templateSnapshot) } : {}), createdAt: now(),
       sequence: 0, inputs, lock: null, lockError: null, deploymentExecuted: false,
       stages: ALL_STAGES.map(skill => ({ skill,
         status: (skill === STAGE.ADVERTISING_PLAN && inputs.adsEnabled !== true) || (skill === STAGE.TEMPLATE_SELECTION && inputs.mode === 'existing-project') ? 'SKIPPED' : 'NOT_STARTED',
@@ -433,6 +436,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       }
       try {
         await verifyLock(); await validateProject(state.inputs.projectPath);
+        if (state.templateSnapshot) await verifyTemplateSnapshot(state.templateSnapshot);
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         await verifyProjectFreshness(index);
         if (index > stageIndex(STAGE.KEYWORD_RESEARCH)) {
@@ -462,7 +466,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (stage.skill === STAGE.KEYWORD_RESEARCH) stage.checkpoint.keywordSha256 = hash(await regularFile(state.inputs.rawKeywordsFile));
         const outputDirectory = join(runDirectory, 'artifacts', String(index), String(stage.checkpoint.attempt));
         await safeOutput(outputDirectory); await mkdir(outputDirectory, { recursive: true });
-        const context = clone({ runId, stage: stage.skill, inputs: state.inputs, outputDirectory, templateRoots, requiredArtifacts: requiredArtifacts(index),
+        const context = clone({ runId, stage: stage.skill, inputs: state.inputs, outputDirectory, templateRoots,
+          templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
           skillLock: state.lock.skills.find(s => s.name === stage.skill),
           upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint,
           mode: stageDefinition(stage.skill).planOnly ? 'plan-only' : stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? 'optimize' : 'audit-only',

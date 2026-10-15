@@ -41,7 +41,7 @@ test('uncommitted Skill edits are rejected with the changed path', async t => {
   const { skillRoot } = await skillRepo(t);
   const tree = git(skillRoot, 'rev-parse', 'HEAD:./');
   await writeFile(join(skillRoot, 'demo-skill', 'SKILL.md'), '# Edited by a worker\n');
-  await assert.rejects(verifySkillSource(skillRoot, tree), /SKILL_SOURCE_DIRTY.*demo-skill\/SKILL\.md/);
+  await assert.rejects(verifySkillSource(skillRoot, tree), /SKILL_SOURCE_DIRTY: uncommitted Skill changes: skills\/demo-skill\/SKILL\.md/);
 });
 
 test('new untracked Skill files are rejected', async t => {

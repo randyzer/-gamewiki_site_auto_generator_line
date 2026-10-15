@@ -1,9 +1,10 @@
-import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { AGENT_ROOT } from './skill-lock.mjs';
 import { safePath, sha256 } from './files.mjs';
 import { validateEntryInputs, inspectEntryCard } from './entry-v1.mjs';
 import { loadConfiguration } from './orchestrator.mjs';
+import { resolveTemplateRef } from './template-snapshot.mjs';
 
 // Read explicit numbered source tables, never the author's suggested URLs or prose.
 export function inspectKeywordSource(text) {
@@ -44,14 +45,10 @@ export async function prepareRealRunPreflight(inputs, id) {
   const bytes = await readFile(original), originalSha256 = sha256(bytes);
   const keywords = inspectKeywordSource(bytes.toString('utf8'));
   const entry = await inspectEntryCard(normalized), config = await loadConfiguration();
-  const templateRoots = [];
-  for (const root of config.templateRoots) {
-    try {
-      await safePath(root, [root]);
-      const entries = await readdir(root, { withFileTypes: true });
-      templateRoots.push({ path: root, readable: true, candidates: entries.filter(x => x.isDirectory() && !x.name.startsWith('.')).map(x => x.name) });
-    } catch { templateRoots.push({ path: root, readable: false, verification: 'TEMPLATE_ROOT_UNAVAILABLE' }); }
-  }
+  // Preflight only reports which commit a new run would pin; the snapshot is fetched when the run starts.
+  let templateSource;
+  try { templateSource = { ...config.templateSource, commit: await resolveTemplateRef(config.templateSource), reachable: true }; }
+  catch (error) { templateSource = { ...config.templateSource, reachable: false, reason: error.message }; }
   const directory = join(AGENT_ROOT, 'runs', id);
   await safePath(directory, [AGENT_ROOT]);
   await mkdir(directory, { mode: 0o700 });
@@ -64,7 +61,7 @@ export async function prepareRealRunPreflight(inputs, id) {
     status: 'NOT_AUTHORIZED_TO_EXECUTE', identity: normalized.gameIdentity,
     gameMetadata: normalized.gameMetadata, identityEvidence: 'USER_SUPPLIED; current official sources not collected',
     original: { path: original, sha256: originalSha256, bytes: bytes.length },
-    derived: { path: derived, sha256: sha256(material) }, keywords, entry, templateRoots,
+    derived: { path: derived, sha256: sha256(material) }, keywords, entry, templateSource,
     sourceRequirements: ['Current Steam facts', 'Official website and support documentation',
       'Run-specific original icon rights and visual approval', 'Research/browser host capability', 'Selected template build tools'],
     missingLaterInputs: entry.checklist.filter(x => x.timing === 'later' && !x.provided).map(x => x.key),

@@ -135,7 +135,8 @@ test('complete handoff passes the native content-integrator preflight and is ide
   await writeFile(join(project, 'docs/template-copy-manifest.json'), JSON.stringify({ destination: project }));
   const output = join(context.runDirectory, 'preflight.json');
   const script = fileURLToPath(new URL('../../codex-skills/game-site-content-integrator/scripts/preflight.py', import.meta.url));
-  await runProcess('python3', [script, '--game', context.inputs.gameIdentity, '--workspace', project, '--output', output]);
+  await runProcess('python3', [script, '--game', context.inputs.gameIdentity, '--workspace', project,
+    '--template-root', context.templateRoots[0], '--output', output]);
   const data = JSON.parse(await readFile(output));
   assert.equal(data.ready, true);
   assert.equal(data.resolved_inputs.keywords, join(project, 'backgroundinformation/keyword-materials/keywords.json'));

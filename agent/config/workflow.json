@@ -2,7 +2,12 @@
   "skillRoot": "../../codex-skills",
   "inventory": "skill-manifest.json",
   "workspace": "..",
-  "templateRoots": ["../../template"],
+  "templateSource": {
+    "repository": "https://github.com/randyzer/-gamewiki_site_auto_generator_line.git",
+    "ref": "main",
+    "subtree": "template"
+  },
+  "templateCache": "../../.template-cache",
   "existingProjectAllowlist": "existing-project-allowlist.json",
   "skills": [
     "game-homepage-icon-research",
