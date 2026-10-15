@@ -17,7 +17,7 @@ npx playwright install chromium
 
 ## 七阶段输入与产物
 
-所有阶段都需要 `gameIdentity`、`objective` 和总控分配的 `projectPath`；后者固定为 `agent/workspaces/RUN_ID/site`。完整权限、证据与验收器见[阶段矩阵](docs/SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。
+所有阶段都需要 `gameIdentity`、`objective` 和用户指定的 `paths.siteDirectory`，解析后用作 `projectPath`。完整权限、证据与验收器见[阶段矩阵](docs/SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。
 
 | 阶段 / Skill | 额外输入 | 必需产物 |
 | --- | --- | --- |
@@ -39,7 +39,11 @@ npx playwright install chromium
   "gameIdentity": "用户确认的准确游戏名",
   "objective": "用户确认的平台、版本、语言及攻略站目标",
   "gameMetadata": {},
-  "rawKeywordsFile": "/用户确认的绝对路径/原始关键词.md",
+  "paths": {
+    "siteDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine",
+    "researchDirectory": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation",
+    "rawKeywordsFile": "/Users/randyz/work/coding/hot_words_web/gameweb/game_WallpaperEngine/backgroundinformation/keyword-materials/关键词.md"
+  },
   "canonicalRequired": true,
   "canonicalOrigin": "https://guides.example.com",
   "uiMode": "audit-only",
@@ -54,7 +58,15 @@ npx playwright install chromium
 }
 ```
 
-`projectPath` 不填，由总控分配；不要添加 `schemaVersion`、密钥或不在白名单里的字段。`rawKeywordsFile` 必须为实际存在、非空的绝对路径 Markdown 原件，不得编造关键词或修改原件。注意：权限代码只为位于本轮 run 内的原始关键词/lineage 文件显式添加读取授权；外部文件虽可通过宿主输入检查，worker 可读性仍需真实运行验证（见[路线图](docs/MASTER_AGENT_EXECUTION_ROADMAP_V1.md)）。
+`projectPath` 不填，由 `paths.siteDirectory` 直接得到；网站就建在这个目录，不自动增加 site/。paths 只接受 siteDirectory、researchDirectory、rawKeywordsFile 三个绝对路径；不支持 projectRoot 或任何占位符。填了相对路径、projectRoot 或占位符时，错误会包含该值。顶层 rawKeywordsFile 在 paths 内未填写时仍兼容。不要添加 schemaVersion、密钥或白名单外字段。
+
+researchDirectory 最后一层必须准确命名为 backgroundinformation，这是首页 Skill validate_outputs.py:49 的要求。research 可以位于 site 内；site 不得位于 research 内，也不得与 agent/、codex-skills/、.template-cache/、runs/ 或模板来源双向重叠；路径不得经过符号链接。新 run 的 site 必须不存在，或仅包含指定 research（含通往嵌套 research 的目录）及 .DS_Store；其他条目会列出最多 10 项并拒绝。
+
+第 1、2 阶段在 research 发布首页、图标和 keyword-materials/ 产物；同名同内容复用，异内容拒绝覆盖。关键词与 lineage 原件保持不变，worker 读取 run 内只读副本。第 3 阶段 worker 只在 run/template-copy/ 中复制模板和写报告，对 site 和 research 只读。宿主检查所有冲突后将模板合并到 site：已有文件一律拒绝，已有同名目录可复用，模板不得写 backgroundinformation 或 research；复制核对 SHA256 和文件权限，仅改写 docs/template-copy-manifest.json 的 destination 字段。
+
+run/TEMPLATE_MERGE_RECEIPT.json 记录来源、目标、文件数、前后哈希及每个已写入或尝试写入的路径。仅在合并成功后删除临时 site；中途失败保留临时目录与回执，不自动回滚、不删除用户文件。stage 4 的报告与交接直接使用 site；research 已经在 site/backgroundinformation 时复用原位置。worker 仅 stage 1/2 可写 research，stage 4 和已批准部署 execute 可写 site；其余阶段只读 site，审计报告由宿主发布。
+
+manifest 记录 paths；retry 修改路径会触发现有输入变化失效逻辑，不自动清理站点或覆盖冲突。旧 manifest（无 paths，或保留 projectRoot 与 site 子目录）仍按记录路径恢复；新输入不能再引入 projectRoot。
 
 `canonicalRequired` 必须为布尔值；为 false 时可不填 `canonicalOrigin`，否则需无尾斜杠、无凭据的 HTTPS origin。`uiMode` 可省略（默认只审计），`siteRevision` 不能省略。第 6/7 阶段需要合法域名；第 7 阶段需要已复核 DNS 和计划授权。`deploymentProvider` 是允许输入，但不在 `missingInputs` 的必填检查中；具体能力仍由部署 Skill 判断。
 

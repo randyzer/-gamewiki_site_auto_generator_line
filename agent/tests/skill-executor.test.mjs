@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { fixture } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { ARTIFACTS, STAGES } from '../src/pipeline.mjs';
-import { prepareResearchHandoff, publishDeploymentPlan } from '../src/handoff.mjs';
+import { prepareResearchHandoff, publishResearchArtifacts, publishDeploymentPlan } from '../src/handoff.mjs';
 import { sha256 } from '../src/files.mjs';
 
 test('non-browser executor preserves its sandbox and BLOCKED output without fabricating artifacts', async t => {
@@ -35,11 +35,12 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
 test('research handoff preserves native filenames, verifies bytes and never overwrites conflicts', async t => {
   const f = await fixture(t), runDirectory = join(f.configuration.workspace, 'runs/fixture');
   await mkdir(runDirectory, { recursive: true });
-  const projectPath = join(f.configuration.workspace, 'site'); await mkdir(projectPath);
+  const projectPath = f.inputs.paths.siteDirectory; await mkdir(projectPath);
   const snapshot = join(runDirectory, '0-native.md'); await writeFile(snapshot, '# Offline research');
   const artifact = { kind: 'HOMEPAGE_RESEARCH.md', path: snapshot, sourcePath: join(runDirectory, 'Offline Fixture攻略站首页调研信息.md'),
     sha256: sha256('# Offline research'), runId: 'fixture', projectPath, gameIdentity: f.inputs.gameIdentity };
   const context = { runId: 'fixture', runDirectory, inputs: { ...f.inputs, projectPath }, upstream: [{ skill: STAGES[0], artifacts: [artifact] }, { skill: STAGES[1], artifacts: [] }] };
+  await publishResearchArtifacts(context, STAGES[0], [artifact]);
   const output = await prepareResearchHandoff(context);
   const file = join(output.homepageRoot, 'Offline Fixture攻略站首页调研信息.md');
   assert.equal(await readFile(file, 'utf8'), '# Offline research');
@@ -57,7 +58,7 @@ test('real adapter rejects fabricated empty directories as PASSED', async t => {
   } });
   await assert.rejects(executor(STAGES[2], { runId: 'fake', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
     outputDirectory, requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [],
-    mode: 'audit-only', permissions: { siteWrites: false } }), /outside allowed roots|regular artifact/);
+    mode: 'audit-only', permissions: { siteWrites: false } }), /outside temporary directory|outside allowed roots|regular artifact/);
 });
 
 test('worker result failures identify parsing and native validation separately', async t => {
@@ -68,7 +69,7 @@ test('worker result failures identify parsing and native validation separately',
     upstream: [], mode: 'audit-only', permissions: { siteWrites: false } };
   for (const [bytes, operation] of [
     ['invalid-json', 'read-worker-result'],
-    [JSON.stringify({ status: 'PASSED', evidence: ['fixture'], missing_inputs: [], artifacts: [] }), 'validate-native-artifacts'],
+    [JSON.stringify({ status: 'PASSED', evidence: ['fixture'], missing_inputs: [], artifacts: [] }), 'validate-template-copy'],
   ]) {
     const executor = createSkillExecutor({ run: async (_command, args) => {
       await writeFile(args[args.indexOf('--output-last-message') + 1], bytes);

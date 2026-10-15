@@ -5,11 +5,11 @@
 ## 共同规则
 
 - `run` / `retry` 在[交互终端](../src/terminal-run.mjs)展示摘要并要求操作者输入 y。Codex 准备输入和读取证据，不代输 y、不绕过终端门、不修改 `codex-skills/`。
-- 每阶段必需 `gameIdentity`、`objective` 和新站总控分配的 `projectPath`（`agent/workspaces/RUN_ID/site`）。`runDirectory` 为 `agent/runs/RUN_ID`；产物副本保存于 `artifacts/0–6/attempt/`，worker 原生区为其下 `native/`。产物按 kind 找，不依赖副本文件名前缀。
+- 每阶段必需 `gameIdentity`、`objective` 和由用户 `paths.siteDirectory` 解析得到的 `projectPath`；`paths.researchDirectory` 指定独立的 `backgroundinformation` 目录，路径规则见 README。旧 manifest（无 paths 或含 projectRoot/site 子目录）保留记录路径。`runDirectory` 为 `agent/runs/RUN_ID`；产物副本保存于 `artifacts/0–6/attempt/`，worker 原生区为其下 `native/`。产物按 kind 找，不依赖副本文件名前缀。
 - [Skill 锁](../src/skill-lock.mjs)校验干净的已提交 git 树与清单 SHA256；[模板快照](../src/template-snapshot.mjs)固定 commit 并复查缓存。每次推进和 worker 返回后检查锁、上游产物身份/哈希；关键词阶段之后检查原件字节。
 - [worker 权限](../src/worker-permissions.mjs)默认为最小读取、按阶段增加写路径、关闭命令网络；第 2 阶段和第 7 阶段 execute 例外。模型客户端认证独立于命令网络。浏览器/MCP/插件/多代理等 worker 功能关闭；首页开放图像生成，第 1/5/6 阶段开放 view_image。
 - [执行器](../src/skill-executor.mjs)调用 Codex exec，解析 [worker result schema](../config/worker-result.schema.json)，经 [validateNativeArtifacts](../src/artifact-validator.mjs)核验后再交 pipeline 校验、保存。PASSED 必须有完整产物、非空证据且无缺项；非 PASSED 的原生产物不会被适配器提升为正式产物。
-- 宿主浏览器和依赖/生产预览在 worker 沙箱外运行；worker 读取宿主证据，另写原生报告。[site-evidence](../src/site-evidence.mjs)在 worker 前后复查文件 SHA256 和截图集合。报告写权限不等于站点源码写权限。
+- 宿主浏览器和依赖/生产预览在 worker 沙箱外运行；worker 读取宿主证据，另写原生报告。[site-evidence](../src/site-evidence.mjs)在 worker 前后复查文件 SHA256 和截图集合。配置 paths 的 run 仅 stage 1/2 可写 research，stage 4 和部署 execute 可写 site；stage 3 仅写 run/template-copy，由宿主预检后合并；其他阶段 worker 只读 site，报告写入 native，由宿主发布到 Skill 验证器要求的位置。
 - WAITING_FOR_USER、BLOCKED、FAILED、PARTIAL 均停止自动推进；retry 保留历史并重验受影响阶段。UI 后源码新鲜度变化要求更新 `siteRevision` 并显式重试。依赖、构建缓存及指定报告路径按代码排除于源码 digest 外。
 
 ## 1. 首页调研与图标：game-homepage-icon-research

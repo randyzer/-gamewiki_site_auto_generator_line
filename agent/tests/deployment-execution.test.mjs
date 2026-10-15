@@ -17,7 +17,7 @@ async function setup(t, { deploymentExecution = true, execute } = {}) {
     if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute' && execute) return execute(context);
     return goodResult(skill, context);
   };
-  const inputs = { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') };
+  const inputs = { ...f.inputs, projectPath: f.inputs.paths.siteDirectory };
   const pipeline = await createPipeline({ ...f.configuration, inputs, executor, siteWrites: true, deploymentExecution });
   const toPlan = async () => {
     for (let i = 0; i < 7; i++) await pipeline.advance();

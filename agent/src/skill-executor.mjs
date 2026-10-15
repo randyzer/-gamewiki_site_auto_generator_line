@@ -1,5 +1,5 @@
 import { chmod, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
 import { installDependencies, buildAndServe } from './site-preview-host.mjs';
@@ -7,7 +7,8 @@ import { collectSiteAudit } from './site-audit-host.mjs';
 import { collectPrelaunch } from './prelaunch-host.mjs';
 import { verifySiteEvidence } from './site-evidence.mjs';
 import { collectHomepageSources } from './homepage-source-host.mjs';
-import { safePath, readArtifact, parseArtifactJson } from './files.mjs';
+import { safePath, readArtifact, parseArtifactJson, inside } from './files.mjs';
+import { templateCopyDirectory, mergeTemplateCopy } from './template-merge.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, stageDefinition } from './stages.mjs';
 import { prepareResearchHandoff, publishDeploymentPlan } from './handoff.mjs';
@@ -60,10 +61,17 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     await mkdir(context.nativeDirectory, { recursive: true });
     const project = context.inputs.projectPath;
     // Source-writing phases have a per-task parent so template copy can atomically rename staging.
-    const writable = !homepageResearch && !hostReview && context.permissions.siteWrites ? (skill === STAGE.CONTENT_INTEGRATION || deploying ? project : dirname(project)) : null;
+    const stagedTemplate = context.inputs.paths && skill === STAGE.TEMPLATE_SELECTION;
+    const writable = !stagedTemplate && !homepageResearch && !hostReview && context.permissions.siteWrites
+      ? (context.inputs.paths || skill === STAGE.CONTENT_INTEGRATION || deploying ? project : dirname(project)) : null;
     if (writable) {
       await safePath(writable, [dirname(project)]);
       await mkdir(writable, { recursive: true });
+    }
+    if (stagedTemplate) {
+      context.templateCopyDestination = templateCopyDirectory(context.runDirectory);
+      await safePath(context.templateCopyDestination, [context.runDirectory]);
+      await mkdir(dirname(context.templateCopyDestination), { recursive: true });
     }
     if (skill === STAGE.CONTENT_INTEGRATION) {
       if (context.inputs.mode === 'existing-project') {
@@ -126,10 +134,13 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (!writable && [STAGE.UI_UX_AUDIT, STAGE.PRELAUNCH_ACCEPTANCE].includes(skill)) {
       const reportRoot = skill === STAGE.UI_UX_AUDIT ? join(project, 'docs', 'ui-ux-audit', context.runId)
         : skill === STAGE.PRELAUNCH_ACCEPTANCE ? join(project, 'docs', 'prelaunch', context.runId) : context.nativeDirectory;
-      await safePath(reportRoot, [project, context.nativeDirectory]);
-      await mkdir(reportRoot, { recursive: true });
-      writePaths.push(...context.requiredArtifacts.map(name => join(reportRoot, name)));
-      if (hostAudit) writePaths.push(join(project, 'docs/ui-ux-audit/LATEST'));
+      context.reportDirectory = context.inputs.paths ? join(context.nativeDirectory, 'reports') : reportRoot;
+      await safePath(context.reportDirectory, [project, context.nativeDirectory]);
+      await mkdir(context.reportDirectory, { recursive: true });
+      if (!context.inputs.paths) {
+        writePaths.push(...context.requiredArtifacts.map(name => join(reportRoot, name)));
+        if (hostAudit) writePaths.push(join(project, 'docs/ui-ux-audit/LATEST'));
+      }
     }
     let preview;
     try {
@@ -164,13 +175,19 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         ] :
         hostAudit ? [
           'Host browser evidence is in context.hostEvidence, with a SHA256 for every screenshot and automated evidence file. Read these files and use view_image to inspect the screenshots. Do not invoke browser commands or network requests.',
-          'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
+          context.inputs.paths
+            ? 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in context.reportDirectory. The site is read-only; the host publishes the reports and LATEST for the unchanged Skill validator. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully.'
+            : 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
         ] : hostPrelaunch ? [
           'Read context.hostEvidence and verify every SHA256. Use view_image to inspect the host screenshots. Do not invoke browser commands, network requests, build/test/lint/typecheck commands, or site repairs; the host already collected those results.',
-          'Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under projectPath/docs/prelaunch/runId per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.'
+          `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
       'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.',
-      'Template phase: only use a configured template root and copy to projectPath. Never modify the template source.',
+      `Template phase: only use a configured template root and copy to ${stagedTemplate ? 'context.templateCopyDestination' : 'projectPath'}. Never modify the template source.`,
+      ...(context.templateCopyDestination ? [
+        'Use context.templateCopyDestination as --destination for the locked copy_template.py dry-run and copy. Its atomic staging sibling stays under runDirectory/template-copy. projectPath and researchDirectory are read-only.',
+        'Write TEMPLATE_SELECTION_REPORT.md and TEMPLATE_RESIDUE_SCAN.json under templateCopyDestination/docs. Return these and templateCopyDestination/docs/template-copy-manifest.json as artifacts. Leave the manifest and copied files unchanged. The host checks and merges the complete temporary tree into projectPath, rewrites only manifest.destination, then removes the temporary directory. Never merge, rename or delete any site files yourself.'
+      ] : []),
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
       ...(context.inputs.keywordSourceLineageFile ? [
         'Read the approved keywordSourceLineageFile alongside approved rawKeywordsFile. Only complete retained terms are eligible; pending truncated and missing rows remain pending, never fabricate or restore them. Preserve original SHA256 and source/table line references in the native keyword processing record.'
@@ -247,7 +264,39 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (homepageResearch && result.status === 'PASSED' && !context.homepageSourceCaptures)
       return { status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['homepageSourceCaptures'], evidence: [
         `HOMEPAGE_SOURCE_CAPTURES_REQUIRED: plan the source URL list in ${requestPath}; no host capture evidence was collected.`] };
-    const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, context, result, validationOptions));
+    if (context.inputs.paths && hostReview && result.status === 'PASSED') {
+      // The native validators require site-local reports; only the host may publish these bytes.
+      const root = join(project, 'docs', hostAudit ? 'ui-ux-audit' : 'prelaunch');
+      const directory = join(root, context.runId);
+      for (const kind of context.requiredArtifacts) {
+        const descriptor = result.artifacts.find(item => item.kind === kind);
+        if (!descriptor || descriptor.path !== join(context.reportDirectory, kind)) throw Error('Native report path mismatch: ' + kind);
+        const bytes = await readArtifact(descriptor.path, [context.nativeDirectory]);
+        const target = join(directory, kind);
+        await safePath(target, [project]); await mkdir(directory, { recursive: true });
+        await writeFile(target, bytes, { mode: 0o600 });
+        descriptor.path = target;
+      }
+      if (hostAudit) {
+        const latest = join(root, 'LATEST'); await safePath(latest, [project]);
+        await writeFile(latest, context.runId, { mode: 0o600 });
+      }
+    }
+    let templateMerge;
+    if (stagedTemplate && result.status === 'PASSED') {
+      for (const descriptor of result.artifacts)
+        if (!inside(context.templateCopyDestination, descriptor.path)) throw Error(`Template artifact outside temporary directory: ${descriptor.path}`);
+      await diagnosticStep('validate-template-copy', () => validateNativeArtifacts(skill,
+        { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } }, result, validationOptions));
+      templateMerge = await diagnosticStep('merge-template-copy', () => mergeTemplateCopy(context));
+      for (const descriptor of result.artifacts)
+        descriptor.path = join(project, relative(context.templateCopyDestination, descriptor.path));
+    }
+    const validationContext = stagedTemplate && result.status !== 'PASSED'
+      ? { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } } : context;
+    const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, validationContext, result, validationOptions));
+    if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
+      `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;

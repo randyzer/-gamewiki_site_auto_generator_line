@@ -312,7 +312,7 @@ test('consumer injection alone never selects the real default worker', async t =
 });
 
 test('actual Skill byte drift is rejected using an isolated synthetic lock; original Skills untouched', async t => {
-  const f = await fixture(t), root = join(f.root, 'synthetic-skills'), name = 'test-skill';
+  const f = await fixture(t, { local: true }), root = join(f.root, 'synthetic-skills'), name = 'test-skill';
   await mkdir(join(root, name), { recursive: true });
   const source = join(root, name, 'SKILL.md'), original = '# TEST-only skill';
   await writeFile(source, original);

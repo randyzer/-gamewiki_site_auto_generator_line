@@ -7,6 +7,9 @@ import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './
 import { parseArtifactJson } from './files.mjs';
 import { verifySkillSource } from './skill-lock.mjs';
 import { verifyTemplateSnapshot } from './template-snapshot.mjs';
+import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './paths.mjs';
+import { isDeepStrictEqual } from 'node:util';
+import { publishResearchArtifacts } from './handoff.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -109,6 +112,10 @@ function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
   assert(m?.schemaVersion === 1 && m.runId === runId && m.workspace === workspace &&
     m.inventoryPath === inventoryPath && JSON.stringify(m.templateRoots) === JSON.stringify(templateRoots), 'Run manifest configuration mismatch');
   checkInputs(m.inputs);
+  if (m.inputs.paths) {
+    assert(isDeepStrictEqual(resolveInputPaths(m.inputs, { legacyPaths: m.inputs.paths }), m.inputs) &&
+      JSON.stringify(m.paths) === JSON.stringify(m.inputs.paths), 'Run manifest paths mismatch');
+  } else assert(m.paths === undefined, 'Run manifest paths mismatch');
   if (m.inputCopies !== undefined) {
     assert(m.inputCopies && typeof m.inputCopies === 'object' && !Array.isArray(m.inputCopies), 'Invalid inputCopies manifest field');
     for (const [key, copy] of Object.entries(m.inputCopies)) {
@@ -181,6 +188,11 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   }
   async function validateProject(projectPath) {
     if (!nonempty(projectPath)) return;
+    if (state?.inputs.paths || inputs.paths) {
+      const current = state?.inputs ?? inputs;
+      await validateInputPaths(current, { workspace, protectedRoots });
+      return;
+    }
     assert(isAbsolute(projectPath) && inside(workspace, resolve(projectPath)), 'Project must be inside workspace');
     assert(resolve(projectPath) !== workspace && !overlaps(resolve(projectPath), join(workspace, 'runs')), 'Project/workspace run directory overlap');
     await safeOutput(projectPath);
@@ -281,7 +293,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     validateManifest(state, runId, workspace, inventoryPath, templateRoots);
     await validateProject(state.inputs.projectPath);
   } else {
-    inputs = checkInputs(inputs);
+    inputs = resolveInputPaths(checkInputs(inputs));
+    await validateInputPaths(inputs, { workspace, protectedRoots, emptySite: true });
     await validateProject(inputs.projectPath);
     await safeOutput(runDirectory);
     await mkdir(dirname(runDirectory), { recursive: true });
@@ -296,7 +309,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     }
     state = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots,
       ...(templateSnapshot ? { templateSnapshot: clone(templateSnapshot) } : {}), createdAt: now(),
-      sequence: 0, inputs, inputCopies: {}, lock: null, lockError: null, deploymentExecuted: false,
+      sequence: 0, inputs, ...(inputs.paths ? { paths: clone(inputs.paths) } : {}), inputCopies: {}, lock: null, lockError: null, deploymentExecuted: false,
       stages: ALL_STAGES.map(skill => ({ skill,
         status: (skill === STAGE.ADVERTISING_PLAN && inputs.adsEnabled !== true) || (skill === STAGE.TEMPLATE_SELECTION && inputs.mode === 'existing-project') ? 'SKIPPED' : 'NOT_STARTED',
         artifacts: [], evidence: skill === STAGE.TEMPLATE_SELECTION && inputs.mode === 'existing-project' ? ['NOT_APPLICABLE: existing source snapshot; template copy not performed; see BASELINE.json'] : [], missing_inputs: [], history: [],
@@ -374,7 +387,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         artifact.gameIdentity === state.inputs.gameIdentity, 'Upstream artifact identity mismatch');
       assert(hash(await regularFile(artifact.path)) === artifact.sha256, 'Upstream artifact SHA256 changed');
       if (artifact.sourceSha256) {
-        await safeOutput(artifact.sourcePath);
+        if (state.inputs.paths) {
+          assert(isAbsolute(artifact.sourcePath ?? '') && [runDirectory, state.inputs.paths.siteDirectory,
+            state.inputs.paths.researchDirectory].some(root => inside(root, artifact.sourcePath)),
+          `Native artifact outside configured paths: ${artifact.sourcePath}`);
+          await noLinks(artifact.sourcePath);
+        } else await safeOutput(artifact.sourcePath);
         assert(hash(await regularFile(artifact.sourcePath)) === artifact.sourceSha256, 'Native upstream artifact SHA256 changed');
       }
     }
@@ -465,7 +483,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         provided: state.inputs[key] !== undefined && state.inputs[key] !== '',
         conditional: ['canonicalOrigin', 'uiApproval', 'adCode', 'adApproval', 'liveUrl', 'deploymentPlanApproval'].includes(key),
         pathOrInformation: key === 'rawKeywordsFile' ? 'User-supplied absolute Markdown file path' :
-          key === 'projectPath' ? 'Absolute project directory inside workspace' : key,
+          key === 'projectPath' ? 'Resolved paths.siteDirectory (legacy runs retain their project directory)'
+          : key === 'paths' ? 'User-supplied absolute site, research and keyword paths' : key,
         purpose: `Input for ${stage}` }));
   }
 
@@ -531,7 +550,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         await save(); return clone(state);
       }
       if (stage.skill === STAGE.TEMPLATE_SELECTION) {
-        try { assert((await readdir(state.inputs.projectPath)).length === 0, 'Template target is not empty'); }
+        try {
+          if (state.inputs.paths) await validateSiteIntake(state.inputs);
+          else assert((await readdir(state.inputs.projectPath)).length === 0, 'Template target is not empty');
+        }
         catch (error) {
           if (error.code !== 'ENOENT') { await recordFailure(stage, error, 'check-template-target', 'BLOCKED'); await save(); return clone(state); }
         }
@@ -558,13 +580,14 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const inputCopyPaths = Object.fromEntries(Object.entries(state.inputCopies ?? {}).map(([key, copy]) => [key, copy.copyPath]));
         const workerInputs = { ...state.inputs, ...inputCopyPaths };
         const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths, outputDirectory, templateRoots,
+          ...(state.inputs.paths ? { readOnlyInputPaths: Object.keys(INPUT_COPY_PREFIX).map(key => state.inputs[key]).filter(nonempty) } : {}),
           templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
           skillLock: state.lock.skills.find(s => s.name === stage.skill),
           upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint, mode,
           ...(executing ? { approvedPlan: { digest: stage.checkpoint.approvedPlanDigest, artifacts: stage.artifacts } } : {}),
           permissions: { uiChanges: stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize',
             gitPush: executing, dns: executing, productionDeployment: executing, gsc: executing, ga4: executing, advertisingScripts: false,
-            siteWrites: siteWrites && (executing || stage.skill === STAGE.TEMPLATE_SELECTION || stage.skill === STAGE.CONTENT_INTEGRATION || (stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
+            siteWrites: siteWrites && (executing || (!state.inputs.paths && stage.skill === STAGE.TEMPLATE_SELECTION) || stage.skill === STAGE.CONTENT_INTEGRATION || (!state.inputs.paths && stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
         // Unknown external effects: from the moment an approved deployment starts, never report "nothing deployed".
         if (executing) { state.deploymentExecuted = true; await save(); }
         operation = 'execute-skill';
@@ -600,6 +623,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           await writeFile(artifact.path, Buffer.from(artifact.content, artifact.encoding ?? 'utf8'), { flag: 'wx', mode: 0o600 });
         }
         const saved = artifacts.map(({ content, encoding, ...metadata }) => metadata);
+        if (state.inputs.paths && status === 'PASSED' && [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(stage.skill)) {
+          operation = 'publish-research-artifacts';
+          await publishResearchArtifacts({ inputs: state.inputs, runDirectory }, stage.skill, saved);
+        }
         // The execute pass keeps the approved plan next to its report so the run records what was approved.
         stage.artifacts = executing ? [...stage.artifacts, ...saved] : saved;
         operation = 'save-stage-checkpoint';
@@ -626,11 +653,21 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       patch = checkInputs(patch);
       assert(!state.stages.some(s => s.status === 'IN_PROGRESS'), 'Interrupted invocation must be reconciled with advance before updating');
       for (const key of ['gameIdentity', 'projectPath', 'objective', 'adsEnabled', 'mode', 'targetId', 'sourceProjectPath', 'taskCardDigest']) {
+        if (key === 'projectPath' && state.inputs.paths) continue;
         if (Object.hasOwn(patch, key) && state.stages.some(s => s.checkpoint.attempt > 0))
           assert(JSON.stringify(patch[key]) === JSON.stringify(state.inputs[key]), `${key} is locked; create a new run`);
       }
-      const updated = { ...state.inputs, ...patch };
-      await validateProject(updated.projectPath);
+      const merged = { ...state.inputs, ...patch };
+      // A legacy top-level keyword update still updates the effective configured path.
+      if (merged.paths && Object.hasOwn(patch, 'rawKeywordsFile') && !Object.hasOwn(patch, 'paths'))
+        merged.paths = { ...merged.paths, rawKeywordsFile: patch.rawKeywordsFile };
+      const updated = resolveInputPaths(merged, { legacyPaths: state.inputs.paths });
+      if (updated.paths) {
+        await validateInputPaths(updated, { workspace, protectedRoots,
+          emptySite: updated.projectPath !== state.inputs.projectPath });
+        for (const key of ['paths', 'projectPath', 'rawKeywordsFile'])
+          if (JSON.stringify(updated[key]) !== JSON.stringify(state.inputs[key])) patch[key] = updated[key];
+      } else await validateProject(updated.projectPath);
       if (Object.hasOwn(patch, 'adsEnabled')) assert(patch.adsEnabled === state.inputs.adsEnabled, 'Ad branch is locked at creation');
       const current = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
       if (state.stages[current]?.skill === STAGE.DEPLOYMENT_PLAN && findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest && Object.hasOwn(patch, 'deploymentPlanApproval')) {
@@ -670,6 +707,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         state.stages[current].missing_inputs.some(key => Object.hasOwn(patch, key))) start = Math.min(start, current);
       if (!changed.length && !Object.keys(patch).length && !retry) return clone(state);
       state.inputs = updated;
+      if (updated.paths) state.paths = clone(updated.paths);
       if (start <= stageIndex(STAGE.KEYWORD_RESEARCH))
         for (const key of Object.keys(INPUT_COPY_PREFIX)) delete state.inputCopies[key];
       if (start >= 0) for (let i = start; i < state.stages.length; i++) {

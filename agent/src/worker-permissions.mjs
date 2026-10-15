@@ -67,7 +67,7 @@ export function keywordResearchEnvironment(source = process.env) {
   return env;
 }
 
-export function permissionProfileConfig(name, { readPaths = [], writePaths = [], writeGitPaths = [], denyPaths = [], network = false } = {}) {
+export function permissionProfileConfig(name, { readPaths = [], writePaths = [], writeGitPaths = [], readOnlyPaths = [], denyPaths = [], network = false } = {}) {
   if (!/^agent-[a-z-]+$/.test(name)) throw Error('WORKER_PERMISSION_PROFILE_INVALID');
   if (typeof network !== 'boolean') throw Error('WORKER_PERMISSION_NETWORK_INVALID');
   const rules = new Map([[':root', 'deny'], [':minimal', 'read']]);
@@ -85,6 +85,11 @@ export function permissionProfileConfig(name, { readPaths = [], writePaths = [],
         !writePaths.some(path => resolve(path, '.git') === gitPath)) throw Error('WORKER_PERMISSION_GIT_PATH_INVALID');
     rules.set(gitPath, 'write');
   }
+  for (const path of readOnlyPaths) {
+    if (!isAbsolute(path) || resolve(path) !== path || path === '/') throw Error('WORKER_PERMISSION_PATH_INVALID');
+    if (!denyPaths.some(root => inside(root, path))) rules.set(path, 'read');
+  }
+  for (const path of denyPaths) rules.set(path, 'deny');
   const table = [...rules].map(([path, access]) => `${JSON.stringify(path)}=${JSON.stringify(access)}`).join(',');
   return `permissions.${name}={filesystem={${table}},network={enabled=${network}}}`;
 }
@@ -124,6 +129,27 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
   if (skill === STAGE.KEYWORD_RESEARCH) readPaths.push(...researchToolPaths);
   if (inputs.projectPath && skill !== STAGE.TEMPLATE_SELECTION) readPaths.push(inputs.projectPath);
   const deploying = deploymentExecutionApproved(skill, context);
+  const configured = inputs.paths;
+  const originalInputs = [];
+  if (configured) {
+    const site = inputs.projectPath, research = configured.researchDirectory;
+    const researchWrites = [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(skill);
+    const siteWrites = deploying || (context.permissions?.siteWrites === true &&
+      skill === STAGE.CONTENT_INTEGRATION);
+    for (const value of new Set([configured.rawKeywordsFile, inputs.keywordSourceLineageFile, ...(context.readOnlyInputPaths ?? [])]))
+      if (value) originalInputs.push(value);
+    // Discard parent grants and out-of-stage descendant grants before building the profile.
+    writePaths = writePaths.filter(path => {
+      if (originalInputs.some(input => inside(path, input))) return false;
+      if (inside(path, site) && path !== site || inside(path, research) && path !== research) return false;
+      if (inside(site, path) && !siteWrites || inside(research, path) && !researchWrites) return false;
+      return true;
+    });
+    readPaths.push(site, research);
+    if (researchWrites) writePaths.push(research);
+    if (siteWrites) writePaths.push(site);
+    if (skill === STAGE.TEMPLATE_SELECTION) writePaths.push(join(runDirectory, 'template-copy'));
+  }
   if (deploying) {
     for (const artifact of context.approvedPlan.artifacts ?? [])
       if (artifact.path && inside(runDirectory, artifact.path)) readPaths.push(artifact.path);
@@ -136,10 +162,13 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
   if (process.platform === 'darwin') denyPaths.push('/usr/bin/osascript', '/usr/bin/open');
   if (process.env.HOME) denyPaths.push(...['.codex', '.ssh', '.aws'].map(name => join(process.env.HOME, name)));
   if (process.env.CODEX_HOME) denyPaths.push(resolve(process.env.CODEX_HOME));
+  if (configured) for (const path of [inputs.projectPath, configured.researchDirectory, ...originalInputs])
+    if (denyPaths.some(root => inside(root, path))) throw Error(`WORKER_PERMISSION_PATH_DENIED: ${path}`);
   const commandNetworkAllowed = skill === STAGE.KEYWORD_RESEARCH || deploying;
   const config = permissionProfileConfig('agent-worker', { readPaths,
     writePaths: [nativeDirectory, ...writePaths],
     writeGitPaths: deploying ? [resolve(inputs.projectPath, '.git')] : [],
+    readOnlyPaths: originalInputs.filter(path => inside(inputs.projectPath, path) || inside(configured.researchDirectory, path)),
     denyPaths, network: commandNetworkAllowed });
   return { config, args: ['-c', 'default_permissions="agent-worker"', '-c', config],
     kind: 'STAGE_WORKER_PERMISSIONS_V1', commandNetworkAllowed,
