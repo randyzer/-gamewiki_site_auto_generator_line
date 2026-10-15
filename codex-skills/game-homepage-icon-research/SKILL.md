@@ -1,6 +1,6 @@
 ---
 name: game-homepage-icon-research
-description: Research a game's guide-site homepage content and create a complete favicon package from an original generated icon. Use when the user provides a game name and local game directory and wants current official links, player-facing stats, homepage copy, SEO metadata, colors, localization priorities, a Markdown research file, and an audited favicon ZIP (favicon.io or approved local conversion) saved under the game's backgroundinformation directory.
+description: Research a game's guide-site homepage content and create a complete favicon package from an original generated icon. Use when the user provides a game name and local game directory and wants current official links, player-facing stats, homepage copy, SEO metadata, colors, localization priorities, a Markdown research file, and a favicon.io ZIP saved under the game's backgroundinformation directory.
 ---
 
 # Game Homepage & Icon Research
@@ -121,45 +121,16 @@ Requirements:
 
 Inspect the generated image. Resize mechanically to exactly 512 by 512 only when the generator emits another square size; preserve alpha.
 
-### 6. Convert using one audited path
+### 6. Convert with favicon.io
 
-Only the **conversion mechanism** has two permitted alternatives. Step 5 (original
-icon creation, transparent 512×512 master, rights and visual inspection) is
-mandatory for **both**. Never describe an arbitrary user-provided icon, SVG,
-synthetic fixture, or local drawing as image-generator-produced artwork.
-If originality/usage-rights provenance is missing, return BLOCKED.
+Use browser interaction on https://favicon.io/favicon-converter/ because the user explicitly requires that service.
 
-Choose **exactly one** conversion route and label it in the final report.
-A valid ZIP alone does not prove the artwork source or conversion method.
-
-**A — favicon.io online conversion**
-
-- Use https://favicon.io/favicon-converter/ with browser commands that have
-  separate human authorization for upload, download and cleanup.
-- Upload only the approved master, verify visible attachment and previews,
-  download the actual file, preserve its bytes and rename to final ZIP path.
-- If automated transfer is unavailable, separately approved human transfer
-  may be used only with user attestation, original PNG + ZIP SHA256, and
-  matching decoded 512px pixels. Label this path
-  `FAVICON_IO_MANUAL_USER_ATTESTED`; do not claim BSK automation or
-  independently authenticated website origin.
-- Do not click advertisements or unrelated buttons.
-
-**B — host-audited local conversion**
-
-- Use the trusted Agent-run converter `LOCAL_FAVICON_CONVERSION_V1`
-  (`agent/scripts/m3-local-favicon.mjs`), not a worker-created ZIP or receipt.
-- Require an existing run and matching gameIdentity, a 512×512 original
-  image with explicit human visual and originality/usage-rights approval,
-  and source PNG SHA256 bound to the request and approval.
-- Check the host conversion receipt, ZIP SHA256, all 7 expected members,
-  PNG sizes and pixels, ICO, Manifest and CRC; the embedded 512px PNG
-  pixels must match the approved source.
-- Copy the host-validated ZIP **byte for byte** to final output. Record
-  `faviconIoUsed=false`, `bskTransferUsed=false` and the converter
-  origin. Never claim this ZIP came from favicon.io.
-- Only trusted host code may authenticate run-bound approval/receipt.
-  A standalone worker must return BLOCKED if approval cannot be verified.
+- Upload the verified 512 by 512 PNG.
+- Confirm the page displays the loaded filename and preview sizes.
+- Download the complete favicon package.
+- Rename the downloaded archive to {game name}图标.zip.
+- Move or copy it into the output directory.
+- Do not click advertisements or unrelated download buttons.
 
 The expected ZIP members are:
 
@@ -179,15 +150,8 @@ Run:
 python3 scripts/validate_outputs.py \
   --markdown "/absolute/path/{game name}攻略站首页调研信息.md" \
   --zip "/absolute/path/{game name}图标.zip" \
-  --game-name "{game name}" \
-  --conversion-mode "favicon-io"
+  --game-name "{game name}"
 ~~~
-
-For a trusted local conversion, supply `--conversion-mode local
---conversion-receipt /absolute/path/CONVERSION_RECEIPT.json`. The
-standalone validator checks ZIP/receipt consistency but does not grant user
-approval; the Agent must independently verify the host-owned approval
-and the exact original artwork provenance.
 
 Also:
 
@@ -201,6 +165,6 @@ Also:
 
 - If the official identity is ambiguous, stop and ask before creating files.
 - If an official/community link cannot be verified, omit it and state it was not confirmed.
-- If favicon.io is unavailable, use local conversion only with an independently verified host approval and conversion receipt; otherwise preserve the master and return BLOCKED.
+- If favicon.io is blocked or fails, preserve the verified 512 by 512 PNG, report the blocker, and do not claim a ZIP was generated.
 - If the local device or destination is unavailable, preserve completed artifacts and report the exact blocked step.
 - Never mark partial work as complete.

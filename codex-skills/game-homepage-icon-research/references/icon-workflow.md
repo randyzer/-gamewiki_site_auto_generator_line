@@ -34,7 +34,7 @@ Before upload, confirm:
 
 If visual inspection reveals excessive detail, regenerate once with fewer shapes rather than trusting automatic downscaling.
 
-## favicon.io browser conversion route
+## favicon.io browser flow
 
 1. Open https://favicon.io/favicon-converter/.
 2. Select the actual image file input, not an advertisement.
@@ -53,25 +53,3 @@ The final archive name is {filename-safe game name}图标.zip.
 Do not add the master PNG to the favicon.io ZIP unless the user asks. The converter's android-chrome-512x512.png is the required 512 member.
 
 Calculate SHA-256 after the archive reaches the user's destination. A matching source/destination hash is required when the file crosses environments.
-
-
-## Audited local conversion route
-
-1. Confirm genuine original-image generation evidence or authorized artwork
-   provenance, and independent user review of visual identity and rights.
-2. Use the **same existing Agent run**; do not substitute synthetic TEST icons.
-3. Host: `node scripts/m3-local-favicon.mjs prepare RUN_ID`;
-   place approved master in exact run-scoped input directory;
-   `inspect RUN_ID`; explicitly ask the user to approve exact SHA256;
-   `approve RUN_ID SOURCE_SHA256`, then `convert RUN_ID`.
-4. Inspect host `CONVERSION_RECEIPT.json` and source-approved SHA256,
-   ZIP SHA256, gameIdentity, runId, converter version and method
-   `LOCAL_FAVICON_CONVERSION_V1`. Site and BrowserSkill transfer must be false.
-5. Verify all seven canonical ZIP members, CRC, PNG sizes, ICO, Manifest,
-   and 512px decoded pixel equality with the approved master.
-6. Copy ZIP bytes unchanged to the original final archive filename.
-   Invoke the Skill validator with `--conversion-mode local
-   --conversion-receipt /absolute/path/CONVERSION_RECEIPT.json`.
-7. This is a **conversion-only** allowance: missing original-artwork
-   evidence, provenance chain, human approval, source or output content,
-   homepage research, or SEO checks still blocks completion.

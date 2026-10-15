@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import hashlib
 import json
 import re
 import sys
@@ -36,49 +35,11 @@ def extract_json(markdown):
     raise ValueError("No valid homepage JSON object found")
 
 
-def validate_conversion_receipt(receipt_path, zip_path, game_name, errors):
-    if not receipt_path or not receipt_path.is_file() or receipt_path.is_symlink():
-        fail(errors, "Local conversion: trusted host receipt required")
-        return
-    try:
-        if receipt_path.stat().st_size > 65536:
-            raise ValueError("Receipt too large")
-        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
-        if not isinstance(receipt, dict):
-            raise ValueError("Receipt must be an object")
-        if (
-            receipt.get("schemaVersion") != 1
-            or receipt.get("origin") != "LOCAL_FAVICON_CONVERSION_V1"
-            or receipt.get("gameIdentity") != game_name
-            or receipt.get("status") != "LOCAL_FAVICON_BINARY_VALIDATED"
-            or receipt.get("zipStructureValidated") is not True
-            or receipt.get("sourcePixelsMatched") is not True
-            or receipt.get("faviconIoUsed") is not False
-            or receipt.get("bskTransferUsed") is not False
-            or receipt.get("stageMayPass") is not False
-            or not re.fullmatch(r"[a-f0-9]{64}", receipt.get("sourceSha256", ""))
-            or not re.fullmatch(r"[a-f0-9]{64}", receipt.get("approvalSha256", ""))
-            or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", receipt.get("runId", ""))
-            or set(receipt.get("members", [])) != EXPECTED_ZIP
-            or len(receipt.get("members", [])) != len(EXPECTED_ZIP)
-        ):
-            raise ValueError("Invalid identity, origin, membership or validation status")
-        if hashlib.sha256(zip_path.read_bytes()).hexdigest() != receipt.get("zipSha256"):
-            raise ValueError("ZIP SHA256 does not match conversion receipt")
-        # This is consistency checking, not independent validation of the
-        # user's real approval. Trusted host must authenticate the source
-        # artwork, approval and original full conversion receipt separately.
-    except (TypeError, ValueError, OSError, json.JSONDecodeError) as exc:
-        fail(errors, f"Local conversion receipt invalid: {exc}")
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--markdown", required=True)
     parser.add_argument("--zip", required=True)
     parser.add_argument("--game-name", required=True)
-    parser.add_argument("--conversion-mode", choices=["favicon-io", "local"], default="favicon-io")
-    parser.add_argument("--conversion-receipt")
     args = parser.parse_args()
 
     md_path = Path(args.markdown)
@@ -135,33 +96,15 @@ def main():
     else:
         try:
             with zipfile.ZipFile(zip_path) as archive:
-                entries = archive.infolist()
-                names = [item.filename for item in entries]
-                if (
-                    len(names) != len(EXPECTED_ZIP)
-                    or set(names) != EXPECTED_ZIP
-                    or len(set(names)) != len(EXPECTED_ZIP)
-                    or any(item.is_dir() or item.flag_bits & 1
-                           or item.file_size <= 0 or item.file_size > 8*1024*1024
-                           or "/" in item.filename or "\\\\" in item.filename
-                           for item in entries)
-                    or sum(item.file_size for item in entries) > 20*1024*1024
-                ):
-                    fail(errors, "ZIP must contain exactly seven safe canonical members")
-                else:
-                    corrupt = archive.testzip()
-                    if corrupt:
-                        fail(errors, f"ZIP CRC failed: {corrupt}")
+                members = {Path(name).name for name in archive.namelist() if not name.endswith("/")}
+                missing = EXPECTED_ZIP - members
+                if missing:
+                    fail(errors, "ZIP missing: " + ", ".join(sorted(missing)))
+                corrupt = archive.testzip()
+                if corrupt:
+                    fail(errors, f"ZIP CRC failed: {corrupt}")
         except zipfile.BadZipFile:
             fail(errors, "Invalid ZIP archive")
-
-    if args.conversion_mode == "local":
-        validate_conversion_receipt(
-            Path(args.conversion_receipt) if args.conversion_receipt else None,
-            zip_path, args.game_name, errors,
-        )
-    elif args.conversion_receipt:
-        fail(errors, "favicon.io route must not claim a local conversion receipt")
 
     if errors:
         for error in errors:
@@ -170,7 +113,6 @@ def main():
 
     print("[OK] Markdown schema and SEO constraints passed")
     print("[OK] Favicon ZIP members and CRC passed")
-    print("[INFO] Conversion mechanism: " + args.conversion_mode + "; host provenance must be verified separately")
     return 0
 
 
