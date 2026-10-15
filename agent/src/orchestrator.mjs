@@ -43,15 +43,15 @@ export function summarize(state, paused = false) {
   const index = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
   const current = state.stages[index];
   return { status: paused ? 'PAUSED' : current?.status ?? 'PASSED', run_id: state.runId,
-    summary: paused ? 'Paused after current stage' : current ? stageDefinition(current.skill).label + ': ' + current.status + (current.evidence.length ? '\n' + current.evidence.map(item => sanitizeDiagnosticText(item)).join('\n') : '') : 'Deployment plan acknowledged; no production actions executed',
+    summary: paused ? 'Paused after current stage' : current ? stageDefinition(current.skill).label + ': ' + current.status + (current.evidence.length ? '\n' + current.evidence.map(item => sanitizeDiagnosticText(item)).join('\n') : '') : state.deploymentExecuted ? 'All stages passed; approved deployment executed' : 'Deployment plan acknowledged; no production actions executed',
     missing_inputs: current?.missing_inputs ?? [], artifact_paths: state.stages.flatMap(s => s.artifacts.map(a => a.path)),
     stage: current?.skill ?? null, stage_index: index, diagnostic: current?.diagnostic ?? null, stage_label: current ? stageDefinition(current.skill).label : null, stages: state.stages.map(s => ({ skill: s.skill, status: s.status })),
-    plan_digest: findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest ?? null, deployment_executed: false };
+    plan_digest: findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest ?? null, deployment_executed: state.deploymentExecuted === true };
 }
 
 // Host code is trusted; task JSON is not. No production approval host is installed.
 // An injected consumer AND executor are required for the offline integration seam.
-export function createOrchestrator({ configuration, executor, approvalConsumer } = {}) {
+export function createOrchestrator({ configuration, executor, approvalConsumer, deploymentExecution = false } = {}) {
   return async function execute(task, { shouldPause = () => false } = {}) {
     task = structuredClone(task);
     const config = structuredClone(configuration ?? await loadConfiguration());
@@ -100,7 +100,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer }
     const templateSnapshot = await runTemplateSnapshot(config, manifest, runId, resume);
     if (localPermit) await permit.start();
     try {
-      const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, executor: guardedExecutor, runId, resume, siteWrites: true,
+      const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor, runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined, inputs: resume ? {} : inputs });
       if (resume) {
@@ -121,7 +121,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer }
       const state = pipeline.snapshot();
       const result = { ...summarize(state, shouldPause(state)), inputs: pipeline.inputChecklist(), project_path: projectPath };
       await writeFile(join(config.workspace, 'runs', runId, 'AGENT_RUN_REPORT.md'),
-        `# Agent run ${runId}\n\n${result.summary}\n\nProduction deployed: false\n\n` +
+        `# Agent run ${runId}\n\n${result.summary}\n\nProduction deployed: ${state.deploymentExecuted === true}\n\n` +
         state.stages.map(s => `- ${s.skill}: ${s.status}`).join('\n') + '\n', { mode: 0o600 });
       return result;
     } finally {

@@ -110,7 +110,16 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     assert(Array.isArray(report.pages) && report.pages.length > 0 && report.coverage && typeof report.coverage === 'object', 'Empty prelaunch coverage');
     assert(Number.isInteger(report.coverage.routes_expected) && report.coverage.routes_expected > 0 && report.coverage.routes_checked === report.coverage.routes_expected && report.pages.length === report.coverage.routes_checked, 'Incomplete prelaunch coverage');
   }
-  if (skill === STAGE.DEPLOYMENT_PLAN) {
+  if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute') {
+    const report = parseArtifactJson(get('DEPLOYMENT_REPORT.json').bytes, get('DEPLOYMENT_REPORT.json').path);
+    // A PASSED execution must have put the site live on the confirmed domain; anything less is not done.
+    assert(report.deployment === 'PRODUCTION LIVE',
+      `DEPLOYMENT_REPORT_INVALID: deployment is ${JSON.stringify(report.deployment)}, expected "PRODUCTION LIVE"`);
+    let origin = null;
+    try { origin = new URL(report.production_url).origin; } catch { /* reported below with the raw value */ }
+    assert(origin === 'https://' + context.inputs.domain,
+      `DEPLOYMENT_REPORT_INVALID: production_url ${JSON.stringify(report.production_url)} is not https://${context.inputs.domain}`);
+  } else if (skill === STAGE.DEPLOYMENT_PLAN) {
     const plan = parseArtifactJson(get('DEPLOYMENT_PLAN.json').bytes, get('DEPLOYMENT_PLAN.json').path);
     assert(plan.schema_version === 1 && plan.status === 'AWAITING_CONFIRMATION' && plan.confirmation?.status === 'AWAITING_CONFIRMATION', 'Plan must await confirmation');
     assert(plan.project?.path === context.inputs.projectPath && plan.project.repository === context.inputs.repo && plan.project.branch === context.inputs.branch, 'Deployment project mismatch');

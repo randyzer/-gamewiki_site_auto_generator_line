@@ -41,6 +41,10 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     `Skills: ${inventory.skillRoot} tree ${inventory.sourceTree ?? '(unversioned)'}`,
     `Templates: ${template}`,
     'Stages:', ...stages.map((stage, index) => `  ${index + 1}. ${stage}`),
+    ...(inputs.deploymentPlanApproval ? [
+      `DEPLOY TO PRODUCTION: approves plan ${inputs.deploymentPlanApproval.digest}`,
+      `  Review first: ${join(configuration.workspace, 'workspaces', runId, 'site', 'docs', 'DEPLOYMENT_PLAN.md')}`,
+      '  Confirming runs the git push, hosting deploy, DNS and GSC/GA4 steps listed in that plan.'] : []),
     ''
   ].join('\n');
 }
@@ -72,6 +76,6 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
     return { status: 'CANCELLED', run_id: runId };
   }
   const execute = createOrchestrator({ configuration, executor: executor ?? createSkillExecutor(),
-    approvalConsumer: operatorConfirmed });
+    approvalConsumer: operatorConfirmed, deploymentExecution: true });
   return execute({ id: runId, inputs: JSON.stringify(inputs), retry: command === 'retry' });
 }

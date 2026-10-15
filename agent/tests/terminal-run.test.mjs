@@ -113,3 +113,25 @@ test('describeRun reports a missing keyword file instead of a digest', async t =
     configuration: s.f.configuration });
   assert.match(text, /\/no\/such\/file\.md \(MISSING\)/);
 });
+
+test('a terminal run executes the approved plan on retry and reports the deployment', async t => {
+  const s = await setup(t);
+  const first = await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId: 'term-deploy',
+    configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
+  assert.equal(first.status, 'WAITING_FOR_USER');
+  assert.equal(first.stage, STAGE.DEPLOYMENT_PLAN);
+  assert.deepEqual(first.missing_inputs, ['deploymentPlanApproval']);
+  const inputs = { ...s.f.inputs, deploymentPlanApproval: { approved: true, digest: first.plan_digest } };
+  await writeFile(s.inputsFile, JSON.stringify(inputs));
+  const io = terminal('y');
+  const second = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId: 'term-deploy',
+    configuration: s.f.configuration, executor: s.executor, ...io });
+  // The operator must see that this "y" approves a production deployment of exactly this plan.
+  assert.match(io.text(), new RegExp(`DEPLOY TO PRODUCTION: approves plan ${first.plan_digest}`));
+  assert.ok(io.text().includes(join(s.f.inputs.projectPath ?? join(s.f.configuration.workspace, 'workspaces', 'term-deploy', 'site'), 'docs', 'DEPLOYMENT_PLAN.md')));
+  assert.equal(second.status, 'PASSED');
+  assert.equal(second.deployment_executed, true);
+  assert.equal(s.calls.filter(skill => skill === STAGE.DEPLOYMENT_PLAN).length, 2);
+  const report = await readFile(join(s.f.configuration.workspace, 'runs', 'term-deploy', 'AGENT_RUN_REPORT.md'), 'utf8');
+  assert.match(report, /Production deployed: true/);
+});
