@@ -7,7 +7,7 @@ import { STAGES } from './stages.mjs';
 import { sha256 } from './files.mjs';
 import { resolveInputPaths } from './paths.mjs';
 
-// The operator at the terminal is the approver: one explicit "y" per run or retry replaces the G0 trusted-host ticket.
+// Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
 
 async function exists(path) {
@@ -21,6 +21,13 @@ async function readInputs(inputsFile) {
   if (!data || typeof data !== 'object' || Array.isArray(data))
     throw Error(`RUN_INPUTS_INVALID: ${inputsFile} must contain a JSON object, got ${Array.isArray(data) ? 'an array' : typeof data}`);
   return data;
+}
+
+function normalizedJson(value) {
+  if (Array.isArray(value)) return '[' + value.map(normalizedJson).join(',') + ']';
+  if (value && typeof value === 'object') return '{' + Object.keys(value).sort()
+    .map(key => JSON.stringify(key) + ':' + normalizedJson(value[key])).join(',') + '}';
+  return JSON.stringify(value);
 }
 
 export async function describeRun({ command, runId, inputs, configuration }) {
@@ -67,8 +74,9 @@ async function askYes({ stdin, stdout }) {
 }
 
 export async function runFromTerminal({ command, inputsFile, runId, configuration, executor,
-  stdin = process.stdin, stdout = process.stdout }) {
+  preview = false, confirm, stdin = process.stdin, stdout = process.stdout }) {
   if (!['run', 'retry'].includes(command)) throw Error(`RUN_COMMAND_INVALID: ${JSON.stringify(command)}`);
+  if (preview && confirm !== undefined) throw Error('RUN_ARGUMENTS_INVALID: --preview and --confirm are mutually exclusive');
   if (!/^[a-zA-Z0-9_-]{1,100}$/.test(runId ?? '')) throw Error(`RUN_ID_INVALID: ${JSON.stringify(runId)} must match [a-zA-Z0-9_-]{1,100}`);
   const inputs = await readInputs(inputsFile);
   configuration ??= await loadConfiguration();
@@ -76,10 +84,21 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
   const existing = await exists(manifest);
   if (command === 'run' && existing) throw Error(`RUN_ALREADY_EXISTS: ${runId} already has a manifest; use retry ${runId}`);
   if (command === 'retry' && !existing) throw Error(`RUN_NOT_FOUND: ${runId} has no manifest at ${manifest}`);
-  if (!stdin.isTTY) throw Error('TERMINAL_CONFIRMATION_REQUIRED: run from an interactive terminal so the operator can confirm');
+  if (!preview && confirm === undefined && !stdin.isTTY)
+    throw Error('TERMINAL_CONFIRMATION_REQUIRED: run from an interactive terminal so the operator can confirm');
 
-  stdout.write(await describeRun({ command, runId, inputs, configuration }));
-  if (!await askYes({ stdin, stdout })) {
+  const summary = await describeRun({ command, runId, inputs, configuration });
+  stdout.write(summary);
+  if (preview || confirm !== undefined) {
+    const code = sha256(command + runId + summary + normalizedJson(inputs)).slice(0, 16);
+    if (preview) {
+      stdout.write(`Confirmation code: ${code}\n`);
+      return { status: 'PREVIEW', run_id: runId, confirmation_code: code };
+    }
+    if (confirm !== code) throw Error(`CONFIRMATION_CODE_MISMATCH: provided ${JSON.stringify(confirm)}, expected ${code}. ` +
+      'inputs.json may have changed, or RUN_ID or command may differ; preview again and ask the user for the current code.');
+    stdout.write('Confirmation method: confirmation-code\n');
+  } else if (!await askYes({ stdin, stdout })) {
     stdout.write('Cancelled; nothing was started.\n');
     return { status: 'CANCELLED', run_id: runId };
   }

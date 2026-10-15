@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFile, readFile, access } from 'node:fs/promises';
+import { writeFile, readFile, access, mkdir, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { runFromTerminal, describeRun } from '../src/terminal-run.mjs';
@@ -48,7 +48,7 @@ test('answering y starts the pipeline and returns the stage summary', async t =>
   await access(manifestPath(s.f, 'term-yes'));
 });
 
-for (const answer of ['n', '', 'yes please', 'Y ', null]) {
+for (const answer of ['n', '', 'yes please', 'Y', 'Y ', 'y ', ' y', null]) {
   test(`answer ${JSON.stringify(answer)} does not start anything`, async t => {
     const s = await setup(t);
     const result = await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId: 'term-no',
@@ -65,6 +65,7 @@ test('a non-interactive stdin is refused before any work', async t => {
     configuration: s.f.configuration, executor: s.executor, ...terminal('y', { isTTY: false }) }),
   /TERMINAL_CONFIRMATION_REQUIRED/);
   assert.equal(s.calls.length, 0);
+  await assert.rejects(access(join(s.f.configuration.workspace, 'runs', 'term-pipe')), { code: 'ENOENT' });
 });
 
 test('retry resumes the same run after a new confirmation', async t => {
@@ -134,4 +135,142 @@ test('a terminal run executes the approved plan on retry and reports the deploym
   assert.equal(s.calls.filter(skill => skill === STAGE.DEPLOYMENT_PLAN).length, 2);
   const report = await readFile(join(s.f.configuration.workspace, 'runs', 'term-deploy', 'AGENT_RUN_REPORT.md'), 'utf8');
   assert.match(report, /Production deployed: true/);
+});
+
+async function preview(s, { command = 'run', runId = 'code-run' } = {}) {
+  const io = terminal(null, { isTTY: false });
+  const result = await runFromTerminal({ command, runId, inputsFile: s.inputsFile,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...io });
+  const match = io.text().match(/Confirmation code: ([a-f0-9]{16})\n$/);
+  assert.ok(match, io.text());
+  assert.equal(result.status, 'PREVIEW');
+  assert.doesNotMatch(io.text(), /Start this run/);
+  return { code: match[1], text: io.text() };
+}
+
+const confirmRun = (s, code, { command = 'run', runId = 'code-run', io = terminal(null, { isTTY: false }) } = {}) =>
+  runFromTerminal({ command, runId, inputsFile: s.inputsFile, configuration: s.f.configuration,
+    executor: s.executor, confirm: code, ...io });
+
+test('preview prints the exact summary and deterministic SHA256 code without creating runs or executing', async t => {
+  const s = await setup(t);
+  const before = await readdir(s.f.configuration.workspace);
+  const first = await preview(s), second = await preview(s);
+  assert.equal(first.code, second.code);
+  const summary = await describeRun({ command: 'run', runId: 'code-run', inputs: s.f.inputs, configuration: s.f.configuration });
+  const keys = new Set();
+  JSON.stringify(s.f.inputs, (key, value) => { keys.add(key); return value; });
+  const normalized = JSON.stringify(s.f.inputs, [...keys].sort());
+  assert.equal(first.code, sha256('run' + 'code-run' + summary + normalized).slice(0, 16));
+  assert.equal(first.text, summary + `Confirmation code: ${first.code}\n`);
+  assert.deepEqual(await readdir(s.f.configuration.workspace), before);
+  assert.equal(s.calls.length, 0);
+});
+
+test('the current code starts without interactive stdin and logs the confirmation method', async t => {
+  const s = await setup(t);
+  const { code } = await preview(s);
+  const io = terminal(null, { isTTY: false });
+  const result = await confirmRun(s, code, { io });
+  assert.equal(result.run_id, 'code-run');
+  assert.equal(s.calls[0], STAGE.HOMEPAGE_RESEARCH);
+  await access(manifestPath(s.f, 'code-run'));
+  assert.match(io.text(), /Confirmation method: confirmation-code\n/);
+  assert.doesNotMatch(io.text(), /Start this run/);
+});
+
+test('wrong and empty codes refuse even interactive y, include both codes, and create no run', async t => {
+  const s = await setup(t);
+  const { code } = await preview(s);
+  for (const supplied of ['wrong-code', '']) {
+    await assert.rejects(confirmRun(s, supplied, { io: terminal('y') }), error => {
+      assert.match(error.message, /CONFIRMATION_CODE_MISMATCH/);
+      assert.ok(error.message.includes(JSON.stringify(supplied)));
+      assert.ok(error.message.includes(code));
+      assert.match(error.message, /inputs\.json.*RUN_ID.*command/);
+      return true;
+    });
+  }
+  assert.equal(s.calls.length, 0);
+  await assert.rejects(access(join(s.f.configuration.workspace, 'runs')), { code: 'ENOENT' });
+});
+
+for (const [field, value] of [['objective', 'Changed objective'], ['domain', 'changed.test'], ['repo', 'changed/repo'],
+  ['extra', { nested: ['changed', null, true, 1] }]]) {
+  test(`changing ${field} invalidates a code even when absent from the summary`, async t => {
+    const s = await setup(t);
+    const old = await preview(s);
+    await writeFile(s.inputsFile, JSON.stringify({ ...s.f.inputs, [field]: value }));
+    const current = await preview(s);
+    assert.notEqual(current.code, old.code);
+    await assert.rejects(confirmRun(s, old.code), error => {
+      assert.ok(error.message.includes(old.code));
+      assert.ok(error.message.includes(current.code));
+      return true;
+    });
+    assert.equal(s.calls.length, 0);
+    await assert.rejects(access(join(s.f.configuration.workspace, 'runs')), { code: 'ENOENT' });
+  });
+}
+
+test('recursive object key order and whitespace do not change codes; array order does', async t => {
+  const s = await setup(t);
+  const extra = JSON.parse('{"z":[{"b":2,"a":1},null,true],"a":{"10":"ten","2":"two","__proto__":{"b":2,"a":1}}}');
+  const original = { ...s.f.inputs, extra };
+  await writeFile(s.inputsFile, JSON.stringify(original));
+  const first = await preview(s);
+  const reverse = value => Array.isArray(value) ? value.map(reverse) : value && typeof value === 'object'
+    ? Object.fromEntries(Object.entries(value).reverse().map(([key, item]) => [key, reverse(item)])) : value;
+  await writeFile(s.inputsFile, JSON.stringify(reverse(original), null, 4) + '\n');
+  assert.equal((await preview(s)).code, first.code);
+  extra.z.reverse();
+  await writeFile(s.inputsFile, JSON.stringify(original));
+  assert.notEqual((await preview(s)).code, first.code);
+});
+
+test('RUN_ID and command type are bound into each code', async t => {
+  const s = await setup(t);
+  const first = await preview(s);
+  assert.notEqual((await preview(s, { runId: 'other-run' })).code, first.code);
+  const directory = join(s.f.configuration.workspace, 'runs', 'code-run');
+  await mkdir(directory, { recursive: true });
+  const bytes = JSON.stringify({ inputs: s.f.inputs });
+  await writeFile(join(directory, 'manifest.json'), bytes);
+  const retry = await preview(s, { command: 'retry' });
+  assert.notEqual(retry.code, first.code);
+  await assert.rejects(confirmRun(s, first.code, { command: 'retry' }), error =>
+    error.message.includes(first.code) && error.message.includes(retry.code));
+  assert.equal(await readFile(join(directory, 'manifest.json'), 'utf8'), bytes);
+  assert.equal(s.calls.length, 0);
+});
+
+test('deployment approval changes retry code; stale code leaves manifest untouched and current code deploys', async t => {
+  const s = await setup(t);
+  const first = await runFromTerminal({ command: 'run', runId: 'code-run', inputsFile: s.inputsFile,
+    configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
+  assert.equal(first.status, 'WAITING_FOR_USER');
+  const old = await preview(s, { command: 'retry' });
+  const before = await readFile(manifestPath(s.f, 'code-run'), 'utf8');
+  const callsBefore = s.calls.length;
+  await writeFile(s.inputsFile, JSON.stringify({ ...s.f.inputs,
+    deploymentPlanApproval: { approved: true, digest: first.plan_digest } }));
+  const current = await preview(s, { command: 'retry' });
+  assert.notEqual(current.code, old.code);
+  assert.match(current.text, /DEPLOY TO PRODUCTION/);
+  await assert.rejects(confirmRun(s, old.code, { command: 'retry' }), error =>
+    error.message.includes(old.code) && error.message.includes(current.code));
+  assert.equal(s.calls.length, callsBefore);
+  assert.equal(await readFile(manifestPath(s.f, 'code-run'), 'utf8'), before);
+  const result = await confirmRun(s, current.code, { command: 'retry' });
+  assert.equal(result.status, 'PASSED');
+  assert.equal(result.deployment_executed, true);
+});
+
+test('preview and confirm cannot be combined', async t => {
+  const s = await setup(t);
+  await assert.rejects(runFromTerminal({ command: 'run', runId: 'code-run', inputsFile: s.inputsFile,
+    configuration: s.f.configuration, executor: s.executor, preview: true, confirm: 'anything', ...terminal('y') }),
+  /RUN_ARGUMENTS_INVALID/);
+  assert.equal(s.calls.length, 0);
+  await assert.rejects(access(join(s.f.configuration.workspace, 'runs')), { code: 'ENOENT' });
 });

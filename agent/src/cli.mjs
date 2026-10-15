@@ -67,10 +67,15 @@ else if (command === 'preflight' && file) {
   if (report.status !== 'PASSED') process.exitCode = 2;
 }
 else if (['run', 'retry'].includes(command) && file && id) {
-  // The operator confirms each run in the terminal; see terminal-run.mjs.
-  const result = await runFromTerminal({ command, inputsFile: file, runId: id });
-  reportEntry(result);
+  const options = process.argv.slice(5);
+  let confirmation = {};
+  if (options.length === 1 && options[0] === '--preview') confirmation = { preview: true };
+  else if (options.length === 2 && options[0] === '--confirm' && !options[1].startsWith('--'))
+    confirmation = { confirm: options[1] };
+  else if (options.length) throw Error('RUN_ARGUMENTS_INVALID: expected --preview or --confirm CODE');
+  const result = await runFromTerminal({ command, inputsFile: file, runId: id, ...confirmation });
+  if (result.status !== 'PREVIEW') reportEntry(result);
 } else {
-  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | run INPUTS.json RUN_ID | retry INPUTS.json RUN_ID');
+  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | run INPUTS.json RUN_ID [--preview | --confirm CODE] | retry INPUTS.json RUN_ID [--preview | --confirm CODE]');
   process.exitCode = 2;
 }
