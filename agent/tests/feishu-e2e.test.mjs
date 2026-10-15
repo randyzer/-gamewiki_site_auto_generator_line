@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import { readFile, rm, writeFile } from 'node:fs/promises';
 import { Store, Queue, handler } from '../feishu-ai-employee/src/core.mjs';
 import { createOrchestrator } from '../src/orchestrator.mjs';
 import { fixture, goodResult, until, offlineApprovalConsumer } from './helpers.mjs';
@@ -18,7 +18,8 @@ test('Feishu offline full flow: pause, missing input, resume, plan approval, dup
   const notifications = [], replies = [];
   const queue = new Queue(store, execute, async (_t, text) => notifications.push(text));
   const handle = handler({ store, queue, reply: async (_id, text) => replies.push(text), allowed: new Set(['owner', 'other']) });
-  const inputs = { ...f.inputs }; delete inputs.rawKeywordsFile;
+  const inputs = { ...f.inputs };
+  const keywords = await readFile(inputs.rawKeywordsFile); await rm(inputs.rawKeywordsFile);
   await handle(event('start', '/start ' + JSON.stringify(inputs)));
   const id = store.list('owner')[0].id;
   await until(() => calls.length === 1);
@@ -29,6 +30,7 @@ test('Feishu offline full flow: pause, missing input, resume, plan approval, dup
   await until(() => store.get(id, 'owner').status === 'waiting_input');
   assert.equal(calls.length, 1);
   await handle(event('inputs', '/inputs ' + id)); assert.match(replies.at(-1), /rawKeywordsFile/);
+  await writeFile(inputs.rawKeywordsFile, keywords);
   await handle(event('supply', '/input ' + id + ' ' + JSON.stringify({ rawKeywordsFile: f.inputs.rawKeywordsFile })));
   await until(() => JSON.parse(store.get(id, 'owner').result || '{}').plan_digest);
   assert.equal(calls.length, 7);

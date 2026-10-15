@@ -8,10 +8,10 @@ import { STAGES, ARTIFACTS } from '../src/pipeline.mjs';
 import { validateNativeArtifacts } from '../src/artifact-validator.mjs';
 import { runProcess } from '../src/process.mjs';
 import { sha256 } from '../src/files.mjs';
-import { prepareResearchHandoff } from '../src/handoff.mjs';
+import { prepareResearchHandoff, publishResearchArtifacts } from '../src/handoff.mjs';
 
 async function nativeFixture(t, index) {
-  const f = await fixture(t), project = join(f.configuration.workspace, 'site');
+  const f = await fixture(t), project = f.inputs.paths.siteDirectory;
   const nativeDirectory = join(f.configuration.workspace, 'native');
   await mkdir(nativeDirectory); await mkdir(project);
   const context = { runId: 'offline-contract', nativeDirectory, runDirectory: f.configuration.workspace,
@@ -151,6 +151,7 @@ test('complete handoff passes the native content-integrator preflight and is ide
     stages.push({ skill: STAGES[index], artifacts });
   }
   context.upstream = stages;
+  for (const stage of stages) await publishResearchArtifacts(context, stage.skill, stage.artifacts);
   await prepareResearchHandoff(context); await prepareResearchHandoff(context);
   const project = context.inputs.projectPath;
   await mkdir(join(project, 'app')); await mkdir(join(project, 'docs'));

@@ -14,6 +14,7 @@ import { promotionPlan } from './promotion-gate.mjs';
 import { prepareResearchHandoff } from './handoff.mjs';
 import { prepareExistingContent } from './existing-content-adapter.mjs';
 import { materializeTemplateSnapshot } from './template-snapshot.mjs';
+import { resolveInputPaths } from './paths.mjs';
 
 export async function loadConfiguration(file = join(AGENT_ROOT, 'config/workflow.json')) {
   const data = JSON.parse(await readFile(file, 'utf8'));
@@ -62,7 +63,6 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     try { await lstat(entryDraft); throw Error('ENTRY_DRAFT_EXECUTION_FORBIDDEN'); }
     catch (error) { if (error.code !== 'ENOENT') throw error; }
     const manifest = join(config.workspace, 'runs', runId, 'manifest.json');
-    const projectPath = join(config.workspace, 'workspaces', runId, 'site');
     let supplied;
     try { supplied = task.inputs ? JSON.parse(task.inputs) : JSON.parse(task.request); } catch { supplied = {}; }
     if (!supplied || typeof supplied !== 'object' || Array.isArray(supplied)) throw Error('Task inputs must be a JSON object');
@@ -84,12 +84,18 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     }
     if (supplied.schemaVersion === 1) return executeExisting(task, supplied, config, executor, shouldPause);
     if (supplied.mode === 'existing-project') throw Error('Existing project requires a versioned structured task card');
-    if (supplied.projectPath && supplied.projectPath !== projectPath) throw Error('Use the assigned isolated projectPath');
-    const inputs = { projectPath, ...supplied };
     let resume = resumePermit;
     if (!freshApproval) {
       try { await access(manifest); resume = true; } catch (error) { if (error.code !== 'ENOENT') throw error; }
     }
+    if (freshApproval && !resume) {
+      try { await access(manifest); throw Error('ENTRY_EXECUTION_DESTINATION_EXISTS'); }
+      catch (error) { if (error.code !== 'ENOENT') throw error; }
+    }
+    const previous = resume ? JSON.parse(await readFile(manifest, 'utf8')).inputs : null;
+    const inputs = resolveInputPaths(previous?.paths && !supplied.paths ? { ...supplied, paths: previous.paths } : supplied,
+      { required: (!resume && !freshApproval) || Boolean(previous?.paths) });
+    if (!inputs.paths && previous) inputs.projectPath = previous.projectPath;
     const guardedExecutor = localPermit ? async (skill, context) => {
       await permit.verify({ stage: skill });
       const result = await executor(skill, context);
@@ -120,7 +126,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
         await pipeline.advance();
       }
       const state = pipeline.snapshot();
-      const result = { ...summarize(state, shouldPause(state)), inputs: pipeline.inputChecklist(), project_path: projectPath };
+      const result = { ...summarize(state, shouldPause(state)), inputs: pipeline.inputChecklist(), project_path: state.inputs.projectPath };
       await writeFile(join(config.workspace, 'runs', runId, 'AGENT_RUN_REPORT.md'),
         `# Agent run ${runId}\n\n${result.summary}\n\nProduction deployed: ${state.deploymentExecuted === true}\n\n` +
         state.stages.map(s => `- ${s.skill}: ${s.status}`).join('\n') + '\n', { mode: 0o600 });

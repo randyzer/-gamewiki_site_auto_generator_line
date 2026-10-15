@@ -8,7 +8,7 @@ import { STAGE, stageName } from '../../src/stages.mjs';
 import { failureDiagnostic, diagnosticSummary } from '../../src/diagnostics.mjs';
 
 const alive = pid => { try { process.kill(pid, 0); return true; } catch (e) { return e.code !== 'ESRCH'; } };
-const INPUT_KEYS = new Set(['gameIdentity', 'gameMetadata', 'objective', 'projectPath', 'rawKeywordsFile', 'canonicalRequired', 'canonicalOrigin', 'uiMode', 'uiApproval', 'siteRevision', 'domain', 'repo', 'branch', 'dns', 'deploymentPlanAuthorized', 'adsEnabled', 'adCode', 'adApproval', 'liveUrl']);
+const INPUT_KEYS = new Set(['gameIdentity', 'gameMetadata', 'objective', 'projectPath', 'paths', 'rawKeywordsFile', 'canonicalRequired', 'canonicalOrigin', 'uiMode', 'uiApproval', 'siteRevision', 'domain', 'repo', 'branch', 'dns', 'deploymentPlanAuthorized', 'adsEnabled', 'adCode', 'adApproval', 'liveUrl']);
 function inputObject(value) {
   if (value?.schemaVersion === 1) return validateIntakeCard(value);
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Inputs must be a JSON object');

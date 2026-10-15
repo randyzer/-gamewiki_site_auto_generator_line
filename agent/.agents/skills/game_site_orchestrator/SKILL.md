@@ -11,7 +11,7 @@ description: "Prepare inputs for the existing seven-stage game-site CLI, ask the
 
 ## 整理输入和启动
 
-1. 只根据用户确认的事实整理 inputs.json：准确游戏身份、平台/版本/语言与目标、原始关键词 Markdown 绝对路径、canonical、siteRevision、域名、仓库/分支、DNS 与部署计划授权。按 README 给出完整 JSON，并列出缺项和条件项；不要猜 Steam App ID、关键词、域名、路径或批准。projectPath 由新站总控分配。
+1. 只根据用户确认的事实整理 inputs.json：准确游戏身份、平台/版本/语言与目标、站点目录、调研目录、原始关键词 Markdown 路径、canonical、siteRevision、域名、仓库/分支、DNS 与部署计划授权。按 README 给出完整 JSON，并列出缺项和条件项；不要猜 Steam App ID、关键词、域名、路径或批准。projectPath 来自 paths.siteDirectory，新 run 未指定时拒绝启动。
 2. 给用户查看输入、文件范围和将调用真实 worker 的操作，请用户确认。密钥不进入输入文件或对话；SERPER_API_KEY 由用户通过环境变量提供。不得索取或输出 token、密码、cookie、凭据文件内容。
 3. 用户确认后，告诉用户在自己的交互终端切换到上述 agent 根目录，再执行：
 
@@ -29,6 +29,19 @@ description: "Prepare inputs for the existing seven-stage game-site CLI, ask the
    run 要求新 manifest，retry 要求已有 manifest；retry 会重验受影响阶段，不保证自动清理已有站点或覆盖冲突。
 
 不要先走 entry-preview/create/update 草稿或可信宿主票据流程；这些代码已冻结。已有项目、飞书、G0/bsk/m3 不属于当前新站主线。不得修改 `codex-skills/`、模板来源、凭据或全局 Codex 配置。仅做文档/检查不授权真实建站或生产操作。
+
+inputs.json 的路径部分示例（其他字段见 README，示例须替换为用户确认的值）：
+
+```json
+"paths": {
+  "projectRoot": "/用户确认的绝对路径/游戏目录",
+  "siteDirectory": "{projectRoot}/site",
+  "researchDirectory": "{projectRoot}/backgroundinformation",
+  "rawKeywordsFile": "{projectRoot}/backgroundinformation/keyword-materials/关键词.md"
+}
+```
+
+projectRoot 可省略，但只支持 `{projectRoot}` 这一种替换；解析后全部须为绝对路径。research 最后一层必须叫 backgroundinformation（首页 Skill validate_outputs.py:49 要求）。site 与 research 不得嵌套、不得与 agent/、codex-skills/、.template-cache/、runs/ 重叠，不得经过符号链接；新站目录须不存在或为空。顶层 rawKeywordsFile 在 paths 内未填写时仍可用。无 paths 的旧 manifest 保持原恢复行为；新 run 不回退到 agent/workspaces。retry 的路径变化会使受影响阶段失效；同名异内容研究文件须由用户处理冲突，原关键词不覆盖。研究产物先落在指定 research，stage 4 才复制到 site/backgroundinformation。worker 仅 stage 1/2 可写 research，stage 3/4 和部署 execute 可写 site，其他阶段只读。
 
 ## 读取进度和部署确认
 

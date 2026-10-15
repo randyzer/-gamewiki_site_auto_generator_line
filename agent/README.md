@@ -17,7 +17,7 @@ npx playwright install chromium
 
 ## 七阶段输入与产物
 
-所有阶段都需要 `gameIdentity`、`objective` 和总控分配的 `projectPath`；后者固定为 `agent/workspaces/RUN_ID/site`。完整权限、证据与验收器见[阶段矩阵](docs/SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。
+所有阶段都需要 `gameIdentity`、`objective` 和用户指定的 `paths.siteDirectory`，解析后用作 `projectPath`。完整权限、证据与验收器见[阶段矩阵](docs/SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。
 
 | 阶段 / Skill | 额外输入 | 必需产物 |
 | --- | --- | --- |
@@ -39,7 +39,12 @@ npx playwright install chromium
   "gameIdentity": "用户确认的准确游戏名",
   "objective": "用户确认的平台、版本、语言及攻略站目标",
   "gameMetadata": {},
-  "rawKeywordsFile": "/用户确认的绝对路径/原始关键词.md",
+  "paths": {
+    "projectRoot": "/用户确认的绝对路径/游戏目录",
+    "siteDirectory": "{projectRoot}/site",
+    "researchDirectory": "{projectRoot}/backgroundinformation",
+    "rawKeywordsFile": "{projectRoot}/backgroundinformation/keyword-materials/关键词.md"
+  },
   "canonicalRequired": true,
   "canonicalOrigin": "https://guides.example.com",
   "uiMode": "audit-only",
@@ -54,7 +59,13 @@ npx playwright install chromium
 }
 ```
 
-`projectPath` 不填，由总控分配；不要添加 `schemaVersion`、密钥或不在白名单里的字段。`rawKeywordsFile` 必须为实际存在、非空的绝对路径 Markdown 原件，不得编造关键词或修改原件。注意：权限代码只为位于本轮 run 内的原始关键词/lineage 文件显式添加读取授权；外部文件虽可通过宿主输入检查，worker 可读性仍需真实运行验证（见[路线图](docs/MASTER_AGENT_EXECUTION_ROADMAP_V1.md)）。
+`projectPath` 不填，由 `paths.siteDirectory` 解析得到。新 run 必须填写 site、research 和关键词文件路径，不再自动分配站点目录；只有 `projectRoot` 可省略，此时其余路径须直接写绝对路径。只支持 `{projectRoot}` 替换，其他 `{...}`、相对路径和缺少 projectRoot 的替换都会报出错误值。不要添加 `schemaVersion`、密钥或不在白名单里的字段。
+
+`researchDirectory` 最后一层必须准确命名为 `backgroundinformation`，这是首页 Skill 的 `validate_outputs.py:49` 要求。site 与 research 不得相互嵌套，也不得位于 `agent/`、`codex-skills/`、`.template-cache/`、`runs/` 或成为这些目录的祖先；路径不得经过符号链接。新 run 的 site 必须不存在或为空。
+
+`paths.rawKeywordsFile` 必须指向用户实际准备的非空 Markdown 原件；仍兼容顶层 `rawKeywordsFile`（当 paths 内未填写时使用）。第 2 阶段通过 run 内只读副本读取关键词和 lineage，原件不修改。第 1 阶段把首页资料和图标 ZIP 复制到 research，第 2 阶段产物放在 research 的 `keyword-materials/`；同名同内容复用，异内容拒绝覆盖。第 4 阶段再把 research 复制到 `<site>/backgroundinformation/`。
+
+manifest 记录解析后的 `paths`；retry 修改路径会触发现有输入变化失效逻辑，不自动清理站点或覆盖研究冲突。无 `paths` 的旧 manifest 继续按原 `agent/workspaces/RUN_ID/site` 和原交接行为恢复。research 仅第 1、2 阶段可写，site 仅第 3、4 阶段和已批准的部署执行轮可写；其他阶段 worker 只读，审计报告由宿主发布。
 
 `canonicalRequired` 必须为布尔值；为 false 时可不填 `canonicalOrigin`，否则需无尾斜杠、无凭据的 HTTPS origin。`uiMode` 可省略（默认只审计），`siteRevision` 不能省略。第 6/7 阶段需要合法域名；第 7 阶段需要已复核 DNS 和计划授权。`deploymentProvider` 是允许输入，但不在 `missingInputs` 的必填检查中；具体能力仍由部署 Skill 判断。
 

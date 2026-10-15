@@ -5,6 +5,7 @@ import { createOrchestrator, loadConfiguration } from './orchestrator.mjs';
 import { createSkillExecutor } from './skill-executor.mjs';
 import { STAGES } from './stages.mjs';
 import { sha256 } from './files.mjs';
+import { resolveInputPaths } from './paths.mjs';
 
 // The operator at the terminal is the approver: one explicit "y" per run or retry replaces the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -23,6 +24,10 @@ async function readInputs(inputsFile) {
 }
 
 export async function describeRun({ command, runId, inputs, configuration }) {
+  const previous = command === 'retry'
+    ? JSON.parse(await readFile(join(configuration.workspace, 'runs', runId, 'manifest.json'), 'utf8')).inputs : null;
+  inputs = resolveInputPaths(previous?.paths && !inputs.paths ? { ...inputs, paths: previous.paths } : inputs,
+    { required: command === 'run' || Boolean(previous?.paths) });
   let keywords = `${inputs.rawKeywordsFile ?? '(not provided)'}`;
   if (inputs.rawKeywordsFile) {
     try { keywords += `\n  SHA256: ${sha256(await readFile(inputs.rawKeywordsFile))}`; }
@@ -37,13 +42,16 @@ export async function describeRun({ command, runId, inputs, configuration }) {
   return [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
     `Game: ${inputs.gameIdentity ?? '(not provided)'}`,
+    `siteDirectory: ${inputs.paths?.siteDirectory ?? previous?.projectPath}`,
+    `researchDirectory: ${inputs.paths?.researchDirectory ?? '(legacy run: research stays in run artifacts until handoff)'}`,
+    `rawKeywordsFile: ${inputs.rawKeywordsFile ?? previous?.rawKeywordsFile ?? '(not provided)'}`,
     `Keywords: ${keywords}`,
     `Skills: ${inventory.skillRoot} tree ${inventory.sourceTree ?? '(unversioned)'}`,
     `Templates: ${template}`,
     'Stages:', ...stages.map((stage, index) => `  ${index + 1}. ${stage}`),
     ...(inputs.deploymentPlanApproval ? [
       `DEPLOY TO PRODUCTION: approves plan ${inputs.deploymentPlanApproval.digest}`,
-      `  Review first: ${join(configuration.workspace, 'workspaces', runId, 'site', 'docs', 'DEPLOYMENT_PLAN.md')}`,
+      `  Review first: ${join(inputs.paths?.siteDirectory ?? previous.projectPath, 'docs', 'DEPLOYMENT_PLAN.md')}`,
       '  Confirming runs the git push, hosting deploy, DNS and GSC/GA4 steps listed in that plan.'] : []),
     ''
   ].join('\n');

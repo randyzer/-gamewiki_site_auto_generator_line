@@ -12,7 +12,7 @@ export const STAGE = Object.freeze({
 export const STAGE_DEFINITIONS = Object.freeze([
   { name: STAGE.HOMEPAGE_RESEARCH, label: '首页调研与图标制作', browserDependent: true,
     artifacts: ['HOMEPAGE_RESEARCH.md', 'ICON.zip'],
-    inputs: ['gameIdentity', 'projectPath', 'objective', 'mode', 'targetId', 'sourceProjectPath', 'taskCardDigest',
+    inputs: ['gameIdentity', 'projectPath', 'paths', 'objective', 'mode', 'targetId', 'sourceProjectPath', 'taskCardDigest',
       'researchRootName', 'gameMetadata', 'iconSourcePng', 'iconSourceMethod'] },
   { name: STAGE.KEYWORD_RESEARCH, label: '关键词资料调研', browserDependent: true,
     artifacts: ['keywords.json', '关键词处理记录.md', '关键词素材汇总.md', 'KEYWORD_MATERIALS.md'], inputs: ['rawKeywordsFile', 'keywordSourceLineageFile'] },

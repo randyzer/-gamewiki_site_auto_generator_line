@@ -128,7 +128,7 @@ test('a terminal run executes the approved plan on retry and reports the deploym
     configuration: s.f.configuration, executor: s.executor, ...io });
   // The operator must see that this "y" approves a production deployment of exactly this plan.
   assert.match(io.text(), new RegExp(`DEPLOY TO PRODUCTION: approves plan ${first.plan_digest}`));
-  assert.ok(io.text().includes(join(s.f.inputs.projectPath ?? join(s.f.configuration.workspace, 'workspaces', 'term-deploy', 'site'), 'docs', 'DEPLOYMENT_PLAN.md')));
+  assert.ok(io.text().includes(join(s.f.inputs.paths.siteDirectory, 'docs', 'DEPLOYMENT_PLAN.md')));
   assert.equal(second.status, 'PASSED');
   assert.equal(second.deployment_executed, true);
   assert.equal(s.calls.filter(skill => skill === STAGE.DEPLOYMENT_PLAN).length, 2);

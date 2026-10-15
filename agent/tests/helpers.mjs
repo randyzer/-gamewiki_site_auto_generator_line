@@ -1,4 +1,5 @@
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, rm, realpath } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sha256 } from '../src/files.mjs';
@@ -12,8 +13,9 @@ export async function offlineApprovalConsumer(_task, configuration) {
   return true;
 }
 
-export async function fixture(t) {
-  const root = await mkdtemp(fileURLToPath(new URL('../.agent-test-', import.meta.url)));
+export async function fixture(t, { local = false } = {}) {
+  const root = await mkdtemp(local ? fileURLToPath(new URL('../.agent-test-', import.meta.url))
+    : join(await realpath(tmpdir()), '.agent-test-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const workspace = join(root, 'workspace'), source = join(root, 'skills'), template = join(root, 'templates');
   await Promise.all([workspace, source, template].map(p => mkdir(p)));
@@ -27,6 +29,7 @@ export async function fixture(t) {
   const rawKeywordsFile = join(root, 'keywords.md'); await writeFile(rawKeywordsFile, '# Offline fixture\n- Fixture guide');
   return { root, configuration: { workspace, inventoryPath, templateRoots: [template] },
     inputs: { gameIdentity: 'Offline Fixture', objective: 'Isolated offline integration test', rawKeywordsFile,
+      paths: { siteDirectory: join(root, 'site'), researchDirectory: join(root, 'backgroundinformation') },
       canonicalRequired: false, siteRevision: 'fixture-v1', domain: 'fixture.test', repo: 'fixture/repo', branch: 'main',
       dns: { provider: 'offline fixture', recordsReviewed: true }, deploymentPlanAuthorized: true } };
 }
