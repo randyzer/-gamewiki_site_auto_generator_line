@@ -8,6 +8,7 @@ import { intakeSummary } from './intake-card.mjs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import {previewEntry,createEntry,updateEntry,statusEntry,previewEntryHandoff,validateEntryHandoff} from './entry-v1.mjs';
+import { runFromTerminal } from './terminal-run.mjs';
 
 const [command, file, id, revision] = process.argv.slice(2);
 async function entryInput(file) {
@@ -65,11 +66,11 @@ else if (command === 'preflight' && file) {
   console.log(JSON.stringify({ runId, reportDirectory: join(config.workspace, 'runs', runId), ...report }, null, 2));
   if (report.status !== 'PASSED') process.exitCode = 2;
 }
-else if (['run', 'retry'].includes(command) && file) {
-  // No caller-supplied key, file, environment switch or JSON flag installs a host.
-  reportEntry({status:'BLOCKED',code:'ENTRY_TRUSTED_APPROVAL_UNAVAILABLE',
-    approvedToRun:false,executorStarted:false,siteWrites:false,releaseAuthorized:false});
+else if (['run', 'retry'].includes(command) && file && id) {
+  // The operator confirms each run in the terminal; see terminal-run.mjs.
+  const result = await runFromTerminal({ command, inputsFile: file, runId: id });
+  reportEntry(result);
 } else {
-  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | run INPUTS.json [RUN_ID] | retry INPUTS.json RUN_ID');
+  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | run INPUTS.json RUN_ID | retry INPUTS.json RUN_ID');
   process.exitCode = 2;
 }

@@ -7,6 +7,17 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 const COMMIT = /^[0-9a-f]{40}$/;
 const git = async (cwd, args) => (await execFileAsync('git', args, { cwd, encoding: 'utf8', timeout: 300000 })).stdout.trimEnd();
+// GitHub HTTPS intermittently drops connections (seen as SSL_ERROR_SYSCALL); other failures are not retried.
+const TRANSIENT_NETWORK = /SSL_ERROR_SYSCALL|SSL_connect|Connection reset|Could not resolve host|Operation timed out|early EOF|unexpected disconnect/i;
+async function gitNetwork(cwd, args, attempts = 3) {
+  for (let attempt = 1; ; attempt++) {
+    try { return await git(cwd, args); }
+    catch (error) {
+      if (attempt >= attempts || !TRANSIENT_NETWORK.test(error.stderr ?? error.message)) throw error;
+      await new Promise(done => setTimeout(done, 1000 * attempt));
+    }
+  }
+}
 
 function checkSource({ repository, ref, subtree } = {}, commit) {
   if (typeof repository !== 'string' || !/^(https:\/\/|file:\/\/)/.test(repository))
@@ -36,7 +47,7 @@ async function fetchCommit(source, ref, staging) {
   await mkdir(staging, { recursive: true });
   await git(staging, ['init', '-q']);
   await git(staging, ['remote', 'add', 'origin', source.repository]);
-  try { await git(staging, ['fetch', '-q', '--depth', '1', 'origin', ref]); }
+  try { await gitNetwork(staging, ['fetch', '-q', '--depth', '1', 'origin', ref]); }
   catch (error) {
     throw Error(`TEMPLATE_SNAPSHOT_FETCH_FAILED: could not fetch ${ref} from ${source.repository}: ${error.stderr?.trim() || error.message}`);
   }
@@ -48,7 +59,7 @@ async function fetchCommit(source, ref, staging) {
 export async function resolveTemplateRef(source) {
   checkSource(source);
   let output;
-  try { output = await git(undefined, ['ls-remote', source.repository, source.ref]); }
+  try { output = await gitNetwork(undefined, ['ls-remote', source.repository, source.ref]); }
   catch (error) {
     throw Error(`TEMPLATE_SNAPSHOT_FETCH_FAILED: could not resolve ${source.ref} in ${source.repository}: ${error.stderr?.trim() || error.message}`);
   }
