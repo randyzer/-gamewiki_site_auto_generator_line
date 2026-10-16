@@ -10,6 +10,8 @@ import { verifyTemplateSnapshot } from './template-snapshot.mjs';
 import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './paths.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { publishResearchArtifacts } from './handoff.mjs';
+import { keywordResearchBudget } from './keyword-budget.mjs';
+import { keywordServiceStops } from './keyword-service-stops.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -69,6 +71,8 @@ function checkInputs(value) {
   assert(value && typeof value === 'object' && !Array.isArray(value), 'Inputs must be an object');
   for (const key of Object.keys(value)) assert(Object.hasOwn(INPUT_STAGE, key), `Unknown input: ${key}`);
   assert(value.mode === undefined || ['new-site', 'existing-project'].includes(value.mode), 'Unknown project mode');
+  if (value.keywordResearchBudget !== undefined) keywordResearchBudget(value.keywordResearchBudget);
+  if (value.keywordServiceStops !== undefined) keywordServiceStops(value.keywordServiceStops);
   // Reject non-JSON values instead of silently dropping functions or cycles.
   const visit = item => {
     if (item === undefined) return;

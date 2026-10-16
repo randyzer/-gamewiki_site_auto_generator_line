@@ -3,9 +3,12 @@ import { join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { createOrchestrator, loadConfiguration } from './orchestrator.mjs';
 import { createSkillExecutor } from './skill-executor.mjs';
-import { STAGES } from './stages.mjs';
+import { STAGES, STAGE } from './stages.mjs';
 import { sha256 } from './files.mjs';
 import { resolveInputPaths } from './paths.mjs';
+import { keywordResearchBudget } from './keyword-budget.mjs';
+import { verifyKeywordRecovery } from './keyword-recovery.mjs';
+import { keywordServiceStops } from './keyword-service-stops.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -31,8 +34,11 @@ function normalizedJson(value) {
 }
 
 export async function describeRun({ command, runId, inputs, configuration }) {
-  const previous = command === 'retry'
-    ? JSON.parse(await readFile(join(configuration.workspace, 'runs', runId, 'manifest.json'), 'utf8')).inputs : null;
+  const runDirectory = join(configuration.workspace, 'runs', runId);
+  const manifestBytes = command === 'retry' ? await readFile(join(runDirectory, 'manifest.json')) : null;
+  const manifest = manifestBytes ? JSON.parse(manifestBytes) : null;
+  const previous = manifest?.inputs;
+  if (previous) inputs = { ...previous, ...inputs };
   inputs = resolveInputPaths(previous?.paths && !inputs.paths ? { ...inputs, paths: previous.paths } : inputs,
     { required: command === 'run' || Boolean(previous?.paths), legacyPaths: previous?.paths });
   let keywords = `${inputs.rawKeywordsFile ?? '(not provided)'}`;
@@ -46,8 +52,19 @@ export async function describeRun({ command, runId, inputs, configuration }) {
       (command === 'retry' ? ' (commit recorded in this run)' : ' (current commit is pinned when the run starts)')
     : configuration.templateRoots?.join(', ') ?? '(none)';
   const stages = inputs.adsEnabled === true ? [...STAGES, 'game-site-adsterra-ad-integration'] : STAGES;
+  const budget = keywordResearchBudget(inputs.keywordResearchBudget);
+  const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
+  let recovery;
+  if (inputs.keywordRecovery) {
+    if (!manifest) throw Error('KEYWORD_RECOVERY_INVALID: recovery requires an existing run');
+    const stage = manifest.stages.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
+    recovery = await verifyKeywordRecovery({ runId, runDirectory, inputs,
+      outputDirectory: join(runDirectory, 'artifacts/1', String(stage.checkpoint.attempt + 1)),
+      skillLock: manifest.lock.skills.find(skill => skill.name === STAGE.KEYWORD_RESEARCH) }, inputs.keywordRecovery);
+  }
   return [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
+    ...(manifestBytes ? [`Resume manifest SHA256: ${sha256(manifestBytes)}`] : []),
     `Game: ${inputs.gameIdentity ?? '(not provided)'}`,
     `siteDirectory: ${inputs.paths?.siteDirectory ?? previous?.projectPath}`,
     `researchDirectory: ${inputs.paths?.researchDirectory ?? '(legacy run: research stays in run artifacts until handoff)'}`,
@@ -55,6 +72,15 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     `Keywords: ${keywords}`,
     `Skills: ${inventory.skillRoot} tree ${inventory.sourceTree ?? '(unversioned)'}`,
     `Templates: ${template}`,
+    `Keyword research budget: ${budget.timeoutMs} ms; handoff margin: ${budget.handoffMarginMs} ms; source: ${budget.configurationSource}`,
+    `Suspended services (all keywords): ${serviceStops.join(', ') || '(none)'}`,
+    'Handoff deadline is cooperative; a hard timeout remains FAILED. Recovery snapshots are unvalidated progress, never a completion waiver.',
+    ...(recovery ? [
+      `Keyword recovery: attempt ${recovery.sourceAttempt}; manifest ${recovery.manifestPath}`,
+      `Recovery SHA256: ${recovery.sha256}; explicitly selected files: ${recovery.files.length}`,
+      ...recovery.files.map(file => `  ${file.path} SHA256 ${file.sha256}`),
+      'Pending raw rows retain their existing PENDING disposition; no inferred keyword expansion or new completed status.'
+    ] : ['Keyword recovery: none (no previous attempt is automatically scanned or reused)']),
     'Stages:', ...stages.map((stage, index) => `  ${index + 1}. ${stage}`),
     ...(inputs.deploymentPlanApproval ? [
       `DEPLOY TO PRODUCTION: approves plan ${inputs.deploymentPlanApproval.digest}`,

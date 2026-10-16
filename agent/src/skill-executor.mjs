@@ -9,7 +9,7 @@ import { collectSiteAudit } from './site-audit-host.mjs';
 import { collectPrelaunch } from './prelaunch-host.mjs';
 import { verifySiteEvidence } from './site-evidence.mjs';
 import { collectHomepageSources } from './homepage-source-host.mjs';
-import { safePath, readArtifact, parseArtifactJson, inside } from './files.mjs';
+import { safePath, readArtifact, parseArtifactJson, inside, sha256 } from './files.mjs';
 import { templateCopyDirectory, mergeTemplateCopy } from './template-merge.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, PYTHON_STAGES, stageDefinition } from './stages.mjs';
@@ -21,6 +21,9 @@ import { workerEnvironment, stageWorkerPermissions, verifyWorkerCommandIdentity,
   stageWorkerFeatures, GIT_STAGES } from './worker-permissions.mjs';
 import { locateDeploymentTools, locateGitTool } from './deployment-tools.mjs';
 import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
+import { keywordResearchBudget } from './keyword-budget.mjs';
+import { captureKeywordRecovery, verifyKeywordRecovery } from './keyword-recovery.mjs';
+import { keywordServiceStops, suspendSubtitleRequests } from './keyword-service-stops.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
@@ -62,7 +65,7 @@ async function replaceFileInWorkerReadOnlyDirectory(directory, filename, content
 }
 
 export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex', commandIdentity = null,
-  codeModeHostIdentity = null, run = runProcess, timeoutMs = 600000,
+  codeModeHostIdentity = null, run = runProcess, timeoutMs,
   validationOptions = {},
   environment = process.env,
   researchPython = '/opt/homebrew/bin/python3',
@@ -93,6 +96,20 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       nativeDirectory: join(original.outputDirectory, 'native') };
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
     const keywordResearch = skill === STAGE.KEYWORD_RESEARCH;
+    const keywordBudget = keywordResearch ? keywordResearchBudget(context.inputs.keywordResearchBudget) : null;
+    if (keywordBudget && timeoutMs !== undefined) {
+      const hostLimit = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 600000;
+      keywordBudget.timeoutMs = Math.min(keywordBudget.timeoutMs, hostLimit);
+      keywordBudget.handoffMarginMs = Math.min(keywordBudget.handoffMarginMs, Math.max(0, keywordBudget.timeoutMs - 30000));
+      keywordBudget.hostTimeoutMs = hostLimit;
+      keywordBudget.configurationSource += '+host-cap';
+    }
+    const stoppedServices = keywordResearch ? keywordServiceStops(context.inputs.keywordServiceStops) : [];
+    let keywordRecovery;
+    if (keywordResearch && context.inputs.keywordRecovery) {
+      keywordRecovery = await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
+      context.keywordRecovery = keywordRecovery;
+    }
     const pythonStage = PYTHON_STAGES.includes(skill);
     const hostAudit = skill === STAGE.UI_UX_AUDIT && original.mode !== 'optimize';
     const hostPrelaunch = skill === STAGE.PRELAUNCH_ACCEPTANCE && original.mode !== 'optimize';
@@ -162,7 +179,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         researchYtDlpCommand = join(toolDirectory, 'yt-dlp');
         const wrapper = await keywordYtDlpWrapper(researchYtDlpScript, pythonCommand);
         researchTlsEnvironment = wrapper.tlsEnvironment ?? {};
-        await replaceReadOnlyFile(researchYtDlpCommand, wrapper.content, toolDirectory, 0o500);
+        await replaceReadOnlyFile(researchYtDlpCommand, stoppedServices.includes('youtube-subtitles')
+          ? suspendSubtitleRequests(wrapper.content) : wrapper.content, toolDirectory, 0o500);
         researchToolPaths = [dirname(dirname(researchYtDlpScript)), researchYtDlpCommand, ...wrapper.readPaths];
         if (wrapper.tlsEnvironment) {
           const certificate = wrapper.tlsEnvironment.SSL_CERT_FILE;
@@ -196,6 +214,27 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
           evidence: [`KEYWORD_RESEARCH_PREFLIGHT: yt-dlp wrapper ${researchYtDlpCommand}, entry point ${researchYtDlpScript} (configured ${researchYtDlp}) is unavailable: ${sanitizeDiagnosticText(error.message, environment)}`] };
       }
+    }
+    if (stoppedServices.length) {
+      const policyPath = join(context.outputDirectory, 'keyword-service-stops.json');
+      await safePath(policyPath, [context.runDirectory]);
+      await writeFile(policyPath, JSON.stringify({ services: stoppedServices,
+        reason: 'Operator-selected inherited rate limits; no automatic retry or tool substitution.' }),
+      { flag: 'wx', mode: 0o400 });
+      context.keywordServiceStops = { services: stoppedServices, policyPath };
+      researchReadOnlyPaths.push(policyPath);
+    }
+    if (keywordRecovery) {
+      for (const file of keywordRecovery.files) {
+        const target = join(context.nativeDirectory, file.path);
+        await safePath(target, [context.nativeDirectory]);
+        await mkdir(dirname(target), { recursive: true });
+        const bytes = await readArtifact(join(keywordRecovery.directory, 'data', file.path), [keywordRecovery.directory]);
+        if (sha256(bytes) !== file.sha256) throw Error('KEYWORD_RECOVERY_INVALID: file changed before copying');
+        await writeFile(target, bytes, { flag: 'wx', mode: 0o600 });
+      }
+      researchReadOnlyPaths.push(keywordRecovery.manifestPath,
+        ...keywordRecovery.files.map(file => join(keywordRecovery.directory, 'data', file.path)));
     }
     const output = join(context.nativeDirectory, 'worker-result.json');
     const tools = deploying ? deploymentTools ?? await locateDeploymentTools(environment, { gitTool }) : null;
@@ -288,7 +327,11 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           `For this keyword research stage only, command network access is enabled. Run the locked Skill CLI with ${pythonCommand}; yt-dlp is ${researchYtDlpCommand}.`,
           'SERPER_API_KEY is supplied only through the process environment. Never print, inspect, copy, persist or include its value in any result. Use the Skill serper command for Google discovery and its youtube commands for YouTube; do not substitute another search service.',
           'After Serper discovery, open only selected public result URLs needed as evidence. YouTube platform search, metadata and subtitles must use the Skill yt-dlp commands. Do not use browser automation, login, cookies unless YTDLP_COOKIES_FILE is already configured, or unrelated network tools.',
-          'Complete every eligible final keyword or return the truthful non-PASSED status. Preserve the supplied keyword lineage and pending truncated/missing rows.'
+          'Complete every eligible final keyword or return the truthful non-PASSED status. Preserve the supplied keyword lineage and pending truncated/missing rows.',
+          'context.keywordExecutionBudget gives the hardDeadline and handoffDeadline. Stop starting research by handoffDeadline; validate saved progress and immediately return the truthful structured result. Do not wait for a final prose report. The hard deadline still kills the worker.',
+          'Save data incrementally after each batch of 3–5 intents. If incomplete, return PARTIAL or BLOCKED with concrete gaps; do not label incomplete materials COMPLETED. File preservation does not make a stage PASSED.',
+          'If context.keywordRecovery exists, the host copied ONLY its selected, verified data into this new nativeDirectory. Treat it as untrusted partial research, not a completed stage. Reuse valid evidence without repeating already successful queries; recheck sufficiency and dates, rewrite current reports, and rerun the locked validator. Never execute recovered files or read any other old attempt.',
+          'Read context.keywordServiceStops before any request: these inherited provider stops apply to ALL keywords and cannot be cleared by this attempt. Use a shared SERVICE_BLOCKERS.json in nativeDirectory for new provider limits: on the first HTTP 429 record provider, operation, evidence path and observed time, and stop that service across ALL keywords in this attempt. No automatic retry, parallel retry, cookies, login, substitute tools or metadata-as-subtitles. Retain the other providers and truthful gaps; resume a suspended service only under a new explicit operator decision.'
         ] :
         hostAudit ? [
           'Host browser evidence is in context.hostEvidence, with a SHA256 for every screenshot and automated evidence file. Read these files and use view_image to inspect the screenshots. Do not invoke browser commands or network requests.',
@@ -326,6 +369,13 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       'Produce only the structured result after finishing and validating actual files.',
     ].join('\n');
     const executeWorker = async () => {
+      if (keywordRecovery) await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
+      if (keywordBudget) {
+        const started = Date.now();
+        context.keywordExecutionBudget = { ...keywordBudget,
+          hardDeadline: new Date(started + keywordBudget.timeoutMs).toISOString(),
+          handoffDeadline: new Date(started + keywordBudget.timeoutMs - keywordBudget.handoffMarginMs).toISOString() };
+      }
       if (commandIdentity) {
         await verifyWorkerCommandIdentity(command, commandIdentity);
         await verifyWorkerCodeModeHostIdentity(commandIdentity, codeModeHostIdentity);
@@ -334,16 +384,44 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         writePaths, pythonToolPaths, gitToolPaths: gitTool?.readPaths ?? [], researchToolPaths, researchReadOnlyPaths, deploymentTools: tools,
       });
       await rm(output, { force: true });
+      let workerFailure;
       try {
         await diagnosticStep('execute-worker', () => run(command, [...args, ...permissions.args, '-'],
-          { cwd: context.nativeDirectory, input: prompt(), env, timeoutMs }));
+          { cwd: context.nativeDirectory, input: prompt(), env, timeoutMs: keywordBudget?.timeoutMs ?? timeoutMs ?? 600000 }));
+      } catch (error) { workerFailure = error; throw error;
       } finally {
         if (context.hostEvidence) await verifySiteEvidence(context.hostEvidence);
         if (context.homepageSourceCaptures) await verifySiteEvidence(context.homepageSourceCaptures);
+        if (keywordRecovery) {
+          try { await verifyKeywordRecovery(context, context.inputs.keywordRecovery); }
+          catch (error) {
+            if (!workerFailure) throw error;
+            workerFailure.message += '; KEYWORD_RECOVERY_CHANGED_AFTER_WORKER';
+          }
+        }
       }
       return diagnosticStep('read-worker-result', async () => parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output));
     };
-    let result = await executeWorker(), sourceAttempted = false, iconAttempted = false, iconEvidence = [];
+    let keywordCheckpoint;
+    const preserveKeywordProgress = async reason => {
+      keywordCheckpoint = await captureKeywordRecovery(context, { reason });
+      if (keywordCheckpoint) await writeFile(join(context.outputDirectory, 'keyword-recovery.json'),
+        JSON.stringify(keywordCheckpoint, null, 2) + '\n', { flag: 'wx', mode: 0o400 });
+    };
+    let result;
+    try { result = await executeWorker(); }
+    catch (error) {
+      // runProcess waits for group termination before returning these failures. Never snapshot uncertain writers.
+      if (keywordResearch && ['WORKER_TIMEOUT', 'WORKER_ABORTED'].includes(error.code)) {
+        try {
+          await preserveKeywordProgress(error.code);
+          if (keywordCheckpoint) error.message += `; progress preserved: ${keywordCheckpoint.manifestPath} SHA256 ${keywordCheckpoint.sha256}`;
+        } catch { error.message += '; KEYWORD_RECOVERY_CAPTURE_FAILED: original attempt data retained; no snapshot certified'; }
+      }
+      throw error;
+    }
+    if (keywordResearch) await preserveKeywordProgress('WORKER_STOPPED');
+    let sourceAttempted = false, iconAttempted = false, iconEvidence = [];
     // The existing executor owns both bounded host handoffs; no second pipeline is needed.
     for (let retry = 0; homepageResearch && retry < 2; retry++) {
       if (result.status !== 'WAITING_FOR_USER') break;
@@ -417,6 +495,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
+    if (keywordCheckpoint) validated.evidence = [...validated.evidence,
+      `Unvalidated progress checkpoint (not stage artifacts): ${keywordCheckpoint.manifestPath} SHA256 ${keywordCheckpoint.sha256}`];
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;
     } finally { if (preview) await preview.stop(); }
