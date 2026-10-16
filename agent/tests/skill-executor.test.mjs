@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, access, symlink, unlink } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, access, link, readdir, stat, symlink, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fixture } from './helpers.mjs';
@@ -350,6 +350,48 @@ test('keyword yt-dlp wrapper executes the resolved entry point and reads only it
     'keyword permissions must not add interpreter aliases outside libexec');
   assert.ok(!profile.includes('"/opt/homebrew"='));
   assert.ok(!profile.includes(JSON.stringify(join(f.f.root, 'Cellar')) + '='));
+});
+
+test('keyword retry atomically replaces an existing read-only yt-dlp wrapper', async t => {
+  const f = await keywordLaunchFixture(t);
+  await f.executor(STAGES[1], f.context);
+  const wrapper = join(f.root, 'host-tools/keyword-research/yt-dlp');
+  const expected = `#!/bin/sh\nexec '${f.script}' "$@"\n`;
+  assert.equal(f.calls.length, 1);
+  assert.equal((await stat(wrapper)).mode & 0o777, 0o500);
+
+  await f.executor(STAGES[1], f.context);
+
+  assert.equal(f.calls.length, 2, 'retry must reach the worker after replacing the 0500 wrapper');
+  assert.equal(await readFile(wrapper, 'utf8'), expected);
+  assert.equal((await stat(wrapper)).mode & 0o777, 0o500);
+  assert.deepEqual(await readdir(dirname(wrapper)), ['yt-dlp']);
+});
+
+test('keyword wrapper replacement rejects unsafe existing targets without leaving temporary files', async t => {
+  for (const kind of ['symlink', 'hardlink', 'directory']) {
+    await t.test(kind, async t => {
+      const f = await keywordLaunchFixture(t);
+      await f.executor(STAGES[1], f.context);
+      const wrapper = join(f.root, 'host-tools/keyword-research/yt-dlp');
+      const outside = join(f.root, `${kind}-target`);
+      await unlink(wrapper);
+      if (kind === 'directory') {
+        await mkdir(wrapper);
+        await writeFile(join(wrapper, 'marker'), 'unchanged');
+      } else {
+        await writeFile(outside, 'unchanged');
+        await (kind === 'symlink' ? symlink(outside, wrapper) : link(outside, wrapper));
+      }
+
+      const result = await f.executor(STAGES[1], f.context);
+
+      assert.equal(result.status, 'BLOCKED');
+      assert.equal(f.calls.length, 1, 'unsafe target must block before retry worker launch');
+      assert.equal(await readFile(kind === 'directory' ? join(wrapper, 'marker') : outside, 'utf8'), 'unchanged');
+      assert.deepEqual((await readdir(dirname(wrapper))).filter(name => name.endsWith('.tmp')), []);
+    });
+  }
 });
 
 test('keyword yt-dlp version failure blocks before worker launch with paths and sanitized output', async t => {

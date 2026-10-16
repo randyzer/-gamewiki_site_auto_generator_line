@@ -1,5 +1,6 @@
 import { constants as fsConstants } from 'node:fs';
-import { access, chmod, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import { access, chmod, lstat, mkdir, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
@@ -23,6 +24,25 @@ import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
+
+async function replaceReadOnlyExecutable(path, content, root) {
+  await safePath(path, [root]);
+  try {
+    const existing = await lstat(path);
+    if (!existing.isFile() || existing.nlink !== 1) throw Error('Expected an unlinked regular executable target');
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+  const temporary = path + '.' + randomUUID() + '.tmp';
+  await safePath(temporary, [root]);
+  try {
+    await writeFile(temporary, content, { flag: 'wx', mode: 0o600 });
+    await chmod(temporary, 0o500);
+    await rename(temporary, path);
+  } finally {
+    await rm(temporary, { force: true });
+  }
+}
 
 export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex', commandIdentity = null,
   codeModeHostIdentity = null, run = runProcess, timeoutMs = 600000,
@@ -113,9 +133,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         await mkdir(toolDirectory, { recursive: true, mode: 0o700 });
         researchYtDlpCommand = join(toolDirectory, 'yt-dlp');
         const wrapper = await keywordYtDlpWrapper(researchYtDlpScript, pythonCommand);
-        await writeFile(researchYtDlpCommand,
-          wrapper.content, { mode: 0o500 });
-        await chmod(researchYtDlpCommand, 0o500);
+        await replaceReadOnlyExecutable(researchYtDlpCommand, wrapper.content, toolDirectory);
         researchToolPaths = [dirname(dirname(researchYtDlpScript)), researchYtDlpCommand, ...wrapper.readPaths];
         await runProcess(researchYtDlpCommand, ['--version'], {
           cwd: context.nativeDirectory, env: workerEnvironment(environment), timeoutMs: 10000,
