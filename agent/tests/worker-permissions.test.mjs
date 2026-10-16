@@ -85,6 +85,37 @@ test('worker environment excludes host approval and research credentials', async
   assert.equal(research.ENTRY_TICKET, undefined);
 });
 
+test('only stages with Python Skill scripts receive the pinned runtime as read-only and keep network policy', async t => {
+  const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
+  const runId = 'TEST-python-permissions-' + randomUUID(), runDirectory = join(AGENT_ROOT, 'runs', runId);
+  const nativeDirectory = join(runDirectory, 'artifacts/0/1/native');
+  const projectPath = join(AGENT_ROOT, 'workspaces', runId, 'site');
+  const pythonRoot = join(runDirectory, 'fixed-python-runtime');
+  await mkdir(nativeDirectory, { recursive: true });
+  await mkdir(projectPath, { recursive: true });
+  await mkdir(pythonRoot);
+  t.after(async () => {
+    await rm(runDirectory, { recursive: true, force: true });
+    await rm(join(AGENT_ROOT, 'workspaces', runId), { recursive: true, force: true });
+  });
+  const context = { runDirectory, nativeDirectory, inputs: { projectPath }, upstream: [],
+    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') }, permissions: {} };
+  const pythonStages = ['game-homepage-icon-research', 'game-innerpage-keyword-information-research',
+    'game-site-template-selector', 'game-site-content-integrator', 'game-site-ui-ux-audit-optimizer',
+    'game-site-prelaunch-gate'];
+  for (const skill of pythonStages) {
+    const { config } = await stageWorkerPermissions(skill, context, { pythonToolPaths: [pythonRoot] });
+    assert.ok(config.includes(JSON.stringify(pythonRoot) + '="read"'), `${skill} reads Python runtime`);
+    assert.equal(config.includes(JSON.stringify(pythonRoot) + '="write"'), false, `${skill} cannot write Python runtime`);
+    assert.equal(config.includes('network={enabled=true}'), skill === 'game-innerpage-keyword-information-research',
+      `${skill} keeps its network policy`);
+  }
+  for (const skill of ['game-site-deploy-and-measurement', 'game-site-adsterra-ad-integration']) {
+    const { config } = await stageWorkerPermissions(skill, context, { pythonToolPaths: [pythonRoot] });
+    assert.equal(config.includes(pythonRoot), false, `${skill} gets no Python runtime permission`);
+  }
+});
+
 test('approved deployment writes only the resolved project .git directory', async t => {
   const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
   const runId = 'TEST-deploy-git-' + randomUUID(), runDirectory = join(AGENT_ROOT, 'runs', runId);
@@ -215,6 +246,7 @@ async function homepageWorker(t, runId, attempt, { worker, convertIcon } = {}) {
   sharedEvidence[runId] ??= { sources: once(syntheticOfficialSources), media: once(syntheticHomepageMedia) };
   const calls = [];
   const result = await createSkillExecutor({ browserHumanDialog: true, requestBrowserLaunch: async () => true,
+    researchPython: process.execPath,
     inspectHomepageReadiness: syntheticHomepageReadiness, collectHomepageSourceEvidence: sharedEvidence[runId].sources,
     collectHomepageMediaEvidence: sharedEvidence[runId].media,
     collectBrowserEvidence: async context => {
@@ -243,6 +275,10 @@ test('the homepage worker writes its icon to a per-run directory and never gets 
   const w = await homepageWorker(t, 'TEST-worker-icon-' + randomUUID(), 1);
   const [call] = w.calls;
   assert.match(call.profile, /network=\{enabled=false\}/);
+  const path = call.args.find(value => value.startsWith('shell_environment_policy.set='));
+  assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
+  assert.ok(call.profile.includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+  assert.ok(call.input.includes(`Use ${process.execPath} for every Python Skill script`));
   assert.ok(call.profile.includes(JSON.stringify(w.iconDirectory) + '="write"'));
   assert.equal(call.args.some(value => /PLAYWRIGHT_BROWSERS_PATH/.test(value)), false);
   assert.ok(call.input.includes(join(w.iconDirectory, 'icon-master.png')));

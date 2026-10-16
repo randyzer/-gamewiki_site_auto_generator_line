@@ -1,7 +1,7 @@
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { realpath, readFile, stat } from 'node:fs/promises';
 import { inside, safePath, sha256 } from './files.mjs';
-import { STAGE } from './stages.mjs';
+import { STAGE, PYTHON_STAGES } from './stages.mjs';
 import { verifySiteEvidence } from './site-evidence.mjs';
 
 export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'browser_use_external',
@@ -100,7 +100,9 @@ export const deploymentExecutionApproved = (skill, context) => skill === STAGE.D
   context.mode === 'execute' && context.permissions?.productionDeployment === true &&
   /^[a-f0-9]{64}$/.test(context.approvedPlan?.digest ?? '');
 
-export async function stageWorkerPermissions(skill, context, { writePaths = [], researchToolPaths = [], deploymentTools } = {}) {
+export async function stageWorkerPermissions(skill, context, {
+  writePaths = [], pythonToolPaths = [], researchToolPaths = [], deploymentTools,
+} = {}) {
   const { nativeDirectory, runDirectory, inputs } = context;
   if (!inside(runDirectory, nativeDirectory)) throw Error('WORKER_PERMISSION_SCOPE_INVALID');
   const readPaths = [dirname(context.skillLock.source), process.execPath, await realpath(process.execPath)];
@@ -126,6 +128,7 @@ export async function stageWorkerPermissions(skill, context, { writePaths = [], 
     readPaths.push(path);
   }
   if (skill === STAGE.TEMPLATE_SELECTION) readPaths.push(...(context.templateRoots ?? []));
+  if (PYTHON_STAGES.includes(skill)) readPaths.push(...pythonToolPaths);
   if (skill === STAGE.KEYWORD_RESEARCH) readPaths.push(...researchToolPaths);
   if (inputs.projectPath && skill !== STAGE.TEMPLATE_SELECTION) readPaths.push(inputs.projectPath);
   const deploying = deploymentExecutionApproved(skill, context);
