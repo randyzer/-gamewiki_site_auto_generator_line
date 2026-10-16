@@ -7,6 +7,23 @@ import { AGENT_ROOT } from '../src/skill-lock.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { sha256 } from '../src/files.mjs';
 import { syntheticOfficialSources, syntheticHomepageReadiness, syntheticHomepageMedia } from './helpers.mjs';
+import { STAGES } from '../src/stages.mjs';
+
+test('only Git stages receive fixed Git read access, without network or Git writes in plan', async t => {
+  const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
+  const root = join(AGENT_ROOT, 'runs', 'TEST-git-permissions-' + randomUUID());
+  const nativeDirectory = join(root, 'artifacts/6/1/native'), gitRoot = join(root, 'git-runtime');
+  await mkdir(nativeDirectory, { recursive: true }); await mkdir(gitRoot);
+  t.after(() => rm(root, { recursive: true, force: true }));
+  for (const [index, skill] of STAGES.entries()) {
+    const result = await stageWorkerPermissions(skill, { runDirectory: root, nativeDirectory,
+      inputs: {}, mode: 'plan', skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') } },
+    { gitToolPaths: [gitRoot] });
+    assert.equal(result.config.includes(JSON.stringify(gitRoot) + '="read"'), index >= 3);
+    assert.equal(result.commandNetworkAllowed, index === 1);
+    assert.equal(result.config.includes(JSON.stringify(join(root, '.git')) + '="write"'), false);
+  }
+});
 
 test('worker gets only digest-checked media receipt read access, never media-directory writes', async t => {
   const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
