@@ -210,6 +210,82 @@ test('runner keeps completed probes when a later command times out and redacts b
   assert.equal(JSON.stringify(result).includes(secret), false);
 });
 
+test('runner diagnoses a normal turn without command evidence without persisting final prose', async t => {
+  const { runWorkerEvents } = await implementation();
+  const root = await mkdtemp(join(tmpdir(), 'selfcheck-event-summary-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const script = join(root, 'worker.mjs');
+  const privateProse = 'private final explanation must never be saved';
+  const rows = [{ type: 'thread.started', thread_id: 'private-thread-id' }, { type: 'turn.started' },
+    { type: 'item.completed', item: { id: 'private-item-id', type: 'agent_message', text: JSON.stringify({
+      status: 'BLOCKED', summary: privateProse, evidence: ['Shell tools are not available'], missing_inputs: [], artifacts: [],
+    }) } }, { type: 'turn.completed', usage: { input_tokens: 10 } }];
+  await writeFile(script, `for (const row of ${JSON.stringify(rows)}) console.log(JSON.stringify(row));`);
+  const result = await runWorkerEvents(process.execPath, [script]);
+  assert.equal(result.exitCode, 0);
+  assert.deepEqual(result.events, []);
+  assert.equal(result.diagnostics.eventCounts['turn.completed'], 1);
+  assert.equal(result.diagnostics.itemCounts.agent_message, 1);
+  assert.equal(result.diagnostics.finalResult.status, 'BLOCKED');
+  assert.equal(result.diagnostics.finalResult.mentionsToolCapabilityProblem, true);
+  assert.equal(result.diagnostics.finalResult.evidenceCount, 1);
+  const stored = JSON.stringify(result);
+  for (const forbidden of [privateProse, 'private-thread-id', 'private-item-id', 'Shell tools are not available'])
+    assert.equal(stored.includes(forbidden), false);
+});
+
+test('diagnostics bound metadata, hash unknown labels and IDs, and never promote tool results to command proof', async t => {
+  const { runWorkerEvents } = await implementation();
+  const root = await mkdtemp(join(tmpdir(), 'selfcheck-unknown-events-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const script = join(root, 'worker.mjs'), canary = 'private-unknown-label';
+  await writeFile(script, `console.log('invalid JSON private prose');
+    console.log('null'); console.log('[]');
+    for (let i=0; i<150; i++) console.log(JSON.stringify({type:'item.completed',item:{id:'private-call-id',type:'mcp_tool_call',tool:'exec_command',status:'failed',error:'private error',result:{command:'git --version',exit_code:0,output:'git version 2.50.1'}}}));
+    for (let i=0; i<80; i++) console.log(JSON.stringify({type:${JSON.stringify(canary)}+i,item:{type:${JSON.stringify(canary)}}}));`);
+  const result = await runWorkerEvents(process.execPath, [script]);
+  assert.equal(result.events.length, 0, 'a nested MCP result is not command completion evidence');
+  assert.equal(result.diagnostics.invalidJsonLines, 1);
+  assert.equal(result.diagnostics.invalidEventShapes, 2);
+  assert.equal(result.diagnostics.itemCounts.mcp_tool_call, 150);
+  assert.equal(result.diagnostics.items.length, 128);
+  assert.equal(result.diagnostics.truncatedItems, 22);
+  assert.ok(Object.keys(result.diagnostics.eventCounts).length <= 65);
+  assert.equal(result.diagnostics.items[0].errorPresent, true);
+  assert.equal(result.diagnostics.items[0].status, 'failed');
+  assert.match(result.diagnostics.items[0].itemIdSha256, /^[a-f0-9]{64}$/);
+  const stored = JSON.stringify(result);
+  for (const forbidden of [canary, 'private-call-id', 'private error', 'private prose', 'git version 2.50.1'])
+    assert.equal(stored.includes(forbidden), false);
+});
+
+test('orchestration persists worker diagnostics alongside inconclusive probe evidence', async t => {
+  const { runSelfcheck, reportExitCode } = await implementation();
+  const reportsDirectory = await mkdtemp(join(tmpdir(), 'selfcheck-diagnostics-report-'));
+  t.after(() => rm(reportsDirectory, { recursive: true, force: true }));
+  const diagnostics = { eventCounts: { 'turn.completed': 1 }, itemCounts: { agent_message: 1 },
+    finalResult: { status: 'BLOCKED', format: 'STRUCTURED' } };
+  const report = await runSelfcheck({ stages: [4], probes: ['P3', 'P9'], reportsDirectory,
+    executorOptions: { researchPython: process.execPath },
+    executeWorker: async () => ({ exitCode: 0, events: [], diagnostics }) });
+  assert.deepEqual(report.stages[3].workerDiagnostics, diagnostics);
+  assert.equal(reportExitCode(report), 1);
+  assert.equal(report.stages[3].probes.find(probe => probe.id === 'P3').status, 'INCONCLUSIVE');
+});
+
+test('observed item.completed/error is reported even when the worker exits zero', async t => {
+  const { runWorkerEvents } = await implementation();
+  const root = await mkdtemp(join(tmpdir(), 'selfcheck-error-item-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const script = join(root, 'worker.mjs');
+  await writeFile(script, `console.log(JSON.stringify({type:'item.completed',item:{type:'error',id:'synthetic-error'}}));`);
+  const result = await runWorkerEvents(process.execPath, [script]);
+  assert.equal(result.exitCode, 0);
+  assert.equal(result.error, 'WORKER_REPORTED_ERROR_ITEM');
+  assert.equal(result.diagnostics.items[0].errorPresent, true);
+  assert.deepEqual(result.events, []);
+});
+
 test('orchestration continues after a launch failure, preserves permissions and cleans temporary inputs', async t => {
   const { runSelfcheck, serializeReport } = await implementation();
   const reports = await mkdtemp(join(tmpdir(), 'selfcheck-report-test-'));

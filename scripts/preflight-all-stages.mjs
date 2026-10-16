@@ -186,9 +186,58 @@ export function formatTable(report) {
 
 // The production runProcess truncates stdout at 8KB. Parse complete events in memory;
 // never write raw events or the model's final response to disk.
+const diagnosticLabels = new Set(['thread.started', 'turn.started', 'turn.completed', 'turn.failed',
+  'item.started', 'item.updated', 'item.completed', 'error', 'command_execution', 'agent_message',
+  'mcp_tool_call', 'reasoning', 'file_change', 'web_search', 'todo_list']);
+const diagnosticStatuses = new Set(['pending', 'in_progress', 'completed', 'failed', 'cancelled']);
+const resultStatuses = new Set(['PASSED', 'PARTIAL', 'FAILED', 'BLOCKED', 'WAITING_FOR_USER']);
+const diagnosticLabel = value => diagnosticLabels.has(value) ? value
+  : typeof value === 'string' ? `unknown:${sha256(value).slice(0, 16)}` : 'missing';
+
+function countDiagnostic(counts, key) {
+  if (!Object.hasOwn(counts, key) && Object.keys(counts).length >= 64) key = 'other';
+  counts[key] = (counts[key] ?? 0) + 1;
+}
+
+function summarizeWorkerEvent(diagnostics, event) {
+  countDiagnostic(diagnostics.eventCounts, diagnosticLabel(event.type));
+  if (!['item.started', 'item.updated', 'item.completed'].includes(event.type) ||
+      !event.item || typeof event.item !== 'object' || Array.isArray(event.item)) return;
+  const item = event.item;
+  countDiagnostic(diagnostics.itemCounts, diagnosticLabel(item.type));
+  if (diagnostics.items.length < 128) diagnostics.items.push({
+    eventType: event.type, itemType: diagnosticLabel(item.type),
+    ...(typeof item.id === 'string' ? { itemIdSha256: sha256(item.id) } : {}),
+    ...(typeof item.tool === 'string' ? { toolNameSha256: sha256(item.tool) } : {}),
+    status: diagnosticStatuses.has(item.status) ? item.status : 'unknown',
+    commandPresent: typeof item.command === 'string', errorPresent: item.type === 'error' || item.error != null,
+    ...(Number.isInteger(item.exit_code) ? { exitCode: item.exit_code } : {}),
+  });
+  else diagnostics.truncatedItems++;
+  if (event.type !== 'item.completed' || item.type !== 'agent_message' || typeof item.text !== 'string') return;
+  let result;
+  try { result = JSON.parse(item.text); }
+  catch { diagnostics.finalResult = { format: 'NON_JSON' }; return; }
+  if (!result || typeof result !== 'object' || Array.isArray(result)) {
+    diagnostics.finalResult = { format: 'NON_OBJECT' }; return;
+  }
+  // Model statements are diagnostic hints only, never command completion proof.
+  const reason = [result.summary, ...(Array.isArray(result.evidence) ? result.evidence : [])]
+    .filter(value => typeof value === 'string').join('\n');
+  diagnostics.finalResult = { format: 'STRUCTURED',
+    status: resultStatuses.has(result.status) ? result.status : 'unknown',
+    evidenceCount: Array.isArray(result.evidence) ? result.evidence.length : 0,
+    missingInputCount: Array.isArray(result.missing_inputs) ? result.missing_inputs.length : 0,
+    artifactCount: Array.isArray(result.artifacts) ? result.artifacts.length : 0,
+    mentionsToolCapabilityProblem: /\b(?:tools?|shell|code.mode|exec_command)\b.{0,120}\b(?:unavailable|not available|not exposed|not provided|disabled)\b/i.test(reason),
+  };
+}
+
 export function runWorkerEvents(command, args, { cwd, input = '', env = process.env, timeoutMs = 300000 } = {}) {
   return new Promise(resolveResult => {
     const events = [];
+    const diagnostics = { eventCounts: {}, itemCounts: {}, items: [], truncatedItems: 0,
+      invalidJsonLines: 0, invalidEventShapes: 0, finalResult: { format: 'NOT_OBSERVED' } };
     const child = spawn(command, args, { cwd, env, detached: process.platform !== 'win32', stdio: ['pipe', 'pipe', 'pipe'] });
     let error, stderr = '', timedOut = false, killTimer, terminationFailed = false;
     const kill = signal => {
@@ -203,7 +252,13 @@ export function runWorkerEvents(command, args, { cwd, input = '', env = process.
     const lines = createInterface({ input: child.stdout, crlfDelay: Infinity });
     lines.on('line', line => {
       let event;
-      try { event = JSON.parse(line); } catch { return; }
+      try { event = JSON.parse(line); } catch { diagnostics.invalidJsonLines++; return; }
+      if (!event || typeof event !== 'object' || Array.isArray(event) || typeof event.type !== 'string') {
+        diagnostics.invalidEventShapes++; return;
+      }
+      summarizeWorkerEvent(diagnostics, event);
+      if (event.type === 'item.completed' && event.item?.type === 'error')
+        error ??= 'WORKER_REPORTED_ERROR_ITEM';
       if (event.type === 'item.completed' && event.item?.type === 'command_execution')
         events.push(redactObject({ command: event.item.command, output: event.item.aggregated_output ?? '',
           exitCode: event.item.exit_code }, env));
@@ -217,7 +272,7 @@ export function runWorkerEvents(command, args, { cwd, input = '', env = process.
     child.on('close', (exitCode, signal) => {
       clearTimeout(timer);
       // A timed-out parent may exit before its descendants. Keep the group kill scheduled.
-      const finish = () => resolveResult({ events, exitCode,
+      const finish = () => resolveResult({ events, exitCode, diagnostics,
         ...(timedOut || error || exitCode !== 0 || terminationFailed ? {
           error: terminationFailed ? 'WORKER_TERMINATION_FAILED' : timedOut ? 'WORKER_TIMEOUT'
             : error || `WORKER_EXIT_NONZERO: ${exitCode ?? signal}`,
@@ -391,6 +446,7 @@ export async function runSelfcheck({ reportsDirectory = join(repository, 'agent/
             events = execution.events;
             workerError = execution.error;
             row.workerExitCode = execution.exitCode;
+            if (execution.diagnostics) row.workerDiagnostics = execution.diagnostics;
             if (execution.stderr) row.workerStderr = redact(execution.stderr, environment);
             await writeFile(outputPath, JSON.stringify({ status: 'BLOCKED', summary: 'Environment verification only',
               evidence: [], missing_inputs: [], artifacts: [] }), { mode: 0o600 });
