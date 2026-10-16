@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fixture } from './helpers.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
@@ -67,13 +67,18 @@ test('module hook resolves playwright from an external script without editing th
 });
 test('audit executor builds preview, passes immutable evidence, permits view_image and always stops', async t => {
   const f = await auditFixture(t); let stops = 0;
-  const execute = createSkillExecutor({ previewSite: async path => {
+  const execute = createSkillExecutor({ researchPython: process.execPath, previewSite: async path => {
     assert.equal(path, f.context.inputs.projectPath); return { url: 'http://127.0.0.1:3001', stop: async () => { stops++; } };
   }, auditSite: async context => { await writeAudit(join(context.inputs.projectPath, 'docs/ui-ux-audit', context.runId));
     return evidence.snapshotSiteEvidence(join(context.inputs.projectPath, 'docs/ui-ux-audit', context.runId));
   }, run: async (_c,args,options) => {
     const context = JSON.parse(options.input.split('Task context: ')[1].split('\n')[0]);
     assert.ok(context.hostEvidence.files.length); assert.match(options.input, /view_image/);
+    const path = args.find(value => value.startsWith('shell_environment_policy.set='));
+    assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
+    assert.ok(args.find(value => value.startsWith('permissions.agent-worker='))
+      .includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+    assert.ok(options.input.includes(`Use ${process.execPath} for every Python Skill script`));
     assert.ok(args.includes('view_image')); assert.match(args.join(' '), /network=\{enabled=false\}/);
     assert.ok(!args.join(' ').includes(JSON.stringify(join(f.context.inputs.projectPath,'docs/ui-ux-audit')) + '="write"'));
     await writeFile(args[args.indexOf('--output-last-message')+1], JSON.stringify({ status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['synthetic review incomplete'] }));

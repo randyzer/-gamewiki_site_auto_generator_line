@@ -38,6 +38,14 @@ export const STAGES = Object.freeze(ALL_STAGES.filter(name => name !== AD_STAGE)
 export const ARTIFACTS = Object.freeze(STAGE_DEFINITIONS.map(stage => stage.artifacts));
 export const INPUT_STAGE = Object.freeze(Object.fromEntries(STAGE_DEFINITIONS.flatMap(stage => stage.inputs.map(key => [key, stage.name]))));
 export const BROWSER_STAGES = Object.freeze(STAGE_DEFINITIONS.filter(stage => stage.browserDependent).map(stage => stage.name));
+export const PYTHON_STAGES = Object.freeze([
+  STAGE.HOMEPAGE_RESEARCH,
+  STAGE.KEYWORD_RESEARCH,
+  STAGE.TEMPLATE_SELECTION,
+  STAGE.CONTENT_INTEGRATION,
+  STAGE.UI_UX_AUDIT,
+  STAGE.PRELAUNCH_ACCEPTANCE,
+]);
 
 // Only the compatibility boundary accepts stage numbers from old approval tickets.
 const legacyStageNames = Object.freeze([

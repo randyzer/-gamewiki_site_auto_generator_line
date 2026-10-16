@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fixture } from './helpers.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
@@ -74,13 +74,19 @@ test('prelaunch closes the browser when opening a context fails',async t=>{
 test('prelaunch executor passes evidence to offline worker and stops preview, detecting changed host files',async t=>{
   for(const tamper of [false,true]){
     const f=await setup(t);let stopped=0,evidencePath;
-    const execute=createSkillExecutor({previewSite:async()=>({url:'http://127.0.0.1:32111',stop:async()=>{stopped++;}}),
+    const execute=createSkillExecutor({researchPython:process.execPath,
+      previewSite:async()=>({url:'http://127.0.0.1:32111',stop:async()=>{stopped++;}}),
       prelaunchSite:async context=>{
         const directory=join(context.inputs.projectPath,'docs/prelaunch',context.runId,'host-evidence');await mkdir(directory,{recursive:true});
         evidencePath=join(directory,'HOST_EVIDENCE.json');await writeFile(evidencePath,'{"synthetic":true}');
         return {...await snapshotSiteEvidence(directory),routes:['/'],evidencePath};
       },run:async(_c,args,options)=>{
         assert.match(args.join(' '),/network=\{enabled=false\}/);assert.match(options.input,/routes_checked/);
+        const path=args.find(value=>value.startsWith('shell_environment_policy.set='));
+        assert.ok(path.indexOf(dirname(process.execPath))<path.indexOf('/usr/bin'));
+        assert.ok(args.find(value=>value.startsWith('permissions.agent-worker='))
+          .includes(JSON.stringify(dirname(dirname(process.execPath)))+'="read"'));
+        assert.ok(options.input.includes(`Use ${process.execPath} for every Python Skill script`));
         if(tamper)await writeFile(evidencePath,'{}');
         await writeFile(args[args.indexOf('--output-last-message')+1],JSON.stringify({status:'BLOCKED',artifacts:[],missing_inputs:[],evidence:['synthetic incomplete']}));
       }});

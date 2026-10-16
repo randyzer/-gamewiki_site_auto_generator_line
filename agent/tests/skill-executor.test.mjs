@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fixture } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { ARTIFACTS, STAGES } from '../src/pipeline.mjs';
@@ -14,7 +14,8 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
     outputDirectory: join(f.configuration.workspace, 'runs/worker-fixture/artifacts/2/1'), requiredArtifacts: ARTIFACTS[2],
     skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [], mode: 'audit-only', templateRoots: f.configuration.templateRoots,
     permissions: { siteWrites: false, productionDeployment: false } };
-  const executor = createSkillExecutor({ command: 'offline-codex-fixture', run: async (command, args, options) => {
+  const executor = createSkillExecutor({ command: 'offline-codex-fixture', researchPython: process.execPath,
+    run: async (command, args, options) => {
     invoked = { command, args, options };
     await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'BLOCKED', summary: 'Offline fixture unavailable browser',
       evidence: ['Offline transport fixture'], missing_inputs: [], artifacts: [] }));
@@ -27,6 +28,11 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.ok(!invoked.args.includes('--add-dir'));
   assert.equal(invoked.options.env.FEISHU_APP_SECRET, undefined);
   assert.equal(invoked.options.env.BSK_AUTO_START, '0');
+  const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
+  assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
+  assert.ok(invoked.args.find(value => value.startsWith('permissions.agent-worker='))
+    .includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+  assert.ok(invoked.options.input.includes(`Use ${process.execPath} for every Python Skill script`));
   assert.match(invoked.options.input, /Do not invoke browser commands/);
   assert.match(invoked.options.input, /actual callable image-generation tool/);
   assert.match(invoked.options.input, /No commit, push/);
@@ -144,9 +150,37 @@ test('keyword research runs the locked Skill CLI with stage-scoped network and e
   assert.equal(result.status, 'BLOCKED');
   assert.equal(invoked.options.env.SERPER_API_KEY, 'SYNTHETIC_SECRET');
   assert.match(invoked.args.find(value => value.startsWith('permissions.agent-worker=')), /network=\{enabled=true\}/);
+  const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
+  assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
+  assert.ok(invoked.args.find(value => value.startsWith('permissions.agent-worker='))
+    .includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+  assert.ok(invoked.options.input.includes(`Use ${process.execPath} for every Python Skill script`));
   assert.match(invoked.options.input, /Use the Skill serper command/);
   assert.match(invoked.options.input, /host-tools\/keyword-research\/yt-dlp/);
   assert.equal(invoked.options.input.includes('SYNTHETIC_SECRET'), false);
+});
+
+test('a missing or non-executable pinned Python blocks a Python stage before worker launch and names the path', async t => {
+  const f = await fixture(t), root = join(f.configuration.workspace, 'runs/python-unavailable');
+  const nonExecutable = join(f.root, 'not-executable-python');
+  await writeFile(nonExecutable, '#!/bin/sh\nexit 0\n', { mode: 0o600 });
+  for (const python of [join(f.root, 'missing-python'), nonExecutable]) {
+    let calls = 0;
+    const executor = createSkillExecutor({ researchPython: python, run: async (_command, args) => {
+      calls++;
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC WORKER STARTED'] }));
+    } });
+    const result = await executor(STAGES[2], { runId: 'python-unavailable',
+      inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+      outputDirectory: join(root, 'artifacts/2/1'), requiredArtifacts: ARTIFACTS[2],
+      skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [],
+      permissions: { siteWrites: false } });
+    assert.equal(result.status, 'BLOCKED');
+    assert.match(result.evidence.join('\n'), /WORKER_PYTHON_UNAVAILABLE/);
+    assert.ok(result.evidence.join('\n').includes(python));
+    assert.equal(calls, 0);
+  }
 });
 
 test('validated deployment plan is published to native docs with identical snapshot bytes and no worker site grant', async t => {
