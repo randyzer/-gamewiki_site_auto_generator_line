@@ -1,12 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, access, symlink, unlink } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fixture } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { ARTIFACTS, STAGES } from '../src/pipeline.mjs';
 import { prepareResearchHandoff, publishResearchArtifacts, publishDeploymentPlan } from '../src/handoff.mjs';
 import { sha256 } from '../src/files.mjs';
+import { ALL_STAGES } from '../src/stages.mjs';
+import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
+import { runProcess } from '../src/process.mjs';
 
 test('non-browser executor preserves its sandbox and BLOCKED output without fabricating artifacts', async t => {
   const f = await fixture(t); let invoked;
@@ -132,11 +136,14 @@ test('browser stages without run-scoped context block before worker launch', asy
 
 test('keyword research runs the locked Skill CLI with stage-scoped network and environment credentials', async t => {
   const f = await fixture(t), root = join(f.configuration.workspace, 'runs/keyword-network');
+  const ytDlp = join(f.root, 'Cellar/yt-dlp/test/libexec/bin/yt-dlp');
+  await mkdir(dirname(ytDlp), { recursive: true });
+  await writeFile(ytDlp, `#!${process.execPath}\nconsole.log('2026.08.19');\n`, { mode: 0o500 });
   let invoked;
   const executor = createSkillExecutor({ environment: {
     PATH: '/synthetic', HOME: process.env.HOME, CODEX_HOME: process.env.CODEX_HOME,
     SERPER_API_KEY: 'SYNTHETIC_SECRET'
-  }, researchPython: process.execPath, researchYtDlp: process.execPath,
+  }, researchPython: process.execPath, researchYtDlp: ytDlp,
   run: async (_command, args, options) => {
     invoked = { args, options };
     await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
@@ -158,6 +165,204 @@ test('keyword research runs the locked Skill CLI with stage-scoped network and e
   assert.match(invoked.options.input, /Use the Skill serper command/);
   assert.match(invoked.options.input, /host-tools\/keyword-research\/yt-dlp/);
   assert.equal(invoked.options.input.includes('SYNTHETIC_SECRET'), false);
+});
+
+async function keywordLaunchFixture(t, { versionFailure = null, withCookies = true,
+  leakCredentialInFailure = false, frameworkRuntime = false } = {}) {
+  const f = await fixture(t), root = join(f.configuration.workspace, 'runs/keyword-env');
+  const libexec = join(f.root, 'Cellar/yt-dlp/test/libexec');
+  const script = join(libexec, 'bin/yt-dlp'), interpreter = join(libexec, 'bin/python');
+  const interpreterAlias = join(f.root, 'opt/python/bin/python'), link = join(f.root, 'yt-dlp');
+  await mkdir(dirname(script), { recursive: true });
+  await mkdir(dirname(interpreterAlias), { recursive: true });
+  let python = process.execPath, frameworkPython, dependencyPaths = [];
+  if (frameworkRuntime) {
+    const framework = join(f.root, "Cellar/python@3.14/test/Frameworks/Python's.framework/Versions/3.14");
+    python = join(framework, 'bin/python3');
+    frameworkPython = join(framework, 'Resources/Python.app/Contents/MacOS/Python');
+    await mkdir(dirname(python), { recursive: true });
+    await mkdir(dirname(frameworkPython), { recursive: true });
+    // Model the broken launcher boundary while leaving the actual runtime usable.
+    await writeFile(python, '#!/bin/sh\necho launcher-unavailable >&2\nexit 73\n', { mode: 0o500 });
+    await writeFile(frameworkPython, `#!${process.execPath}\n` +
+      `if (process.env.__PYVENV_LAUNCHER__ !== ${JSON.stringify(interpreter)}) process.exit(74);\n` +
+      `if (process.argv.at(-1) === '--version') console.log('2026.08.19');\n` +
+      `else { console.log(JSON.stringify(process.argv.slice(2))); process.exit(9); }\n`, { mode: 0o500 });
+    await writeFile(join(libexec, 'pyvenv.cfg'), 'version = 3.14.7\n');
+    const certifi = join(f.root, 'Cellar/certifi/test/lib/python3.14/site-packages/certifi');
+    const ssl = join(f.root, 'Cellar/openssl@3/test/lib');
+    await mkdir(certifi, { recursive: true });
+    await mkdir(ssl, { recursive: true });
+    await symlink(join(f.root, 'Cellar/certifi/test'), join(f.root, 'opt/certifi'));
+    await symlink(join(f.root, 'Cellar/openssl@3/test'), join(f.root, 'opt/openssl@3'));
+    dependencyPaths = [certifi, join(ssl, 'libssl.3.dylib'), join(ssl, 'libcrypto.3.dylib')];
+    for (const path of dependencyPaths.slice(1)) await writeFile(path, 'fixture library');
+  }
+  await symlink(python, interpreterAlias);
+  await symlink(interpreterAlias, interpreter);
+  const environment = { HOME: process.env.HOME, CODEX_HOME: process.env.CODEX_HOME,
+    SERPER_API_KEY: randomUUID(), ...(withCookies ? { YTDLP_COOKIES_FILE: join(f.root, 'cookies.txt') } : {}) };
+  const failureOutput = leakCredentialInFailure
+    ? `${versionFailure} ${environment.SERPER_API_KEY}` : versionFailure;
+  const body = versionFailure
+    ? `console.error(${JSON.stringify(failureOutput)}); process.exit(7);`
+    : `console.log('2026.08.19');`;
+  await writeFile(script, `#!${frameworkRuntime ? interpreter : python}\n${body}\n`, { mode: 0o500 });
+  await symlink(script, link);
+  const calls = [];
+  const hostEvidence = async context => {
+    const directory = join(context.inputs.projectPath, 'docs/offline-evidence');
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, 'evidence.txt'), 'offline host evidence');
+    return snapshotSiteEvidence(directory);
+  };
+  const executor = createSkillExecutor({ environment, researchPython: python, researchYtDlp: link,
+    previewSite: async () => ({ url: 'http://127.0.0.1:3001', stop: async () => {} }),
+    auditSite: hostEvidence, prelaunchSite: hostEvidence,
+    run: async (command, args, options) => {
+      calls.push({ command, args, options });
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['offline worker fixture'] }));
+    } });
+  const context = { runId: 'keyword-env', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+    outputDirectory: join(root, 'artifacts/1/1'), requiredArtifacts: ARTIFACTS[1],
+    skillLock: { source: join(f.root, 'skills', STAGES[1] + '.md') }, upstream: [], permissions: { siteWrites: false } };
+  return { f, root, libexec, script, interpreterAlias, interpreter, python, frameworkPython, dependencyPaths, environment, calls, executor, context };
+}
+
+test('keyword framework launcher preserves venv identity, arguments and exit status without alias grants', async t => {
+  const f = await keywordLaunchFixture(t, { frameworkRuntime: true });
+  await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls.length, 1, 'host version preflight must reach the framework runtime');
+  const wrapper = join(f.root, 'host-tools/keyword-research/yt-dlp');
+  const content = await readFile(wrapper, 'utf8');
+  assert.match(content, /__PYVENV_LAUNCHER__/);
+  assert.ok(!content.includes(`exec '${f.python}'`));
+  const profile = f.calls[0].args.find(value => value.startsWith('permissions.agent-worker='));
+  assert.ok(profile.includes(JSON.stringify(f.libexec) + '="read"'));
+  assert.ok(!profile.includes(JSON.stringify(f.interpreterAlias) + '="read"'));
+  for (const path of f.dependencyPaths) assert.ok(profile.includes(JSON.stringify(path) + '="read"'));
+  assert.ok(!profile.includes(JSON.stringify(dirname(f.dependencyPaths[1])) + '="read"'));
+  assert.ok(!profile.includes(JSON.stringify(join(f.f.root, 'Cellar')) + '="read"'));
+  assert.match(content, /export DYLD_LIBRARY_PATH=/);
+  const version = await runProcess(wrapper, ['--version'], { env: { PATH: '/usr/bin:/bin' } });
+  assert.equal(version.stdout.trim(), '2026.08.19');
+  await assert.rejects(runProcess(wrapper, ['argument with spaces', "single'quote"], { env: { PATH: '/usr/bin:/bin' } }), error => {
+    assert.equal(error.exitCode, 9);
+    assert.ok(error.message.includes(JSON.stringify(['-I', f.script, 'argument with spaces', "single'quote"])));
+    return true;
+  });
+});
+
+test('keyword dependency symlinks cannot grant reads outside their Homebrew formula', async t => {
+  const f = await keywordLaunchFixture(t, { frameworkRuntime: true });
+  await unlink(join(f.f.root, 'opt/certifi'));
+  await symlink(f.f.root, join(f.f.root, 'opt/certifi'));
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls.length, 0);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /YTDLP_DEPENDENCY_OUTSIDE_FORMULA/);
+});
+
+test('keyword framework launcher blocks a venv from a different Python installation', async t => {
+  const f = await keywordLaunchFixture(t, { frameworkRuntime: true });
+  await unlink(f.interpreterAlias);
+  await symlink(process.execPath, f.interpreterAlias);
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls.length, 0);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /YTDLP_PYTHON_MISMATCH/);
+});
+
+test('keyword framework runtime cannot resolve outside the existing Python read root', async t => {
+  const f = await keywordLaunchFixture(t, { frameworkRuntime: true });
+  await unlink(f.frameworkPython);
+  await symlink(process.execPath, f.frameworkPython);
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls.length, 0);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /YTDLP_FRAMEWORK_OUTSIDE_PYTHON_ROOT/);
+});
+
+test('keyword venv without pyvenv.cfg fails closed instead of using base packages', async t => {
+  const f = await keywordLaunchFixture(t, { frameworkRuntime: true });
+  await unlink(join(f.libexec, 'pyvenv.cfg'));
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls.length, 0);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /YTDLP_VENV_CONFIG_MISSING/);
+});
+
+test('keyword standalone entry point cannot select an unpinned interpreter', async t => {
+  const f = await keywordLaunchFixture(t);
+  await unlink(f.script);
+  await writeFile(f.script, '#!/bin/sh\necho 2026.08.19\n', { mode: 0o500 });
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls.length, 0);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /YTDLP_PYTHON_MISMATCH/);
+});
+
+test('keyword shell inherits only credential names without exposing values in launch arguments', async t => {
+  for (const withCookies of [true, false]) {
+    const f = await keywordLaunchFixture(t, { withCookies });
+    await f.executor(STAGES[1], f.context);
+    assert.equal(f.calls.length, 1);
+    const { args, options } = f.calls[0];
+    assert.ok(args.includes('shell_environment_policy.inherit="all"'));
+    assert.ok(args.includes('shell_environment_policy.ignore_default_excludes=true'));
+    const allowed = ['PATH', 'TMPDIR', 'SERPER_API_KEY', ...(withCookies ? ['YTDLP_COOKIES_FILE'] : [])];
+    assert.ok(args.includes(`shell_environment_policy.include_only=${JSON.stringify(allowed)}`));
+    for (const name of ['SERPER_API_KEY', 'YTDLP_COOKIES_FILE']) {
+      assert.ok(!f.environment[name] || !args.join(' ').includes(f.environment[name]), 'launch arguments must not contain credential values');
+      assert.ok(options.env[name] === f.environment[name], 'only the process environment carries credentials');
+    }
+    assert.equal(args.join(' ').includes('YTDLP_COOKIES_FILE'), withCookies);
+    await mkdir(f.f.inputs.paths.researchDirectory, { recursive: true });
+    for (const index of [0, 2, 3, 4, 5, 6, 7]) {
+      const stageContext = { ...f.context, outputDirectory: join(f.root, `artifacts/${index}/1`),
+        mode: 'plan-only', requiredArtifacts: ARTIFACTS[index],
+        upstream: [0, 1].map(i => ({ skill: STAGES[i], artifacts: [] })),
+        skillLock: { source: join(f.f.root, 'skills', ALL_STAGES[index] + '.md') } };
+      const count = f.calls.length;
+      await f.executor(ALL_STAGES[index], stageContext);
+      assert.equal(f.calls.length, count + 1);
+      const other = f.calls.at(-1);
+      assert.ok(other.args.includes('shell_environment_policy.inherit="none"'));
+      assert.ok(!/SERPER_API_KEY|YTDLP_COOKIES_FILE/.test(other.args.join(' ')));
+      assert.ok(other.options.env.SERPER_API_KEY === undefined && other.options.env.YTDLP_COOKIES_FILE === undefined);
+    }
+  }
+});
+
+test('keyword yt-dlp wrapper executes the resolved entry point and reads only its libexec root', async t => {
+  const f = await keywordLaunchFixture(t);
+  await f.executor(STAGES[1], f.context);
+  const wrapper = join(f.root, 'host-tools/keyword-research/yt-dlp');
+  assert.equal(await readFile(wrapper, 'utf8'), `#!/bin/sh\nexec '${f.script}' "$@"\n`);
+  assert.ok(!(await readFile(wrapper, 'utf8')).includes(process.execPath));
+  const profile = f.calls[0].args.find(value => value.startsWith('permissions.agent-worker='));
+  const path = f.calls[0].args.find(value => value.startsWith('shell_environment_policy.set='));
+  assert.ok(path.indexOf(dirname(wrapper)) < path.indexOf(dirname(process.execPath)));
+  assert.ok(path.indexOf(dirname(wrapper)) < path.indexOf('/usr/bin'));
+  assert.ok(profile.includes(JSON.stringify(f.libexec) + '="read"'));
+  assert.ok(!profile.includes(JSON.stringify(f.interpreterAlias) + '="read"'),
+    'keyword permissions must not add interpreter aliases outside libexec');
+  assert.ok(!profile.includes('"/opt/homebrew"='));
+  assert.ok(!profile.includes(JSON.stringify(join(f.f.root, 'Cellar')) + '='));
+});
+
+test('keyword yt-dlp version failure blocks before worker launch with paths and sanitized output', async t => {
+  const f = await keywordLaunchFixture(t, { versionFailure: 'venv module missing', leakCredentialInFailure: true });
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(result.status, 'BLOCKED');
+  assert.equal(f.calls.length, 0);
+  const evidence = result.evidence.join('\n');
+  assert.ok(evidence.includes(join(f.root, 'host-tools/keyword-research/yt-dlp')));
+  assert.ok(evidence.includes(f.script));
+  assert.match(evidence, /venv module missing/);
+  assert.match(evidence, /7/);
+  assert.ok(!evidence.includes(f.environment.SERPER_API_KEY), 'preflight evidence must not expose credentials');
 });
 
 test('a missing or non-executable pinned Python blocks a Python stage before worker launch and names the path', async t => {

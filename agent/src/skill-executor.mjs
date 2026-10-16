@@ -19,9 +19,11 @@ import { workerEnvironment, stageWorkerPermissions, verifyWorkerCommandIdentity,
   verifyWorkerCodeModeHostIdentity, keywordResearchEnvironment, deploymentExecutionApproved,
   stageWorkerFeatures } from './worker-permissions.mjs';
 import { locateDeploymentTools } from './deployment-tools.mjs';
+import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
+
 export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex', commandIdentity = null,
   codeModeHostIdentity = null, run = runProcess, timeoutMs = 600000,
   validationOptions = {},
@@ -103,20 +105,24 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (keywordResearch) {
       if (!environment.SERPER_API_KEY) return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
         evidence: ['KEYWORD_RESEARCH_PREFLIGHT: current host process has no SERPER_API_KEY'] };
+      let researchYtDlpScript = researchYtDlp;
       try {
-        const researchYtDlpScript = await realpath(researchYtDlp);
+        researchYtDlpScript = await realpath(researchYtDlp);
         const toolDirectory = join(context.runDirectory, 'host-tools', 'keyword-research');
         await safePath(toolDirectory, [context.runDirectory]);
         await mkdir(toolDirectory, { recursive: true, mode: 0o700 });
         researchYtDlpCommand = join(toolDirectory, 'yt-dlp');
-        const shellQuote = value => `'${value.replaceAll("'", `'\"'\"'`)}'`;
+        const wrapper = await keywordYtDlpWrapper(researchYtDlpScript, pythonCommand);
         await writeFile(researchYtDlpCommand,
-          `#!/bin/sh\nexec ${shellQuote(pythonCommand)} ${shellQuote(researchYtDlpScript)} "$@"\n`, { mode: 0o500 });
+          wrapper.content, { mode: 0o500 });
         await chmod(researchYtDlpCommand, 0o500);
-        researchToolPaths = [dirname(dirname(researchYtDlpScript)), researchYtDlpCommand];
+        researchToolPaths = [dirname(dirname(researchYtDlpScript)), researchYtDlpCommand, ...wrapper.readPaths];
+        await runProcess(researchYtDlpCommand, ['--version'], {
+          cwd: context.nativeDirectory, env: workerEnvironment(environment), timeoutMs: 10000,
+        });
       } catch (error) {
         return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
-          evidence: [`KEYWORD_RESEARCH_PREFLIGHT: pinned yt-dlp ${researchYtDlp} is unavailable: ${sanitizeDiagnosticText(error.message)}`] };
+          evidence: [`KEYWORD_RESEARCH_PREFLIGHT: yt-dlp wrapper ${researchYtDlpCommand}, entry point ${researchYtDlpScript} (configured ${researchYtDlp}) is unavailable: ${sanitizeDiagnosticText(error.message, environment)}`] };
       }
     }
     const output = join(context.nativeDirectory, 'worker-result.json');
@@ -128,15 +134,23 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     const sourceDirectory = homepageResearch ? join(context.runDirectory, 'homepage-sources') : null;
     if (sourceDirectory) { await safePath(sourceDirectory, [context.runDirectory]); await mkdir(sourceDirectory, { recursive: true }); }
     const requestPath = sourceDirectory ? join(sourceDirectory, 'FETCH_REQUEST.json') : null;
-    const commandPath = [...(pythonStage ? [dirname(pythonCommand)] : []),
+    const commandPath = [...(keywordResearch ? [dirname(researchYtDlpCommand)] : []),
+      ...(pythonStage ? [dirname(pythonCommand)] : []),
       '/usr/bin', '/bin', '/usr/sbin', '/sbin', dirname(process.execPath),
-      ...researchToolPaths.map(dirname), ...(tools?.paths ?? [])].filter((value, index, all) => all.indexOf(value) === index).join(':');
+      ...(tools?.paths ?? [])].filter((value, index, all) => all.indexOf(value) === index).join(':');
     const args = ['exec', '--ignore-user-config', '--ignore-rules', '--strict-config', '--skip-git-repo-check', '--ephemeral',
       '-c', 'approval_policy="never"', '-c', 'web_search="disabled"',
-      '-c', 'allow_login_shell=false', '-c', 'shell_environment_policy.inherit="none"',
+      '-c', 'allow_login_shell=false', '-c', `shell_environment_policy.inherit=${JSON.stringify(keywordResearch ? 'all' : 'none')}`,
       '-c', 'analytics.enabled=false',
       '-c', `shell_environment_policy.set={PATH=${JSON.stringify(commandPath)},TMPDIR=${JSON.stringify(context.nativeDirectory)}}`,
       '-C', context.nativeDirectory, '--output-schema', schema, '--output-last-message', output];
+    if (keywordResearch) {
+      // 0.153 filters after set; keep the pinned PATH/TMPDIR and inherit credentials by name only.
+      const includeOnly = ['PATH', 'TMPDIR', 'SERPER_API_KEY',
+        ...(environment.YTDLP_COOKIES_FILE ? ['YTDLP_COOKIES_FILE'] : [])];
+      args.push('-c', 'shell_environment_policy.ignore_default_excludes=true',
+        '-c', `shell_environment_policy.include_only=${JSON.stringify(includeOnly)}`);
+    }
     // Codex 0.153 advertises these keys via `codex features list`. CLI errors fail closed.
     const features = stageWorkerFeatures(skill);
     for (const feature of features.disabled)
