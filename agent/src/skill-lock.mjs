@@ -32,7 +32,6 @@ export async function generateInventory(configFile = join(AGENT_ROOT, 'config/wo
   const changes = await gitOutput(skillRoot, ['status', '--porcelain', '--untracked-files=all', '--', '.']);
   if (changes) throw Error(`SKILL_SOURCE_DIRTY: commit Skill changes before locking: ${changes.split('\n').map(line => line.slice(3)).join(', ')}`);
   const sourceTree = await skillSourceTree(skillRoot);
-  const sourceCommit = await gitOutput(skillRoot, ['rev-parse', 'HEAD']);
   const skills = [];
   for (const name of config.skills) {
     const root = join(skillRoot, name);
@@ -43,6 +42,6 @@ export async function generateInventory(configFile = join(AGENT_ROOT, 'config/wo
       contractVersion: 1, version: 'tree-sha256:' + sha256(JSON.stringify(files.map(f => [relative(root, f.path), f.sha256]))) });
   }
   const output = resolve(dirname(configFile), config.inventory);
-  await writeFile(output, JSON.stringify({ skillRoot, sourceTree, sourceCommit, skills }, null, 2) + '\n', { mode: 0o600 });
+  await writeFile(output, JSON.stringify({ skillRoot, sourceTree, skills }, null, 2) + '\n', { mode: 0o600 });
   return output;
 }

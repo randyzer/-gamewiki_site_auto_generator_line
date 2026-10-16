@@ -118,6 +118,8 @@ nohup node src/cli.mjs retry inputs.json RUN_ID --confirm USER_PROVIDED_CODE > r
 
 [skill-lock.mjs](src/skill-lock.mjs) 校验 [Skill 清单](config/skill-manifest.json) 中的 git 树哈希和文件 SHA256；`codex-skills/` 有未提交变化或树不匹配就拒绝执行，Codex 不得改该目录或重锁掩盖漂移。[模板快照](src/template-snapshot.mjs) 按[配置](config/workflow.json)固定 GitHub `main` 的 `template` 子树，缓存于仓库 `.template-cache/<commit>`，retry 复用 manifest 记录的 commit。
 
+Skill 清单仅包含 `skillRoot`、`sourceTree` 和 `skills`，不记录仓库 HEAD。只提交总控代码后重新生成清单，文件字节保持不变，已锁定运行可继续；Skill 内容变更仍会触发锁校验失败。
+
 worker 使用文件权限沙箱，命令网络只在第 2 阶段和第 7 阶段执行轮开放；模型认证与命令网络边界分开。真实浏览器由总控在 worker 沙箱外调用：首页公开网页代抓、favicon.io 转换、UI 审计和全站巡检；依赖安装/生产预览也由宿主运行。证据逐文件 SHA256 复核。第 1 阶段 worker 另有图像生成权限，第 5/6 阶段可看截图、写报告。optimize 当前直接 BLOCKED。
 
 ## 验证范围
