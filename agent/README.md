@@ -15,6 +15,16 @@ npx playwright install chromium
 
 从环境变量提供 `SERPER_API_KEY`，不要写入输入、文档或对话；第 2 阶段默认依赖 `/opt/homebrew/bin/python3` 和 `/opt/homebrew/bin/yt-dlp`。已有的 `YTDLP_COOKIES_FILE` 可用于该阶段。部署前准备当前进程可调用、已完成授权的 gh、git、vercel；需要登录、OAuth 或 Google 账号操作时由用户处理，worker 等待。图标缩放使用 macOS 的 `/usr/bin/sips`。依据：[执行器](src/skill-executor.mjs)、[部署工具](src/deployment-tools.mjs)、[图标宿主](src/favicon-io-host.mjs)、[package.json](package.json)。
 
+阶段 4–7 的 Git 固定入口默认为 `/opt/homebrew/bin/git`（可信宿主可通过 `createSkillExecutor({ workerGit })` 配置）。每次启动解析真实可执行文件、版本、helper 目录和 macOS 原生库依赖；把真实 Git 目录置于系统路径之前，只读授权必要路径，不写死 Cellar 版本。固定入口失败不会自动选择其他 Git；阶段 5/6 的 `audit-only` 仍可保留独立宿主检查证据，随后以 `GIT_STATE_UNKNOWN` 等待修复，不宣称仓库干净或同步完成。阶段 7 plan 不因环境自检增加 Python、gh/vercel、联网或生产写入权限。
+
+只验证一个真实 worker 的 Git 能力可从仓库根目录运行：
+
+```sh
+node scripts/preflight-all-stages.mjs --stage 4 --probes P3,P9
+```
+
+该命令使用临时仓库及正式阶段权限，会调用一次真实模型；不带选择参数将探测全部七阶段。未选项目为 `N/A`，缺少完成证据为 `INCONCLUSIVE`；缺证与失败均返回非零。报告保存源码/工具身份及命令证据，不代表其他阶段、权限拒写或真实业务已经验证。
+
 ## 七阶段输入与产物
 
 所有阶段都需要 `gameIdentity`、`objective` 和用户指定的 `paths.siteDirectory`，解析后用作 `projectPath`。完整权限、证据与验收器见[阶段矩阵](docs/SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。

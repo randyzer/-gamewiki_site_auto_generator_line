@@ -5,9 +5,11 @@ import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { parseArgs } from 'node:util';
 import { createSkillExecutor } from '../agent/src/skill-executor.mjs';
 import { runProcess } from '../agent/src/process.mjs';
 import { snapshotSiteEvidence } from '../agent/src/site-evidence.mjs';
+import { sha256 } from '../agent/src/files.mjs';
 import { STAGE, STAGES } from '../agent/src/stages.mjs';
 
 const repository = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -16,10 +18,10 @@ const sensitiveName = /password|passwd|secret|token|cookie|credential|private.?k
 const labels = ['解释器', 'node', 'git', '环境变量', 'TMPDIR', 'TLS', 'yt-dlp',
   'Skill Python', '工作区 git', 'Playwright', '部署工具', '写权限边界', '只读输入'];
 const applicability = [
-  [1, 2, 3, 4, 5, 8, 12], [1, 2, 3, 4, 5, 6, 7, 8, 12, 13],
-  [1, 2, 3, 4, 5, 8, 12], [1, 2, 3, 4, 5, 8, 9, 12],
-  [1, 2, 3, 4, 5, 8, 9, 10, 12], [1, 2, 3, 4, 5, 8, 9, 12],
-  [1, 2, 3, 4, 5, 6, 11],
+  [1, 2, 4, 5, 8, 12], [1, 2, 4, 5, 6, 7, 8, 12, 13],
+  [1, 2, 4, 5, 8, 12], [1, 2, 3, 4, 5, 8, 9, 12],
+  [1, 2, 3, 4, 5, 8, 9, 12], [1, 2, 3, 4, 5, 8, 9, 12],
+  [2, 3, 4, 5],
 ];
 
 export const PROBE_MATRIX = Object.freeze(STAGES.map((skill, index) => Object.freeze({
@@ -46,19 +48,30 @@ function redactObject(value, environment) {
   return value;
 }
 
-export function createReport() {
+export function createReport({ stages = PROBE_MATRIX.map(row => row.stage), probes = labels.map((_, i) => `P${i + 1}`) } = {}) {
+  if (!Array.isArray(stages) || !stages.length || new Set(stages).size !== stages.length ||
+      !stages.every(stage => Number.isInteger(stage) && stage >= 1 && stage <= 7) ||
+      !Array.isArray(probes) || !probes.length || new Set(probes).size !== probes.length ||
+      !probes.every(id => /^P(?:[1-9]|1[0-3])$/.test(id)) ||
+      !stages.every(stage => PROBE_MATRIX[stage - 1].probes.some(probe => probe.applicable && probes.includes(probe.id))))
+    throw Error('SELFCHECK_SELECTION_INVALID: choose applicable stages 1–7 and probes P1–P13');
   return { startedAt: new Date().toISOString(), temporaryRootRemoved: false,
+    selection: { stages, probes },
     notes: [
       'Environment probes only; no research, site build, browser, deployment or authentication actions.',
-      'P4: research variables present only in stage 2; HOME missing, TMPDIR present in all stages.',
+      'P4: research variables present only in stage 2; HOME and TMPDIR present in all stages.',
+      'Git is required in stages 4–7. Stage 7 plan does not require Python, outbound TLS or execute CLIs; Playwright runs on the host.',
+      'N/A means outside this worker responsibility or not selected; it is not a capability PASS.',
+      'Stage 6 audit-only may inspect independent checks with unknown Git; this selfcheck verifies actual Git execution, not that input preflight rejects audit-only.',
       'P12: research writes tested in stages 1–6; stage 7 uses only its explicit probe allowlist.',
       'Stages 5/6 use explicitly synthetic host evidence and a no-op preview adapter to reach the real worker without a build/browser.',
       'Stage 7 uses formal plan permissions; no execute-mode tool or network grants are added.',
     ],
     stages: PROBE_MATRIX.map(row => ({ stage: row.stage, skill: row.skill, workerLaunched: false,
       probes: row.probes.map(probe => ({ id: probe.id, label: probe.label,
-        status: probe.applicable ? 'FAIL' : 'N/A', commands: [],
-        ...(probe.applicable ? { lastLine: 'Not executed' } : {}) })),
+        status: probe.applicable && stages.includes(row.stage) && probes.includes(probe.id) ? 'INCONCLUSIVE' : 'N/A', commands: [],
+        lastLine: !probe.applicable ? 'Not a required worker capability'
+          : !stages.includes(row.stage) || !probes.includes(probe.id) ? 'Not selected' : 'Not executed' })),
     })),
   };
 }
@@ -110,7 +123,7 @@ function commandMatches(actual, expected) {
 }
 
 function checkCommand(definition, event) {
-  if (!event) return { status: 'FAIL', lastLine: 'Command event missing', exitCode: null, output: '' };
+  if (!event || !Number.isInteger(event.exitCode)) return { status: 'INCONCLUSIVE', lastLine: 'Command completion missing', exitCode: null, output: event?.output ?? '' };
   const output = event.output ?? '';
   let passed = event.exitCode === (definition.expectedExit ?? 0), note;
   if (definition.expectedExit === 'denied')
@@ -118,6 +131,7 @@ function checkCommand(definition, event) {
   if (definition.expectedOutput !== undefined) passed &&= output.trim() === definition.expectedOutput;
   if (definition.expectation === 'http-status') passed &&= /^\d{3}$/.test(output.trim());
   if (definition.expectation === 'clean-git') passed &&= output.trim() === definition.workspace;
+  if (definition.expectation === 'git-entry') passed &&= /^git version \S+/m.test(output) && output.trim().split('\n').at(-1) === definition.entry;
   if (definition.expectation === 'missing-git-rejected') {
     passed = Number.isInteger(event.exitCode) && event.exitCode !== 0 && /git/i.test(output);
     if (event.exitCode === 0) { passed = false; note = 'preflight 静默放过'; }
@@ -143,11 +157,13 @@ export function recordStage(report, stage, definitions, events, { error, environ
       return redactObject({ ...definition, ...checked, expectedCommand: definition.command }, environment);
     });
     const failed = probe.commands.filter(command => command.status === 'FAIL');
-    probe.status = expected.length && !failed.length ? 'PASS' : 'FAIL';
-    if (probe.status === 'FAIL') probe.lastLine = failed.at(-1)?.lastLine || row.error || 'Command definition missing';
+    const unknown = probe.commands.filter(command => command.status === 'INCONCLUSIVE');
+    probe.status = failed.length ? 'FAIL' : !expected.length || unknown.length ? 'INCONCLUSIVE' : 'PASS';
+    if (probe.status !== 'PASS') probe.lastLine = failed.at(-1)?.lastLine || unknown.at(-1)?.lastLine || row.error || 'Command definition missing';
     else delete probe.lastLine;
   }
-  row.status = row.error || row.probes.some(probe => probe.status === 'FAIL') ? 'FAIL' : 'PASS';
+  row.status = row.error || row.probes.some(probe => probe.status === 'FAIL') ? 'FAIL'
+    : row.probes.some(probe => probe.status === 'INCONCLUSIVE') ? 'INCONCLUSIVE' : 'PASS';
 }
 
 export function serializeReport(report, environment = process.env) {
@@ -155,7 +171,7 @@ export function serializeReport(report, environment = process.env) {
 }
 
 export function reportExitCode(report) {
-  return report.stages.some(stage => stage.error || stage.probes.some(probe => probe.status === 'FAIL')) ? 1 : 0;
+  return report.stages.some(stage => stage.error || stage.probes.some(probe => ['FAIL', 'INCONCLUSIVE'].includes(probe.status))) ? 1 : 0;
 }
 
 export function formatTable(report) {
@@ -164,7 +180,7 @@ export function formatTable(report) {
     `| 阶段 | ${labels.map((label, i) => `P${i + 1} ${label}`).join(' | ')} |`,
     `| --- | ${labels.map(() => '---').join(' | ')} |`,
     ...report.stages.map(stage => `| ${stage.stage} | ${stage.probes.map(probe => cell(
-      probe.status === 'FAIL' ? `FAIL — ${probe.lastLine}` : probe.status)).join(' | ')} |`),
+      ['FAIL', 'INCONCLUSIVE'].includes(probe.status) ? `${probe.status} — ${probe.lastLine}` : probe.status)).join(' | ')} |`),
   ].join('\n');
 }
 
@@ -244,15 +260,17 @@ export async function buildProbeCommands(stage, { context, shellPath, pythonPath
     : unavailable(name);
   add('P1', versionAndPath('python3', python, '/usr/bin/python3'));
   add('P2', node ? `${quote(node)} --version` : unavailable('node'));
-  add('P3', versionAndPath('git', git, '/usr/bin/git'));
+  if (stage >= 4) add('P3', git
+    ? `${quote(git)} --version; probe_rc=$?; probe_path=$(command -v git); path_rc=$?; print -r -- "$probe_path"; [ "$probe_rc" -eq 0 ] && [ "$path_rc" -eq 0 ] && [ "$probe_path" = ${quote(git)} ]`
+    : unavailable('git'), { expectation: 'git-entry', entry: git });
   for (const name of ['SERPER_API_KEY', 'DYLD_LIBRARY_PATH', 'SSL_CERT_FILE', 'ZDOTDIR', 'HOME', 'TMPDIR']) {
-    const present = name === 'TMPDIR' || (stage === 2 && name !== 'HOME');
+    const present = ['HOME', 'TMPDIR'].includes(name) || stage === 2;
     add('P4', `[ -n "\${${name}-}" ] && echo ${name}=present || echo ${name}=missing`,
       { variable: name, expectedOutput: `${name}=${present ? 'present' : 'missing'}` });
   }
   add('P5', 'probe_file=$(/usr/bin/mktemp "${TMPDIR:?}/env-selfcheck.XXXXXX") && /bin/rm "$probe_file"');
-  if ([2, 7].includes(stage)) {
-    const url = stage === 2 ? 'https://www.youtube.com' : 'https://api.github.com';
+  if (stage === 2) {
+    const url = 'https://www.youtube.com';
     const code = `import ssl,urllib.request; print(urllib.request.urlopen(${JSON.stringify(url)}, context=ssl.create_default_context(), timeout=20).status)`;
     add('P6', python ? `${quote(python)} -c ${quote(code)}` : unavailable('python3'), { expectation: 'http-status' });
   }
@@ -270,18 +288,6 @@ export async function buildProbeCommands(stage, { context, shellPath, pythonPath
     const workspace = context.inputs.projectPath;
     add('P9', git ? `${quote(git)} -C ${quote(workspace)} rev-parse --show-toplevel && ${quote(git)} -C ${quote(workspace)} status --porcelain`
       : unavailable('git'), { expectation: 'clean-git', workspace });
-    if (stage === 6) {
-      const path = join(dirname(context.skillLock.source), 'scripts/preflight.py');
-      const noGitPath = join(context.nativeDirectory, 'no-git-path');
-      await mkdir(noGitPath);
-      add('P9', python ? `export PATH=${quote(noGitPath)}; if command -v git >/dev/null 2>&1; then print 'git still on PATH'; exit 0; fi; ${quote(python)} ${quote(path)} --game 'Environment Selfcheck' --project ${quote(workspace)} --domain-unconfirmed --preview-url http://127.0.0.1:1`
-        : unavailable('python3'), { expectation: 'missing-git-rejected' });
-    }
-  }
-  if (stage === 5) add('P10', node ? `${quote(node)} -e ${quote("require.resolve('playwright')")}` : unavailable('node'));
-  if (stage === 7) for (const name of ['gh', 'vercel', 'git']) {
-    const path = await fixedCommand(name, shellPath);
-    add('P11', path ? `${quote(path)} --version` : unavailable(name), { tool: name });
   }
   if (stage <= 6) {
     if ([3, 4, 5, 6].includes(stage)) add('P12', `printf 'selfcheck\\n' > ${quote(join(context.inputs.projectPath, 'env-selfcheck-write'))}`,
@@ -333,14 +339,19 @@ function workerPrompt(commands) {
 }
 
 export async function runSelfcheck({ reportsDirectory = join(repository, 'agent/runs'),
-  executorOptions = {}, executeWorker = runWorkerEvents, onProgress = () => {} } = {}) {
+  executorOptions = {}, executeWorker = runWorkerEvents, onProgress = () => {}, stages, probes } = {}) {
   const environment = executorOptions.environment ?? process.env;
-  const report = createReport();
+  const report = createReport({ stages, probes });
+  const sourceFiles = ['scripts/preflight-all-stages.mjs', 'agent/src/skill-executor.mjs',
+    'agent/src/worker-permissions.mjs', 'agent/src/deployment-tools.mjs'];
+  report.sourceSha256 = Object.fromEntries(await Promise.all(sourceFiles.map(async file =>
+    [file, sha256(await readFile(join(repository, file)))])));
   const root = await mkdtemp(join(await realpath(tmpdir()), 'stage-env-selfcheck-'));
   report.temporaryRoot = root;
   report.reportPath = join(reportsDirectory, `ENV_SELFCHECK_${report.startedAt.replace(/[:.]/g, '-')}.json`);
   try {
     for (const row of report.stages) {
+      if (!row.probes.some(probe => probe.status !== 'N/A')) continue;
       onProgress(`Stage ${row.stage}/7: ${row.skill}`);
       let definitions = [], events = [], workerError;
       try {
@@ -357,10 +368,18 @@ export async function runSelfcheck({ reportsDirectory = join(repository, 'agent/
           run: async (command, args, options) => {
             row.workerLaunched = true;
             row.permissionProfile = args.find(arg => arg.startsWith('permissions.agent-worker='));
+            row.permissionProfileSha256 = sha256(row.permissionProfile);
+            row.workerCommand = command;
+            if (executorOptions.commandIdentity) row.workerCommandIdentity = executorOptions.commandIdentity;
+            if (executorOptions.codeModeHostIdentity) row.codeModeHostIdentity = executorOptions.codeModeHostIdentity;
             const pathConfig = args.find(arg => arg.startsWith('shell_environment_policy.set='));
             const shellPath = JSON.parse(pathConfig.match(/PATH=("(?:\\.|[^"\\])*")/)[1]);
             const pythonPath = options.input.match(/^Use (.+) for every Python Skill script\./m)?.[1];
-            definitions = await buildProbeCommands(row.stage, { context, shellPath, pythonPath });
+            const gitIdentity = options.input.match(/^Fixed Git: (.+)\. Use this Git entry/m)?.[1];
+            if (gitIdentity) row.gitTool = JSON.parse(gitIdentity);
+            row.shellPath = shellPath;
+            definitions = (await buildProbeCommands(row.stage, { context, shellPath, pythonPath }))
+              .filter(definition => row.probes.some(probe => probe.id === definition.id && probe.status !== 'N/A'));
             const jsonArgs = [...args];
             jsonArgs.splice(1, 0, '--json');
             const outputIndex = jsonArgs.indexOf('--output-last-message');
@@ -395,7 +414,9 @@ export async function runSelfcheck({ reportsDirectory = join(repository, 'agent/
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
-    const report = await runSelfcheck({ onProgress: message => process.stderr.write(message + '\n') });
+    const { values } = parseArgs({ options: { stage: { type: 'string', multiple: true }, probes: { type: 'string' } } });
+    const report = await runSelfcheck({ stages: values.stage?.map(Number), probes: values.probes?.split(','),
+      onProgress: message => process.stderr.write(message + '\n') });
     console.log(formatTable(report));
     console.log(`Report: ${report.reportPath}`);
     process.exitCode = reportExitCode(report);

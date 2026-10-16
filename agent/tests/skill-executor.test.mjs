@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, access, link, readdir, stat, symlink, unlink } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, access, link, readdir, stat, symlink, unlink, realpath } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fixture } from './helpers.mjs';
@@ -574,12 +574,75 @@ test('approved deployment worker gets network, the operator CLI logins and an ex
   assert.ok(profile.includes(JSON.stringify(projectPath) + '="write"'));
   assert.ok(profile.includes(JSON.stringify(context.approvedPlan.artifacts[0].path) + '="read"'));
   const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
+  assert.ok(path.indexOf('/opt/homebrew/bin') < path.indexOf('/usr/bin'), 'deployment tools precede system launchers');
   assert.match(path, /\/opt\/homebrew\/bin/);
   assert.match(invoked.options.input, /Execute the APPROVED deployment plan/);
   assert.match(invoked.options.input, /a{64}/);
   assert.match(invoked.options.input, /DEPLOYMENT_REPORT\.md/);
   assert.doesNotMatch(invoked.options.input, /No commit, push/);
   for (const key of ['GH_TOKEN', 'GITHUB_TOKEN', 'VERCEL_TOKEN']) assert.equal(invoked.options.env[key], undefined);
+});
+
+test('Git stages use the resolved fixed Git before system launchers and keep plan offline', async t => {
+  const f = await fixture(t), projectPath = join(f.configuration.workspace, 'site');
+  let invoked;
+  const executor = createSkillExecutor({ run: async (_command, args, options) => {
+    invoked = { args, options };
+    await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC'] }));
+  } });
+  await executor(STAGES[6], deploymentExecutionContext(f, projectPath, { mode: 'plan', approvedPlan: undefined,
+    permissions: { siteWrites: false, productionDeployment: false } }));
+  const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
+  const gitDirectory = dirname(await realpath('/opt/homebrew/bin/git'));
+  assert.ok(path.indexOf(gitDirectory) < path.indexOf('/usr/bin'));
+  assert.ok(path.includes('GIT_EXEC_PATH='));
+  assert.match(invoked.args.find(value => value.startsWith('permissions.agent-worker=')), /network=\{enabled=false\}/);
+  assert.ok(invoked.options.input.includes('git version'));
+});
+
+test('missing fixed Git blocks a Git stage before launching a worker', async t => {
+  const f = await fixture(t), git = join(f.root, 'missing-git');
+  let calls = 0;
+  const executor = createSkillExecutor({ workerGit: git, run: async () => { calls++; } });
+  const result = await executor(STAGES[6], deploymentExecutionContext(f, join(f.root, 'site'), {
+    mode: 'plan', approvedPlan: undefined, permissions: { siteWrites: false, productionDeployment: false } }));
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /WORKER_GIT_UNAVAILABLE/);
+  assert.ok(result.evidence.join('\n').includes(git));
+  assert.equal(calls, 0);
+});
+
+test('audit-only hosts retain independent evidence when Git is unavailable, without substituting a worker Git', async t => {
+  for (const skill of [STAGES[4], STAGES[5]]) {
+    const f = await fixture(t), root = join(f.configuration.workspace, 'runs/audit-git-unknown');
+    const projectPath = join(f.root, 'site');
+    let audited = 0, stopped = 0, workerCalls = 0;
+    const collect = async context => {
+      audited++;
+      const area = join(context.nativeDirectory, 'host-evidence');
+      await mkdir(area); await writeFile(join(area, 'EVIDENCE.txt'), 'SYNTHETIC independent audit');
+      return snapshotSiteEvidence(area);
+    };
+    const execute = createSkillExecutor({ workerGit: join(f.root, 'missing-git'), researchPython: process.execPath,
+      previewSite: async () => ({ url: 'http://127.0.0.1:1', stop: async () => { stopped++; } }),
+      auditSite: collect, prelaunchSite: collect, run: async () => { workerCalls++; } });
+    const context = { runId: 'audit-git-unknown', outputDirectory: join(root, 'artifacts/4/1'),
+      inputs: { ...f.inputs, projectPath }, requiredArtifacts: [], upstream: [], mode: 'audit-only',
+      permissions: { siteWrites: false }, skillLock: { source: join(f.root, 'skills', skill + '.md') } };
+    const result = await execute(skill, context);
+    assert.equal(audited, 1);
+    assert.equal(stopped, 1);
+    assert.equal(workerCalls, 0);
+    assert.equal(result.status, 'BLOCKED');
+    assert.match(result.evidence.join('\n'), /GIT_STATE_UNKNOWN/);
+    assert.match(result.evidence.join('\n'), /host-evidence/);
+    assert.deepEqual(result.artifacts, []);
+    const repair = await execute(skill, { ...context, mode: 'audit-and-repair', permissions: { siteWrites: true } });
+    assert.equal(repair.status, 'BLOCKED');
+    assert.equal(audited, 1);
+    assert.equal(workerCalls, 0);
+  }
 });
 
 test('the plan pass stays offline and keeps the no-commit instruction', async t => {

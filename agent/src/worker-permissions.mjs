@@ -10,6 +10,8 @@ export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'b
   'skill_mcp_dependency_install', 'skill_search', 'request_permissions_tool', 'shell_snapshot',
   'workspace_dependencies', 'auth_elicitation', 'tool_suggest', 'goals', 'view_image']);
 export const ENABLED_WORKER_FEATURES = Object.freeze(['code_mode_host']);
+export const GIT_STAGES = Object.freeze([STAGE.CONTENT_INTEGRATION, STAGE.UI_UX_AUDIT,
+  STAGE.PRELAUNCH_ACCEPTANCE, STAGE.DEPLOYMENT_PLAN]);
 // Only homepage research generates images; audit workers can inspect host screenshots.
 
 export function stageWorkerFeatures(skill) {
@@ -101,7 +103,7 @@ export const deploymentExecutionApproved = (skill, context) => skill === STAGE.D
   /^[a-f0-9]{64}$/.test(context.approvedPlan?.digest ?? '');
 
 export async function stageWorkerPermissions(skill, context, {
-  writePaths = [], pythonToolPaths = [], researchToolPaths = [], researchReadOnlyPaths = [], deploymentTools,
+  writePaths = [], pythonToolPaths = [], gitToolPaths = [], researchToolPaths = [], researchReadOnlyPaths = [], deploymentTools,
 } = {}) {
   const { nativeDirectory, runDirectory, inputs } = context;
   if (!inside(runDirectory, nativeDirectory)) throw Error('WORKER_PERMISSION_SCOPE_INVALID');
@@ -129,6 +131,7 @@ export async function stageWorkerPermissions(skill, context, {
   }
   if (skill === STAGE.TEMPLATE_SELECTION) readPaths.push(...(context.templateRoots ?? []));
   if (PYTHON_STAGES.includes(skill)) readPaths.push(...pythonToolPaths);
+  if (GIT_STAGES.includes(skill)) readPaths.push(...gitToolPaths);
   if (skill === STAGE.KEYWORD_RESEARCH) readPaths.push(...researchToolPaths);
   if (inputs.projectPath && skill !== STAGE.TEMPLATE_SELECTION) readPaths.push(inputs.projectPath);
   const deploying = deploymentExecutionApproved(skill, context);

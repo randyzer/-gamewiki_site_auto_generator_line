@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, chmod, rm, realpath } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, chmod, rm, realpath, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { locateDeploymentTools } from '../src/deployment-tools.mjs';
+import { locateDeploymentTools, locateGitTool } from '../src/deployment-tools.mjs';
 
 async function machine(t, { withVercel = true } = {}) {
   const root = await realpath(await mkdtemp(join(tmpdir(), 'deploy-tools-')));
@@ -41,4 +41,40 @@ test('a missing CLI fails with its name and the PATH searched', async t => {
 
 test('HOME must be absolute', async () => {
   await assert.rejects(locateDeploymentTools({ PATH: '/usr/bin' }), /DEPLOYMENT_TOOLS_UNAVAILABLE: HOME/);
+});
+
+test('fixed Git resolves its executable, helpers and transitive native libraries without broad grants', async t => {
+  const m = await machine(t), root = join(m.root, 'Cellar/git/1.0');
+  const helpers = join(root, 'libexec/git-core');
+  const library = join(m.root, 'Cellar/pcre2/1/lib/pcre.dylib');
+  await mkdir(helpers, { recursive: true });
+  await mkdir(join(m.root, 'Cellar/pcre2/1/lib'), { recursive: true });
+  await writeFile(library, 'library');
+  const entry = join(m.bin, 'fixed-git');
+  await symlink(join(root, 'bin/git'), entry);
+  const calls = [];
+  const tool = await locateGitTool(entry, { platform: 'darwin', run: async (command, args) => {
+    calls.push({ command, args });
+    if (args[0] === '--version') return { stdout: 'git version 2.50.1\n' };
+    if (args[0] === '--exec-path') return { stdout: helpers + '\n' };
+    return { stdout: command === '/usr/bin/otool'
+      ? `${args[1]}:\n\t${library} (compatibility version 1.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0)\n` : '' };
+  } });
+  assert.equal(tool.path, entry);
+  assert.equal(tool.realPath, join(root, 'bin/git'));
+  assert.equal(tool.execPath, helpers);
+  assert.equal(tool.version, 'git version 2.50.1');
+  assert.ok(tool.readPaths.includes(root));
+  assert.ok(tool.readPaths.includes(library));
+  assert.equal(tool.readPaths.includes(m.root), false);
+  assert.ok(calls.some(call => call.command === '/usr/bin/otool' && call.args[1] === library));
+});
+
+test('fixed Git failure names the configured entry and does not try another Git', async t => {
+  const m = await machine(t), entry = join(m.bin, 'git'), calls = [];
+  await assert.rejects(locateGitTool(entry, { run: async (command, args) => {
+    calls.push(command);
+    throw Error('fixture launcher unavailable');
+  } }), /WORKER_GIT_UNAVAILABLE.*fixture launcher unavailable/);
+  assert.deepEqual(calls, [entry]);
 });

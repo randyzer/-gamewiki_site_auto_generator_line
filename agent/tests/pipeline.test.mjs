@@ -64,6 +64,31 @@ async function advance(pipeline, count) {
   return pipeline.snapshot();
 }
 
+test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
+  for (const index of [4, 5]) {
+    const f = await fixture(t);
+    let checked = 0;
+    const collect = async context => {
+      checked++;
+      const area = join(context.nativeDirectory, 'independent-host');
+      await mkdir(area); await writeFile(join(area, 'evidence.txt'), 'SYNTHETIC independent evidence');
+      return snapshotSiteEvidence(area);
+    };
+    const execute = createSkillExecutor({ workerGit: join(f.root, 'missing-git'), researchPython: process.execPath,
+      previewSite: async () => ({ url: 'http://127.0.0.1:1', stop: async () => {} }),
+      auditSite: collect, prelaunchSite: collect, run: async () => assert.fail('must not launch worker') });
+    const p = await f.create({ executor: (skill, context) => skill === api.STAGES[index]
+      ? execute(skill, context) : f.good(skill, context) });
+    const state = await advance(p, index + 1);
+    const stage = state.stages[index];
+    assert.equal(checked, 1);
+    assert.equal(stage.status, 'BLOCKED', JSON.stringify(stage.evidence));
+    assert.match(stage.evidence.join('\n'), /GIT_STATE_UNKNOWN/);
+    assert.equal(stage.diagnostic.operation, 'worker-reported-failure');
+    assert.deepEqual(stage.missing_inputs, []);
+  }
+});
+
 test('host installs once after template passes, before content; retry preserves installation manifest', async t => {
   const f = await fixture(t), order = [];
   const p = await f.create({ installSiteDependencies: async (project, options) => {

@@ -16,10 +16,10 @@ test('probe matrix defines P1–P13 and applicability for all seven formal stage
   const { PROBE_MATRIX } = await implementation();
   assert.deepEqual(PROBE_MATRIX.map(row => row.skill), STAGES);
   const applicable = [
-    [1, 2, 3, 4, 5, 8, 12], [1, 2, 3, 4, 5, 6, 7, 8, 12, 13],
-    [1, 2, 3, 4, 5, 8, 12], [1, 2, 3, 4, 5, 8, 9, 12],
-    [1, 2, 3, 4, 5, 8, 9, 10, 12], [1, 2, 3, 4, 5, 8, 9, 12],
-    [1, 2, 3, 4, 5, 6, 11],
+    [1, 2, 4, 5, 8, 12], [1, 2, 4, 5, 6, 7, 8, 12, 13],
+    [1, 2, 4, 5, 8, 12], [1, 2, 3, 4, 5, 8, 9, 12],
+    [1, 2, 3, 4, 5, 8, 9, 12], [1, 2, 3, 4, 5, 8, 9, 12],
+    [2, 3, 4, 5],
   ];
   for (const [index, row] of PROBE_MATRIX.entries()) {
     assert.deepEqual(row.probes.map(probe => probe.id), Array.from({ length: 13 }, (_, i) => `P${i + 1}`));
@@ -60,13 +60,13 @@ test('any FAIL produces a nonzero exit status; an entirely passing matrix return
   assert.notEqual(reportExitCode(report), 0);
 });
 
-test('missing, unexpected and duplicated command events fail rather than shifting results', async () => {
+test('missing and duplicated command events remain INCONCLUSIVE rather than proving failure or success', async () => {
   const { createReport, recordStage } = await implementation();
   for (const events of [[], [{ command: 'other', output: 'ok', exitCode: 0 }],
     [{ command: 'wanted', output: 'ok', exitCode: 0 }, { command: 'wanted', output: 'ok', exitCode: 0 }]]) {
     const report = createReport();
     recordStage(report, 1, [{ id: 'P1', command: 'wanted', expectedExit: 0 }], events);
-    assert.equal(report.stages[0].probes[0].status, 'FAIL');
+    assert.equal(report.stages[0].probes[0].status, 'INCONCLUSIVE');
   }
 });
 
@@ -101,7 +101,8 @@ test('denied-write checks require permission denial, not a missing tool or file'
   const { createReport, recordStage } = await implementation();
   for (const [exitCode, output, expected] of [[1, 'Permission denied', 'PASS'],
     [1, 'Operation not permitted', 'PASS'], [127, 'command not found', 'FAIL'],
-    [1, 'No such file or directory', 'FAIL'], [0, 'wrote file', 'FAIL']]) {
+    [1, 'No such file or directory', 'FAIL'], [0, 'wrote file', 'FAIL'],
+    [null, 'Permission denied', 'INCONCLUSIVE']]) {
     const report = createReport();
     recordStage(report, 3, [{ id: 'P12', command: 'write', expectedExit: 'denied' }],
       [{ command: 'write', exitCode, output }]);
@@ -121,6 +122,52 @@ test('Skill and TLS probes use the executor-pinned Python even when PATH resolve
   assert.equal(commands.filter(item => item.id === 'P4').length, 6);
   assert.equal(commands.filter(item => item.id === 'P8').length, 2);
   assert.ok(commands.find(item => item.id === 'P1').command.includes('command -v python3'));
+  assert.equal(commands.find(item => item.variable === 'HOME').expectedOutput, 'HOME=present');
+});
+
+test('selection launches only one formal stage and runs only selected Git probes', async t => {
+  const { runSelfcheck, reportExitCode } = await implementation();
+  const reportsDirectory = await mkdtemp(join(tmpdir(), 'selfcheck-select-'));
+  t.after(() => rm(reportsDirectory, { recursive: true, force: true }));
+  let calls = 0;
+  const report = await runSelfcheck({ reportsDirectory, stages: [4], probes: ['P3', 'P9'],
+    executorOptions: { researchPython: process.execPath },
+    executeWorker: async (_command, args, options, commands) => {
+      calls++;
+      assert.deepEqual(commands.map(item => item.id), ['P3', 'P9']);
+      assert.match(args.find(arg => arg.startsWith('permissions.agent-worker=')), /network=\{enabled=false\}/);
+      return { exitCode: 0, events: commands.map(item => ({ command: item.command, exitCode: 0,
+        output: item.id === 'P3' ? `git version 2.50.1\n${item.entry}\n` : item.workspace + '\n' })) };
+    } });
+  assert.equal(calls, 1);
+  assert.equal(reportExitCode(report), 0);
+  assert.deepEqual(report.selection, { stages: [4], probes: ['P3', 'P9'] });
+  assert.ok(report.stages.filter(row => row.stage !== 4).every(row => !row.workerLaunched));
+});
+
+test('invalid or empty probe selection rejects before any worker launch', async () => {
+  const { runSelfcheck } = await implementation();
+  for (const selection of [{ stages: [] }, { stages: [8] }, { stages: [4, 4] },
+    { probes: [] }, { probes: ['P99'] }, { stages: [7], probes: ['P11'] }]) {
+    await assert.rejects(runSelfcheck({ ...selection, executeWorker: async () => {
+      assert.fail('invalid selection must never start a worker');
+    } }), /SELFCHECK_SELECTION_INVALID/);
+  }
+});
+
+test('a working system Git is judged by execution and selected entry, not its path name', async () => {
+  const { createReport, recordStage, reportExitCode } = await implementation();
+  const report = createReport({ stages: [4], probes: ['P3'] });
+  const definition = { id: 'P3', command: 'git-version', expectation: 'git-entry', entry: '/usr/bin/git' };
+  recordStage(report, 4, [definition], [{ command: definition.command, exitCode: 0,
+    output: 'git version 2.50.1\n/usr/bin/git\n' }]);
+  assert.equal(reportExitCode(report), 0);
+  recordStage(report, 4, [definition], [{ command: definition.command, exitCode: 0,
+    output: 'git version 2.50.1\n/unexpected/git\n' }]);
+  assert.equal(reportExitCode(report), 1);
+  recordStage(report, 4, [definition], []);
+  assert.equal(report.stages[3].probes.find(item => item.id === 'P3').status, 'INCONCLUSIVE');
+  assert.equal(reportExitCode(report), 1);
 });
 
 test('stage 6 records a successful missing-git preflight as silent-pass failure', async () => {

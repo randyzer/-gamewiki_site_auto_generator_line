@@ -90,7 +90,10 @@ test('prelaunch executor passes evidence to offline worker and stops preview, de
         if(tamper)await writeFile(evidencePath,'{}');
         await writeFile(args[args.indexOf('--output-last-message')+1],JSON.stringify({status:'BLOCKED',artifacts:[],missing_inputs:[],evidence:['synthetic incomplete']}));
       }});
-    if(tamper)await assert.rejects(execute(STAGE.PRELAUNCH_ACCEPTANCE,f.context),/HOST_EVIDENCE_CHANGED/);
+    if(tamper)await assert.rejects(async()=>{
+      const result=await execute(STAGE.PRELAUNCH_ACCEPTANCE,f.context);
+      assert.fail('Expected evidence tamper rejection; executor returned '+JSON.stringify(result));
+    },/HOST_EVIDENCE_CHANGED/);
     else assert.equal((await execute(STAGE.PRELAUNCH_ACCEPTANCE,f.context)).status,'BLOCKED');
     assert.equal(stopped,1);
   }
