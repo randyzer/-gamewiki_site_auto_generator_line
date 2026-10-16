@@ -44,10 +44,16 @@ export async function keywordYtDlpWrapper(script, python) {
   const ssl = await dependency('openssl@3', 'lib/libssl.3.dylib');
   const crypto = await dependency('openssl@3', 'lib/libcrypto.3.dylib');
   if (dirname(ssl) !== dirname(crypto)) throw Error('YTDLP_OPENSSL_LAYOUT_UNSUPPORTED');
+  const certificate = await realpath(join(certifi, 'cacert.pem'));
+  const certificateRoot = join(prefix, 'etc/ca-certificates');
+  if (!inside(certificateRoot, certificate) || !(await stat(certificate)).isFile())
+    throw Error(`YTDLP_CERTIFICATE_OUTSIDE_CA_ROOT: ${certificate}`);
+  const tlsEnvironment = { DYLD_LIBRARY_PATH: dirname(ssl), SSL_CERT_FILE: certificate };
   // CPython's macOS launcher handoff preserves pyvenv.cfg discovery without executing its symlink chain.
   // The framework executable is already inside the pinned Python read root; no additional grant is needed.
   return {
-    content: `#!/bin/sh\nexport __PYVENV_LAUNCHER__=${quote(interpreter)}\nexport DYLD_LIBRARY_PATH=${quote(dirname(ssl))}\nexec ${quote(runtime)} -I ${quote(script)} "$@"\n`,
-    readPaths: [certifi, ssl, crypto],
+    content: `#!/bin/sh\nexport __PYVENV_LAUNCHER__=${quote(interpreter)}\nexport DYLD_LIBRARY_PATH=${quote(tlsEnvironment.DYLD_LIBRARY_PATH)}\nexec ${quote(runtime)} -I ${quote(script)} "$@"\n`,
+    readPaths: [certifi, ssl, crypto, certificate],
+    tlsEnvironment,
   };
 }

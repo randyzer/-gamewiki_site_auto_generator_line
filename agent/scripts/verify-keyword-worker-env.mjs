@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { access, mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -26,11 +26,15 @@ const researchDirectory = join(root, 'research');
 const rawKeywordsFile = join(runDirectory, 'keywords.md');
 const report = { temporaryRoot: root, temporaryRootRemoved: false };
 const credentialValues = [process.env.SERPER_API_KEY, process.env.YTDLP_COOKIES_FILE].filter(Boolean);
+const quote = value => `'${value.replaceAll("'", `'"'"'`)}'`;
+const resolvedPython = await realpath(fixedPython);
+const pythonCommand = code => `${resolvedPython} -c ${quote(code)}`;
 const expectedCommands = [
-  '[ -n "$SERPER_API_KEY" ] && echo present || echo missing',
-  `${wrapper} --version`,
-  `${await realpath(fixedPython)} ${researchCli} check`,
+  'ls -l "$ZDOTDIR/.zshenv"; mv "$ZDOTDIR/.zshenv" "$ZDOTDIR/.zshenv.moved"; echo "exit=$?"; echo x > "$ZDOTDIR/.zshenv.new"; echo "exit=$?"',
+  pythonCommand('import urllib.request; print(urllib.request.urlopen("https://www.youtube.com", timeout=20).status)'),
+  pythonCommand('import urllib.error, urllib.request; exec("try:\\n print(urllib.request.urlopen(\\"https://google.serper.dev\\", timeout=20).status)\\nexcept urllib.error.HTTPError as error:\\n print(error.code)")'),
 ];
+assert.ok(expectedCommands.every(command => !command.includes('\n')), 'verification commands must stay one line each');
 
 function assertNoCredentialValue(value, label) {
   for (const credential of credentialValues)
@@ -62,7 +66,7 @@ try {
     assertNoCredentialValue(joined, 'worker launch arguments');
     report.permissionProfile = args.find(value => value.startsWith('permissions.agent-worker='));
     const prompt = [
-      'This is an environment verification, not research. Make exactly three sequential shell tool calls, one for each line below, in order. No added commands, retries, or shell setup. Set login=false, yield_time_ms=10000, max_output_tokens=2000 for each call. Capture all output and the exit code of each call.',
+      'This is an environment verification, not research. Make exactly three sequential shell tool calls, one for each line below, in order. Execute every line in its own tool call even if an earlier command fails; do not omit, combine, rewrite, retry, or add shell setup. Set yield_time_ms=10000 and max_output_tokens=2000 for each call. Capture all output and the exit code of each call.',
       '```sh', ...expectedCommands, '```',
       'Return status BLOCKED, summary "Environment verification complete", no artifacts or missing inputs, and evidence containing the complete command output. Never print or inspect any credential value.',
     ].join('\n');
@@ -89,22 +93,27 @@ try {
   assert.equal(result.status, 'BLOCKED');
   assert.equal(report.commands?.length, 3, 'worker must execute exactly three commands');
   assert.ok(report.commands.every(command => command.exitCode === 0));
-  const quote = value => `'${value.replaceAll("'", `'"'"'`)}'`;
   for (const [index, expected] of expectedCommands.entries()) {
     const actual = report.commands[index].command;
     assert.ok(actual === expected || ['/bin/zsh', '/bin/bash', '/bin/sh']
-      .some(shell => actual === `${shell} -c ${quote(expected)}`), 'unexpected worker command');
+      .some(shell => actual === `${shell} -c ${quote(expected)}` ||
+        actual === `${shell} -c ${JSON.stringify(expected)}`), 'unexpected worker command');
   }
-  assert.equal(report.commands[0].output.trim(), 'present');
-  const version = report.commands[1].output.trim();
-  assert.match(version, /^\d{4}\.\d{1,2}\.\d{1,2}$/);
-  const check = JSON.parse(report.commands[2].output);
-  assert.equal(check.serper_api_key, 'present');
-  assert.equal(check.yt_dlp, version);
+  const mutationOutput = report.commands[0].output;
+  const mutationExitCodes = [...mutationOutput.matchAll(/(?:^|\n)exit=(\d+)/g)]
+    .map(match => Number(match[1]));
+  assert.equal(mutationExitCodes.length, 2);
+  assert.ok(mutationExitCodes.every(code => code !== 0));
+  assert.match(mutationOutput, /Operation not permitted|Permission denied/i);
+  for (const path of [join(runDirectory, 'host-tools/keyword-research/zdotdir/.zshenv.moved'),
+    join(runDirectory, 'host-tools/keyword-research/zdotdir/.zshenv.new')])
+    await assert.rejects(access(path), error => error.code === 'ENOENT');
+  assert.equal(report.commands[1].output.trim(), '200');
+  assert.equal(report.commands[2].output.trim(), '403');
   report.acceptance = 'PASSED';
   report.status = result.status;
   report.wrapper = wrapper;
-  report.fixedPython = await realpath(fixedPython);
+  report.fixedPython = resolvedPython;
   report.researchCli = researchCli;
   report.evidence = result.evidence;
 } finally {
