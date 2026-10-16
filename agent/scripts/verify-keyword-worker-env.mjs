@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { access, mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -30,7 +30,7 @@ const quote = value => `'${value.replaceAll("'", `'"'"'`)}'`;
 const resolvedPython = await realpath(fixedPython);
 const pythonCommand = code => `${resolvedPython} -c ${quote(code)}`;
 const expectedCommands = [
-  pythonCommand('import ssl; print(ssl.OPENSSL_VERSION)'),
+  'ls -l "$ZDOTDIR/.zshenv"; mv "$ZDOTDIR/.zshenv" "$ZDOTDIR/.zshenv.moved"; echo "exit=$?"; echo x > "$ZDOTDIR/.zshenv.new"; echo "exit=$?"',
   pythonCommand('import urllib.request; print(urllib.request.urlopen("https://www.youtube.com", timeout=20).status)'),
   pythonCommand('import urllib.error, urllib.request; exec("try:\\n print(urllib.request.urlopen(\\"https://google.serper.dev\\", timeout=20).status)\\nexcept urllib.error.HTTPError as error:\\n print(error.code)")'),
 ];
@@ -99,7 +99,15 @@ try {
       .some(shell => actual === `${shell} -c ${quote(expected)}` ||
         actual === `${shell} -c ${JSON.stringify(expected)}`), 'unexpected worker command');
   }
-  assert.match(report.commands[0].output.trim(), /^OpenSSL\s+\S+/);
+  const mutationOutput = report.commands[0].output;
+  const mutationExitCodes = [...mutationOutput.matchAll(/(?:^|\n)exit=(\d+)/g)]
+    .map(match => Number(match[1]));
+  assert.equal(mutationExitCodes.length, 2);
+  assert.ok(mutationExitCodes.every(code => code !== 0));
+  assert.match(mutationOutput, /Operation not permitted|Permission denied/i);
+  for (const path of [join(runDirectory, 'host-tools/keyword-research/zdotdir/.zshenv.moved'),
+    join(runDirectory, 'host-tools/keyword-research/zdotdir/.zshenv.new')])
+    await assert.rejects(access(path), error => error.code === 'ENOENT');
   assert.equal(report.commands[1].output.trim(), '200');
   assert.equal(report.commands[2].output.trim(), '403');
   report.acceptance = 'PASSED';

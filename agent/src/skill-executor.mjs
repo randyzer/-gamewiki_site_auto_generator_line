@@ -46,6 +46,21 @@ async function replaceReadOnlyFile(path, content, root, mode) {
   }
 }
 
+async function replaceFileInWorkerReadOnlyDirectory(directory, filename, content, root) {
+  await safePath(directory, [root]);
+  try {
+    const existing = await lstat(directory);
+    if (!existing.isDirectory()) throw Error('Expected a directory for the shell environment');
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    await mkdir(directory, { mode: 0o700 });
+  }
+  await chmod(directory, 0o700);
+  const path = join(directory, filename);
+  await replaceReadOnlyFile(path, content, directory, 0o400);
+  return path;
+}
+
 export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex', commandIdentity = null,
   codeModeHostIdentity = null, run = runProcess, timeoutMs = 600000,
   validationOptions = {},
@@ -123,7 +138,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         }
       } else context.researchHandoff = await prepareResearchHandoff(context);
     }
-    let researchToolPaths = [], researchYtDlpCommand = researchYtDlp;
+    let researchToolPaths = [], researchReadOnlyPaths = [], researchYtDlpCommand = researchYtDlp;
     let researchTlsEnvironment = {}, researchShellEnvironment = {};
     if (keywordResearch) {
       if (!environment.SERPER_API_KEY) return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
@@ -154,11 +169,13 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           } catch (error) {
             throw Error(`KEYWORD_TLS_IMPORT_FAILED: fixed Python ${pythonCommand}, OpenSSL directory ${wrapper.tlsEnvironment.DYLD_LIBRARY_PATH}, certificate ${certificate}: ${error.message}`);
           }
-          const zshEnvironment = join(context.nativeDirectory, '.zshenv');
+          const zshEnvironmentDirectory = join(toolDirectory, 'zdotdir');
           const zshEnvironmentContent = `export DYLD_LIBRARY_PATH=${shellQuote(wrapper.tlsEnvironment.DYLD_LIBRARY_PATH)}\n` +
             `export SSL_CERT_FILE=${shellQuote(certificate)}\n`;
-          await replaceReadOnlyFile(zshEnvironment, zshEnvironmentContent, context.nativeDirectory, 0o400);
-          researchShellEnvironment = { ZDOTDIR: context.nativeDirectory };
+          await replaceFileInWorkerReadOnlyDirectory(zshEnvironmentDirectory, '.zshenv', zshEnvironmentContent,
+            toolDirectory);
+          researchReadOnlyPaths = [zshEnvironmentDirectory];
+          researchShellEnvironment = { ZDOTDIR: zshEnvironmentDirectory };
         }
         await runProcess(researchYtDlpCommand, ['--version'], {
           cwd: context.nativeDirectory,
@@ -296,7 +313,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         await verifyWorkerCodeModeHostIdentity(commandIdentity, codeModeHostIdentity);
       }
       const permissions = await stageWorkerPermissions(skill, context, {
-        writePaths, pythonToolPaths, researchToolPaths, deploymentTools: tools,
+        writePaths, pythonToolPaths, researchToolPaths, researchReadOnlyPaths, deploymentTools: tools,
       });
       await rm(output, { force: true });
       try {

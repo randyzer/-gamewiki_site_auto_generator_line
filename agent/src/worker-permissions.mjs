@@ -101,7 +101,7 @@ export const deploymentExecutionApproved = (skill, context) => skill === STAGE.D
   /^[a-f0-9]{64}$/.test(context.approvedPlan?.digest ?? '');
 
 export async function stageWorkerPermissions(skill, context, {
-  writePaths = [], pythonToolPaths = [], researchToolPaths = [], deploymentTools,
+  writePaths = [], pythonToolPaths = [], researchToolPaths = [], researchReadOnlyPaths = [], deploymentTools,
 } = {}) {
   const { nativeDirectory, runDirectory, inputs } = context;
   if (!inside(runDirectory, nativeDirectory)) throw Error('WORKER_PERMISSION_SCOPE_INVALID');
@@ -158,7 +158,13 @@ export async function stageWorkerPermissions(skill, context, {
       if (artifact.path && inside(runDirectory, artifact.path)) readPaths.push(artifact.path);
     readPaths.push(...(deploymentTools?.readPaths ?? []));
   }
-  for (const path of [...readPaths, ...writePaths, nativeDirectory]) await safePath(path, [path]);
+  const stageReadOnlyPaths = skill === STAGE.KEYWORD_RESEARCH ? researchReadOnlyPaths : [];
+  const workerWritePaths = [nativeDirectory, ...writePaths];
+  for (const readOnlyPath of stageReadOnlyPaths) {
+    if (workerWritePaths.some(writePath => inside(writePath, readOnlyPath) || inside(readOnlyPath, writePath)))
+      throw Error('WORKER_PERMISSION_SCOPE_INVALID');
+  }
+  for (const path of [...readPaths, ...workerWritePaths, ...stageReadOnlyPaths]) await safePath(path, [path]);
   // Login state lives under the user's home and is often a symlinked dotfile, so it skips the link check above.
   if (deploying) readPaths.push(...(deploymentTools?.credentialPaths ?? []));
   const denyPaths = [];
@@ -169,9 +175,10 @@ export async function stageWorkerPermissions(skill, context, {
     if (denyPaths.some(root => inside(root, path))) throw Error(`WORKER_PERMISSION_PATH_DENIED: ${path}`);
   const commandNetworkAllowed = skill === STAGE.KEYWORD_RESEARCH || deploying;
   const config = permissionProfileConfig('agent-worker', { readPaths,
-    writePaths: [nativeDirectory, ...writePaths],
+    writePaths: workerWritePaths,
     writeGitPaths: deploying ? [resolve(inputs.projectPath, '.git')] : [],
-    readOnlyPaths: originalInputs.filter(path => inside(inputs.projectPath, path) || inside(configured.researchDirectory, path)),
+    readOnlyPaths: [...stageReadOnlyPaths,
+      ...originalInputs.filter(path => inside(inputs.projectPath, path) || inside(configured.researchDirectory, path))],
     denyPaths, network: commandNetworkAllowed });
   return { config, args: ['-c', 'default_permissions="agent-worker"', '-c', config],
     kind: 'STAGE_WORKER_PERMISSIONS_V1', commandNetworkAllowed,

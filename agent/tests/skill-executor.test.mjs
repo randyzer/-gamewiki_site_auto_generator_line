@@ -7,7 +7,7 @@ import { fixture } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { ARTIFACTS, STAGES } from '../src/pipeline.mjs';
 import { prepareResearchHandoff, publishResearchArtifacts, publishDeploymentPlan } from '../src/handoff.mjs';
-import { sha256 } from '../src/files.mjs';
+import { inside, sha256 } from '../src/files.mjs';
 import { ALL_STAGES } from '../src/stages.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { runProcess } from '../src/process.mjs';
@@ -278,13 +278,21 @@ test('keyword TLS uses resolved Homebrew paths and grants only the certificate f
   assert.equal(f.calls[0].options.env.DYLD_LIBRARY_PATH, opensslDirectory);
   assert.equal(f.calls[0].options.env.SSL_CERT_FILE, f.certificateFile);
   const nativeDirectory = join(f.context.outputDirectory, 'native');
-  const zshEnvironment = join(nativeDirectory, '.zshenv');
-  assert.equal(f.calls[0].options.env.ZDOTDIR, nativeDirectory);
+  const zdotDirectory = join(f.root, 'host-tools/keyword-research/zdotdir');
+  const zshEnvironment = join(zdotDirectory, '.zshenv');
+  assert.equal(f.calls[0].options.env.ZDOTDIR, zdotDirectory);
+  assert.equal(inside(nativeDirectory, zdotDirectory), false);
+  assert.equal(inside(zdotDirectory, nativeDirectory), false);
   assert.ok(args.includes('shell_environment_policy.include_only=["PATH","TMPDIR","SERPER_API_KEY","YTDLP_COOKIES_FILE","DYLD_LIBRARY_PATH","SSL_CERT_FILE","ZDOTDIR"]'));
   assert.equal(await readFile(zshEnvironment, 'utf8'),
     `export DYLD_LIBRARY_PATH='${opensslDirectory}'\nexport SSL_CERT_FILE='${f.certificateFile}'\n`);
+  await assert.rejects(access(join(nativeDirectory, '.zshenv')), error => error.code === 'ENOENT');
   assert.equal((await stat(zshEnvironment)).mode & 0o777, 0o400);
   const profile = args.find(value => value.startsWith('permissions.agent-worker='));
+  assert.ok(profile.includes(JSON.stringify(zdotDirectory) + '="read"'));
+  assert.equal(profile.includes(JSON.stringify(zdotDirectory) + '="write"'), false);
+  assert.equal(profile.includes(JSON.stringify(dirname(zdotDirectory)) + '="write"'), false);
+  assert.ok(profile.includes(JSON.stringify(nativeDirectory) + '="write"'));
   assert.ok(profile.includes(JSON.stringify(f.certificateFile) + '="read"'));
   assert.equal(profile.includes(JSON.stringify(dirname(f.certificateFile)) + '='), false);
   assert.equal(profile.includes(JSON.stringify(join(f.f.root, 'etc')) + '='), false);
@@ -381,7 +389,8 @@ test('keyword shell inherits only credential names without exposing values in la
     assert.equal(args.join(' ').includes('YTDLP_COOKIES_FILE'), withCookies);
     await mkdir(f.f.inputs.paths.researchDirectory, { recursive: true });
     for (const index of [0, 2, 3, 4, 5, 6, 7]) {
-      const stageContext = { ...f.context, outputDirectory: join(f.root, `artifacts/${index}/1`),
+      const otherRunDirectory = join(f.root, `other-runs/${index}`);
+      const stageContext = { ...f.context, outputDirectory: join(otherRunDirectory, `artifacts/${index}/1`),
         mode: 'plan-only', requiredArtifacts: ARTIFACTS[index],
         upstream: [0, 1].map(i => ({ skill: STAGES[i], artifacts: [] })),
         skillLock: { source: join(f.f.root, 'skills', ALL_STAGES[index] + '.md') } };
@@ -393,6 +402,8 @@ test('keyword shell inherits only credential names without exposing values in la
       assert.ok(!/SERPER_API_KEY|YTDLP_COOKIES_FILE|DYLD_LIBRARY_PATH|SSL_CERT_FILE|ZDOTDIR/.test(other.args.join(' ')));
       for (const name of ['SERPER_API_KEY', 'YTDLP_COOKIES_FILE', 'DYLD_LIBRARY_PATH', 'SSL_CERT_FILE', 'ZDOTDIR'])
         assert.equal(other.options.env[name], undefined);
+      await assert.rejects(access(join(otherRunDirectory, 'host-tools/keyword-research/zdotdir/.zshenv')),
+        error => error.code === 'ENOENT');
     }
   }
 });
