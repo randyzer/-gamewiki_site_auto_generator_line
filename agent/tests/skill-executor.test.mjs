@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, access, link, readdir, stat, symlink, unlink, realpath } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, access, link, readdir, stat, symlink, unlink, realpath, chmod } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { join, dirname } from 'node:path';
-import { fixture } from './helpers.mjs';
+import { fixture, goodResult } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
-import { ARTIFACTS, STAGES } from '../src/pipeline.mjs';
+import { ARTIFACTS, STAGES, createPipeline } from '../src/pipeline.mjs';
+import { captureKeywordRecovery, verifyKeywordRecovery } from '../src/keyword-recovery.mjs';
 import { prepareResearchHandoff, publishResearchArtifacts, publishDeploymentPlan } from '../src/handoff.mjs';
 import { inside, sha256 } from '../src/files.mjs';
 import { ALL_STAGES } from '../src/stages.mjs';
@@ -165,11 +166,56 @@ test('keyword research runs the locked Skill CLI with stage-scoped network and e
   assert.match(invoked.options.input, /Use the Skill serper command/);
   assert.match(invoked.options.input, /host-tools\/keyword-research\/yt-dlp/);
   assert.equal(invoked.options.input.includes('SYNTHETIC_SECRET'), false);
+  assert.equal(invoked.options.timeoutMs, 1800000);
+  assert.match(invoked.options.input, /handoffDeadline/);
+});
+
+test('keyword budget is stage-scoped and invalid budgets block before worker launch', async t => {
+  const f = await keywordLaunchFixture(t);
+  f.context.inputs.keywordResearchBudget = { timeoutMs: 1200000, handoffMarginMs: 240000 };
+  await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls[0].options.timeoutMs, 1200000);
+  assert.match(f.calls[0].options.input, /240000/);
+  f.context.inputs.keywordResearchBudget = { timeoutMs: 1000, handoffMarginMs: 2000 };
+  await assert.rejects(f.executor(STAGES[1], f.context), /KEYWORD_BUDGET_INVALID/);
+  assert.equal(f.calls.length, 1);
+});
+
+test('an explicit trusted-host timeout still caps keyword research and cannot be raised by task input', async t => {
+  const f = await keywordLaunchFixture(t, { executorTimeoutMs: 300000 });
+  await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls[0].options.timeoutMs, 300000, 'preserve the existing selfcheck five-minute cap');
+  f.context.outputDirectory = join(f.root, 'artifacts/1/2');
+  f.context.inputs.keywordResearchBudget = { timeoutMs: 3600000, handoffMarginMs: 180000 };
+  await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls[1].options.timeoutMs, 300000);
+  f.context.outputDirectory = join(f.root, 'artifacts/1/3');
+  f.context.inputs.keywordResearchBudget = { timeoutMs: 120000, handoffMarginMs: 30000 };
+  await f.executor(STAGES[1], f.context);
+  assert.equal(f.calls[2].options.timeoutMs, 120000, 'the smaller task budget also remains effective');
+});
+
+test('inherited provider stops are shared readonly policy and suspend subtitle CLI requests', async t => {
+  const f = await keywordLaunchFixture(t);
+  f.context.inputs.keywordServiceStops = ['youtube-subtitles', 'steam-community'];
+  await f.executor(STAGES[1], f.context);
+  const policy = join(f.context.outputDirectory, 'keyword-service-stops.json');
+  assert.deepEqual(JSON.parse(await readFile(policy)).services, f.context.inputs.keywordServiceStops);
+  const profile = f.calls[0].args.find(value => value.startsWith('permissions.agent-worker='));
+  assert.ok(profile.includes(JSON.stringify(policy) + '="read"'));
+  const wrapper = join(f.root, 'host-tools/keyword-research/yt-dlp');
+  for (const flag of ['--write-subs', '--write-auto-subs'])
+    await assert.rejects(runProcess(wrapper, [flag, 'synthetic.invalid'], { env: { PATH: '/usr/bin:/bin' } }),
+      /KEYWORD_SERVICE_SUSPENDED/);
+  assert.equal((await runProcess(wrapper, ['--version'], { env: { PATH: '/usr/bin:/bin' } })).exitCode, 0);
+  f.context.inputs.keywordServiceStops = ['unknown-provider'];
+  await assert.rejects(f.executor(STAGES[1], f.context), /KEYWORD_SERVICE_STOPS_INVALID/);
+  assert.equal(f.calls.length, 1);
 });
 
 async function keywordLaunchFixture(t, { versionFailure = null, withCookies = true,
   leakCredentialInFailure = false, frameworkRuntime = false, tlsImportFailure = false,
-  emptyCertificate = false } = {}) {
+  emptyCertificate = false, workerRun, executorTimeoutMs } = {}) {
   const f = await fixture(t), root = join(f.configuration.workspace, 'runs/keyword-env');
   const libexec = join(f.root, 'Cellar/yt-dlp/test/libexec');
   const script = join(libexec, 'bin/yt-dlp'), interpreter = join(libexec, 'bin/python');
@@ -227,11 +273,12 @@ async function keywordLaunchFixture(t, { versionFailure = null, withCookies = tr
     await writeFile(join(directory, 'evidence.txt'), 'offline host evidence');
     return snapshotSiteEvidence(directory);
   };
-  const executor = createSkillExecutor({ environment, researchPython: python, researchYtDlp: link,
+  const executor = createSkillExecutor({ environment, researchPython: python, researchYtDlp: link, timeoutMs: executorTimeoutMs,
     previewSite: async () => ({ url: 'http://127.0.0.1:3001', stop: async () => {} }),
     auditSite: hostEvidence, prelaunchSite: hostEvidence,
     run: async (command, args, options) => {
       calls.push({ command, args, options });
+      if (workerRun) return workerRun(command, args, options);
       await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
         status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['offline worker fixture'] }));
     } });
@@ -241,6 +288,63 @@ async function keywordLaunchFixture(t, { versionFailure = null, withCookies = tr
   return { f, root, libexec, script, interpreterAlias, interpreter, python, frameworkPython,
     dependencyPaths, certificateFile, environment, calls, executor, context };
 }
+
+test('keyword timeout preserves host-hashed progress without advancing or registering artifacts', async t => {
+  const f = await keywordLaunchFixture(t, { workerRun: async (_command, _args, options) => {
+    await writeFile(join(options.cwd, 'Fixture素材.md'), '- 状态: PARTIAL\n- 缺口: synthetic HTTP 429');
+    throw Object.assign(Error('Worker timed out'), { code: 'WORKER_TIMEOUT' });
+  } });
+  const p = await createPipeline({ ...f.f.configuration, runId: 'keyword-env', inputs: f.f.inputs,
+    executor: (skill, context) => skill === STAGES[0] ? goodResult(skill, context) : f.executor(skill, context) });
+  await p.advance();
+  const failed = await p.advance();
+  assert.equal(failed.stages[1].status, 'FAILED');
+  assert.equal(failed.stages[1].diagnostic.code, 'WORKER_TIMEOUT');
+  assert.deepEqual(failed.stages[1].artifacts, []);
+  assert.equal(failed.stages[2].status, 'NOT_STARTED');
+  const ref = JSON.parse(await readFile(join(f.root, 'artifacts/1/1/keyword-recovery.json')));
+  const verified = await verifyKeywordRecovery({ ...f.context,
+    outputDirectory: join(f.root, 'artifacts/1/2') }, ref);
+  assert.equal(verified.sourceAttempt, 1);
+  assert.match(await readFile(join(verified.directory, 'data/Fixture素材.md'), 'utf8'), /PARTIAL/);
+});
+
+test('keyword recovery copies only selected data and grants reads only to selected immutable files', async t => {
+  const f = await keywordLaunchFixture(t);
+  const native = join(f.context.outputDirectory, 'native'); await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'selected.txt'), 'verified old public evidence');
+  await writeFile(join(native, 'unselected.txt'), 'must not be exposed');
+  const ref = await captureKeywordRecovery(f.context, { reason: 'WORKER_TIMEOUT' });
+  f.context.inputs.keywordRecovery = { ...ref, files: ['selected.txt'] };
+  f.context.outputDirectory = join(f.root, 'artifacts/1/2');
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(result.status, 'BLOCKED');
+  assert.deepEqual(result.artifacts, []);
+  assert.equal(await readFile(join(f.context.outputDirectory, 'native/selected.txt'), 'utf8'), 'verified old public evidence');
+  await assert.rejects(access(join(f.context.outputDirectory, 'native/unselected.txt')), { code: 'ENOENT' });
+  const profile = f.calls[0].args.find(value => value.startsWith('permissions.agent-worker='));
+  const recoveryDirectory = dirname(ref.manifestPath);
+  assert.ok(profile.includes(JSON.stringify(join(recoveryDirectory, 'data/selected.txt')) + '="read"'));
+  assert.ok(!profile.includes(JSON.stringify(recoveryDirectory) + '='));
+  assert.ok(!profile.includes(JSON.stringify(join(recoveryDirectory, 'data/unselected.txt')) + '='));
+  assert.match(f.calls[0].options.input, /ALL keywords/);
+  assert.match(f.calls[0].options.input, /Never execute recovered files/);
+});
+
+test('post-worker recovery integrity errors do not hide an original worker timeout', async t => {
+  let ref;
+  const f = await keywordLaunchFixture(t, { workerRun: async () => {
+    // Host-side fault injection; the real worker has no write permission here.
+    await chmod(ref.manifestPath, 0o600); await writeFile(ref.manifestPath, '{}');
+    throw Object.assign(Error('Worker timed out'), { code: 'WORKER_TIMEOUT' });
+  } });
+  const native = join(f.context.outputDirectory, 'native'); await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'public.txt'), 'partial evidence');
+  ref = await captureKeywordRecovery(f.context, { reason: 'WORKER_TIMEOUT' });
+  f.context.inputs.keywordRecovery = ref; f.context.outputDirectory = join(f.root, 'artifacts/1/2');
+  await assert.rejects(f.executor(STAGES[1], f.context), error =>
+    error.code === 'WORKER_TIMEOUT' && /KEYWORD_RECOVERY_CHANGED_AFTER_WORKER/.test(error.message));
+});
 
 test('keyword framework launcher preserves venv identity, arguments and exit status without alias grants', async t => {
   const f = await keywordLaunchFixture(t, { frameworkRuntime: true });

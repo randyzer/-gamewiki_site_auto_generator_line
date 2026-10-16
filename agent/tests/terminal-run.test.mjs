@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFile, readFile, access, mkdir, readdir } from 'node:fs/promises';
+import { writeFile, readFile, access, mkdir, readdir, chmod } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { runFromTerminal, describeRun } from '../src/terminal-run.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { sha256 } from '../src/files.mjs';
 import { fixture, goodResult } from './helpers.mjs';
+import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 
 function terminal(answer, { isTTY = true } = {}) {
   const stdin = Readable.from(answer === null ? [] : [answer + '\n']);
@@ -113,6 +114,59 @@ test('describeRun reports a missing keyword file instead of a digest', async t =
   const text = await describeRun({ command: 'run', runId: 'x', inputs: { ...s.f.inputs, rawKeywordsFile: '/no/such/file.md' },
     configuration: s.f.configuration });
   assert.match(text, /\/no\/such\/file\.md \(MISSING\)/);
+});
+
+test('preview exposes the keyword budget and binds the current retry manifest', async t => {
+  const s = await setup(t);
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId: 'budget-preview',
+    configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
+  const inputs = { ...s.f.inputs, keywordResearchBudget: { timeoutMs: 1200000, handoffMarginMs: 180000 } };
+  await writeFile(s.inputsFile, JSON.stringify(inputs));
+  const io = terminal(null, { isTTY: false });
+  const before = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId: 'budget-preview',
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...io });
+  assert.match(io.text(), /Keyword research budget: 1200000 ms; handoff margin: 180000 ms; source: run-inputs/);
+  const path = manifestPath(s.f, 'budget-preview'), manifest = JSON.parse(await readFile(path));
+  manifest.sequence++;
+  await writeFile(path, JSON.stringify(manifest));
+  const after = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId: 'budget-preview',
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...terminal(null, { isTTY: false }) });
+  assert.notEqual(before.confirmation_code, after.confirmation_code);
+});
+
+test('retry preview validates selected recovery bytes and confirms selection and provider stops', async t => {
+  const s = await setup(t), runId = 'selected-recovery';
+  const pausing = async (skill, context) => skill === STAGE.KEYWORD_RESEARCH
+    ? { status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC stop'] } : goodResult(skill, context);
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: pausing, ...terminal('y') });
+  const runDirectory = join(s.f.configuration.workspace, 'runs', runId), native = join(runDirectory, 'artifacts/1/1/native');
+  await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'one.txt'), 'public evidence one');
+  await writeFile(join(native, 'two.txt'), 'public evidence two');
+  const ref = await captureStoppedKeywordAttempt(runDirectory, 1);
+  const inputs = { ...s.f.inputs, keywordRecovery: ref, keywordServiceStops: ['youtube-subtitles'] };
+  const preview = async value => {
+    await writeFile(s.inputsFile, JSON.stringify(value));
+    const io = terminal(null, { isTTY: false });
+    const result = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+      configuration: s.f.configuration, executor: s.executor, preview: true, ...io });
+    return { ...result, text: io.text() };
+  };
+  const first = await preview(inputs);
+  assert.ok(first.text.includes(ref.sha256));
+  assert.match(first.text, /Suspended services \(all keywords\): youtube-subtitles/);
+  const second = await preview({ ...inputs, keywordRecovery: { ...ref, files: ['one.txt'] } });
+  assert.notEqual(first.confirmation_code, second.confirmation_code);
+  const third = await preview({ ...inputs, keywordServiceStops: [] });
+  assert.notEqual(first.confirmation_code, third.confirmation_code);
+  const target = join(ref.manifestPath, '..', 'data/one.txt');
+  await chmod(target, 0o600); await writeFile(target, 'tampered data');
+  await assert.rejects(preview(inputs), /RECOVERY/);
+  assert.equal(s.calls.length, 0, 'preview never invokes the executor');
+  const manifest = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  assert.equal(manifest.stages[1].status, 'BLOCKED');
+  assert.equal(manifest.stages[1].checkpoint.attempt, 1);
 });
 
 test('a terminal run executes the approved plan on retry and reports the deployment', async t => {
