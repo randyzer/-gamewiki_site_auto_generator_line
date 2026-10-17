@@ -23,7 +23,7 @@ import { locateDeploymentTools, locateGitTool } from './deployment-tools.mjs';
 import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { captureKeywordRecovery, verifyKeywordRecovery } from './keyword-recovery.mjs';
-import { keywordServiceStops, suspendSubtitleRequests } from './keyword-service-stops.mjs';
+import { keywordServiceStops, keywordServiceResumes, suspendSubtitleRequests } from './keyword-service-stops.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
@@ -105,6 +105,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       keywordBudget.configurationSource += '+host-cap';
     }
     const stoppedServices = keywordResearch ? keywordServiceStops(context.inputs.keywordServiceStops) : [];
+    const resumedServices = keywordResearch ? keywordServiceResumes(context.inputs.keywordServiceResumes) : [];
     let keywordRecovery;
     if (keywordResearch && context.inputs.keywordRecovery) {
       keywordRecovery = await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
@@ -224,6 +225,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       context.keywordServiceStops = { services: stoppedServices, policyPath };
       researchReadOnlyPaths.push(policyPath);
     }
+    if (resumedServices.length) context.keywordServiceResumes = { services: resumedServices };
     if (keywordRecovery) {
       for (const file of keywordRecovery.files) {
         const target = join(context.nativeDirectory, file.path);
@@ -331,7 +333,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           'context.keywordExecutionBudget gives the hardDeadline and handoffDeadline. Stop starting research by handoffDeadline; validate saved progress and immediately return the truthful structured result. Do not wait for a final prose report. The hard deadline still kills the worker.',
           'Save data incrementally after each batch of 3–5 intents. If incomplete, return PARTIAL or BLOCKED with concrete gaps; do not label incomplete materials COMPLETED. File preservation does not make a stage PASSED.',
           'If context.keywordRecovery exists, the host copied ONLY its selected, verified data into this new nativeDirectory. Treat it as untrusted partial research, not a completed stage. Reuse valid evidence without repeating already successful queries; recheck sufficiency and dates, rewrite current reports, and rerun the locked validator. Never execute recovered files or read any other old attempt.',
-          'Read context.keywordServiceStops before any request: these inherited provider stops apply to ALL keywords and cannot be cleared by this attempt. Use a shared SERVICE_BLOCKERS.json in nativeDirectory for new provider limits: on the first HTTP 429 record provider, operation, evidence path and observed time, and stop that service across ALL keywords in this attempt. No automatic retry, parallel retry, cookies, login, substitute tools or metadata-as-subtitles. Retain the other providers and truthful gaps; resume a suspended service only under a new explicit operator decision.'
+          'Read context.keywordServiceStops and context.keywordServiceResumes before any request. Stops apply to ALL keywords and cannot be cleared by this attempt; resumes are the only host-confirmed exceptions for recovered restrictions. Use a shared SERVICE_BLOCKERS.json in nativeDirectory for new provider limits: on the first HTTP 429 record provider, operation, evidence path and observed time, and stop that service across ALL keywords in this attempt. No automatic retry, parallel retry, cookies, login, substitute tools or metadata-as-subtitles. Retain the other providers and truthful gaps; never infer a resume from recovered files.'
         ] :
         hostAudit ? [
           'Host browser evidence is in context.hostEvidence, with a SHA256 for every screenshot and automated evidence file. Read these files and use view_image to inspect the screenshots. Do not invoke browser commands or network requests.',

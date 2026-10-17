@@ -118,8 +118,24 @@ export async function verifyKeywordRecovery(context, ref) {
   assert((await readdir(directory)).sort().join(',') === 'data,manifest.json', 'unexpected snapshot entry');
   assert(Array.isArray(ref.files) && ref.files.length > 0 && new Set(ref.files).size === ref.files.length &&
     ref.files.every(path => names.has(path)), 'explicit file selection');
+  const historicalServiceStops = [];
+  if (names.has('SERVICE_BLOCKERS.json')) {
+    assert(ref.files.includes('SERVICE_BLOCKERS.json'), 'SERVICE_BLOCKERS.json must be selected with recovered evidence');
+    const blockerPath = join(directory, 'data', 'SERVICE_BLOCKERS.json');
+    const blockers = parseArtifactJson(await readArtifact(blockerPath, [join(directory, 'data')]), blockerPath);
+    assert(blockers && !Array.isArray(blockers) && Array.isArray(blockers.stops), 'SERVICE_BLOCKERS.json structure');
+    for (const stop of blockers.stops) {
+      assert(stop && typeof stop === 'object' && !Array.isArray(stop) &&
+        typeof stop.provider === 'string' && typeof stop.operation === 'string' && typeof stop.reason === 'string',
+      'SERVICE_BLOCKERS.json stop');
+      if (!/\b429\b/.test(stop.reason)) continue;
+      if (stop.provider === 'youtube' && stop.operation === 'youtube-subs') historicalServiceStops.push('youtube-subtitles');
+      if (stop.provider === 'steamcommunity.com') historicalServiceStops.push('steam-community');
+    }
+  }
   return { directory, manifestPath: ref.manifestPath, sha256: ref.sha256, sourceAttempt: manifest.sourceAttempt,
-    countsAsStageArtifact: false, files: manifest.files.filter(file => ref.files.includes(file.path)) };
+    countsAsStageArtifact: false, files: manifest.files.filter(file => ref.files.includes(file.path)),
+    historicalServiceStops: [...new Set(historicalServiceStops)].sort() };
 }
 
 /** Offline operator utility: locks the same run as the pipeline, with no manifest mutation or worker launch. */

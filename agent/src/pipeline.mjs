@@ -11,7 +11,7 @@ import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './pat
 import { isDeepStrictEqual } from 'node:util';
 import { publishResearchArtifacts } from './handoff.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
-import { keywordServiceStops } from './keyword-service-stops.mjs';
+import { keywordServiceStops, keywordServiceResumes } from './keyword-service-stops.mjs';
 import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
@@ -79,6 +79,7 @@ function checkInputs(value) {
   assert(value.mode === undefined || ['new-site', 'existing-project'].includes(value.mode), 'Unknown project mode');
   if (value.keywordResearchBudget !== undefined) keywordResearchBudget(value.keywordResearchBudget);
   if (value.keywordServiceStops !== undefined) keywordServiceStops(value.keywordServiceStops);
+  if (value.keywordServiceResumes !== undefined) keywordServiceResumes(value.keywordServiceResumes);
   if (value.keywordRecoveryDecision !== undefined)
     keywordRecoveryDecision(value.keywordRecoveryDecision, { recovery: value.keywordRecovery });
   // Reject non-JSON values instead of silently dropping functions or cycles.

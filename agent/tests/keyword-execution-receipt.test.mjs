@@ -7,7 +7,7 @@ const base = () => ({
   runId: 'receipt-run', inputsFile: '/tmp/receipt-inputs.json', inputsFileBytes: Buffer.from('{"fixture":true}'),
   inputs: { keywordRecoveryDecision: { mode: 'fresh' },
     keywordResearchBudget: { timeoutMs: 1200000, handoffMarginMs: 180000 },
-    keywordServiceStops: ['youtube-subtitles'] },
+    keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [] },
   manifestBytes: Buffer.from('{"sequence":12}'), confirmationBinding: 'confirmation-code:fixture',
 });
 
@@ -22,6 +22,7 @@ test('keyword execution receipt binds input identity, manifest and recovery cont
   for (const changed of [
     { inputs: { ...value.inputs, keywordResearchBudget: { timeoutMs: 900000, handoffMarginMs: 180000 } } },
     { inputs: { ...value.inputs, keywordServiceStops: [] } },
+    { inputs: { ...value.inputs, keywordServiceResumes: ['youtube-subtitles'] } },
     { manifestBytes: Buffer.from('{"sequence":13}') },
     { runId: 'other-run' },
   ]) assert.throws(() => verifyKeywordExecutionReceipt(receipt, { runId: value.runId,
