@@ -118,11 +118,11 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 }
 ```
 
-计划文件采用 `KEYWORD_EVIDENCE_PLAN_V1`，绑定 `runId`、Stage 2、所选恢复快照 SHA256、`serviceStops` 和 `serviceResumes`。`tasks` 不能为空；每项必须写明最终关键词、原始行号、具体事实缺口、允许的工具、查询或 HTTPS 目标、预期取得的证据。允许工具仅为 `serper`、`public-page`、YouTube 搜索/元数据/字幕和 Steam Community；计划不能调度仍处于暂停状态的服务。`pendingRows` 保留歧义词的原词和决定，`PENDING`/`EXCLUDE` 行不能进入证据任务。示例：
+计划文件采用 `KEYWORD_EVIDENCE_PLAN_V2`，绑定 `runId`、Stage 2、所选恢复快照 SHA256、`serviceStops` 和 `serviceResumes`。V1 会被明确拒绝，必须重新生成并审核计划。`tasks` 不能为空；每项除最终关键词、原始行号、具体事实缺口、允许的工具、查询或 HTTPS 目标、预期证据外，还必须声明验收条件、停止条件、来源要求、失败后的处置和预期素材状态变化。允许工具仅为 `serper`、`public-page`、YouTube 搜索/元数据/字幕和 Steam Community；计划不能调度仍处于暂停状态的服务。`pendingRows` 保留歧义词的原词和决定，`PENDING`/`EXCLUDE` 行不能进入证据任务。示例：
 
 ```json
 {
-  "kind": "KEYWORD_EVIDENCE_PLAN_V1",
+  "kind": "KEYWORD_EVIDENCE_PLAN_V2",
   "runId": "RUN_ID",
   "stage": "game-innerpage-keyword-information-research",
   "recoverySha256": "恢复快照的64位SHA256",
@@ -134,7 +134,16 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
     "gap": "当前版本号和发布日期缺少官方正文",
     "tool": "serper",
     "target": "site:official.example release notes current version",
-    "expectedEvidence": "能够直接支持版本号和发布日期的官方页面正文"
+    "expectedEvidence": "能够直接支持版本号和发布日期的官方页面正文",
+    "acceptanceCriteria": ["官方正文同时给出当前稳定版号和发布日期"],
+    "stopConditions": ["OFFICIAL_SOURCE_UNAVAILABLE", "SERVICE_SUSPENDED"],
+    "sourceRequirements": {
+      "allowedSourceTypes": ["FIRST_PARTY"],
+      "requiresBody": true,
+      "requiresCurrentAccess": true
+    },
+    "fallbackDisposition": "KEEP_PARTIAL",
+    "expectedStatusTransition": { "from": "PARTIAL", "to": "COMPLETED" }
   }],
   "pendingRows": [{
     "row": 36,
@@ -145,7 +154,11 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 }
 ```
 
-预览会显示计划 SHA256、任务数、每项预期证据和歧义词决定。计划文件、恢复快照或服务决定变化后，原确认码和执行凭据失效。Pipeline 和 Worker 启动入口会再次校验同一文件，并以恢复快照中的 `RAW_LINEAGE.json` 和 `keywords.json` 核对任务关键词、原始行归属及完整的待确认行；缺少计划、空计划、直接或间接依赖暂停服务、遗漏/改写待确认行或编造行归属时，不启动 Worker。恢复执行后，宿主只把新增/改变的 `evidence/` 文件计为研究进展；`SERVICE_BLOCKERS.json` 单独作为诊断变化，不算新增证据。只重写报告、阻断记录或重新校验旧文件会记录 `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS`，下一次 retry 必须修改计划。计划只证明本轮有可执行的补证路径，不代表任务必然取得证据，也不降低 `COMPLETED`/Stage `PASSED` 门槛。
+预览会显示计划 SHA256、任务数、每项预期证据和歧义词决定。计划文件、恢复快照或服务决定变化后，原确认码和执行凭据失效。Pipeline 和 Worker 启动入口会再次校验同一文件，并以恢复快照中的 `RAW_LINEAGE.json` 和 `keywords.json` 核对任务关键词、原始行归属及完整的待确认行；缺少计划、空计划、直接或间接依赖暂停服务、遗漏/改写待确认行或编造行归属时，不启动 Worker。
+
+恢复 worker 必须写 `KEYWORD_EVIDENCE_CLAIMS_V2.json`，逐项引用本轮改变的 `evidence/` 文件、HTTPS 来源、文件 SHA256、访问结果、来源类型、所支持的验收条件以及对应素材文件。该文件只是 worker 声明。worker 停止后，宿主重新读取实际文件和素材状态，生成只读的 `KEYWORD_EVIDENCE_OUTCOME_V2.json`，结果只会是 `NEW_FILES`、`NEW_VERIFIED_EVIDENCE`、`GAP_RESOLVED`、`STATUS_CHANGED`、`NO_PROGRESS` 或 `PLAN_EXHAUSTED`。文件哈希变化本身最多是 `NEW_FILES`；只有来自 worker 写权限边界之外、与文件路径、URL、哈希、访问结果、来源类型和支持事实完全匹配的宿主访问记录，才能升级为已验证证据。每个被删除的历史缺口也必须由单独的可信任务覆盖，worker 不能通过重写素材文件一并清空其他缺口。停止条件同样需要匹配的宿主执行或服务阻断记录，自报停止原因只会保留为 `NO_PROGRESS`。`SERVICE_BLOCKERS.json` 始终只算诊断变化。
+
+`PLAN_EXHAUSTED` 会绑定恢复快照、计划策略、服务决定和素材缺口状态，并随下一份恢复快照强制携带。完全相同的缺口、服务决定和任务策略不能再次执行；必须提交一份经过审核、实际改变任务策略的新 V2 计划。以上分类不会把 `PARTIAL` 自动改成 `PASSED`，也不会降低 `COMPLETED` 或正式 artifacts 的验收门槛。
 
 存在上一 attempt 的 `keyword-recovery.json` 时，Stage 2 retry 必须显式设置 `keywordRecoveryDecision`。`{"mode":"recover"}` 必须同时提供 `keywordRecovery`；`{"mode":"fresh"}` 必须移除或置空 `keywordRecovery`。预览与确认会生成宿主执行凭据，绑定输入文件 SHA256、恢复选择、预算、暂停项、恢复授权、当时的 manifest 与确认码；缺失或变化会在 worker 启动前拒绝执行。历史 receipt 与 attempt 只保留审计用途，不会被新决定改写。
 

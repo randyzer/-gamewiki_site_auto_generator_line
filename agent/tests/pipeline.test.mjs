@@ -73,6 +73,8 @@ async function writeFixtureRecoveryLineage(nativeDirectory) {
   await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
     { category: 'Guide', keywords: ['Example walkthrough'] },
   ] }));
+  await writeFile(join(nativeDirectory, 'Example walkthrough素材.md'),
+    '- 状态: PARTIAL\n- 缺口: Missing official fact\n');
 }
 
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
@@ -667,12 +669,17 @@ test('direct pipeline recovery rejects incomplete historical service decisions b
   const runDirectory = join(f.workspace, 'runs', runId);
   const recovery = await captureStoppedKeywordAttempt(runDirectory, 1);
   const planPath = join(f.root, 'incomplete-service-plan.json');
-  const planBytes = Buffer.from(JSON.stringify({ kind: 'KEYWORD_EVIDENCE_PLAN_V1', runId,
+  const planBytes = Buffer.from(JSON.stringify({ kind: 'KEYWORD_EVIDENCE_PLAN_V2', runId,
     stage: api.STAGES[1], recoverySha256: recovery.sha256,
     serviceStops: ['youtube-subtitles'], serviceResumes: [],
     tasks: [{ keyword: 'Example walkthrough', rawRows: [1], gap: 'Missing official fact',
       tool: 'serper', target: 'Example walkthrough official documentation',
-      expectedEvidence: 'First-party page body for the missing fact' }], pendingRows: [] }));
+      expectedEvidence: 'First-party page body for the missing fact',
+      acceptanceCriteria: ['Official body supports the missing example fact.'],
+      stopConditions: ['OFFICIAL_SOURCE_UNAVAILABLE'],
+      sourceRequirements: { allowedSourceTypes: ['FIRST_PARTY'], requiresBody: true,
+        requiresCurrentAccess: true }, fallbackDisposition: 'KEEP_PARTIAL',
+      expectedStatusTransition: { from: 'PARTIAL', to: 'COMPLETED' } }], pendingRows: [] }));
   await writeFile(planPath, planBytes);
   const patch = { keywordRecovery: recovery, keywordRecoveryDecision: { mode: 'recover' },
     keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [],

@@ -108,6 +108,17 @@ test('a file selection does not silently include the rest of a snapshot', async 
     await assert.rejects(recovery.verifyKeywordRecovery(next, { ...ref, files }), /RECOVERY/);
 });
 
+test('a recovery selection cannot omit the prior host evidence outcome', async t => {
+  const { context, next } = await setup(t);
+  await writeFile(join(context.nativeDirectory, 'KEYWORD_EVIDENCE_OUTCOME_V2.json'), JSON.stringify({
+    kind: 'HOST_KEYWORD_EVIDENCE_OUTCOME_V2', classification: 'PLAN_EXHAUSTED',
+  }));
+  const ref = await recovery.captureKeywordRecovery(context, { reason: 'WORKER_STOPPED' });
+  await assert.rejects(recovery.verifyKeywordRecovery(next, {
+    ...ref, files: ref.files.filter(path => path !== 'KEYWORD_EVIDENCE_OUTCOME_V2.json'),
+  }), /KEYWORD_EVIDENCE_OUTCOME_V2/);
+});
+
 test('verified recovery exposes known unresolved provider stops from selected blocker evidence', async t => {
   const { context, next } = await setup(t);
   await writeFile(join(context.nativeDirectory, 'SERVICE_BLOCKERS.json'), JSON.stringify({

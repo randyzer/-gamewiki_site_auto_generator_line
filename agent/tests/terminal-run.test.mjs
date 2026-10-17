@@ -27,11 +27,16 @@ async function setup(t) {
 
 async function evidencePlan(f, runId, recoverySha256, { serviceStops = [], serviceResumes = [], suffix = '' } = {}) {
   const plan = {
-    kind: 'KEYWORD_EVIDENCE_PLAN_V1', runId, stage: STAGE.KEYWORD_RESEARCH, recoverySha256,
+    kind: 'KEYWORD_EVIDENCE_PLAN_V2', runId, stage: STAGE.KEYWORD_RESEARCH, recoverySha256,
     serviceStops, serviceResumes,
     tasks: [{ keyword: 'Fixture guide', rawRows: [1], gap: 'Verify one missing official fact' + suffix,
       tool: 'serper', target: 'Fixture guide official documentation' + suffix,
-      expectedEvidence: 'A first-party page body supporting the missing fact' }],
+      expectedEvidence: 'A first-party page body supporting the missing fact',
+      acceptanceCriteria: ['Official body supports the missing fixture fact.'],
+      stopConditions: ['OFFICIAL_SOURCE_UNAVAILABLE'],
+      sourceRequirements: { allowedSourceTypes: ['FIRST_PARTY'], requiresBody: true,
+        requiresCurrentAccess: true }, fallbackDisposition: 'KEEP_PARTIAL',
+      expectedStatusTransition: { from: 'PARTIAL', to: 'COMPLETED' } }],
     pendingRows: [],
   };
   const bytes = Buffer.from(JSON.stringify(plan, null, 2) + '\n');
@@ -47,6 +52,8 @@ async function writeRecoveryLineage(nativeDirectory) {
   await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
     { category: 'Guide', keywords: ['Fixture guide'] },
   ] }));
+  await writeFile(join(nativeDirectory, 'Fixture guide素材.md'),
+    '- 状态: PARTIAL\n- 缺口: Verify one missing official fact\n');
 }
 
 const manifestPath = (f, id) => join(f.configuration.workspace, 'runs', id, 'manifest.json');
@@ -184,7 +191,7 @@ test('retry preview validates selected recovery bytes and confirms selection and
   assert.ok(first.text.includes(ref.sha256));
   assert.match(first.text, /Suspended services \(all keywords\): youtube-subtitles/);
   const second = await preview({ ...inputs, keywordRecovery: { ...ref,
-    files: ['one.txt', 'RAW_LINEAGE.json', 'keywords.json'] } });
+    files: ['one.txt', 'RAW_LINEAGE.json', 'keywords.json', 'Fixture guide素材.md'] } });
   assert.notEqual(first.confirmation_code, second.confirmation_code);
   const thirdPlan = await evidencePlan(s.f, runId, ref.sha256, { suffix: '-third' });
   const third = await preview({ ...inputs, keywordServiceStops: [], keywordEvidencePlan: thirdPlan });
