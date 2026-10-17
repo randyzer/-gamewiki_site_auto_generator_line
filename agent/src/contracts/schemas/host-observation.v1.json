@@ -1,0 +1,45 @@
+{
+  "$id": "HOST_OBSERVATION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "trustLevel", "evidenceMode", "namespace", "runId", "stageId", "attemptId", "contextDigest", "recoveryDigest", "policyVersion", "planDigest", "observationId", "taskId", "tool", "target", "startedAtMs", "endedAtMs", "accessResult", "artifacts", "criterionIds"],
+  "properties": {
+    "kind": { "const": "HOST_OBSERVATION" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "HOST_EVIDENCE_BROKER" },
+    "trustLevel": { "const": "T2" },
+    "evidenceMode": { "enum": ["SIMULATED", "PRODUCTION"] },
+    "namespace": { "type": "string", "format": "relative-posix-path" },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "recoveryDigest": { "type": "string", "format": "sha256" },
+    "policyVersion": { "type": "integer", "minimum": 1 },
+    "planDigest": { "type": "string", "format": "sha256" },
+    "observationId": { "type": "string", "pattern": "^obs-[a-f0-9]{24}$" },
+    "taskId": { "type": "string", "pattern": "^task-[a-f0-9]{64}$" },
+    "tool": { "type": "string", "minLength": 1 },
+    "target": { "type": "string", "minLength": 1 },
+    "startedAtMs": { "type": "integer", "minimum": 0 },
+    "endedAtMs": { "type": "integer", "minimum": 0 },
+    "accessResult": { "enum": ["HTTP_200", "TOOL_SUCCESS", "HTTP_403", "HTTP_429", "CAPTCHA", "CURRENT_PROCESS_LOGIN_MISSING", "TOOL_UNAVAILABLE", "TIMEOUT"] },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "url", "sha256", "accessResult", "sourceType", "criterionIds"],
+        "properties": {
+          "path": { "type": "string", "format": "relative-posix-path", "pattern": "^evidence/" },
+          "url": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "format": "sha256" },
+          "accessResult": { "enum": ["HTTP_200", "TOOL_SUCCESS", "HTTP_403", "HTTP_429", "CAPTCHA", "CURRENT_PROCESS_LOGIN_MISSING", "TOOL_UNAVAILABLE", "TIMEOUT"] },
+          "sourceType": { "type": "string", "minLength": 1 },
+          "criterionIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^criterion-[a-f0-9]{24}$" } }
+        }
+      }
+    },
+    "criterionIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^criterion-[a-f0-9]{24}$" } },
+    "stopCondition": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$" }
+  }
+}

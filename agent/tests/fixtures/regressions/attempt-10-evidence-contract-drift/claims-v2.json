@@ -1,0 +1,29 @@
+{
+  "kind": "KEYWORD_EVIDENCE_CLAIMS_V2",
+  "runId": "wallpaper-engine-002",
+  "stage": "game-innerpage-keyword-information-research",
+  "recoverySha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "keywordEvidencePlanSha256": "606af254ee4d5e6c2ad2a321cf83344b8629abb061c1aab620f22ec44757216c",
+  "tasks": [
+    {
+      "keyword": "Wallpaper Engine price",
+      "gap": "The current US-market USD price remains unverified from the live Steam store body.",
+      "attemptedOperation": "public-page approved target",
+      "evidence": [
+        {
+          "path": "/fixture/native/evidence/price.txt",
+          "url": "https://store.steampowered.com/app/431960/?cc=us",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "accessResult": "HTTP 200",
+          "sourceType": "PLATFORM_FIRST_PARTY",
+          "supportedFacts": ["Steam US price is shown in USD."]
+        }
+      ],
+      "materialPath": "/fixture/native/Wallpaper Engine price素材.md",
+      "materialSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "finalStatus": "PARTIAL",
+      "remainingGaps": ["Price changes over time."],
+      "stopCondition": null
+    }
+  ]
+}

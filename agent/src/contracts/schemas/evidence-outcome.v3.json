@@ -1,0 +1,45 @@
+{
+  "$id": "EVIDENCE_OUTCOME_V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "trustLevel", "evidenceMode", "runId", "stageId", "attemptId", "contextDigest", "recoveryDigest", "policyVersion", "planDigest", "tasks", "diagnostics"],
+  "properties": {
+    "kind": { "const": "EVIDENCE_OUTCOME" },
+    "schemaVersion": { "const": 3 },
+    "producer": { "const": "EVIDENCE_ASSESSOR" },
+    "trustLevel": { "const": "T3" },
+    "evidenceMode": { "enum": ["SIMULATED", "PRODUCTION"] },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "recoveryDigest": { "type": "string", "format": "sha256" },
+    "policyVersion": { "type": "integer", "minimum": 1 },
+    "planDigest": { "type": "string", "format": "sha256" },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["taskId", "classification", "criteria"],
+        "properties": {
+          "taskId": { "type": "string", "pattern": "^task-[a-f0-9]{64}$" },
+          "classification": { "enum": ["GAP_RESOLVED", "PARTIAL_PROGRESS", "NO_PROGRESS", "REJECTED"] },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["criterionId", "status", "reason", "observationIds"],
+              "properties": {
+                "criterionId": { "type": "string", "pattern": "^criterion-[a-f0-9]{24}$" },
+                "status": { "enum": ["VERIFIED", "UNVERIFIED", "REJECTED"] },
+                "reason": { "type": "string", "minLength": 1 },
+                "observationIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^obs-[a-f0-9]{24}$" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "diagnostics": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}
