@@ -66,6 +66,15 @@ async function advance(pipeline, count) {
   return pipeline.snapshot();
 }
 
+async function writeFixtureRecoveryLineage(nativeDirectory) {
+  await writeFile(join(nativeDirectory, 'RAW_LINEAGE.json'), JSON.stringify({ pendingIds: [], rows: [
+    { id: '1', raw: 'example walkthrough', final: 'Example walkthrough' },
+  ] }));
+  await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
+    { category: 'Guide', keywords: ['Example walkthrough'] },
+  ] }));
+}
+
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
   for (const index of [4, 5]) {
     const f = await fixture(t);
@@ -644,6 +653,7 @@ test('direct pipeline recovery rejects incomplete historical service decisions b
     const native = join(context.outputDirectory, 'native');
     await mkdir(native, { recursive: true });
     await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+    await writeFixtureRecoveryLineage(native);
     await writeFile(join(native, 'SERVICE_BLOCKERS.json'), JSON.stringify({ resumeAuthorized: false, stops: [
       { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
       { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
@@ -656,8 +666,17 @@ test('direct pipeline recovery rejects incomplete historical service decisions b
   const runId = first.snapshot().runId;
   const runDirectory = join(f.workspace, 'runs', runId);
   const recovery = await captureStoppedKeywordAttempt(runDirectory, 1);
+  const planPath = join(f.root, 'incomplete-service-plan.json');
+  const planBytes = Buffer.from(JSON.stringify({ kind: 'KEYWORD_EVIDENCE_PLAN_V1', runId,
+    stage: api.STAGES[1], recoverySha256: recovery.sha256,
+    serviceStops: ['youtube-subtitles'], serviceResumes: [],
+    tasks: [{ keyword: 'Example walkthrough', rawRows: [1], gap: 'Missing official fact',
+      tool: 'serper', target: 'Example walkthrough official documentation',
+      expectedEvidence: 'First-party page body for the missing fact' }], pendingRows: [] }));
+  await writeFile(planPath, planBytes);
   const patch = { keywordRecovery: recovery, keywordRecoveryDecision: { mode: 'recover' },
-    keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [] };
+    keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [],
+    keywordEvidencePlan: { path: planPath, sha256: hash(planBytes) } };
   const manifestBytes = await readFile(first.manifestPath);
   const receipt = createKeywordExecutionReceipt({ runId, inputsFile: join(f.root, 'retry-inputs.json'),
     inputsFileBytes: Buffer.from(JSON.stringify(patch)), inputs: patch, manifestBytes,
@@ -667,6 +686,37 @@ test('direct pipeline recovery rejects incomplete historical service decisions b
   await resumed.updateUserInputs(patch, { retry: true });
   await assert.rejects(resumed.advance(), /KEYWORD_SERVICE_DECISION_REQUIRED.*steam-community/);
   assert.equal(keywordCalls, 1, 'incomplete recovery decisions must fail before the worker is called');
+});
+
+test('direct pipeline recovery waits for an explicit evidence plan before invoking the worker', async t => {
+  const f = await fixture(t);
+  let keywordCalls = 0;
+  const executor = async (skill, context) => {
+    f.calls.push({ skill, context });
+    if (skill !== api.STAGES[1]) return f.good(skill, context);
+    keywordCalls++;
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true });
+    await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+    await writeFixtureRecoveryLineage(native);
+    return { status: 'PARTIAL', artifacts: [], evidence: ['SYNTHETIC incomplete research'], missing_inputs: [] };
+  };
+  const first = await f.create({ executor });
+  await advance(first, 2);
+  assert.equal(keywordCalls, 1);
+  const runId = first.snapshot().runId;
+  const recovery = await captureStoppedKeywordAttempt(join(f.workspace, 'runs', runId), 1);
+  const patch = { keywordRecovery: recovery, keywordRecoveryDecision: { mode: 'recover' },
+    keywordServiceStops: [], keywordServiceResumes: [] };
+  const manifestBytes = await readFile(first.manifestPath);
+  const receipt = { runId, decision: { mode: 'recover' }, manifestSha256: hash(manifestBytes) };
+  const resumed = await f.create({ runId, resume: true, inputs: {}, executor,
+    keywordExecutionReceipt: receipt, keywordExecutionInputs: patch });
+  await resumed.updateUserInputs(patch, { retry: true });
+  const state = await resumed.advance();
+  assert.equal(state.stages[1].status, 'WAITING_FOR_USER');
+  assert.deepEqual(state.stages[1].missing_inputs, ['keywordEvidencePlan']);
+  assert.equal(keywordCalls, 1, 'missing evidence plan must stop before the worker is called');
 });
 
 test('resume blocks on a changed or out-of-run keyword input copy and names the file', async t => {

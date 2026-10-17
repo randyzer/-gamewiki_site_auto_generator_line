@@ -25,6 +25,30 @@ async function setup(t) {
   return { f, inputsFile, calls, executor };
 }
 
+async function evidencePlan(f, runId, recoverySha256, { serviceStops = [], serviceResumes = [], suffix = '' } = {}) {
+  const plan = {
+    kind: 'KEYWORD_EVIDENCE_PLAN_V1', runId, stage: STAGE.KEYWORD_RESEARCH, recoverySha256,
+    serviceStops, serviceResumes,
+    tasks: [{ keyword: 'Fixture guide', rawRows: [1], gap: 'Verify one missing official fact' + suffix,
+      tool: 'serper', target: 'Fixture guide official documentation' + suffix,
+      expectedEvidence: 'A first-party page body supporting the missing fact' }],
+    pendingRows: [],
+  };
+  const bytes = Buffer.from(JSON.stringify(plan, null, 2) + '\n');
+  const path = join(f.root, `keyword-evidence-plan${suffix || ''}.json`);
+  await writeFile(path, bytes);
+  return { path, sha256: sha256(bytes) };
+}
+
+async function writeRecoveryLineage(nativeDirectory) {
+  await writeFile(join(nativeDirectory, 'RAW_LINEAGE.json'), JSON.stringify({ pendingIds: [], rows: [
+    { id: '1', raw: 'fixture guide', final: 'Fixture guide' },
+  ] }));
+  await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
+    { category: 'Guide', keywords: ['Fixture guide'] },
+  ] }));
+}
+
 const manifestPath = (f, id) => join(f.configuration.workspace, 'runs', id, 'manifest.json');
 
 test('summary shows game, keyword file digest, Skill tree, template source and stages before asking', async t => {
@@ -144,9 +168,11 @@ test('retry preview validates selected recovery bytes and confirms selection and
   await mkdir(native, { recursive: true });
   await writeFile(join(native, 'one.txt'), 'public evidence one');
   await writeFile(join(native, 'two.txt'), 'public evidence two');
+  await writeRecoveryLineage(native);
   const ref = await captureStoppedKeywordAttempt(runDirectory, 1);
+  const plan = await evidencePlan(s.f, runId, ref.sha256, { serviceStops: ['youtube-subtitles'] });
   const inputs = { ...s.f.inputs, keywordRecovery: ref, keywordRecoveryDecision: { mode: 'recover' },
-    keywordServiceStops: ['youtube-subtitles'] };
+    keywordServiceStops: ['youtube-subtitles'], keywordEvidencePlan: plan };
   const preview = async value => {
     await writeFile(s.inputsFile, JSON.stringify(value));
     const io = terminal(null, { isTTY: false });
@@ -157,9 +183,11 @@ test('retry preview validates selected recovery bytes and confirms selection and
   const first = await preview(inputs);
   assert.ok(first.text.includes(ref.sha256));
   assert.match(first.text, /Suspended services \(all keywords\): youtube-subtitles/);
-  const second = await preview({ ...inputs, keywordRecovery: { ...ref, files: ['one.txt'] } });
+  const second = await preview({ ...inputs, keywordRecovery: { ...ref,
+    files: ['one.txt', 'RAW_LINEAGE.json', 'keywords.json'] } });
   assert.notEqual(first.confirmation_code, second.confirmation_code);
-  const third = await preview({ ...inputs, keywordServiceStops: [] });
+  const thirdPlan = await evidencePlan(s.f, runId, ref.sha256, { suffix: '-third' });
+  const third = await preview({ ...inputs, keywordServiceStops: [], keywordEvidencePlan: thirdPlan });
   assert.notEqual(first.confirmation_code, third.confirmation_code);
   const target = join(ref.manifestPath, '..', 'data/one.txt');
   await chmod(target, 0o600); await writeFile(target, 'tampered data');
@@ -180,6 +208,7 @@ test('retry preview requires an explicit current decision for every recovered pr
   const native = join(runDirectory, 'artifacts/1/1/native');
   await mkdir(native, { recursive: true });
   await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+  await writeRecoveryLineage(native);
   await writeFile(join(native, 'SERVICE_BLOCKERS.json'), JSON.stringify({ resumeAuthorized: false, stops: [
     { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
     { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
@@ -198,18 +227,60 @@ test('retry preview requires an explicit current decision for every recovered pr
   await assert.rejects(preview({ ...common, keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [] }),
     /KEYWORD_SERVICE_DECISION_REQUIRED.*steam-community/);
 
+  const suspendedPlan = await evidencePlan(s.f, runId, ref.sha256,
+    { serviceStops: ['steam-community', 'youtube-subtitles'], suffix: '-suspended' });
   const suspended = await preview({ ...common,
-    keywordServiceStops: ['steam-community', 'youtube-subtitles'], keywordServiceResumes: [] });
+    keywordServiceStops: ['steam-community', 'youtube-subtitles'], keywordServiceResumes: [],
+    keywordEvidencePlan: suspendedPlan });
   assert.match(suspended.text, /Recovered service restrictions: steam-community, youtube-subtitles/);
   assert.match(suspended.text, /Explicitly resumed services: \(none\)/);
 
+  const resumedPlan = await evidencePlan(s.f, runId, ref.sha256,
+    { serviceStops: ['steam-community'], serviceResumes: ['youtube-subtitles'], suffix: '-resumed' });
   const resumed = await preview({ ...common,
-    keywordServiceStops: ['steam-community'], keywordServiceResumes: ['youtube-subtitles'] });
+    keywordServiceStops: ['steam-community'], keywordServiceResumes: ['youtube-subtitles'],
+    keywordEvidencePlan: resumedPlan });
   assert.notEqual(suspended.confirmation_code, resumed.confirmation_code);
   assert.match(resumed.text, /Explicitly resumed services: youtube-subtitles/);
   await assert.rejects(preview({ ...common,
     keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: ['youtube-subtitles', 'steam-community'] }),
   /KEYWORD_SERVICE_DECISION_INVALID/);
+});
+
+test('recovery preview refuses to launch without a bound incremental evidence plan', async t => {
+  const s = await setup(t), runId = 'recovery-evidence-plan';
+  const pausing = async (skill, context) => skill === STAGE.KEYWORD_RESEARCH
+    ? { status: 'PARTIAL', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC incomplete research'] }
+    : goodResult(skill, context);
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: pausing, ...terminal('y') });
+  const runDirectory = join(s.f.configuration.workspace, 'runs', runId);
+  const native = join(runDirectory, 'artifacts/1/1/native');
+  await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+  await writeRecoveryLineage(native);
+  const recovery = await captureStoppedKeywordAttempt(runDirectory, 1);
+  const common = { ...s.f.inputs, keywordRecovery: recovery, keywordRecoveryDecision: { mode: 'recover' },
+    keywordServiceStops: [], keywordServiceResumes: [] };
+  await writeFile(s.inputsFile, JSON.stringify(common));
+  await assert.rejects(runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) }), /KEYWORD_EVIDENCE_PLAN_REQUIRED/);
+
+  const plan = await evidencePlan(s.f, runId, recovery.sha256);
+  await writeFile(s.inputsFile, JSON.stringify({ ...common, keywordEvidencePlan: plan }));
+  const io = terminal(null, { isTTY: false });
+  const first = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...io });
+  assert.match(io.text(), /Keyword evidence plan: .*keyword-evidence-plan\.json/);
+  assert.match(io.text(), /Evidence tasks: 1/);
+  const changedPlan = await evidencePlan(s.f, runId, recovery.sha256, { suffix: '-changed' });
+  await writeFile(s.inputsFile, JSON.stringify({ ...common, keywordEvidencePlan: changedPlan }));
+  const second = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) });
+  assert.notEqual(first.confirmation_code, second.confirmation_code);
+  assert.equal(s.calls.length, 0, 'preview never invokes the executor');
 });
 
 test('a stopped keyword attempt with a recovery snapshot requires an explicit recovery decision', async t => {

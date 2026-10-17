@@ -10,6 +10,7 @@ import { keywordResearchBudget } from './keyword-budget.mjs';
 import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { createKeywordExecutionReceipt, keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
+import { verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -73,6 +74,15 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     serviceResumes,
     suppliedInputs,
   });
+  let evidencePlan;
+  if (decision?.mode === 'recover') {
+    if (!Object.hasOwn(suppliedInputs, 'keywordEvidencePlan') || !inputs.keywordEvidencePlan)
+      throw Error('KEYWORD_EVIDENCE_PLAN_REQUIRED: recover retries need a current, reviewed incremental evidence plan');
+    evidencePlan = await verifyKeywordEvidencePlan({ runId, recoverySha256: recovery.sha256,
+      serviceStops, serviceResumes, recovery }, inputs.keywordEvidencePlan);
+  } else if (inputs.keywordEvidencePlan) {
+    throw Error('KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with {"mode":"recover"}');
+  }
   return [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
     ...(manifestBytes ? [`Resume manifest SHA256: ${sha256(manifestBytes)}`] : []),
@@ -88,6 +98,12 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     `Recovered service restrictions: ${serviceDecisions.historicalStops.join(', ') || '(none)'}`,
     `Explicitly resumed services: ${serviceResumes.join(', ') || '(none)'}`,
     `Keyword recovery decision: ${decision?.mode ?? '(not required)'}`,
+    `Keyword evidence plan: ${evidencePlan ? `${evidencePlan.path} SHA256 ${evidencePlan.sha256}` : '(not required)'}`,
+    `Evidence tasks: ${evidencePlan?.plan.tasks.length ?? 0}`,
+    ...(evidencePlan ? evidencePlan.plan.tasks.map(task =>
+      `  ${task.keyword}: ${task.tool} -> ${task.expectedEvidence}`) : []),
+    ...(evidencePlan ? ['Pending raw row decisions:', ...evidencePlan.plan.pendingRows.map(item =>
+      `  row ${item.row} ${item.rawKeyword}: ${item.decision}${item.targetKeyword ? ` -> ${item.targetKeyword}` : ''}`)] : []),
     'Handoff deadline is cooperative; a hard timeout remains FAILED. Recovery snapshots are unvalidated progress, never a completion waiver.',
     ...(recovery ? [
       `Keyword recovery: attempt ${recovery.sourceAttempt}; manifest ${recovery.manifestPath}`,

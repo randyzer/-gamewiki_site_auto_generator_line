@@ -107,6 +107,46 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 
 `keywordServiceStops` 是所有关键词共享的继续暂停项，`keywordServiceResumes` 是操作者明确批准恢复的项目。若选中的恢复快照含 `SERVICE_BLOCKERS.json`，宿主会从中提取已知的 YouTube 字幕和 Steam Community 429；当前输入文件必须同时显式提供两个数组，并把每个历史受限服务恰好放入其中一个，否则预览不会生成确认码。暂停字幕时固定 yt-dlp 入口会拒绝字幕参数，仍允许元数据查询。Steam 社区暂停以及新发现的 429 由 worker 的共享阻断记录和指令执行，当前不构成按域名的网络防火墙。禁止自动退避重试、换工具、增加登录或将元数据当作字幕；任何恢复决定都会改变确认码。暂停不意味着限流已解除。
 
+`recover` 还必须提供 `keywordEvidencePlan`，防止只复核旧文件、没有增量任务的空转重试。该字段引用一份只读 JSON 文件：
+
+```json
+{
+  "keywordEvidencePlan": {
+    "path": "/absolute/path/to/KEYWORD_EVIDENCE_PLAN.json",
+    "sha256": "64位文件SHA256"
+  }
+}
+```
+
+计划文件采用 `KEYWORD_EVIDENCE_PLAN_V1`，绑定 `runId`、Stage 2、所选恢复快照 SHA256、`serviceStops` 和 `serviceResumes`。`tasks` 不能为空；每项必须写明最终关键词、原始行号、具体事实缺口、允许的工具、查询或 HTTPS 目标、预期取得的证据。允许工具仅为 `serper`、`public-page`、YouTube 搜索/元数据/字幕和 Steam Community；计划不能调度仍处于暂停状态的服务。`pendingRows` 保留歧义词的原词和决定，`PENDING`/`EXCLUDE` 行不能进入证据任务。示例：
+
+```json
+{
+  "kind": "KEYWORD_EVIDENCE_PLAN_V1",
+  "runId": "RUN_ID",
+  "stage": "game-innerpage-keyword-information-research",
+  "recoverySha256": "恢复快照的64位SHA256",
+  "serviceStops": ["youtube-subtitles", "steam-community"],
+  "serviceResumes": [],
+  "tasks": [{
+    "keyword": "Game latest version",
+    "rawRows": [91],
+    "gap": "当前版本号和发布日期缺少官方正文",
+    "tool": "serper",
+    "target": "site:official.example release notes current version",
+    "expectedEvidence": "能够直接支持版本号和发布日期的官方页面正文"
+  }],
+  "pendingRows": [{
+    "row": 36,
+    "rawKeyword": "ambiguous raw keyword",
+    "decision": "PENDING",
+    "targetKeyword": null
+  }]
+}
+```
+
+预览会显示计划 SHA256、任务数、每项预期证据和歧义词决定。计划文件、恢复快照或服务决定变化后，原确认码和执行凭据失效。Pipeline 和 Worker 启动入口会再次校验同一文件，并以恢复快照中的 `RAW_LINEAGE.json` 和 `keywords.json` 核对任务关键词、原始行归属及完整的待确认行；缺少计划、空计划、直接或间接依赖暂停服务、遗漏/改写待确认行或编造行归属时，不启动 Worker。恢复执行后，宿主只把新增/改变的 `evidence/` 文件计为研究进展；`SERVICE_BLOCKERS.json` 单独作为诊断变化，不算新增证据。只重写报告、阻断记录或重新校验旧文件会记录 `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS`，下一次 retry 必须修改计划。计划只证明本轮有可执行的补证路径，不代表任务必然取得证据，也不降低 `COMPLETED`/Stage `PASSED` 门槛。
+
 存在上一 attempt 的 `keyword-recovery.json` 时，Stage 2 retry 必须显式设置 `keywordRecoveryDecision`。`{"mode":"recover"}` 必须同时提供 `keywordRecovery`；`{"mode":"fresh"}` 必须移除或置空 `keywordRecovery`。预览与确认会生成宿主执行凭据，绑定输入文件 SHA256、恢复选择、预算、暂停项、恢复授权、当时的 manifest 与确认码；缺失或变化会在 worker 启动前拒绝执行。历史 receipt 与 attempt 只保留审计用途，不会被新决定改写。
 
 worker 每处理 3–5 个意图应保存进度文件；当前宿主只在 worker 停止后创建一致快照，不承诺运行期间定时捕获。快照排除脚本、HTML、日志、隐藏文件及 worker 自报的完整性清单。原始目录仍保留这些文件，宿主不执行它们。

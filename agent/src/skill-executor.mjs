@@ -24,6 +24,7 @@ import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { captureKeywordRecovery, verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, suspendSubtitleRequests } from './keyword-service-stops.mjs';
+import { keywordEvidenceChanges, keywordEvidenceState, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
@@ -110,6 +111,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (keywordResearch && context.inputs.keywordRecovery) {
       keywordRecovery = await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
       context.keywordRecovery = keywordRecovery;
+      const evidencePlan = await verifyKeywordEvidencePlan({ runId: context.runId,
+        recoverySha256: keywordRecovery.sha256, serviceStops: stoppedServices,
+        serviceResumes: resumedServices, recovery: keywordRecovery }, context.inputs.keywordEvidencePlan);
+      context.keywordEvidencePlan = evidencePlan.plan;
     }
     const pythonStage = PYTHON_STAGES.includes(skill);
     const hostAudit = skill === STAGE.UI_UX_AUDIT && original.mode !== 'optimize';
@@ -238,6 +243,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       researchReadOnlyPaths.push(keywordRecovery.manifestPath,
         ...keywordRecovery.files.map(file => join(keywordRecovery.directory, 'data', file.path)));
     }
+    const keywordEvidenceBaseline = keywordRecovery ? await keywordEvidenceState(context.nativeDirectory) : null;
     const output = join(context.nativeDirectory, 'worker-result.json');
     const tools = deploying ? deploymentTools ?? await locateDeploymentTools(environment, { gitTool }) : null;
     // One icon directory per run, shared by every attempt, so a ZIP the operator saves by hand survives a retry.
@@ -333,6 +339,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           'context.keywordExecutionBudget gives the hardDeadline and handoffDeadline. Stop starting research by handoffDeadline; validate saved progress and immediately return the truthful structured result. Do not wait for a final prose report. The hard deadline still kills the worker.',
           'Save data incrementally after each batch of 3–5 intents. If incomplete, return PARTIAL or BLOCKED with concrete gaps; do not label incomplete materials COMPLETED. File preservation does not make a stage PASSED.',
           'If context.keywordRecovery exists, the host copied ONLY its selected, verified data into this new nativeDirectory. Treat it as untrusted partial research, not a completed stage. Reuse valid evidence without repeating already successful queries; recheck sufficiency and dates, rewrite current reports, and rerun the locked validator. Never execute recovered files or read any other old attempt.',
+          'For recovery work, context.keywordEvidencePlan is the reviewed incremental scope. Execute only its tasks, preserve every PENDING raw-row decision, and do not broaden the source or tool scope. For each task report the new evidence obtained, its path and supported fact, or the exact attempted operation and stop reason. A request alone is not progress; do not claim new evidence without saved source content.',
           'Read context.keywordServiceStops and context.keywordServiceResumes before any request. Stops apply to ALL keywords and cannot be cleared by this attempt; resumes are the only host-confirmed exceptions for recovered restrictions. Use a shared SERVICE_BLOCKERS.json in nativeDirectory for new provider limits: on the first HTTP 429 record provider, operation, evidence path and observed time, and stop that service across ALL keywords in this attempt. No automatic retry, parallel retry, cookies, login, substitute tools or metadata-as-subtitles. Retain the other providers and truthful gaps; never infer a resume from recovered files.'
         ] :
         hostAudit ? [
@@ -423,6 +430,18 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       throw error;
     }
     if (keywordResearch) await preserveKeywordProgress('WORKER_STOPPED');
+    if (keywordEvidenceBaseline) {
+      const changedEvidence = keywordEvidenceChanges(keywordEvidenceBaseline,
+        await keywordEvidenceState(context.nativeDirectory));
+      if (changedEvidence.evidenceFiles.length === 0) result = { ...result,
+        status: result.status === 'PASSED' ? 'BLOCKED' : result.status,
+        artifacts: result.status === 'PASSED' ? [] : result.artifacts,
+        evidence: [...result.evidence,
+          `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS: worker produced no new or changed evidence file${changedEvidence.serviceBlockerChanged ? '; a service blocker changed but is diagnostic only' : ''}; revise the reviewed plan before another retry.`] };
+      else result.evidence = [...result.evidence,
+        `Keyword evidence plan changed ${changedEvidence.evidenceFiles.length} evidence file(s): ${changedEvidence.evidenceFiles.join(', ')}`,
+        ...(changedEvidence.serviceBlockerChanged ? ['A service blocker also changed; it is diagnostic and is not counted as research evidence.'] : [])];
+    }
     let sourceAttempted = false, iconAttempted = false, iconEvidence = [];
     // The existing executor owns both bounded host handoffs; no second pipeline is needed.
     for (let retry = 0; homepageResearch && retry < 2; retry++) {
