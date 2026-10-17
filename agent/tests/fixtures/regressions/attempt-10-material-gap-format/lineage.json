@@ -1,0 +1,38 @@
+{
+  "pendingIds": [
+    36,
+    84,
+    96,
+    100
+  ],
+  "rows": [
+    {
+      "id": 36,
+      "raw": "wallpaper engine space",
+      "final": null,
+      "disposition": "待确认",
+      "pendingReason": "space 可能是第三方站点或太空壁纸，意图待核验"
+    },
+    {
+      "id": 84,
+      "raw": "engine wallpaper 4k",
+      "final": null,
+      "disposition": "待确认",
+      "pendingReason": "engine 是否指软件尚未确认"
+    },
+    {
+      "id": 96,
+      "raw": "wallpaper engine luatools",
+      "final": null,
+      "disposition": "待确认",
+      "pendingReason": "Luatools 工具性质及授权意图待核验，暂不链接"
+    },
+    {
+      "id": 100,
+      "raw": "reverse wallpaper engine",
+      "final": null,
+      "disposition": "待确认",
+      "pendingReason": "reverse 的对象缺失，不能直接补成 reverse image search"
+    }
+  ]
+}

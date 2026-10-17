@@ -1,0 +1,53 @@
+{
+  "$id": "KEYWORD_MATERIAL_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "keyword", "status", "contractStatus", "unresolvedGaps", "reviewNotes", "unclassifiedItems", "source", "diagnostics"],
+  "properties": {
+    "kind": { "const": "KEYWORD_MATERIAL" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "ADAPTER" },
+    "keyword": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["COMPLETED", "PARTIAL", "BLOCKED"] },
+    "contractStatus": { "enum": ["VALID", "INVALID"] },
+    "unresolvedGaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "sourceSyntax"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^gap-[a-f0-9]{24}$" },
+          "description": { "type": "string", "minLength": 1 },
+          "sourceSyntax": { "enum": ["skill-v1", "legacy-v1", "mixed"] }
+        }
+      }
+    },
+    "reviewNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "unclassifiedItems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "sourceSyntax"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^pending-[a-f0-9]{24}$" },
+          "description": { "type": "string", "minLength": 1 },
+          "sourceSyntax": { "const": "skill-v1" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "adapter", "skillContractSha256"],
+      "properties": {
+        "path": { "type": "string", "format": "relative-posix-path" },
+        "sha256": { "type": "string", "format": "sha256" },
+        "adapter": { "const": "keyword-skill-v1" },
+        "skillContractSha256": { "type": "string", "format": "sha256" }
+      }
+    },
+    "diagnostics": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+  }
+}

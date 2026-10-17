@@ -1,0 +1,294 @@
+{
+  "kind": "REGRESSION_FIXTURE_MANIFEST",
+  "schemaVersion": 1,
+  "sourceAttempt": 10,
+  "sourceDescription": "Wallpaper Engine Stage 2 attempt 10 material format regression",
+  "skillContractSha256": "5b6cc70c15b9038a35c2bcc5545ef854f5ecc3e1cb0abab19f012c54d926e997",
+  "materials": [
+    {
+      "file": "Wallpaper Engine 3440x1440 RGB OLED Razer wallpaper素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine 3440x1440 RGB OLED Razer wallpaper素材.md",
+      "sourceSha256": "75db8eeafab6d10578942f33101e04f04cf3dc642c210325aea2a0c7d9702944",
+      "fixturePath": "materials/Wallpaper Engine 3440x1440 RGB OLED Razer wallpaper素材.md",
+      "fixtureSha256": "fb3618687459c585f54aa93f73e4d40fb0e23981044a960a2b54fff873bde9f8",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine 4K wallpapers素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine 4K wallpapers素材.md",
+      "sourceSha256": "62cd492df209f69396ccdd38a55d2527ad9097cadf5b67b58c99db88ffb8f889",
+      "fixturePath": "materials/Wallpaper Engine 4K wallpapers素材.md",
+      "fixtureSha256": "1ca00c269c48961d04c6518d6f732d4f6b23b53e77fe0b2238107fd6a4209d4d",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine GitHub素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine GitHub素材.md",
+      "sourceSha256": "73bc808a9730d2d73eeec10f74c16339f82633770d731458fe569737ac468f31",
+      "fixturePath": "materials/Wallpaper Engine GitHub素材.md",
+      "fixtureSha256": "61f338cfbc309fe90a185fd1b9dd584ddc11dba78365660487e06a5c936fe49b",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine Reddit素材.md",
+      "status": "BLOCKED",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine Reddit素材.md",
+      "sourceSha256": "fe524c8fd24c4c9e2884a5121e6668b2d0efcd7b3bdfbfc5a5f8c3ab7458efc7",
+      "fixturePath": "materials/Wallpaper Engine Reddit素材.md",
+      "fixtureSha256": "4f35b9ec4292150276ceb095eba4bb27a660d9cdc45096f277d7f40f3008235e",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine Steam ID素材.md",
+      "status": "COMPLETED",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine Steam ID素材.md",
+      "sourceSha256": "c2813378b82e0d2ff755a07730dcbf9061648896859a7f85249a306687dbdadc",
+      "fixturePath": "materials/Wallpaper Engine Steam ID素材.md",
+      "fixtureSha256": "fb7c21419174449460e93151f053071d5455bfc5881e359cb46a76539214ff9d",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine SteamDB素材.md",
+      "status": "BLOCKED",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine SteamDB素材.md",
+      "sourceSha256": "59876807576b0a0bc2e7ff53801197ed04f41bd9f986e91d65dbf0a1c357d4d6",
+      "fixturePath": "materials/Wallpaper Engine SteamDB素材.md",
+      "fixtureSha256": "7e2eda2bb1577499e349c287a925f0576322101bbf2d10e73da7d217dc0a6459",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine Sucrose素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine Sucrose素材.md",
+      "sourceSha256": "ea4fd0b87c0c51acaf8dc75307abb8017ddebe53e006e1bc83c921138d03260e",
+      "fixturePath": "materials/Wallpaper Engine Sucrose素材.md",
+      "fixtureSha256": "d21d320dbb7843418b918b1d60042684a49af7f0df540c4773d1971650af0dc1",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine alternatives素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine alternatives素材.md",
+      "sourceSha256": "0a879a6139a1d3c6df5be7aa703b2cd99f285ae90e3874fd8dbb95397b18f3ce",
+      "fixturePath": "materials/Wallpaper Engine alternatives素材.md",
+      "fixtureSha256": "86a2d5298b9de33d04df26c2ceda68f1bba2f383d26156e972bb9e22e5792a69",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine android素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine android素材.md",
+      "sourceSha256": "6fcff50cf28ffe6bedcf3ff6ba7edd21faf414372ad659c1d56c528e8f21ef5e",
+      "fixturePath": "materials/Wallpaper Engine android素材.md",
+      "fixtureSha256": "33867e361b2b35ec53522f39e7db5fcf6cbeef8ca29a63ee4f82cbbca6aa7ee1",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine best wallpapers素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine best wallpapers素材.md",
+      "sourceSha256": "a8042cf586a546b29cf6ff824b96a21d58eef5a12c4612fc49490403a7a3fb3c",
+      "fixturePath": "materials/Wallpaper Engine best wallpapers素材.md",
+      "fixtureSha256": "29a31023fbf585ec0b596a72eb7a8ec3fd246af1ad8cde98e4844df98f52779f",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine download素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine download素材.md",
+      "sourceSha256": "dfa93bf0bfdf2f4a8ffa62f150a1793886cb604830aee27338225d007ce55d60",
+      "fixturePath": "materials/Wallpaper Engine download素材.md",
+      "fixtureSha256": "9abac818257d809318ee6a77ea2691901211df0acec8946f3e9f2d7e7cafae3c",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine dual monitor素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine dual monitor素材.md",
+      "sourceSha256": "6e17cdd58c0bdf62d0d04a66fabd15a8040c986c11a8113014e9cc18e8802ce1",
+      "fixturePath": "materials/Wallpaper Engine dual monitor素材.md",
+      "fixtureSha256": "327735e859eda42e3fc0b43b5ea3fbe1b52864bb63bf3849373304d7e6c0daaa",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine edit downloaded wallpaper素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine edit downloaded wallpaper素材.md",
+      "sourceSha256": "ec18dce76b9066fa4551671f7c43d77fa1f771c7cb451aa95638f60a1da8fe24",
+      "fixturePath": "materials/Wallpaper Engine edit downloaded wallpaper素材.md",
+      "fixtureSha256": "eefa2505a34c51c489598725b244c04f891cd0c76a1d225e4e11200820723162",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine for mac素材.md",
+      "status": "COMPLETED",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine for mac素材.md",
+      "sourceSha256": "61cfa0a42a850c344bdc18d9c8db5a935d21f155cd4fe4754320ebeeb5faa306",
+      "fixturePath": "materials/Wallpaper Engine for mac素材.md",
+      "fixtureSha256": "ef382c8bfb8d1eb6b273af265bc6481b11e5e4add05905cb53d98832db19f280",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine how to use素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine how to use素材.md",
+      "sourceSha256": "8ba3ae907d304172c1848f4c4df10e06e05399cf8082403bc3bbcf0e8f7913a3",
+      "fixturePath": "materials/Wallpaper Engine how to use素材.md",
+      "fixtureSha256": "0b803b9ad810eb663970cc8da2006d223b9a3133db1805a2b7ff7d40ac7a107a",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine ios素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine ios素材.md",
+      "sourceSha256": "41dea0f8f1e4701e6cf66803d0d79cf5a6d2de00779195fd9abd0d16fdaf786f",
+      "fixturePath": "materials/Wallpaper Engine ios素材.md",
+      "fixtureSha256": "c229f71b23f5b8f51b0eb801909d8454ba65795dabc0ed18a401b81a848123dc",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine latest version素材.md",
+      "status": "BLOCKED",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine latest version素材.md",
+      "sourceSha256": "9fad8bdd6fc928a5f3c3cdd8fef747adc7ab959848a0d0c7e2536a2677ac33ec",
+      "fixturePath": "materials/Wallpaper Engine latest version素材.md",
+      "fixtureSha256": "b49e19812076e63df2b0361606b4ac7605ee7b24a919a8d6552864e67bc39780",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine linux素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine linux素材.md",
+      "sourceSha256": "59696eacb9318306adccfcbeab36a28269f17f2d3a7765be506a21a30a3b9f00",
+      "fixturePath": "materials/Wallpaper Engine linux素材.md",
+      "fixtureSha256": "beed45b3272eaaa3016ab1558a9046784a9ed7f5453af719dceed05560488db2",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine price素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine price素材.md",
+      "sourceSha256": "3d50bc8b518b6823c9e96f2119b47c6a965202f57c7841733683042950442c8d",
+      "fixturePath": "materials/Wallpaper Engine price素材.md",
+      "fixtureSha256": "2d0c99f05de8d4c767feb94154f25d4b47b039f045a9ad7bcb02214e7c10084a",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine reverse image search素材.md",
+      "status": "BLOCKED",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine reverse image search素材.md",
+      "sourceSha256": "9500e6ecdddee984ede87302dcf553296db77b3463d3b7596e9cb69436c2a8dc",
+      "fixturePath": "materials/Wallpaper Engine reverse image search素材.md",
+      "fixtureSha256": "1e575832b41f8e24826c612745cbb39dad45e4a7bccc4c84e5e11aba78922b3f",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine safe素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine safe素材.md",
+      "sourceSha256": "2e48b8a8db49f17707f813c4f368e0cd430d6e61370fce1fa55048f402659dc9",
+      "fixturePath": "materials/Wallpaper Engine safe素材.md",
+      "fixtureSha256": "04f744a4fa9033a4077c65143224f4b39b74ed1aa061f25a59750f0741471186",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine screensaver素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine screensaver素材.md",
+      "sourceSha256": "f39cc2c21d5cb2247b846ebf3bebb8eeaacf3e0ef3e4bcc962c8803ee719552c",
+      "fixturePath": "materials/Wallpaper Engine screensaver素材.md",
+      "fixtureSha256": "2000e6b3e60fe208dfce87458f6493135aca06818997b8f897e6e577c3b72b31",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine search素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine search素材.md",
+      "sourceSha256": "05f7b34491ca9e813408aa3fd928673f9b6e1b467a79cf873eddd263d7a5752c",
+      "fixturePath": "materials/Wallpaper Engine search素材.md",
+      "fixtureSha256": "e39ad40c987473006a4107dd163fcec7a5236a78d088c7bc49d85079d62782e5",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine steam key素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine steam key素材.md",
+      "sourceSha256": "3f11ca82d2c4926ab1d48c263cdb0a22fda1a33185948144a0b2c469c4366ab2",
+      "fixturePath": "materials/Wallpaper Engine steam key素材.md",
+      "fixtureSha256": "5565c9c5a40beef95b7c7f14e864cb275470847e77814f3abf11acfc8db44eea",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine wallpaper location素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine wallpaper location素材.md",
+      "sourceSha256": "dd62c59b9bd5d32d91a496288b58d75437ed9aae638263aa39285c55834a2415",
+      "fixturePath": "materials/Wallpaper Engine wallpaper location素材.md",
+      "fixtureSha256": "673d1703db0f2fb97bea9615371ac8f3f57fc7d437c5a9541f6e2e395235dbed",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine wallpapers on Lively素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine wallpapers on Lively素材.md",
+      "sourceSha256": "6be1f688e67083a749159067c658253a1a774f2a04b297da00a048097caea1f8",
+      "fixturePath": "materials/Wallpaper Engine wallpapers on Lively素材.md",
+      "fixtureSha256": "9954191cfc09a23f5a9a1256b1f341cbe8054bf0bd060ffc9a414f5a8f412914",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine wallpapers素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine wallpapers素材.md",
+      "sourceSha256": "6712f92d0ca68754d121c02cac092d30d5f206bc07d8a0eae2b4a764152f12a7",
+      "fixturePath": "materials/Wallpaper Engine wallpapers素材.md",
+      "fixtureSha256": "b3c5b3868264afd499f7a2bc6440d75997df776d4f33d1a40c3e810d3b8768b3",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine what is it素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine what is it素材.md",
+      "sourceSha256": "953edd6804dbb26e1f2dfa6d24efdba3f9a0b9f5da85f9769fb7083bb287104d",
+      "fixturePath": "materials/Wallpaper Engine what is it素材.md",
+      "fixtureSha256": "1c382aab89821006145992362782c4bd674c0b1b3e967c0c87e209e6f1720794",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine workshop downloader素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine workshop downloader素材.md",
+      "sourceSha256": "0ac6c521c478392fa3da1c484c4683f05409154a520d569abf12d2bf4bae79ec",
+      "fixturePath": "materials/Wallpaper Engine workshop downloader素材.md",
+      "fixtureSha256": "7b9845d5d54080eecb046d1a9dbf88665e6725e3919a8cb0990240b0fbb2667c",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine workshop素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine workshop素材.md",
+      "sourceSha256": "59baa56496f1561a725a775f3131290d662a213aab7794413bd754ba211569b7",
+      "fixturePath": "materials/Wallpaper Engine workshop素材.md",
+      "fixtureSha256": "053563ca162aff965c44babff4577ef18543ce0c3d278f485cf0d2a33fe0af2a",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    },
+    {
+      "file": "Wallpaper Engine worth it素材.md",
+      "status": "PARTIAL",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/Wallpaper Engine worth it素材.md",
+      "sourceSha256": "a8f1a5aca867fb51eebdd92b6d2edaf21fca72540494fe124b8f9cccd702b62b",
+      "fixturePath": "materials/Wallpaper Engine worth it素材.md",
+      "fixtureSha256": "45f800b64f5a0290d84aaff1c7562009146f07b23593767fb57b3ce1a5569fba",
+      "redaction": "Kept title, game, keyword, status, and exact 待确认 section; removed source bodies, URLs, dates, local paths, and prose not needed for contract regression."
+    }
+  ],
+  "lineage": {
+    "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/RAW_LINEAGE.json",
+    "sourceSha256": "ddc48818a977e6af77230a915c49f3b4a50a953ce2803a4a82bb4f6d6f953734",
+    "fixturePath": "lineage.json",
+    "fixtureSha256": "53c574bd6419b4b9e7104c95d6d98096ff5df0ce0414a61c685e500b50763bad"
+  }
+}
