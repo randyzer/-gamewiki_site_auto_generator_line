@@ -1,13 +1,16 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { parseArtifactJson, readArtifact, safePath, sha256 } from './files.mjs';
 import { STAGE } from './stages.mjs';
 
 export const RESEARCH_HANDOFF_KIND = 'RESEARCH_HANDOFF_MANIFEST_V1';
+export const RESEARCH_HANDOFF_APPROVAL_KIND = 'RESEARCH_HANDOFF_APPROVAL_V1';
 const RECOVERY_KIND = 'HOST_KEYWORD_RECOVERY_V1';
 const STATUS = new Set(['COMPLETED', 'PARTIAL', 'BLOCKED']);
 const digest = value => /^[a-f0-9]{64}$/.test(value ?? '');
 const assert = (condition, detail) => { if (!condition) throw Error('RESEARCH_HANDOFF_INVALID: ' + detail); };
+const jsonDigest = value => sha256(Buffer.from(JSON.stringify(value)));
 
 function material(bytes, path) {
   const body = bytes.toString('utf8');
@@ -95,6 +98,11 @@ export async function createResearchHandoffCandidate({ runId, runDirectory, atte
     publicationPolicy: { COMPLETED: 'PUBLISH', PARTIAL: 'DRAFT_ONLY', BLOCKED: 'OMIT' },
     approval: null,
   };
+  candidate.bindings = {
+    materialStateSha256: jsonDigest(candidate.materials),
+    pendingRowsSha256: jsonDigest(candidate.pendingRows),
+    routePolicySha256: jsonDigest(candidate.publicationPolicy),
+  };
   const bytes = Buffer.from(JSON.stringify(candidate, null, 2) + '\n');
   const directory = join(runDirectory, 'research-handoffs', String(attempt));
   const path = join(directory, 'candidate.json');
@@ -110,7 +118,7 @@ export async function createResearchHandoffCandidate({ runId, runDirectory, atte
 
 export async function verifyResearchHandoffCandidate(reference, { runId, runDirectory, attempt,
   siteRevision, domain }) {
-  assert(reference?.kind === RESEARCH_HANDOFF_KIND && reference.approved === false &&
+  assert(reference?.kind === RESEARCH_HANDOFF_KIND && typeof reference.approved === 'boolean' &&
     reference.attempt === attempt && digest(reference.sha256) && isAbsolute(reference.path ?? ''),
   'candidate reference');
   const bytes = await readArtifact(reference.path, [join(runDirectory, 'research-handoffs')]);
@@ -120,6 +128,37 @@ export async function verifyResearchHandoffCandidate(reference, { runId, runDire
     candidate.stage === STAGE.KEYWORD_RESEARCH && candidate.attempt === attempt &&
     candidate.siteRevision === siteRevision && candidate.domain === domain && candidate.approval === null &&
     candidate.recovery?.sha256 === reference.recoverySha256 && Array.isArray(candidate.materials) &&
-    Array.isArray(candidate.pendingRows), 'candidate binding changed');
+    Array.isArray(candidate.pendingRows) &&
+    candidate.bindings?.materialStateSha256 === jsonDigest(candidate.materials) &&
+    candidate.bindings?.pendingRowsSha256 === jsonDigest(candidate.pendingRows) &&
+    candidate.bindings?.routePolicySha256 === jsonDigest(candidate.publicationPolicy),
+  'candidate binding changed');
   return candidate;
+}
+
+export function researchHandoffApprovalTemplate(reference, candidate) {
+  assert(reference?.kind === RESEARCH_HANDOFF_KIND && digest(reference.sha256) &&
+    candidate?.kind === RESEARCH_HANDOFF_KIND && candidate.runId && candidate.attempt === reference.attempt,
+  'approval source');
+  return {
+    kind: RESEARCH_HANDOFF_APPROVAL_KIND,
+    approved: true,
+    handoffSha256: reference.sha256,
+    runId: candidate.runId,
+    stage: STAGE.KEYWORD_RESEARCH,
+    attempt: candidate.attempt,
+    recoverySha256: candidate.recovery.sha256,
+    materialStateSha256: candidate.bindings.materialStateSha256,
+    pendingRowsSha256: candidate.bindings.pendingRowsSha256,
+    routePolicySha256: candidate.bindings.routePolicySha256,
+    siteRevision: candidate.siteRevision,
+    domain: candidate.domain,
+  };
+}
+
+export function verifyResearchHandoffApproval(approval, reference, candidate) {
+  const expected = researchHandoffApprovalTemplate(reference, candidate);
+  assert(approval && isDeepStrictEqual(approval, expected),
+    'approval must exactly match the immutable handoff');
+  return jsonDigest(expected);
 }

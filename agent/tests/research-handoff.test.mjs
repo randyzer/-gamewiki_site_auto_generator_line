@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { captureKeywordRecovery } from '../src/keyword-recovery.mjs';
-import { createResearchHandoffCandidate, verifyResearchHandoffCandidate } from '../src/research-handoff.mjs';
+import { createResearchHandoffCandidate, researchHandoffApprovalTemplate,
+  verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from '../src/research-handoff.mjs';
 
 async function fixture(t) {
   const root = await mkdtemp(resolve('.research-handoff-test-'));
@@ -45,6 +46,11 @@ test('candidate binds every material, pending row and publication disposition wi
   ]);
   assert.deepEqual(candidate.pendingRows, [{ row: 3, rawKeyword: 'ambiguous raw' }]);
   assert.equal(candidate.approval, null);
+  assert.match(candidate.bindings.materialStateSha256, /^[a-f0-9]{64}$/);
+  const approval = researchHandoffApprovalTemplate(reference, candidate);
+  assert.match(verifyResearchHandoffApproval(approval, reference, candidate), /^[a-f0-9]{64}$/);
+  await assert.rejects(async () => verifyResearchHandoffApproval({ ...approval,
+    pendingRowsSha256: '0'.repeat(64) }, reference, candidate), /exactly match/);
 });
 
 test('candidate rejects missing materials and detects immutable byte tampering', async t => {

@@ -16,7 +16,7 @@ export const STAGE_DEFINITIONS = Object.freeze([
       'researchRootName', 'gameMetadata', 'iconSourcePng', 'iconSourceMethod'] },
   { name: STAGE.KEYWORD_RESEARCH, label: '关键词资料调研', browserDependent: true,
     artifacts: ['keywords.json', '关键词处理记录.md', '关键词素材汇总.md', 'KEYWORD_MATERIALS.md'],
-    inputs: ['rawKeywordsFile', 'keywordSourceLineageFile', 'keywordRecovery', 'keywordRecoveryDecision', 'keywordEvidencePlan', 'keywordResearchBudget', 'keywordServiceStops', 'keywordServiceResumes'] },
+    inputs: ['rawKeywordsFile', 'keywordSourceLineageFile', 'keywordRecovery', 'keywordRecoveryDecision', 'keywordEvidencePlan', 'keywordResearchBudget', 'keywordServiceStops', 'keywordServiceResumes', 'researchHandoffApproval'] },
   { name: STAGE.TEMPLATE_SELECTION, label: '模板选择与复制',
     artifacts: ['TEMPLATE_SELECTION_REPORT.md', 'template-copy-manifest.json', 'TEMPLATE_RESIDUE_SCAN.json'], inputs: [] },
   { name: STAGE.CONTENT_INTEGRATION, label: '网站内容整合',
