@@ -48,3 +48,21 @@ test('recovery receipt requires and binds the evidence plan reference', () => {
   assert.throws(() => createKeywordExecutionReceipt({ ...value,
     inputs: { ...value.inputs, keywordEvidencePlan: undefined } }), /EVIDENCE_PLAN_REQUIRED/);
 });
+
+test('snapshot-backed receipt uses V2 and binds the approved snapshot', () => {
+  const value = { ...base(), previewSnapshot: {
+    previewId: '12345678-1234-4234-9234-123456789abc',
+    snapshotSha256: '1'.repeat(64), approvedSummarySha256: '2'.repeat(64),
+    effectiveInputsSha256: '3'.repeat(64), effectiveEvidencePlanSha256: null,
+  } };
+  const receipt = createKeywordExecutionReceipt(value);
+  assert.equal(receipt.schemaVersion, 2);
+  assert.equal(receipt.kind, 'KEYWORD_RECOVERY_EXECUTION_V2');
+  assert.deepEqual(receipt.previewSnapshot, value.previewSnapshot);
+  assert.deepEqual(verifyKeywordExecutionReceipt(receipt, { runId: value.runId,
+    inputs: value.inputs, manifestBytes: value.manifestBytes }), receipt);
+  assert.throws(() => verifyKeywordExecutionReceipt({ ...receipt,
+    previewSnapshot: { ...receipt.previewSnapshot, snapshotSha256: 'invalid' } }, {
+    runId: value.runId, inputs: value.inputs, manifestBytes: value.manifestBytes,
+  }), /RECEIPT_INVALID/);
+});

@@ -2,7 +2,7 @@
 
 总控把用户提供的游戏身份和关键词依次交给七个 Skill，核验产物后再推进；第 7 阶段先生成部署计划，用户确认准确 digest 后才执行发布。主流程入口为 `run` / `retry`，实现见 [cli.mjs](src/cli.mjs)、[terminal-run.mjs](src/terminal-run.mjs) 和 [pipeline.mjs](src/pipeline.mjs)。
 
-Codex 整理输入，先用 `--preview` 展示完整摘要与确认码；用户在自己的消息中写出该码后，Codex 才能用 `--confirm` 后台启动并读取进度。CLI 也保留操作者在交互终端亲自输入单独小写 `y` 的流程；未带 `--confirm` 的非交互 stdin（包括管道 `y`）仍会被拒绝。Codex 不得代输 `y`、模拟操作者终端或绕过确认。
+Codex 整理输入，先用 `--preview` 展示完整摘要、Preview ID 与确认码，并保存不可变审批快照；用户在自己的消息中写出该码后，Codex 才能用 `run-confirm` / `retry-confirm` 读取快照、复验受保护状态并后台启动。CLI 也保留操作者在交互终端亲自输入单独小写 `y` 的流程；非交互 stdin（包括管道 `y`）仍会被拒绝。Codex 不得代输 `y`、模拟操作者终端或绕过确认。
 
 ## 首次准备
 
@@ -164,7 +164,7 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 
 worker 每处理 3–5 个意图应保存进度文件；当前宿主只在 worker 停止后创建一致快照，不承诺运行期间定时捕获。快照排除脚本、HTML、日志、隐藏文件及 worker 自报的完整性清单。原始目录仍保留这些文件，宿主不执行它们。
 
-用户确认完整输入后，Codex 先执行预览，将**完整摘要**及 `Confirmation code: <码>` 原样展示给用户：
+用户确认完整输入后，Codex 先执行预览，将**完整摘要**、`Preview ID: <ID>` 及 `Confirmation code: <码>` 原样展示给用户：
 
 ```sh
 node src/cli.mjs run inputs.json RUN_ID --preview
@@ -172,19 +172,19 @@ node src/cli.mjs run inputs.json RUN_ID --preview
 node src/cli.mjs retry inputs.json RUN_ID --preview
 ```
 
-预览退出码为 0，不创建 run 目录、不调用 Skill、不启动执行器、不联网。确认码是 `sha256(命令类型 + RUN_ID + 摘要全文 + 规范化inputs.json)` 的前 16 位小写十六进制；JSON 对象各层键名排序后紧凑序列化，数组顺序保留，空白与字段顺序不影响码。任何输入字段（包括摘要未显示的 objective、domain、repo）、RUN_ID、命令或摘要变化都会改变码。
+预览退出码为 0，不创建正式 manifest、不调用 Skill、不启动执行器、不联网。它把准确输入、Evidence Plan、摘要和当时的 manifest 摘要保存到 `runs/.preview-approvals/<RUN_ID>/<PREVIEW_ID>/`。确认码是 `sha256(命令类型 + RUN_ID + 摘要全文 + 规范化inputs.json)` 的前 16 位小写十六进制；JSON 对象各层键名排序后紧凑序列化，数组顺序保留，空白与字段顺序不影响码。任何输入字段（包括摘要未显示的 objective、domain、repo）、RUN_ID、命令或摘要变化都会改变码。
 
-**只有用户在自己的消息里写出了本轮预览的确认码，Codex 才可以带该码执行 `--confirm`。** Codex 不得自行抄用预览中的码来启动、计算或猜测确认码，不得复用过期的码，不得替用户编写确认内容，也不能把普通“同意”代换为确认码。确认不匹配时拒绝启动，错误同时显示提供码与当前码，提示 inputs.json、RUN_ID 或命令可能变化；应重新预览并等待用户回复，不能自动改用错误中的当前码。
+**只有用户在自己的消息里写出了本轮预览的确认码，Codex 才可以带该码确认对应 Preview ID。** Codex 不得自行抄用预览中的码来启动、计算或猜测确认码，不得复用过期的码，不得替用户编写确认内容，也不能把普通“同意”代换为确认码。确认不匹配时拒绝启动；应重新预览并等待用户回复，不能自动改用错误中的当前码。历史上没有审批快照的确认码不能升级为快照授权。
 
 收到用户消息中的码后，以 agent 为 cwd 在后台启动；以下 `USER_PROVIDED_CODE` 只能替换为用户本轮亲自提供的码，`RUN_ID` 替换为已核对的运行 ID：
 
 ```sh
-nohup node src/cli.mjs run inputs.json RUN_ID --confirm USER_PROVIDED_CODE > runs/RUN_ID.run.log 2>&1 < /dev/null &
+nohup node src/cli.mjs run-confirm PREVIEW_ID RUN_ID USER_PROVIDED_CODE > runs/RUN_ID.run.log 2>&1 < /dev/null &
 # retry 使用同样的后台方式，但必须先取得本轮用户给出的确认码
-nohup node src/cli.mjs retry inputs.json RUN_ID --confirm USER_PROVIDED_CODE > runs/RUN_ID.run.log 2>&1 < /dev/null &
+nohup node src/cli.mjs retry-confirm PREVIEW_ID RUN_ID USER_PROVIDED_CODE > runs/RUN_ID.run.log 2>&1 < /dev/null &
 ```
 
-日志位于 `agent/runs/<RUN_ID>.run.log`（runs/ 已被 .gitignore 忽略），成功校验后记录 `Confirmation method: confirmation-code`。Codex 定期轮询 `agent/runs/<RUN_ID>/manifest.json`，结合日志与报告汇报进度，不要阻塞在一条长命令上。启动初期 manifest 可能尚未生成，先查看日志诊断。每次 retry 都必须重新预览并要求用户在本轮消息提供确认码；相同输入的码具有确定性，即使字符串相同也不得沿用旧的确认消息。`--preview` 与 `--confirm` 互斥，没有 `--yes` 或环境变量绕过开关。
+日志位于 `agent/runs/<RUN_ID>.run.log`（runs/ 已被 .gitignore 忽略），成功校验后记录 `Confirmation method: preview-snapshot`。原 inputs.json 或 Evidence Plan 在预览后消失不影响确认；Manifest、Recovery、关键词 lineage、服务决策或其他受保护状态变化仍会使快照失效。快照有效期为 24 小时且只能消费一次；过期后必须重新预览并取得用户提供的新 Preview ID 与确认码。Codex 定期轮询 `agent/runs/<RUN_ID>/manifest.json`，结合日志与报告汇报进度，不要阻塞在一条长命令上。启动初期 manifest 可能尚未生成，先查看日志诊断。每次 retry 都必须重新预览并要求用户在本轮消息提供确认码；相同输入的码具有确定性，即使字符串相同也不得沿用旧的确认消息。没有 `--yes` 或环境变量绕过开关。旧的 `run/retry ... --confirm CODE` 仅保留兼容，不用于新的跨回合执行。
 
 用户也可自行运行不带参数的 `run inputs.json RUN_ID` 或 `retry inputs.json RUN_ID`，查看摘要后在交互终端亲自输入 `y`。
 
@@ -202,7 +202,7 @@ nohup node src/cli.mjs retry inputs.json RUN_ID --confirm USER_PROVIDED_CODE > r
 "deploymentPlanApproval": { "approved": true, "digest": "本轮计划的64位SHA256摘要" }
 ```
 
-用户确认计划并添加该字段后，Codex 重新执行 `retry ... --preview`，展示包含 `DEPLOY TO PRODUCTION` 的完整摘要和新确认码。该字段会改变确认码，添加前的码不能批准部署。只有用户在自己的消息里写出此码后，才能按上述后台方式 `retry ... --confirm`。这次确认允许同一阶段按批准计划执行 push、部署、DNS、GSC/GA4；计划内容、上游或源码变化会阻断或使批准失效。需要账号交互或执行范围变化时停止等待，不能绕过。交互终端流程仍允许用户自行核对部署摘要后亲自输入 `y`。
+用户确认计划并添加该字段后，Codex 重新执行 `retry ... --preview`，展示包含 `DEPLOY TO PRODUCTION` 的完整摘要、新 Preview ID 和确认码。该字段会改变确认码，添加前的码不能批准部署。只有用户在自己的消息里写出此码后，才能按上述后台方式执行 `retry-confirm PREVIEW_ID RUN_ID CODE`。这次确认允许同一阶段按批准计划执行 push、部署、DNS、GSC/GA4；计划内容、上游或源码变化会阻断或使批准失效。需要账号交互或执行范围变化时停止等待，不能绕过。交互终端流程仍允许用户自行核对部署摘要后亲自输入 `y`。
 
 `deploymentExecuted` 在执行 worker 启动前就置 true，失败时也可能保持 true，仅表示已进入可能产生外部副作用的阶段。成功还要核对阶段状态和部署报告：原生校验要求 `PRODUCTION LIVE` 及匹配域名；GSC 提交不等于已收录，GA4 标签不等于已有数据。依据：[pipeline](src/pipeline.mjs)、[产物校验](src/artifact-validator.mjs)。
 

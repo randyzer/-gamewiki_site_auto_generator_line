@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cp, mkdir, writeFile, access } from 'node:fs/promises';
+import { cp, mkdir, writeFile, access, rm } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fixture } from './helpers.mjs';
@@ -19,17 +19,24 @@ async function setup(t) {
   const invoke = (command, ...args) => spawnSync(process.execPath,
     [join(agent, 'src', 'cli.mjs'), command, inputsFile, 'cli-code', ...args],
     { cwd: agent, encoding: 'utf8', input: 'y\n', timeout: 5000 });
-  return { f, invoke };
+  const invokeSnapshot = (command, previewId, code) => spawnSync(process.execPath,
+    [join(agent, 'src', 'cli.mjs'), command, previewId, 'cli-code', code],
+    { cwd: agent, encoding: 'utf8', timeout: 5000 });
+  return { f, inputsFile, invoke, invokeSnapshot };
 }
 
-test('CLI run and retry preview exit 0, print stable codes and do not execute or create a run', async t => {
+test('CLI run and retry preview exit 0, print stable codes and do not execute or create a manifest', async t => {
   const { f, invoke } = await setup(t);
   const first = invoke('run', '--preview');
   assert.equal(first.status, 0, first.stderr);
   const code = first.stdout.match(/Confirmation code: ([a-f0-9]{16})\n$/)?.[1];
+  const previewId = first.stdout.match(/Preview ID: ([a-f0-9-]{36})/)?.[1];
   assert.ok(code, first.stdout);
-  assert.equal(invoke('run', '--preview').stdout, first.stdout);
-  await assert.rejects(access(join(f.configuration.workspace, 'runs')), { code: 'ENOENT' });
+  assert.ok(previewId, first.stdout);
+  const repeated = invoke('run', '--preview');
+  assert.equal(repeated.stdout.match(/Confirmation code: ([a-f0-9]{16})/)?.[1], code);
+  assert.notEqual(repeated.stdout.match(/Preview ID: ([a-f0-9-]{36})/)?.[1], previewId);
+  await assert.rejects(access(join(f.configuration.workspace, 'runs', 'cli-code', 'manifest.json')), { code: 'ENOENT' });
   await assert.rejects(access(join(f.root, 'cache')), { code: 'ENOENT' });
   const directory = join(f.configuration.workspace, 'runs', 'cli-code');
   await mkdir(directory, { recursive: true });
@@ -38,6 +45,19 @@ test('CLI run and retry preview exit 0, print stable codes and do not execute or
   assert.equal(retry.status, 0, retry.stderr);
   assert.match(retry.stdout, /Retry existing run cli-code/);
   assert.notEqual(retry.stdout.match(/Confirmation code: ([a-f0-9]{16})/)?.[1], code);
+});
+
+test('CLI snapshot confirm no longer reads the caller-owned inputs path', async t => {
+  const { f, inputsFile, invoke, invokeSnapshot } = await setup(t);
+  const preview = invoke('run', '--preview');
+  const previewId = preview.stdout.match(/Preview ID: ([a-f0-9-]{36})/)?.[1];
+  assert.ok(previewId, preview.stdout);
+  await rm(inputsFile);
+  const refused = invokeSnapshot('run-confirm', previewId, 'wrong-code');
+  assert.notEqual(refused.status, 0);
+  assert.match(refused.stderr, /CONFIRMATION_CODE_MISMATCH/);
+  assert.doesNotMatch(refused.stderr, /RUN_INPUTS_INVALID|ENOENT/);
+  await assert.rejects(access(join(f.configuration.workspace, 'runs', 'cli-code', 'manifest.json')), { code: 'ENOENT' });
 });
 
 test('CLI confirm passes the supplied code through and refuses mismatch before execution', async t => {
@@ -50,7 +70,7 @@ test('CLI confirm passes the supplied code through and refuses mismatch before e
   assert.match(refused.stderr, /CONFIRMATION_CODE_MISMATCH/);
   assert.ok(refused.stderr.includes(expected));
   assert.ok(refused.stderr.includes('wrong-code'));
-  await assert.rejects(access(join(f.configuration.workspace, 'runs')), { code: 'ENOENT' });
+  await assert.rejects(access(join(f.configuration.workspace, 'runs', 'cli-code', 'manifest.json')), { code: 'ENOENT' });
 });
 
 for (const args of [['--yes'], ['--confirm'], ['--confirm', '--preview'], ['--preview', '--confirm', 'code'],

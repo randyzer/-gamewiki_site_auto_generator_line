@@ -11,6 +11,8 @@ import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { createKeywordExecutionReceipt, keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 import { verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
+import { consumeRunPreviewSnapshot, createRunPreviewSnapshot,
+  loadRunPreviewSnapshot } from './run-preview-snapshot.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -29,7 +31,7 @@ async function readInputs(inputsFile) {
   return { data, bytes, path };
 }
 
-export async function describeRun({ command, runId, inputs, configuration }) {
+export async function describeRun({ command, runId, inputs, configuration, evidencePlanDisplayPath }) {
   const runDirectory = join(configuration.workspace, 'runs', runId);
   const suppliedInputs = inputs;
   const manifestBytes = command === 'retry' ? await readFile(join(runDirectory, 'manifest.json')) : null;
@@ -98,7 +100,7 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     `Recovered service restrictions: ${serviceDecisions.historicalStops.join(', ') || '(none)'}`,
     `Explicitly resumed services: ${serviceResumes.join(', ') || '(none)'}`,
     `Keyword recovery decision: ${decision?.mode ?? '(not required)'}`,
-    `Keyword evidence plan: ${evidencePlan ? `${evidencePlan.path} SHA256 ${evidencePlan.sha256}` : '(not required)'}`,
+    `Keyword evidence plan: ${evidencePlan ? `${evidencePlanDisplayPath ?? evidencePlan.path} SHA256 ${evidencePlan.sha256}` : '(not required)'}`,
     `Evidence tasks: ${evidencePlan?.plan.tasks.length ?? 0}`,
     ...(evidencePlan ? evidencePlan.plan.tasks.map(task =>
       `  ${task.keyword}: ${task.tool} -> ${task.expectedEvidence}`) : []),
@@ -130,33 +132,78 @@ async function askYes({ stdin, stdout }) {
 }
 
 export async function runFromTerminal({ command, inputsFile, runId, configuration, executor,
-  preview = false, confirm, stdin = process.stdin, stdout = process.stdout }) {
+  preview = false, previewId, confirm, stdin = process.stdin, stdout = process.stdout }) {
   if (!['run', 'retry'].includes(command)) throw Error(`RUN_COMMAND_INVALID: ${JSON.stringify(command)}`);
-  if (preview && confirm !== undefined) throw Error('RUN_ARGUMENTS_INVALID: --preview and --confirm are mutually exclusive');
+  if (preview && (confirm !== undefined || previewId !== undefined))
+    throw Error('RUN_ARGUMENTS_INVALID: --preview and snapshot confirmation are mutually exclusive');
+  if (previewId !== undefined && confirm === undefined)
+    throw Error('RUN_ARGUMENTS_INVALID: snapshot confirmation requires a confirmation code');
   if (!/^[a-zA-Z0-9_-]{1,100}$/.test(runId ?? '')) throw Error(`RUN_ID_INVALID: ${JSON.stringify(runId)} must match [a-zA-Z0-9_-]{1,100}`);
-  const inputDocument = await readInputs(inputsFile);
-  const inputs = inputDocument.data;
   configuration ??= await loadConfiguration();
-  const manifest = join(configuration.workspace, 'runs', runId, 'manifest.json');
+  let inputDocument;
+  let inputs;
+  let approvedInputs;
+  if (previewId === undefined) {
+    inputDocument = await readInputs(inputsFile);
+    inputs = inputDocument.data;
+    approvedInputs = inputs;
+  }
+  const runDirectory = join(configuration.workspace, 'runs', runId);
+  const previewRoot = join(configuration.workspace, 'runs', '.preview-approvals', runId);
+  const manifest = join(runDirectory, 'manifest.json');
   const existing = await exists(manifest);
   if (command === 'run' && existing) throw Error(`RUN_ALREADY_EXISTS: ${runId} already has a manifest; use retry ${runId}`);
   if (command === 'retry' && !existing) throw Error(`RUN_NOT_FOUND: ${runId} has no manifest at ${manifest}`);
-  if (!preview && confirm === undefined && !stdin.isTTY)
-    throw Error('TERMINAL_CONFIRMATION_REQUIRED: run from an interactive terminal so the operator can confirm');
-
-  const summary = await describeRun({ command, runId, inputs, configuration });
+  const currentManifestBytes = existing ? await readFile(manifest) : null;
+  let snapshot = null;
+  let summary;
+  if (previewId !== undefined) {
+    snapshot = await loadRunPreviewSnapshot({ previewRoot, command, runId, previewId });
+    if ((currentManifestBytes ? sha256(currentManifestBytes) : null) !== snapshot.manifestSha256)
+      throw Error('RUN_PREVIEW_STALE: manifest changed after preview; create a new preview');
+    inputDocument = snapshot.effectiveInputDocument;
+    inputs = inputDocument.data;
+    approvedInputs = snapshot.sourceInputDocument.data;
+    summary = await describeRun({ command, runId, inputs, configuration,
+      evidencePlanDisplayPath: snapshot.sourceEvidencePlanPath });
+    if (summary !== snapshot.summary)
+      throw Error('RUN_PREVIEW_STALE: protected inputs or execution context changed after preview; create a new preview');
+  } else {
+    if (!preview && confirm === undefined && !stdin.isTTY)
+      throw Error('TERMINAL_CONFIRMATION_REQUIRED: run from an interactive terminal so the operator can confirm');
+    summary = await describeRun({ command, runId, inputs, configuration });
+  }
   stdout.write(summary);
   let confirmationBinding = 'interactive-y';
+  let previewSnapshotBinding = null;
   if (preview || confirm !== undefined) {
-    const code = sha256(command + runId + summary + normalizedJson(inputs)).slice(0, 16);
+    const code = sha256(command + runId + summary + normalizedJson(approvedInputs)).slice(0, 16);
     if (preview) {
+      const created = await createRunPreviewSnapshot({ previewRoot, command, runId, inputDocument,
+        summary, confirmationCode: code, manifestBytes: currentManifestBytes });
+      stdout.write(`Preview ID: ${created.previewId}\n`);
       stdout.write(`Confirmation code: ${code}\n`);
-      return { status: 'PREVIEW', run_id: runId, confirmation_code: code };
+      return { status: 'PREVIEW', run_id: runId, preview_id: created.previewId, confirmation_code: code };
     }
+    if (snapshot && snapshot.confirmationCode !== code)
+      throw Error('RUN_PREVIEW_SNAPSHOT_INVALID: confirmation binding changed');
     if (confirm !== code) throw Error(`CONFIRMATION_CODE_MISMATCH: provided ${JSON.stringify(confirm)}, expected ${code}. ` +
       'inputs.json may have changed, or RUN_ID or command may differ; preview again and ask the user for the current code.');
-    stdout.write('Confirmation method: confirmation-code\n');
-    confirmationBinding = 'confirmation-code:' + code;
+    if (snapshot) {
+      await consumeRunPreviewSnapshot(snapshot);
+      stdout.write('Confirmation method: preview-snapshot\n');
+      confirmationBinding = `preview-snapshot:${snapshot.previewId}:${snapshot.snapshotSha256}:${code}`;
+      previewSnapshotBinding = {
+        previewId: snapshot.previewId,
+        snapshotSha256: snapshot.snapshotSha256,
+        approvedSummarySha256: snapshot.approvedSummarySha256,
+        effectiveInputsSha256: sha256(snapshot.effectiveInputDocument.bytes),
+        effectiveEvidencePlanSha256: snapshot.effectiveEvidencePlanSha256,
+      };
+    } else {
+      stdout.write('Confirmation method: confirmation-code\n');
+      confirmationBinding = 'confirmation-code:' + code;
+    }
   } else if (!await askYes({ stdin, stdout })) {
     stdout.write('Cancelled; nothing was started.\n');
     return { status: 'CANCELLED', run_id: runId };
@@ -166,7 +213,8 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
   let keywordExecutionReceipt = null;
   if (command === 'retry' && inputs.keywordRecoveryDecision) {
     keywordExecutionReceipt = createKeywordExecutionReceipt({ runId, inputsFile: inputDocument.path,
-      inputsFileBytes: inputDocument.bytes, inputs, manifestBytes: await readFile(manifest), confirmationBinding });
+      inputsFileBytes: inputDocument.bytes, inputs, manifestBytes: currentManifestBytes, confirmationBinding,
+      previewSnapshot: previewSnapshotBinding });
   }
   return execute({ id: runId, inputs: JSON.stringify(inputs), retry: command === 'retry', keywordExecutionReceipt });
 }
