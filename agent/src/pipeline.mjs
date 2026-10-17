@@ -15,6 +15,8 @@ import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 import { keywordEvidencePlanReference, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
+import { createResearchHandoffCandidate, RESEARCH_HANDOFF_KIND,
+  verifyResearchHandoffCandidate } from './research-handoff.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -150,6 +152,14 @@ function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
       Array.isArray(stage.missing_inputs) && Number.isSafeInteger(stage.checkpoint?.attempt) && stage.checkpoint.attempt >= 0,
     'Invalid stage checkpoint');
     assert(stage.status !== 'SKIPPED' || (stage.skill === STAGE.ADVERTISING_PLAN && m.inputs.adsEnabled !== true) || (stage.skill === STAGE.TEMPLATE_SELECTION && m.inputs.mode === 'existing-project'), 'Mandatory stage cannot be skipped');
+    if (stage.checkpoint.researchHandoff !== undefined) {
+      const handoff = stage.checkpoint.researchHandoff;
+      assert(stage.skill === STAGE.KEYWORD_RESEARCH && handoff?.kind === RESEARCH_HANDOFF_KIND &&
+        handoff.approved === false && handoff.attempt === stage.checkpoint.attempt &&
+        typeof handoff.path === 'string' && isAbsolute(handoff.path) &&
+        /^[a-f0-9]{64}$/.test(handoff.sha256 ?? '') &&
+        /^[a-f0-9]{64}$/.test(handoff.recoverySha256 ?? ''), 'Invalid research handoff checkpoint');
+    }
     if (stage.status !== 'SKIPPED') {
       assert(!pending || stage.status === 'NOT_STARTED', 'Invalid out-of-order checkpoint');
       if (stage.status !== 'PASSED') pending = true;
@@ -312,6 +322,9 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     state = JSON.parse((await regularFile(manifestPath)).toString('utf8'));
     validateManifest(state, runId, workspace, inventoryPath, templateRoots);
     await validateProject(state.inputs.projectPath);
+    const handoff = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.researchHandoff;
+    if (handoff) await verifyResearchHandoffCandidate(handoff, { runId, runDirectory,
+      attempt: handoff.attempt, siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
   } else {
     inputs = resolveInputPaths(checkInputs(inputs));
     await validateInputPaths(inputs, { workspace, protectedRoots, emptySite: true });
@@ -688,6 +701,24 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         // The execute pass keeps the approved plan next to its report so the run records what was approved.
         stage.artifacts = executing ? [...stage.artifacts, ...saved] : saved;
         operation = 'save-stage-checkpoint';
+        if (stage.skill === STAGE.KEYWORD_RESEARCH && status === 'PARTIAL') {
+          const recoveryPath = join(outputDirectory, 'keyword-recovery.json');
+          try {
+            const recoveryRef = parseArtifactJson(await regularFile(recoveryPath), recoveryPath);
+            if (nonempty(state.inputs.siteRevision) && nonempty(state.inputs.domain)) {
+              stage.checkpoint.researchHandoff = await createResearchHandoffCandidate({ runId,
+                runDirectory, attempt: stage.checkpoint.attempt, recoveryRef,
+                siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
+              evidence = [...evidence,
+                `Immutable research handoff candidate: ${stage.checkpoint.researchHandoff.path} SHA256 ${stage.checkpoint.researchHandoff.sha256}; approval is still required.`];
+            } else evidence = [...evidence,
+              'Research handoff candidate not created: siteRevision and domain are required for immutable binding.'];
+          } catch (error) {
+            if (error.code !== 'ENOENT') throw error;
+            evidence = [...evidence,
+              'Research handoff candidate not created: no host recovery checkpoint was returned.'];
+          }
+        }
         if (stage.skill === STAGE.UI_UX_AUDIT && status === 'PASSED') stage.checkpoint.projectDigest = await projectDigest();
         if (stage.skill === STAGE.DEPLOYMENT_PLAN && status === 'PASSED' && !executing) {
           stage.checkpoint.planDigest = hash(JSON.stringify(stage.artifacts.map(a => a.sha256)));
@@ -773,7 +804,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (stage.status === 'SKIPPED' || stage.status === 'NOT_STARTED') continue;
         transition(stage, 'NOT_STARTED', ['Explicit user input update/retry; previous attempt retained in history']);
         stage.artifacts = [];
-        for (const key of ['planDigest', 'approvedPlanDigest', 'projectDigest', 'keywordSha256']) delete stage.checkpoint[key];
+        for (const key of ['planDigest', 'approvedPlanDigest', 'projectDigest', 'keywordSha256',
+          'researchHandoff']) delete stage.checkpoint[key];
       }
       if (start <= stageIndex(STAGE.DEPLOYMENT_PLAN)) delete state.inputs.deploymentPlanApproval;
       await save(); return clone(state);

@@ -430,6 +430,37 @@ test('explicit retry retains attempt history and can resume partial work', async
   assert.equal(p.snapshot().stages[0].checkpoint.attempt, 2);
 });
 
+test('Stage 2 PARTIAL records an immutable unapproved research handoff without advancing', async t => {
+  const f = await fixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[1]) return f.good(skill, context);
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true });
+    await writeFixtureRecoveryLineage(native);
+    const runDirectory = join(f.workspace, 'runs', context.runId);
+    const recovery = await (await import('../src/keyword-recovery.mjs')).captureKeywordRecovery({
+      ...context, runDirectory, nativeDirectory: native,
+    }, { reason: 'WORKER_STOPPED' });
+    await writeFile(join(context.outputDirectory, 'keyword-recovery.json'), JSON.stringify(recovery));
+    return { status: 'PARTIAL', artifacts: [], evidence: ['incomplete research'], missing_inputs: [] };
+  };
+  const pipeline = await f.create({ executor });
+  await advance(pipeline, 2);
+  const state = pipeline.snapshot(), stage = state.stages[1];
+  assert.equal(stage.status, 'PARTIAL');
+  assert.equal(state.stages[2].status, 'NOT_STARTED');
+  assert.equal(stage.checkpoint.researchHandoff.kind, 'RESEARCH_HANDOFF_MANIFEST_V1');
+  assert.equal(stage.checkpoint.researchHandoff.approved, false);
+  assert.equal(stage.artifacts.length, 0);
+  const candidate = JSON.parse(await readFile(stage.checkpoint.researchHandoff.path));
+  assert.equal(candidate.materials[0].publicationDisposition, 'DRAFT_ONLY');
+  assert.equal(candidate.approval, null);
+
+  const resumed = await f.create({ runId: state.runId, resume: true, inputs: {}, executor });
+  await resumed.advance();
+  assert.equal(resumed.snapshot().stages[2].status, 'NOT_STARTED');
+});
+
 test('later input updates do not repeat a pending deployment plan', async t => {
   const f = await fixture(t, { adsEnabled: true });
   const p = await f.create(); await advance(p, 7);
