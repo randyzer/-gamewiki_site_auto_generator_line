@@ -156,7 +156,7 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 
 预览会显示计划 SHA256、任务数、每项预期证据和歧义词决定。计划文件、恢复快照或服务决定变化后，原确认码和执行凭据失效。Pipeline 和 Worker 启动入口会再次校验同一文件，并以恢复快照中的 `RAW_LINEAGE.json` 和 `keywords.json` 核对任务关键词、原始行归属及完整的待确认行；缺少计划、空计划、直接或间接依赖暂停服务、遗漏/改写待确认行或编造行归属时，不启动 Worker。
 
-恢复 worker 必须写 `KEYWORD_EVIDENCE_CLAIMS_V2.json`，逐项引用本轮改变的 `evidence/` 文件、HTTPS 来源、文件 SHA256、访问结果、来源类型、所支持的验收条件以及对应素材文件。该文件只是 worker 声明。worker 停止后，宿主重新读取实际文件和素材状态，生成只读的 `KEYWORD_EVIDENCE_OUTCOME_V2.json`，结果只会是 `NEW_FILES`、`NEW_VERIFIED_EVIDENCE`、`GAP_RESOLVED`、`STATUS_CHANGED`、`NO_PROGRESS` 或 `PLAN_EXHAUSTED`。文件哈希变化本身最多是 `NEW_FILES`；`SERVICE_BLOCKERS.json` 始终只算诊断变化。缺少声明、哈希不符、来源或访问结果没有出现在证据正文、素材状态与声明不符时，都不能关闭事实缺口。
+恢复 worker 必须写 `KEYWORD_EVIDENCE_CLAIMS_V2.json`，逐项引用本轮改变的 `evidence/` 文件、HTTPS 来源、文件 SHA256、访问结果、来源类型、所支持的验收条件以及对应素材文件。该文件只是 worker 声明。worker 停止后，宿主重新读取实际文件和素材状态，生成只读的 `KEYWORD_EVIDENCE_OUTCOME_V2.json`，结果只会是 `NEW_FILES`、`NEW_VERIFIED_EVIDENCE`、`GAP_RESOLVED`、`STATUS_CHANGED`、`NO_PROGRESS` 或 `PLAN_EXHAUSTED`。文件哈希变化本身最多是 `NEW_FILES`；只有来自 worker 写权限边界之外、与文件路径、URL、哈希、访问结果、来源类型和支持事实完全匹配的宿主访问记录，才能升级为已验证证据。每个被删除的历史缺口也必须由单独的可信任务覆盖，worker 不能通过重写素材文件一并清空其他缺口。停止条件同样需要匹配的宿主执行或服务阻断记录，自报停止原因只会保留为 `NO_PROGRESS`。`SERVICE_BLOCKERS.json` 始终只算诊断变化。
 
 `PLAN_EXHAUSTED` 会绑定恢复快照、计划策略、服务决定和素材缺口状态，并随下一份恢复快照强制携带。完全相同的缺口、服务决定和任务策略不能再次执行；必须提交一份经过审核、实际改变任务策略的新 V2 计划。以上分类不会把 `PARTIAL` 自动改成 `PASSED`，也不会降低 `COMPLETED` 或正式 artifacts 的验收门槛。
 

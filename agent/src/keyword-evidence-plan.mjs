@@ -284,7 +284,44 @@ function claimIndex(claims, plan, planSha256) {
   return result;
 }
 
-async function verifyClaimEvidence(task, claim, before, after, nativeDirectory) {
+function hostObservationIndex(observations, plan) {
+  assert(Array.isArray(observations), 'host observations must be an array');
+  const tasks = new Set(plan.tasks.map(task => JSON.stringify([task.keyword, task.gap])));
+  const sources = new Map(), stops = new Map();
+  for (const observation of observations) {
+    const taskKey = JSON.stringify([observation?.keyword, observation?.gap]);
+    assert(tasks.has(taskKey), 'host observation does not match an approved task');
+    if (observation.kind === 'HOST_SOURCE_ACCESS_V1') {
+      assert(exactKeys(observation, ['kind', 'keyword', 'gap', 'path', 'url', 'sha256',
+        'accessResult', 'sourceType', 'supportedFacts']) &&
+        typeof observation.path === 'string' && httpsUrl(observation.url) &&
+        digest(observation.sha256) && ACCESS_RESULTS.has(observation.accessResult) &&
+        SOURCE_TYPES.has(observation.sourceType) && Array.isArray(observation.supportedFacts) &&
+        observation.supportedFacts.length > 0 && observation.supportedFacts.every(item => text(item, 1000)),
+      'host source observation schema');
+      const key = JSON.stringify([taskKey, observation.path]);
+      assert(!sources.has(key), 'duplicate host source observation');
+      sources.set(key, observation);
+    } else {
+      assert(exactKeys(observation, ['kind', 'keyword', 'gap', 'attemptedOperation', 'target',
+        'stopCondition']) && observation.kind === 'HOST_STOP_OBSERVATION_V1' &&
+        text(observation.attemptedOperation, 2000) && text(observation.target, 4000) &&
+        /^[A-Z][A-Z0-9_]{2,63}$/.test(observation.stopCondition),
+      'host stop observation schema');
+      assert(!stops.has(taskKey), 'duplicate host stop observation');
+      stops.set(taskKey, observation);
+    }
+  }
+  return { sources, stops };
+}
+
+function sameSourceObservation(descriptor, observation) {
+  return observation && ['path', 'url', 'sha256', 'accessResult', 'sourceType'].every(key =>
+    observation[key] === descriptor[key]) &&
+    JSON.stringify(observation.supportedFacts) === JSON.stringify(descriptor.supportedFacts);
+}
+
+async function verifyClaimEvidence(task, claim, before, after, nativeDirectory, hostSources) {
   const valid = [], reasons = [];
   for (const descriptor of claim.evidence) {
     if (!exactKeys(descriptor, ['path', 'url', 'sha256', 'accessResult', 'sourceType', 'supportedFacts']) ||
@@ -295,6 +332,11 @@ async function verifyClaimEvidence(task, claim, before, after, nativeDirectory) 
         !Array.isArray(descriptor.supportedFacts) || descriptor.supportedFacts.length === 0 ||
         !descriptor.supportedFacts.every(fact => task.acceptanceCriteria.includes(fact))) {
       reasons.push('evidence descriptor does not satisfy the approved source contract'); continue;
+    }
+    const taskKey = JSON.stringify([task.keyword, task.gap]);
+    const hostObservation = hostSources.get(JSON.stringify([taskKey, descriptor.path]));
+    if (!sameSourceObservation(descriptor, hostObservation)) {
+      reasons.push(`evidence has no matching trusted host access observation: ${descriptor.path}`); continue;
     }
     if (after.evidence[descriptor.path] !== descriptor.sha256 ||
         before.evidence[descriptor.path] === after.evidence[descriptor.path]) {
@@ -320,38 +362,70 @@ function fallbackSatisfied(task, previous, current) {
 }
 
 export async function assessKeywordEvidenceOutcome({ plan, planSha256, before, after,
-  nativeDirectory, claims }) {
+  nativeDirectory, claims, hostObservations = [] }) {
   assert(plan?.kind === KIND && digest(planSha256), 'host outcome plan binding');
   const changes = keywordEvidenceChanges(before, after), claimsByTask = claimIndex(claims, plan, planSha256);
-  const tasks = [];
+  const observations = hostObservationIndex(hostObservations, plan), assessments = [];
   for (const task of plan.tasks) {
     const claim = claimsByTask.get(JSON.stringify([task.keyword, task.gap])), previous = before.materials[task.keyword],
       current = after.materials[task.keyword];
     if (!claim) {
-      tasks.push({ keyword: task.keyword, gap: task.gap, classification: 'NO_PROGRESS',
-        reason: 'No bound worker evidence claim was returned.' });
+      assessments.push({ task, claim, previous, current, evidence: { valid: [], reasons: [] },
+        allCriteria: false, materialValid: false, missingClaim: true });
       continue;
     }
     const materialValid = current && claim.materialPath === current.path &&
       claim.materialSha256 === current.sha256 && claim.finalStatus === current.status &&
       JSON.stringify(claim.remainingGaps) === JSON.stringify(current.gaps);
-    const evidence = await verifyClaimEvidence(task, claim, before, after, nativeDirectory);
+    const evidence = await verifyClaimEvidence(task, claim, before, after, nativeDirectory,
+      observations.sources);
     const supported = new Set(evidence.valid.flatMap(item => item.supportedFacts));
     const allCriteria = task.acceptanceCriteria.every(item => supported.has(item));
+    assessments.push({ task, claim, previous, current, evidence, allCriteria, materialValid,
+      missingClaim: false });
+  }
+  const verifiedGaps = new Map();
+  for (const item of assessments) if (item.allCriteria) {
+    if (!verifiedGaps.has(item.task.keyword)) verifiedGaps.set(item.task.keyword, new Set());
+    verifiedGaps.get(item.task.keyword).add(item.task.gap);
+  }
+  const tasks = [];
+  for (const item of assessments) {
+    const { task, claim, previous, current, evidence, allCriteria, materialValid } = item;
+    if (item.missingClaim) {
+      tasks.push({ keyword: task.keyword, gap: task.gap, classification: 'NO_PROGRESS',
+        reason: 'No bound worker evidence claim was returned.' });
+      continue;
+    }
     const materialChanged = Boolean(previous && current && previous.sha256 !== current.sha256);
     const statusChanged = Boolean(previous && current && previous.status !== current.status);
+    const approvedRemovals = verifiedGaps.get(task.keyword) ?? new Set();
+    const removedGaps = previous?.gaps.filter(gap => !current?.gaps.includes(gap)) ?? [];
+    const unapprovedRemovals = removedGaps.filter(gap => !approvedRemovals.has(gap));
+    const completionValid = current?.status !== 'COMPLETED' ||
+      (current.gaps.length === 0 && previous.gaps.every(gap => approvedRemovals.has(gap)));
+    const stop = observations.stops.get(JSON.stringify([task.keyword, task.gap]));
+    const trustedStop = stop && claim.stopCondition === stop.stopCondition &&
+      claim.attemptedOperation === stop.attemptedOperation && task.target === stop.target &&
+      task.stopConditions.includes(stop.stopCondition);
     let classification = 'NO_PROGRESS', reason = evidence.reasons.join('; ');
     if (materialValid && materialChanged && previous?.status === task.expectedStatusTransition.from && allCriteria &&
-        current.status === task.expectedStatusTransition.to && !current.gaps.includes(task.gap)) {
+        current.status === task.expectedStatusTransition.to && !current.gaps.includes(task.gap) &&
+        unapprovedRemovals.length === 0 && completionValid) {
       classification = 'GAP_RESOLVED'; reason = 'All acceptance criteria have changed evidence and the bound material transition.';
-    } else if (materialValid && statusChanged) {
+    } else if (unapprovedRemovals.length > 0) {
+      reason = [reason, `Material contains unapproved gap removal: ${unapprovedRemovals.join('; ')}`]
+        .filter(Boolean).join('; ');
+    } else if (materialValid && statusChanged && (allCriteria || trustedStop) && completionValid) {
       classification = 'STATUS_CHANGED';
       reason = reason || 'The material status changed, but the approved gap was not independently resolved.';
     } else if (evidence.valid.length > 0) {
       classification = 'NEW_VERIFIED_EVIDENCE'; reason = 'Changed evidence bytes satisfy the approved source descriptors.';
-    } else if (claim.stopCondition && task.stopConditions.includes(claim.stopCondition) && materialValid &&
+    } else if (trustedStop && materialValid &&
         fallbackSatisfied(task, previous, current)) {
       classification = 'PLAN_EXHAUSTED'; reason = `Approved stop condition reached: ${claim.stopCondition}`;
+    } else if (claim.stopCondition && !trustedStop) {
+      reason ||= `Stop condition has no matching trusted host observation: ${claim.stopCondition}`;
     } else reason ||= 'No changed evidence or verified material transition closed the approved gap.';
     tasks.push({ keyword: task.keyword, gap: task.gap, classification, reason });
   }
@@ -368,5 +442,6 @@ export async function assessKeywordEvidenceOutcome({ plan, planSha256, before, a
     gapStateSha256: after.gapStateSha256, serviceStops: [...plan.serviceStops],
     serviceResumes: [...plan.serviceResumes], classification, tasks,
     evidenceFiles: changes.evidenceFiles, serviceBlockerChanged: changes.serviceBlockerChanged,
+    hostObservationCount: hostObservations.length,
   };
 }

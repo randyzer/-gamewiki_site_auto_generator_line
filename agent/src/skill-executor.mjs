@@ -449,12 +449,15 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       try {
         outcome = await assessKeywordEvidenceOutcome({ plan: keywordEvidencePlan,
           planSha256: keywordEvidencePlanSha256, before: keywordEvidenceBaseline, after,
-          nativeDirectory: context.nativeDirectory, claims });
+          nativeDirectory: context.nativeDirectory, claims,
+          // Worker-authored files cannot prove their own network access. Until a host collector
+          // supplies observations outside the worker write boundary, classifications fail closed.
+          hostObservations: [] });
       } catch (error) {
         claimError = sanitizeDiagnosticText(error.message);
         outcome = await assessKeywordEvidenceOutcome({ plan: keywordEvidencePlan,
           planSha256: keywordEvidencePlanSha256, before: keywordEvidenceBaseline, after,
-          nativeDirectory: context.nativeDirectory, claims: null });
+          nativeDirectory: context.nativeDirectory, claims: null, hostObservations: [] });
       }
       await rm(join(context.nativeDirectory, KEYWORD_EVIDENCE_OUTCOME_FILE), { force: true });
       await writeFile(join(context.nativeDirectory, KEYWORD_EVIDENCE_OUTCOME_FILE),

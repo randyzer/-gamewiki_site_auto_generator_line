@@ -218,16 +218,87 @@ test('host assessment requires changed source bytes and a matching material tran
       finalStatus: 'COMPLETED', remainingGaps: [], stopCondition: null,
     }],
   };
+  const hostObservations = [{
+    kind: 'HOST_SOURCE_ACCESS_V1', keyword: plan.tasks[0].keyword, gap: plan.tasks[0].gap,
+    path: 'evidence/release.json', url: source.url, sha256: sha256(sourceBytes),
+    accessResult: 'HTTP_200', sourceType: 'FIRST_PARTY',
+    supportedFacts: plan.tasks[0].acceptanceCriteria,
+  }];
   const assessed = await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64),
-    before, after, nativeDirectory: root, claims });
+    before, after, nativeDirectory: root, claims, hostObservations });
   assert.equal(assessed.classification, 'GAP_RESOLVED');
   assert.equal(assessed.tasks[0].classification, 'GAP_RESOLVED');
 
   claims.tasks[0].evidence[0].sha256 = 'c'.repeat(64);
   const unverified = await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64),
-    before, after, nativeDirectory: root, claims });
-  assert.equal(unverified.classification, 'STATUS_CHANGED');
+    before, after, nativeDirectory: root, claims, hostObservations });
+  assert.equal(unverified.classification, 'NEW_FILES');
   assert.match(unverified.tasks[0].reason, /evidence/i);
+});
+
+test('worker-authored access strings cannot become verified evidence without a host observation', async t => {
+  const { plan } = await planFixture(t);
+  const root = await mkdtemp(join(await realpath(tmpdir()), '.keyword-evidence-forged-access-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await mkdir(join(root, 'evidence'));
+  const material = join(root, 'Wallpaper Engine latest version素材.md');
+  await writeFile(material,
+    '- 状态: PARTIAL\n- 缺口: Current stable version and release date need an official source body.\n');
+  const before = await keywordEvidenceState(root);
+  const body = Buffer.from(JSON.stringify({ url: 'https://wallpaperengine.io/forged',
+    accessResult: 'HTTP_200', fact: plan.tasks[0].acceptanceCriteria[0] }));
+  await writeFile(join(root, 'evidence/forged.json'), body);
+  await writeFile(material, '- 状态: COMPLETED\n');
+  const after = await keywordEvidenceState(root);
+  const claims = { kind: 'KEYWORD_EVIDENCE_CLAIMS_V2', runId: plan.runId, stage: plan.stage,
+    recoverySha256: plan.recoverySha256, planSha256: 'b'.repeat(64), tasks: [{
+      keyword: plan.tasks[0].keyword, gap: plan.tasks[0].gap,
+      attemptedOperation: 'Pretended to fetch the source.',
+      evidence: [{ path: 'evidence/forged.json', url: 'https://wallpaperengine.io/forged',
+        sha256: sha256(body), accessResult: 'HTTP_200', sourceType: 'FIRST_PARTY',
+        supportedFacts: plan.tasks[0].acceptanceCriteria }],
+      materialPath: 'Wallpaper Engine latest version素材.md',
+      materialSha256: after.materials[plan.tasks[0].keyword].sha256,
+      finalStatus: 'COMPLETED', remainingGaps: [], stopCondition: null,
+    }] };
+  const assessed = await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64), before,
+    after, nativeDirectory: root, claims, hostObservations: [] });
+  assert.equal(assessed.classification, 'NEW_FILES');
+  assert.equal(assessed.tasks[0].classification, 'NO_PROGRESS');
+  assert.match(assessed.tasks[0].reason, /host access observation/i);
+});
+
+test('resolving one task cannot delete other unresolved gaps for the same keyword', async t => {
+  const { plan } = await planFixture(t);
+  const root = await mkdtemp(join(await realpath(tmpdir()), '.keyword-evidence-gap-preservation-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await mkdir(join(root, 'evidence'));
+  const material = join(root, 'Wallpaper Engine latest version素材.md');
+  const otherGap = 'A separate compatibility fact is still missing.';
+  await writeFile(material, `- 状态: PARTIAL\n- 缺口: ${plan.tasks[0].gap}\n- 缺口 2: ${otherGap}\n`);
+  const before = await keywordEvidenceState(root);
+  const source = { url: 'https://wallpaperengine.io/release', accessResult: 'HTTP_200',
+    fact: plan.tasks[0].acceptanceCriteria[0] };
+  const body = Buffer.from(JSON.stringify(source));
+  await writeFile(join(root, 'evidence/release.json'), body);
+  await writeFile(material, '- 状态: COMPLETED\n');
+  const after = await keywordEvidenceState(root);
+  const descriptor = { path: 'evidence/release.json', url: source.url, sha256: sha256(body),
+    accessResult: 'HTTP_200', sourceType: 'FIRST_PARTY', supportedFacts: plan.tasks[0].acceptanceCriteria };
+  const claims = { kind: 'KEYWORD_EVIDENCE_CLAIMS_V2', runId: plan.runId, stage: plan.stage,
+    recoverySha256: plan.recoverySha256, planSha256: 'b'.repeat(64), tasks: [{
+      keyword: plan.tasks[0].keyword, gap: plan.tasks[0].gap,
+      attemptedOperation: 'Fetched the official release body once.', evidence: [descriptor],
+      materialPath: 'Wallpaper Engine latest version素材.md',
+      materialSha256: after.materials[plan.tasks[0].keyword].sha256,
+      finalStatus: 'COMPLETED', remainingGaps: [], stopCondition: null,
+    }] };
+  const hostObservations = [{ kind: 'HOST_SOURCE_ACCESS_V1', keyword: plan.tasks[0].keyword,
+    gap: plan.tasks[0].gap, ...descriptor }];
+  const assessed = await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64), before,
+    after, nativeDirectory: root, claims, hostObservations });
+  assert.notEqual(assessed.classification, 'GAP_RESOLVED');
+  assert.match(assessed.tasks[0].reason, /unapproved gap removal/i);
 });
 
 test('host assessment distinguishes unrelated files, verified evidence, no progress and exhausted plans', async t => {
@@ -255,7 +326,13 @@ test('host assessment distinguishes unrelated files, verified evidence, no progr
       stopCondition: 'OFFICIAL_SOURCE_UNAVAILABLE',
     }] };
   assert.equal((await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64), before: after,
-    after, nativeDirectory: root, claims: exhaustedClaims })).classification, 'PLAN_EXHAUSTED');
+    after, nativeDirectory: root, claims: exhaustedClaims })).classification, 'NO_PROGRESS');
+  const hostObservations = [{ kind: 'HOST_STOP_OBSERVATION_V1', keyword: plan.tasks[0].keyword,
+    gap: plan.tasks[0].gap, attemptedOperation: exhaustedClaims.tasks[0].attemptedOperation,
+    target: plan.tasks[0].target, stopCondition: 'OFFICIAL_SOURCE_UNAVAILABLE' }];
+  assert.equal((await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64), before: after,
+    after, nativeDirectory: root, claims: exhaustedClaims, hostObservations })).classification,
+  'PLAN_EXHAUSTED');
 });
 
 test('host assessment keeps separate gaps for the same keyword', async t => {
@@ -275,7 +352,11 @@ test('host assessment keeps separate gaps for the same keyword', async t => {
       remainingGaps: state.materials[task.keyword].gaps, stopCondition: 'OFFICIAL_SOURCE_UNAVAILABLE',
     })) };
   const assessed = await assessKeywordEvidenceOutcome({ plan, planSha256: 'b'.repeat(64),
-    before: state, after: state, nativeDirectory: root, claims });
+    before: state, after: state, nativeDirectory: root, claims, hostObservations: plan.tasks.map(task => ({
+      kind: 'HOST_STOP_OBSERVATION_V1', keyword: task.keyword, gap: task.gap,
+      attemptedOperation: 'Checked the approved target once.', target: task.target,
+      stopCondition: 'OFFICIAL_SOURCE_UNAVAILABLE',
+    })) });
   assert.equal(assessed.tasks.length, 2);
   assert.equal(assessed.classification, 'PLAN_EXHAUSTED');
 });
