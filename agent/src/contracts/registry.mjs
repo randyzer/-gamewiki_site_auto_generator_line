@@ -16,6 +16,14 @@ const definitions = new Map([
     producer: 'HOST', validator: 'CONTRACT_REGISTRY', schema: load('execution-context.v1.json') }],
   ['KEYWORD_MATERIAL:1', { kind: 'KEYWORD_MATERIAL', schemaVersion: 1,
     producer: 'ADAPTER', validator: 'CONTRACT_REGISTRY', schema: load('keyword-material.v1.json') }],
+  ['EVIDENCE_PLAN:3', { kind: 'EVIDENCE_PLAN', schemaVersion: 3,
+    producer: 'HOST_PLAN_BUILDER', validator: 'CONTRACT_REGISTRY', schema: load('evidence-plan.v3.json') }],
+  ['EVIDENCE_CLAIM:3', { kind: 'EVIDENCE_CLAIM', schemaVersion: 3,
+    producer: 'WORKER', validator: 'CONTRACT_REGISTRY', schema: load('evidence-claim.v3.json') }],
+  ['HOST_OBSERVATION:1', { kind: 'HOST_OBSERVATION', schemaVersion: 1,
+    producer: 'HOST_EVIDENCE_BROKER', validator: 'CONTRACT_REGISTRY', schema: load('host-observation.v1.json') }],
+  ['EVIDENCE_OUTCOME:3', { kind: 'EVIDENCE_OUTCOME', schemaVersion: 3,
+    producer: 'EVIDENCE_ASSESSOR', validator: 'CONTRACT_REGISTRY', schema: load('evidence-outcome.v3.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

@@ -1,0 +1,10 @@
+{
+  "kind": "REGRESSION_FIXTURE_MANIFEST",
+  "schemaVersion": 1,
+  "sourceAttempt": 10,
+  "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/1/10/native/KEYWORD_EVIDENCE_CLAIMS_V2.json",
+  "sourceSha256": "9f799d5af56b729cdf01de5845e80c9ee82a9d8b7d0d3a6f82f12d1e518e1794",
+  "fixturePath": "claims-v2.json",
+  "fixtureSha256": "489fb09a5d61e10e2425915680c1f9804964d49c0a2987620e21b248df9a7144",
+  "redaction": "Kept one representative Attempt 10 task and the exact field-shape defects; replaced the local root, source body, nonessential tasks, and material prose. No Host Observation was synthesized."
+}

@@ -1,0 +1,48 @@
+{
+  "$id": "EVIDENCE_CLAIM_V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "trustLevel", "runId", "stageId", "attemptId", "contextDigest", "recoveryDigest", "policyVersion", "planDigest", "sourceFormat", "tasks", "diagnostics"],
+  "properties": {
+    "kind": { "const": "EVIDENCE_CLAIM" },
+    "schemaVersion": { "const": 3 },
+    "producer": { "const": "WORKER" },
+    "trustLevel": { "const": "T0" },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "recoveryDigest": { "type": "string", "format": "sha256" },
+    "policyVersion": { "type": "integer", "minimum": 1 },
+    "planDigest": { "type": "string", "format": "sha256" },
+    "sourceFormat": { "enum": ["V3", "LEGACY_V2_ADAPTED"] },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["taskId", "attempted", "evidence", "stopCondition"],
+        "properties": {
+          "taskId": { "type": "string", "pattern": "^task-[a-f0-9]{64}$" },
+          "attempted": { "type": "boolean" },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["path", "url", "sha256", "accessResult", "sourceType", "criterionIds"],
+              "properties": {
+                "path": { "type": "string", "format": "relative-posix-path", "pattern": "^evidence/" },
+                "url": { "type": "string", "minLength": 1 },
+                "sha256": { "type": "string", "format": "sha256" },
+                "accessResult": { "enum": ["HTTP_200", "TOOL_SUCCESS", "HTTP_403", "HTTP_429", "CAPTCHA", "CURRENT_PROCESS_LOGIN_MISSING", "TOOL_UNAVAILABLE", "TIMEOUT"] },
+                "sourceType": { "type": "string", "minLength": 1 },
+                "criterionIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^criterion-[a-f0-9]{24}$" } }
+              }
+            }
+          },
+          "stopCondition": { "type": ["string", "null"], "pattern": "^[A-Z][A-Z0-9_]{2,63}$" }
+        }
+      }
+    },
+    "diagnostics": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}
