@@ -329,6 +329,39 @@ test('keyword recovery copies only selected data and grants reads only to select
   assert.ok(!profile.includes(JSON.stringify(join(recoveryDirectory, 'data/unselected.txt')) + '='));
   assert.match(f.calls[0].options.input, /ALL keywords/);
   assert.match(f.calls[0].options.input, /Never execute recovered files/);
+  assert.match(f.calls[0].options.input, /return exactly the three top-level artifact roles/i);
+  assert.match(f.calls[0].options.input, /Never return keyword-material:/);
+});
+
+test('keyword contract failure preserves PARTIAL worker status and a recovery snapshot', async t => {
+  const f = await keywordLaunchFixture(t, { workerRun: async (_command, args, options) => {
+    const files = {
+      'keywords.json': JSON.stringify({ categories: [{ category: 'Guide', keywords: ['Fixture guide'] }] }),
+      '关键词处理记录.md': '# Fixture processing',
+      '关键词素材汇总.md': '# Fixture summary',
+      'Fixture guide素材.md': '- 状态: PARTIAL\n- 缺口: synthetic provider stop',
+    };
+    for (const [name, content] of Object.entries(files)) await writeFile(join(options.cwd, name), content);
+    const output = args[args.indexOf('--output-last-message') + 1];
+    await writeFile(output, JSON.stringify({ status: 'PARTIAL', missing_inputs: [], evidence: ['SYNTHETIC partial'],
+      artifacts: [
+        { kind: 'keywords.json', path: join(options.cwd, 'keywords.json') },
+        { kind: '关键词处理记录.md', path: join(options.cwd, '关键词处理记录.md') },
+        { kind: '关键词素材汇总.md', path: join(options.cwd, '关键词素材汇总.md') },
+        { kind: 'keyword-material:Fixture guide', path: join(options.cwd, 'Fixture guide素材.md') },
+      ] }));
+  } });
+  await assert.rejects(f.executor(STAGES[1], f.context), error => {
+    assert.equal(error.diagnosticOperation, 'validate-native-artifacts');
+    assert.equal(error.workerStatus, 'PARTIAL');
+    assert.equal(error.hostValidation, 'FAILED');
+    assert.match(error.message, /host-derived/);
+    return true;
+  });
+  const checkpoint = JSON.parse(await readFile(join(f.context.outputDirectory, 'keyword-recovery.json')));
+  const verified = await verifyKeywordRecovery({ ...f.context,
+    outputDirectory: join(f.root, 'artifacts/1/2') }, checkpoint);
+  assert.equal(verified.sourceAttempt, 1);
 });
 
 test('post-worker recovery integrity errors do not hide an original worker timeout', async t => {

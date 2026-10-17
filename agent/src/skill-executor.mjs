@@ -365,7 +365,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       'Never use another tool/service to bypass a failed preferred tool. Missing capabilities => BLOCKED; missing facts => WAITING_FOR_USER.',
       'Never read or print credentials. Do not invent keywords, sources, approvals, test results or completed actions.',
       'Result artifacts are roles mapped to real absolute file paths, not generated placeholder bytes. Preserve native output contracts.',
-      'KEYWORD_MATERIALS.md is an adapter role: return actual keyword files; the adapter builds the bundle. Missing inputs use supported task keys.',
+      'Keyword research must return exactly the three top-level artifact roles: keywords.json, 关键词处理记录.md, and 关键词素材汇总.md. The host discovers and validates per-keyword material files from keywords.json, then derives keyword-material:<keyword> and KEYWORD_MATERIALS.md. Never return keyword-material:*, KEYWORD_MATERIALS.md, validator reports, blocker files, lineage files, or evidence files as result artifacts; keep supporting files in nativeDirectory. Missing inputs use supported task keys.',
       'Produce only the structured result after finishing and validating actual files.',
     ].join('\n');
     const executeWorker = async () => {
@@ -491,7 +491,15 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     const validationContext = stagedTemplate && result.status !== 'PASSED'
       ? { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } } : context;
-    const validated = await diagnosticStep('validate-native-artifacts', () => validateNativeArtifacts(skill, validationContext, result, validationOptions));
+    let validated;
+    try {
+      validated = await diagnosticStep('validate-native-artifacts', () =>
+        validateNativeArtifacts(skill, validationContext, result, validationOptions));
+    } catch (error) {
+      error.workerStatus = result.status;
+      error.hostValidation = 'FAILED';
+      throw error;
+    }
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];

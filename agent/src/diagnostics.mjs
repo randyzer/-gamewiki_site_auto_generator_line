@@ -38,7 +38,11 @@ export function failureDiagnostic(error, { stage = null, attempt = 0, operation 
   const reason = error instanceof SyntaxError ? 'Invalid JSON or JavaScript syntax' : error?.message ?? error;
   return { stage, attempt, operation: adapterOperations.has(error?.diagnosticOperation) ? error.diagnosticOperation : operation,
     code: safeCodes.has(error?.code) ? error.code : 'ERROR',
-    reason: sanitizeDiagnosticText(reason), at: new Date().toISOString() };
+    reason: sanitizeDiagnosticText(reason),
+    ...(['PASSED', 'PARTIAL', 'FAILED', 'BLOCKED', 'WAITING_FOR_USER'].includes(error?.workerStatus)
+      ? { workerStatus: error.workerStatus } : {}),
+    ...(error?.hostValidation === 'FAILED' ? { hostValidation: 'FAILED' } : {}),
+    at: new Date().toISOString() };
 }
 
 export function diagnosticSummary(diagnostic) {

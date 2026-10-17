@@ -21,6 +21,11 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     byKind.set(item.kind, item);
     artifacts.push(item);
   }
+  if (skill === STAGE.KEYWORD_RESEARCH) {
+    const workerOwned = new Set(['keywords.json', '关键词处理记录.md', '关键词素材汇总.md']);
+    for (const kind of byKind.keys()) assert(workerOwned.has(kind),
+      `Unexpected keyword artifact role ${kind}; keyword material artifacts are host-derived`);
+  }
   if (result.status !== 'PASSED') return { ...result, artifacts: [] };
   assert(result.missing_inputs.length === 0 && result.evidence.length > 0, 'False success with missing inputs/evidence');
   const required = context.requiredArtifacts.filter(k => k !== 'KEYWORD_MATERIALS.md');

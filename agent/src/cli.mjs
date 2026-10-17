@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import {previewEntry,createEntry,updateEntry,statusEntry,previewEntryHandoff,validateEntryHandoff} from './entry-v1.mjs';
 import { runFromTerminal } from './terminal-run.mjs';
+import { reportCliResult } from './cli-result.mjs';
 
 const [command, file, id, revision] = process.argv.slice(2);
 async function entryInput(file) {
@@ -35,8 +36,7 @@ async function entryInput(file) {
   catch{throw Error('ENTRY_INVALID_JSON');}
 }
 const reportEntry = result => {
-  console.log(JSON.stringify(result,null,2));
-  if (['WAITING_FOR_USER','BLOCKED'].includes(result.status)) process.exitCode=2;
+  reportCliResult(result);
 };
 if (command?.startsWith('entry-')) {
   try {

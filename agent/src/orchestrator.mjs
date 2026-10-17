@@ -15,6 +15,7 @@ import { prepareResearchHandoff } from './handoff.mjs';
 import { prepareExistingContent } from './existing-content-adapter.mjs';
 import { materializeTemplateSnapshot } from './template-snapshot.mjs';
 import { resolveInputPaths } from './paths.mjs';
+import { verifyKeywordExecutionReceipt } from './keyword-execution-receipt.mjs';
 
 export async function loadConfiguration(file = join(AGENT_ROOT, 'config/workflow.json')) {
   const data = JSON.parse(await readFile(file, 'utf8'));
@@ -92,7 +93,10 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
       try { await access(manifest); throw Error('ENTRY_EXECUTION_DESTINATION_EXISTS'); }
       catch (error) { if (error.code !== 'ENOENT') throw error; }
     }
-    const previous = resume ? JSON.parse(await readFile(manifest, 'utf8')).inputs : null;
+    const manifestBytes = resume ? await readFile(manifest) : null;
+    const previous = manifestBytes ? JSON.parse(manifestBytes).inputs : null;
+    const keywordExecutionReceipt = task.keywordExecutionReceipt
+      ? verifyKeywordExecutionReceipt(task.keywordExecutionReceipt, { runId, inputs: supplied, manifestBytes }) : null;
     const inputs = resolveInputPaths(previous?.paths && !supplied.paths ? { ...supplied, paths: previous.paths } : supplied,
       { required: (!resume && !freshApproval) || Boolean(previous?.paths), legacyPaths: previous?.paths });
     if (!inputs.paths && previous) inputs.projectPath = previous.projectPath;
@@ -109,7 +113,8 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
       const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor,
         installSiteDependencies: executor.installDependencies, runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
-        expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined, inputs: resume ? {} : inputs });
+        expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined,
+        keywordExecutionReceipt, inputs: resume ? {} : inputs });
       if (resume) {
         if (pipeline.snapshot().stages.some(s => s.status === 'IN_PROGRESS')) await pipeline.advance();
         const old = pipeline.snapshot().inputs;

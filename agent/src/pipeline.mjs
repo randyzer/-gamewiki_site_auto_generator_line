@@ -12,6 +12,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { publishResearchArtifacts } from './handoff.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { keywordServiceStops } from './keyword-service-stops.mjs';
+import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -39,6 +40,11 @@ const overlaps = (a, b) => inside(a, b) || inside(b, a);
 const now = () => new Date().toISOString();
 const assert = (ok, message) => { if (!ok) throw new Error(message); };
 const INPUT_COPY_PREFIX = Object.freeze({ rawKeywordsFile: 'raw', keywordSourceLineageFile: 'lineage' });
+
+async function exists(path) {
+  try { await lstat(path); return true; }
+  catch (error) { if (error.code === 'ENOENT') return false; throw error; }
+}
 
 export function inputCopyFilename(prefix, originalFilename) {
   assert(['raw', 'lineage'].includes(prefix) && typeof originalFilename === 'string' && originalFilename.length > 0 &&
@@ -73,6 +79,8 @@ function checkInputs(value) {
   assert(value.mode === undefined || ['new-site', 'existing-project'].includes(value.mode), 'Unknown project mode');
   if (value.keywordResearchBudget !== undefined) keywordResearchBudget(value.keywordResearchBudget);
   if (value.keywordServiceStops !== undefined) keywordServiceStops(value.keywordServiceStops);
+  if (value.keywordRecoveryDecision !== undefined)
+    keywordRecoveryDecision(value.keywordRecoveryDecision, { recovery: value.keywordRecovery });
   // Reject non-JSON values instead of silently dropping functions or cycles.
   const visit = item => {
     if (item === undefined) return;
@@ -160,7 +168,8 @@ export async function recoverDeadRunLock(lockPath) {
 
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
-  expectedManifestSha256, deploymentExecution = false, installSiteDependencies = executor?.installDependencies } = {}) {
+  expectedManifestSha256, keywordExecutionReceipt, deploymentExecution = false,
+  installSiteDependencies = executor?.installDependencies } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
@@ -289,6 +298,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
 
   assert(!(resume && preparedRun), 'Prepared run cannot resume');
   if (resume) {
+    if (keywordExecutionReceipt) assert(hash(await regularFile(manifestPath)) === keywordExecutionReceipt.manifestSha256,
+      'KEYWORD_EXECUTION_RECEIPT_INVALID: manifest changed');
     if (expectedManifestSha256 !== undefined) assert(hash(await regularFile(manifestPath)) === expectedManifestSha256,
       'ENTRY_RESUME_MANIFEST_CHANGED');
     assert(Object.keys(inputs).length === 0 || JSON.stringify(checkInputs(inputs)) ===
@@ -448,6 +459,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const bytes = await regularFile(input.rawKeywordsFile);
         assert(nonempty(bytes.toString('utf8')), 'Empty keywords');
       } catch { missing.push('rawKeywordsFile'); }
+      const previousSnapshot = state.stages[index].checkpoint.attempt > 0 && await exists(join(runDirectory, 'artifacts',
+        String(index), String(state.stages[index].checkpoint.attempt), 'keyword-recovery.json'));
+      if ((state.inputs.keywordRecovery || previousSnapshot) && !state.inputs.keywordRecoveryDecision)
+        missing.push('keywordRecoveryDecision');
     }
     if (state.stages[index].skill === STAGE.TEMPLATE_SELECTION && templateRoots.length === 0) missing.push('templateRoots (create a configured run)');
     if (state.stages[index].skill === STAGE.CONTENT_INTEGRATION) {
@@ -552,6 +567,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       if (missing.length) {
         transition(stage, 'WAITING_FOR_USER', ['Required stage inputs are missing or invalid'], missing);
         await save(); return clone(state);
+      }
+      if (stage.skill === STAGE.KEYWORD_RESEARCH && state.inputs.keywordRecoveryDecision) {
+        const decision = keywordRecoveryDecision(state.inputs.keywordRecoveryDecision, { recovery: state.inputs.keywordRecovery });
+        assert(keywordExecutionReceipt && keywordExecutionReceipt.runId === runId &&
+          normalizedJson(keywordExecutionReceipt.decision) === normalizedJson(decision),
+        'KEYWORD_EXECUTION_RECEIPT_REQUIRED: preview and confirm this explicit recovery decision');
+        stage.checkpoint.executionReceipt = clone(keywordExecutionReceipt);
       }
       if (stage.skill === STAGE.TEMPLATE_SELECTION) {
         try {
