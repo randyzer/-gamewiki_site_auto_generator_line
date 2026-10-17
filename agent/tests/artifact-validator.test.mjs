@@ -75,7 +75,8 @@ async function nativeFixture(t, index) {
 for (let i = 0; i < 7; i++) test('native stage contract accepts structural fixture: ' + STAGES[i], async t => {
   const f = await nativeFixture(t, i); const result = await f.validate();
   assert.equal(result.status, 'PASSED'); assert.ok(result.artifacts.length >= ARTIFACTS[i].length);
-  assert.ok(result.artifacts.every(a => a.sourcePath && (a.sourceSha256 || a.kind === 'KEYWORD_MATERIALS.md')));
+  assert.ok(result.artifacts.every(a => a.sourcePath && (a.sourceSha256 ||
+    ['KEYWORD_MATERIALS.md', 'ROUTE_PUBLICATION_MANIFEST.json'].includes(a.kind))));
 });
 test('keyword validator reads the same run-local copy as the worker', async t => {
   const f = await nativeFixture(t, 1);
@@ -98,7 +99,7 @@ test('UI report must include the exact six required viewport widths', async t =>
 });
 test('prelaunch report must cover exactly the routes captured by the host', async t => {
   const f = await nativeFixture(t, 5);
-  f.context.hostEvidence = { routes: ['/', '/missing-from-report'] };
+  f.context.hostEvidence = { routes: ['/', '/missing-from-report'], routePublicationViolations: [] };
   await assert.rejects(f.validate(), /Prelaunch host route coverage mismatch/);
 });
 test('homepage rejects directories, invalid ZIP and missing native fields', async t => {
@@ -135,6 +136,29 @@ test('keyword material roles remain host-owned and malformed PARTIAL descriptors
   f.result.artifacts.at(-1).kind = 'KEYWORD_MATERIALS.md';
   f.result.artifacts.push({ kind: 'KEYWORD_MATERIALS.md', path: material });
   await assert.rejects(f.validate(), /Duplicate artifact role/);
+});
+test('approved partial handoff derives a draft-only route manifest without a formal keyword artifact', async t => {
+  const f = await nativeFixture(t, 3);
+  const contentItem = f.result.artifacts.find(item => item.kind === 'CONTENT_PAGE_MANIFEST.json');
+  const content = JSON.parse(await readFile(contentItem.path));
+  Object.assign(content.pages[0], { outcome: 'DRAFT', route: '/draft-guide',
+    material_status: 'PARTIAL' });
+  content.counts = { keywords: 1, published: 0, draft: 1, blocked: 0 };
+  await writeFile(contentItem.path, JSON.stringify(content));
+  f.context.upstream.find(stage => stage.skill === STAGES[1]).artifacts = [];
+  f.context.researchHandoff = {
+    reference: { sha256: 'a'.repeat(64), approved: true },
+    manifest: { kind: 'RESEARCH_HANDOFF_MANIFEST_V1', materials: [{
+      keyword: 'Offline Fixture guide', status: 'PARTIAL', publicationDisposition: 'DRAFT_ONLY',
+    }] },
+  };
+  const validated = await f.validate();
+  const routeArtifact = validated.artifacts.find(item => item.kind === 'ROUTE_PUBLICATION_MANIFEST.json');
+  const publication = JSON.parse(Buffer.from(routeArtifact.content, 'base64'));
+  assert.equal(publication.pages.find(page => page.keyword === 'Offline Fixture guide').disposition,
+    'DRAFT_ONLY');
+  assert.equal(publication.pages.find(page => page.keyword === 'Offline Fixture guide').noindexRequired,
+    true);
 });
 test('template mismatch and nonexistent content source fail validation', async t => {
   const f = await nativeFixture(t, 2); await writeFile(join(f.context.inputs.projectPath, 'index.html'), 'tampered');

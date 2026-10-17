@@ -643,7 +643,7 @@ test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck art
       const directory = join(context.inputs.projectPath, 'docs/prelaunch', context.runId, 'host-evidence');
       await mkdir(directory, { recursive: true });
       await writeFile(join(directory, 'HOST_EVIDENCE.json'), '{"synthetic":true}');
-      return { ...await snapshotSiteEvidence(directory), routes: ['/'] };
+      return { ...await snapshotSiteEvidence(directory), routes: ['/'], routePublicationViolations: [] };
     },
     validationOptions: { run: async () => ({ exitCode: 0 }) },
     run: async (_command, args, options) => {

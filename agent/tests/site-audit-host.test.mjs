@@ -11,14 +11,19 @@ const host = await import('../src/site-audit-host.mjs').catch(() => ({}));
 const evidence = await import('../src/site-evidence.mjs').catch(() => ({}));
 export async function auditFixture(t) {
   const f = await fixture(t), runId = 'audit-host', runDirectory = join(f.configuration.workspace, 'runs', runId);
-  const projectPath = join(f.root, 'site'), manifestPath = join(runDirectory, 'CONTENT_PAGE_MANIFEST.json');
+  const projectPath = join(f.root, 'site'), manifestPath = join(runDirectory, 'ROUTE_PUBLICATION_MANIFEST.json');
   await mkdir(runDirectory, { recursive: true }); await mkdir(projectPath);
-  await writeFile(manifestPath, JSON.stringify({ pages: [{ route: '/guide', outcome: 'PUBLISHED' }, { route: '/draft', outcome: 'DRAFT' }] }));
+  await writeFile(manifestPath, JSON.stringify({ kind: 'ROUTE_PUBLICATION_MANIFEST_V1', schemaVersion: 1,
+    runId, gameIdentity: f.inputs.gameIdentity, siteRevision: f.inputs.siteRevision,
+    domain: f.inputs.domain, researchHandoffSha256: null,
+    pages: [{ route: '/', disposition: 'PUBLISH' }, { route: '/guide', disposition: 'PUBLISH' },
+      { route: '/draft', disposition: 'DRAFT_ONLY', noindexRequired: true }],
+    counts: { publish: 2, draftOnly: 1, omit: 0 } }));
   return { ...f, context: { runId, runDirectory, inputs: { ...f.inputs, projectPath },
     outputDirectory: join(runDirectory, 'artifacts/4/1'), requiredArtifacts: [], mode: 'audit-only',
     skillLock: { source: join(f.root, 'skills', STAGE.UI_UX_AUDIT + '.md') },
     permissions: { siteWrites: false, uiChanges: false },
-    upstream: [{ skill: STAGE.CONTENT_INTEGRATION, artifacts: [{ kind: 'CONTENT_PAGE_MANIFEST.json', path: manifestPath }] }] } };
+    upstream: [{ skill: STAGE.CONTENT_INTEGRATION, artifacts: [{ kind: 'ROUTE_PUBLICATION_MANIFEST.json', path: manifestPath }] }] } };
 }
 async function writeAudit(directory) {
   await mkdir(join(directory, 'screenshots/home'), { recursive: true });
@@ -43,9 +48,14 @@ test('audit adapter uses locked script through module hook and published routes 
 });
 test('audit adapter rejects route escape and an incomplete viewport set', async t => {
   const f = await auditFixture(t), path = f.context.upstream[0].artifacts[0].path;
-  await writeFile(path, JSON.stringify({ pages: [{ outcome: 'PUBLISHED', route: '//external.invalid/' }] }));
-  await assert.rejects(host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async () => assert.fail('must not run') }), /SITE_ROUTE_INVALID/);
-  await writeFile(path, JSON.stringify({ pages: [] }));
+  const manifest = JSON.parse(await readFile(path));
+  manifest.pages = [{ disposition: 'PUBLISH', route: '//external.invalid/' }];
+  manifest.counts = { publish: 1, draftOnly: 0, omit: 0 };
+  await writeFile(path, JSON.stringify(manifest));
+  await assert.rejects(host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async () => assert.fail('must not run') }), /ROUTE_PUBLICATION_INVALID/);
+  manifest.pages = [{ disposition: 'PUBLISH', route: '/' }];
+  manifest.counts = { publish: 1, draftOnly: 0, omit: 0 };
+  await writeFile(path, JSON.stringify(manifest));
   await assert.rejects(host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async (_c,args) => {
     const out = args[args.indexOf('--out') + 1]; await writeAudit(out);
     await writeFile(join(out, 'AUTOMATED_AUDIT.json'), '{"viewports":[{"width":390}]}');

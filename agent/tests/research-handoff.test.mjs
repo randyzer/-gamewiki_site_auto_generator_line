@@ -5,6 +5,8 @@ import { join, resolve } from 'node:path';
 import { captureKeywordRecovery } from '../src/keyword-recovery.mjs';
 import { createResearchHandoffCandidate, researchHandoffApprovalTemplate,
   verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from '../src/research-handoff.mjs';
+import { prepareResearchHandoff } from '../src/handoff.mjs';
+import { STAGE } from '../src/stages.mjs';
 
 async function fixture(t) {
   const root = await mkdtemp(resolve('.research-handoff-test-'));
@@ -68,4 +70,21 @@ test('candidate rejects missing materials and detects immutable byte tampering',
   await chmod(reference.path, 0o600); await writeFile(reference.path, '{}');
   await assert.rejects(verifyResearchHandoffCandidate(reference, { ...changed, attempt: 1,
     siteRevision: 'rev-1', domain: 'example.test' }), /candidate digest changed/);
+});
+
+test('approved partial research is copied from the verified recovery snapshot for content integration', async t => {
+  const f = await fixture(t), projectPath = join(f.root, 'site'); await mkdir(projectPath);
+  const reference = await createResearchHandoffCandidate({ ...f, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' });
+  const manifest = await verifyResearchHandoffCandidate(reference, { ...f, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' });
+  const prepared = await prepareResearchHandoff({ runId: f.runId, runDirectory: f.runDirectory,
+    inputs: { projectPath }, researchHandoff: { reference: { ...reference, approved: true }, manifest },
+    upstream: [{ skill: STAGE.HOMEPAGE_RESEARCH, artifacts: [] },
+      { skill: STAGE.KEYWORD_RESEARCH, artifacts: [] }] });
+  assert.equal(prepared.manifest.kind, 'RESEARCH_HANDOFF_MANIFEST_V1');
+  assert.equal(await readFile(join(prepared.keywordsRoot, 'Partial guide素材.md'), 'utf8'),
+    '- 状态: PARTIAL\n- 缺口: missing fact\n');
+  assert.equal(JSON.parse(await readFile(join(prepared.keywordsRoot, 'keywords.json')))
+    .categories[0].keywords.length, 3);
 });

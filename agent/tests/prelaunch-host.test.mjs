@@ -11,14 +11,20 @@ const api = await import('../src/prelaunch-host.mjs').catch(() => ({}));
 async function setup(t) {
   const f = await fixture(t), runId = 'prelaunch-host', runDirectory = join(f.configuration.workspace,'runs',runId);
   const projectPath = join(f.root, 'site'); await mkdir(projectPath); await mkdir(runDirectory,{recursive:true});
-  const path = join(runDirectory,'CONTENT_PAGE_MANIFEST.json');
-  await writeFile(path, JSON.stringify({pages:[{route:'/guide',outcome:'PUBLISHED'},{route:'/draft',outcome:'DRAFT'}]}));
+  const path = join(runDirectory,'ROUTE_PUBLICATION_MANIFEST.json');
+  await writeFile(path, JSON.stringify({kind:'ROUTE_PUBLICATION_MANIFEST_V1',schemaVersion:1,
+    runId,gameIdentity:f.inputs.gameIdentity,siteRevision:f.inputs.siteRevision,domain:f.inputs.domain,
+    researchHandoffSha256:null,pages:[
+      {route:'/',disposition:'PUBLISH',noindexRequired:false},
+      {route:'/guide',disposition:'PUBLISH',noindexRequired:false},
+      {route:'/draft',disposition:'DRAFT_ONLY',noindexRequired:true}],
+    counts:{publish:2,draftOnly:1,omit:0}}));
   await writeFile(join(projectPath,'package.json'),JSON.stringify({scripts:{typecheck:'tsc',test:'test',build:'next build'}}));
   await writeFile(join(projectPath,'pnpm-lock.yaml'),'locked');
   return {...f, context:{runId,runDirectory,inputs:{...f.inputs,projectPath},mode:'audit-only',requiredArtifacts:[],
     outputDirectory:join(runDirectory,'artifacts/5/1'),permissions:{siteWrites:false},
     skillLock:{source:join(f.root,'skills',STAGE.PRELAUNCH_ACCEPTANCE+'.md')},
-    upstream:[{skill:STAGE.CONTENT_INTEGRATION,artifacts:[{kind:'CONTENT_PAGE_MANIFEST.json',path}]}]}};
+    upstream:[{skill:STAGE.CONTENT_INTEGRATION,artifacts:[{kind:'ROUTE_PUBLICATION_MANIFEST.json',path}]}]}};
 }
 function dependencies() {
   const shots=[],requests=[],commands=[]; let browserClosed=0,contextsClosed=0;
@@ -43,13 +49,33 @@ function dependencies() {
 }
 test('prelaunch unions published and same-site sitemap pages, screenshots all sizes and preserves browser errors',async t=>{
   const f=await setup(t),d=dependencies();const result=await api.collectPrelaunch(f.context,d.options);
-  assert.deepEqual(result.routes,['/','/guide','/sitemap-only']);
+  assert.deepEqual(result.routes,['/','/guide','/draft','/sitemap-only']);
   const data=JSON.parse(await readFile(result.evidencePath));
-  assert.equal(data.pages.length,3);assert.deepEqual(data.coverage,{routes_expected:3,routes_checked:3});
-  assert.deepEqual(d.shots.map(s=>s.width),[1440,390,360,768,1440,390,360,768,1440,390]);
+  assert.equal(data.pages.length,4);assert.deepEqual(data.coverage,{routes_expected:4,routes_checked:4});
+  assert.deepEqual(d.shots.map(s=>s.width),[1440,390,360,768,1440,390,360,768,1440,390,1440,390]);
   assert.equal(data.pages[0].viewports[0].status,200);assert.ok(data.pages[0].viewports[0].consoleErrors.length);
   assert.ok(data.pages[0].viewports[0].pageErrors.length);assert.ok(data.pages[0].viewports[0].failedRequests.length);
-  assert.equal(d.closed().browserClosed,1);assert.equal(d.closed().contextsClosed,10);
+  assert.ok(data.routePublication.violations.some(item=>item.code==='DRAFT_NOINDEX_UNPROVEN'));
+  assert.ok(data.routePublication.violations.some(item=>item.code==='SITEMAP_UNDECLARED_ROUTE'));
+  assert.equal(d.closed().browserClosed,1);assert.equal(d.closed().contextsClosed,12);
+});
+test('prelaunch proves an isolated noindex draft and exact public sitemap without violations',async t=>{
+  const f=await setup(t),shots=[];
+  const fetchUrl=async target=>{
+    const path=new URL(target).pathname;
+    const text=path==='/sitemap.xml'
+      ? '<urlset><url><loc>https://fixture.test/</loc></url><url><loc>https://fixture.test/guide</loc></url></urlset>'
+      : path==='/draft' ? '<html><head><meta name="robots" content="noindex,nofollow"></head></html>' : '<html></html>';
+    return {status:200,headers:new Headers({'content-type':path.includes('xml')?'application/xml':'text/html'}),
+      text:async()=>text,body:{cancel:async()=>{}}};
+  };
+  const launchBrowser=async()=>({newContext:async({viewport})=>({newPage:async()=>({on:()=>{},
+    goto:async()=>({status:()=>200}),evaluate:async()=>[],screenshot:async({path})=>{shots.push(viewport.width);await writeFile(path,'shot');}}),close:async()=>{}}),close:async()=>{}});
+  const result=await api.collectPrelaunch(f.context,{url:'http://127.0.0.1:32111',fetchUrl,launchBrowser,run:async()=>({exitCode:0})});
+  const data=JSON.parse(await readFile(result.evidencePath));
+  assert.deepEqual(result.routePublicationViolations,[]);
+  assert.deepEqual(data.routePublication.violations,[]);
+  assert.equal(shots.length,10);
 });
 test('prelaunch checks robots, every sitemap URL and recursively checks internal links without requesting offsite URLs',async t=>{
   const f=await setup(t),d=dependencies();const result=await api.collectPrelaunch(f.context,d.options);
@@ -79,7 +105,8 @@ test('prelaunch executor passes evidence to offline worker and stops preview, de
       prelaunchSite:async context=>{
         const directory=join(context.inputs.projectPath,'docs/prelaunch',context.runId,'host-evidence');await mkdir(directory,{recursive:true});
         evidencePath=join(directory,'HOST_EVIDENCE.json');await writeFile(evidencePath,'{"synthetic":true}');
-        return {...await snapshotSiteEvidence(directory),routes:['/'],evidencePath};
+        return {...await snapshotSiteEvidence(directory),routes:['/'],evidencePath,
+          routePublicationViolations:[]};
       },run:async(_c,args,options)=>{
         assert.match(args.join(' '),/network=\{enabled=false\}/);assert.match(options.input,/routes_checked/);
         const path=args.find(value=>value.startsWith('shell_environment_policy.set='));
