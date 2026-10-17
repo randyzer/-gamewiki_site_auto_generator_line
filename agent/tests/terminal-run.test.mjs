@@ -40,6 +40,15 @@ async function evidencePlan(f, runId, recoverySha256, { serviceStops = [], servi
   return { path, sha256: sha256(bytes) };
 }
 
+async function writeRecoveryLineage(nativeDirectory) {
+  await writeFile(join(nativeDirectory, 'RAW_LINEAGE.json'), JSON.stringify({ pendingIds: [], rows: [
+    { id: '1', raw: 'fixture guide', final: 'Fixture guide' },
+  ] }));
+  await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
+    { category: 'Guide', keywords: ['Fixture guide'] },
+  ] }));
+}
+
 const manifestPath = (f, id) => join(f.configuration.workspace, 'runs', id, 'manifest.json');
 
 test('summary shows game, keyword file digest, Skill tree, template source and stages before asking', async t => {
@@ -159,6 +168,7 @@ test('retry preview validates selected recovery bytes and confirms selection and
   await mkdir(native, { recursive: true });
   await writeFile(join(native, 'one.txt'), 'public evidence one');
   await writeFile(join(native, 'two.txt'), 'public evidence two');
+  await writeRecoveryLineage(native);
   const ref = await captureStoppedKeywordAttempt(runDirectory, 1);
   const plan = await evidencePlan(s.f, runId, ref.sha256, { serviceStops: ['youtube-subtitles'] });
   const inputs = { ...s.f.inputs, keywordRecovery: ref, keywordRecoveryDecision: { mode: 'recover' },
@@ -173,7 +183,8 @@ test('retry preview validates selected recovery bytes and confirms selection and
   const first = await preview(inputs);
   assert.ok(first.text.includes(ref.sha256));
   assert.match(first.text, /Suspended services \(all keywords\): youtube-subtitles/);
-  const second = await preview({ ...inputs, keywordRecovery: { ...ref, files: ['one.txt'] } });
+  const second = await preview({ ...inputs, keywordRecovery: { ...ref,
+    files: ['one.txt', 'RAW_LINEAGE.json', 'keywords.json'] } });
   assert.notEqual(first.confirmation_code, second.confirmation_code);
   const thirdPlan = await evidencePlan(s.f, runId, ref.sha256, { suffix: '-third' });
   const third = await preview({ ...inputs, keywordServiceStops: [], keywordEvidencePlan: thirdPlan });
@@ -197,6 +208,7 @@ test('retry preview requires an explicit current decision for every recovered pr
   const native = join(runDirectory, 'artifacts/1/1/native');
   await mkdir(native, { recursive: true });
   await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+  await writeRecoveryLineage(native);
   await writeFile(join(native, 'SERVICE_BLOCKERS.json'), JSON.stringify({ resumeAuthorized: false, stops: [
     { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
     { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
@@ -246,6 +258,7 @@ test('recovery preview refuses to launch without a bound incremental evidence pl
   const native = join(runDirectory, 'artifacts/1/1/native');
   await mkdir(native, { recursive: true });
   await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+  await writeRecoveryLineage(native);
   const recovery = await captureStoppedKeywordAttempt(runDirectory, 1);
   const common = { ...s.f.inputs, keywordRecovery: recovery, keywordRecoveryDecision: { mode: 'recover' },
     keywordServiceStops: [], keywordServiceResumes: [] };

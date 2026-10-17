@@ -580,13 +580,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         assert(keywordExecutionReceipt && keywordExecutionReceipt.runId === runId &&
           normalizedJson(keywordExecutionReceipt.decision) === normalizedJson(decision),
         'KEYWORD_EXECUTION_RECEIPT_REQUIRED: preview and confirm this explicit recovery decision');
-        let historicalStops = [];
+        let historicalStops = [], verifiedRecovery;
         if (decision.mode === 'recover') {
-          const recovery = await verifyKeywordRecovery({ runId, runDirectory, inputs: state.inputs,
+          verifiedRecovery = await verifyKeywordRecovery({ runId, runDirectory, inputs: state.inputs,
             outputDirectory: join(runDirectory, 'artifacts', String(index), String(stage.checkpoint.attempt + 1)),
             checkpoint: stage.checkpoint, skillLock: state.lock.skills.find(skill => skill.name === STAGE.KEYWORD_RESEARCH) },
           state.inputs.keywordRecovery);
-          historicalStops = recovery.historicalServiceStops;
+          historicalStops = verifiedRecovery.historicalServiceStops;
         }
         recoveredKeywordServiceDecisions({ historicalStops,
           serviceStops: state.inputs.keywordServiceStops, serviceResumes: state.inputs.keywordServiceResumes,
@@ -595,7 +595,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           assert(Object.hasOwn(keywordExecutionInputs, 'keywordEvidencePlan'),
             'KEYWORD_EVIDENCE_PLAN_REQUIRED: current retry inputs must explicitly provide the reviewed plan');
           await verifyKeywordEvidencePlan({ runId, recoverySha256: state.inputs.keywordRecovery.sha256,
-            serviceStops: state.inputs.keywordServiceStops, serviceResumes: state.inputs.keywordServiceResumes },
+            serviceStops: state.inputs.keywordServiceStops, serviceResumes: state.inputs.keywordServiceResumes,
+            recovery: verifiedRecovery },
           state.inputs.keywordEvidencePlan);
         } else assert(!state.inputs.keywordEvidencePlan,
           'KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with recover mode');

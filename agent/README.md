@@ -145,7 +145,7 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 }
 ```
 
-预览会显示计划 SHA256、任务数、每项预期证据和歧义词决定。计划文件、恢复快照或服务决定变化后，原确认码和执行凭据失效。Pipeline 和 Worker 启动入口会再次校验同一文件；缺少计划、空计划、直接或间接依赖暂停服务、或把 PENDING 行当成确定意图时，不启动 Worker。恢复执行后，宿主只把新增/改变的 `evidence/` 文件或 `SERVICE_BLOCKERS.json` 计为进展；只重写报告或重新校验旧文件会转成 `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS`，下一次 retry 必须修改计划。计划只证明本轮有可执行的补证路径，不代表任务必然取得证据，也不降低 `COMPLETED`/Stage `PASSED` 门槛。
+预览会显示计划 SHA256、任务数、每项预期证据和歧义词决定。计划文件、恢复快照或服务决定变化后，原确认码和执行凭据失效。Pipeline 和 Worker 启动入口会再次校验同一文件，并以恢复快照中的 `RAW_LINEAGE.json` 和 `keywords.json` 核对任务关键词、原始行归属及完整的待确认行；缺少计划、空计划、直接或间接依赖暂停服务、遗漏/改写待确认行或编造行归属时，不启动 Worker。恢复执行后，宿主只把新增/改变的 `evidence/` 文件计为研究进展；`SERVICE_BLOCKERS.json` 单独作为诊断变化，不算新增证据。只重写报告、阻断记录或重新校验旧文件会记录 `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS`，下一次 retry 必须修改计划。计划只证明本轮有可执行的补证路径，不代表任务必然取得证据，也不降低 `COMPLETED`/Stage `PASSED` 门槛。
 
 存在上一 attempt 的 `keyword-recovery.json` 时，Stage 2 retry 必须显式设置 `keywordRecoveryDecision`。`{"mode":"recover"}` 必须同时提供 `keywordRecovery`；`{"mode":"fresh"}` 必须移除或置空 `keywordRecovery`。预览与确认会生成宿主执行凭据，绑定输入文件 SHA256、恢复选择、预算、暂停项、恢复授权、当时的 manifest 与确认码；缺失或变化会在 worker 启动前拒绝执行。历史 receipt 与 attempt 只保留审计用途，不会被新决定改写。
 

@@ -66,6 +66,15 @@ async function advance(pipeline, count) {
   return pipeline.snapshot();
 }
 
+async function writeFixtureRecoveryLineage(nativeDirectory) {
+  await writeFile(join(nativeDirectory, 'RAW_LINEAGE.json'), JSON.stringify({ pendingIds: [], rows: [
+    { id: '1', raw: 'example walkthrough', final: 'Example walkthrough' },
+  ] }));
+  await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
+    { category: 'Guide', keywords: ['Example walkthrough'] },
+  ] }));
+}
+
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
   for (const index of [4, 5]) {
     const f = await fixture(t);
@@ -644,6 +653,7 @@ test('direct pipeline recovery rejects incomplete historical service decisions b
     const native = join(context.outputDirectory, 'native');
     await mkdir(native, { recursive: true });
     await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+    await writeFixtureRecoveryLineage(native);
     await writeFile(join(native, 'SERVICE_BLOCKERS.json'), JSON.stringify({ resumeAuthorized: false, stops: [
       { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
       { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
@@ -688,6 +698,7 @@ test('direct pipeline recovery waits for an explicit evidence plan before invoki
     const native = join(context.outputDirectory, 'native');
     await mkdir(native, { recursive: true });
     await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+    await writeFixtureRecoveryLineage(native);
     return { status: 'PARTIAL', artifacts: [], evidence: ['SYNTHETIC incomplete research'], missing_inputs: [] };
   };
   const first = await f.create({ executor });

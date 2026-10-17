@@ -11,6 +11,20 @@ const recoverySha256 = 'a'.repeat(64);
 async function planFixture(t, patch = {}) {
   const root = await mkdtemp(join(await realpath(tmpdir()), '.keyword-evidence-plan-'));
   t.after(() => rm(root, { recursive: true, force: true }));
+  const recoveryDirectory = join(root, 'recovery');
+  await mkdir(join(recoveryDirectory, 'data'), { recursive: true });
+  await writeFile(join(recoveryDirectory, 'data', 'RAW_LINEAGE.json'), JSON.stringify({
+    pendingIds: [36], rows: [
+      { id: '4', raw: 'best wallpaper engine wallpapers', final: 'Wallpaper Engine best wallpapers' },
+      { id: '36', raw: 'wallpaper engine space', final: null },
+      { id: '91', raw: 'wallpaper engine latest version', final: 'Wallpaper Engine latest version' },
+    ],
+  }));
+  await writeFile(join(recoveryDirectory, 'data', 'keywords.json'), JSON.stringify({ categories: [{
+    category: 'Guides', keywords: ['Wallpaper Engine latest version', 'Wallpaper Engine best wallpapers'],
+  }] }));
+  const recovery = { directory: recoveryDirectory,
+    files: [{ path: 'RAW_LINEAGE.json' }, { path: 'keywords.json' }] };
   const plan = {
     kind: 'KEYWORD_EVIDENCE_PLAN_V1',
     runId: 'fixture-run',
@@ -32,17 +46,17 @@ async function planFixture(t, patch = {}) {
   const bytes = Buffer.from(JSON.stringify(plan, null, 2) + '\n');
   const path = join(root, 'plan.json');
   await writeFile(path, bytes);
-  return { plan, ref: { path, sha256: sha256(bytes) } };
+  return { plan, recovery, ref: { path, sha256: sha256(bytes) } };
 }
 
-const context = overrides => ({
+const context = (recovery, overrides = {}) => ({
   runId: 'fixture-run', recoverySha256,
-  serviceStops: ['steam-community', 'youtube-subtitles'], serviceResumes: [], ...overrides,
+  serviceStops: ['steam-community', 'youtube-subtitles'], serviceResumes: [], recovery, ...overrides,
 });
 
 test('evidence plan binds the run, recovery snapshot, service decisions and concrete tasks', async t => {
-  const { ref } = await planFixture(t);
-  const verified = await verifyKeywordEvidencePlan(context(), ref);
+  const { ref, recovery } = await planFixture(t);
+  const verified = await verifyKeywordEvidencePlan(context(recovery), ref);
   assert.equal(verified.sha256, ref.sha256);
   assert.equal(verified.plan.tasks.length, 1);
   assert.equal(verified.plan.tasks[0].tool, 'serper');
@@ -58,46 +72,60 @@ test('evidence plan rejects empty work, stale bindings and changed bytes', async
     { recoverySha256: 'b'.repeat(64) },
     { serviceStops: ['youtube-subtitles'] },
   ]) {
-    const { ref } = await planFixture(t, patch);
-    await assert.rejects(verifyKeywordEvidencePlan(context(), ref), /KEYWORD_EVIDENCE_PLAN_INVALID/);
+    const { ref, recovery } = await planFixture(t, patch);
+    await assert.rejects(verifyKeywordEvidencePlan(context(recovery), ref), /KEYWORD_EVIDENCE_PLAN_INVALID/);
   }
-  const { ref } = await planFixture(t);
+  const { ref, recovery } = await planFixture(t);
   await writeFile(ref.path, '{}');
-  await assert.rejects(verifyKeywordEvidencePlan(context(), ref), /KEYWORD_EVIDENCE_PLAN_INVALID/);
+  await assert.rejects(verifyKeywordEvidencePlan(context(recovery), ref), /KEYWORD_EVIDENCE_PLAN_INVALID/);
 });
 
 test('evidence plan cannot schedule a suspended service unless that service is explicitly resumed', async t => {
   const task = {
-    keyword: 'Wallpaper Engine best wallpapers', rawRows: [4, 10],
+    keyword: 'Wallpaper Engine best wallpapers', rawRows: [4],
     gap: 'Workshop item details need first-party verification.', tool: 'steam-community',
     target: 'https://steamcommunity.com/app/431960/workshop/',
     expectedEvidence: 'Current workshop item detail pages and author information.',
   };
-  const { ref } = await planFixture(t, { tasks: [task] });
-  await assert.rejects(verifyKeywordEvidencePlan(context(), ref), /service is suspended.*steam-community/i);
+  const { ref, recovery } = await planFixture(t, { tasks: [task] });
+  await assert.rejects(verifyKeywordEvidencePlan(context(recovery), ref), /service is suspended.*steam-community/i);
 
   const resumed = await planFixture(t, { serviceStops: ['youtube-subtitles'],
     serviceResumes: ['steam-community'], tasks: [task] });
-  const verified = await verifyKeywordEvidencePlan(context({ serviceStops: ['youtube-subtitles'],
+  const verified = await verifyKeywordEvidencePlan(context(resumed.recovery, { serviceStops: ['youtube-subtitles'],
     serviceResumes: ['steam-community'] }), resumed.ref);
   assert.equal(verified.plan.tasks[0].tool, 'steam-community');
 });
 
 test('a suspended platform cannot be reached indirectly through a generic search task', async t => {
-  const { ref } = await planFixture(t, { tasks: [{
+  const { ref, recovery } = await planFixture(t, { tasks: [{
     keyword: 'Wallpaper Engine latest version', rawRows: [91], gap: 'Missing official version',
     tool: 'serper', target: 'site:steamcommunity.com/games/431960/announcements version',
     expectedEvidence: 'Official announcement body with the current version.',
   }] });
-  await assert.rejects(verifyKeywordEvidencePlan(context(), ref), /suspended Steam Community/i);
+  await assert.rejects(verifyKeywordEvidencePlan(context(recovery), ref), /suspended Steam Community/i);
 });
 
 test('pending ambiguous rows cannot be smuggled into evidence tasks', async t => {
-  const { ref } = await planFixture(t, { tasks: [{
+  const { ref, recovery } = await planFixture(t, { tasks: [{
     keyword: 'Wallpaper Engine space', rawRows: [36], gap: 'Unknown user intent.', tool: 'serper',
     target: 'wallpaper engine space', expectedEvidence: 'Clarify whether this is a site or space wallpaper intent.',
   }] });
-  await assert.rejects(verifyKeywordEvidencePlan(context(), ref), /pending raw row 36/i);
+  await assert.rejects(verifyKeywordEvidencePlan(context(recovery), ref), /pending raw row 36/i);
+});
+
+test('recovery lineage prevents omitted pending rows, invented keywords and wrong raw-row ownership', async t => {
+  for (const patch of [
+    { pendingRows: [] },
+    { tasks: [{ keyword: 'Invented guide', rawRows: [91], gap: 'Missing fact', tool: 'serper',
+      target: 'official guide', expectedEvidence: 'Official page body' }] },
+    { tasks: [{ keyword: 'Wallpaper Engine latest version', rawRows: [4], gap: 'Missing fact', tool: 'serper',
+      target: 'official guide', expectedEvidence: 'Official page body' }] },
+    { pendingRows: [{ row: 36, rawKeyword: 'different raw text', decision: 'PENDING', targetKeyword: null }] },
+  ]) {
+    const { ref, recovery } = await planFixture(t, patch);
+    await assert.rejects(verifyKeywordEvidencePlan(context(recovery), ref), /KEYWORD_EVIDENCE_PLAN_INVALID/);
+  }
 });
 
 test('evidence progress counts only new or changed evidence and blocker files', async t => {
@@ -108,9 +136,10 @@ test('evidence progress counts only new or changed evidence and blocker files', 
   await writeFile(join(root, 'report.md'), 'rewritten report');
   const before = await keywordEvidenceState(root);
   await writeFile(join(root, 'report.md'), 'rewritten again');
-  assert.deepEqual(keywordEvidenceChanges(before, await keywordEvidenceState(root)), []);
+  assert.deepEqual(keywordEvidenceChanges(before, await keywordEvidenceState(root)),
+    { evidenceFiles: [], serviceBlockerChanged: false });
   await writeFile(join(root, 'SERVICE_BLOCKERS.json'), '{"stops":[]}');
   await writeFile(join(root, 'evidence', 'new.json'), '{"fact":"new"}');
   assert.deepEqual(keywordEvidenceChanges(before, await keywordEvidenceState(root)),
-    ['SERVICE_BLOCKERS.json', 'evidence/new.json']);
+    { evidenceFiles: ['evidence/new.json'], serviceBlockerChanged: true });
 });

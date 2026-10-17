@@ -79,7 +79,7 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     if (!Object.hasOwn(suppliedInputs, 'keywordEvidencePlan') || !inputs.keywordEvidencePlan)
       throw Error('KEYWORD_EVIDENCE_PLAN_REQUIRED: recover retries need a current, reviewed incremental evidence plan');
     evidencePlan = await verifyKeywordEvidencePlan({ runId, recoverySha256: recovery.sha256,
-      serviceStops, serviceResumes }, inputs.keywordEvidencePlan);
+      serviceStops, serviceResumes, recovery }, inputs.keywordEvidencePlan);
   } else if (inputs.keywordEvidencePlan) {
     throw Error('KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with {"mode":"recover"}');
   }

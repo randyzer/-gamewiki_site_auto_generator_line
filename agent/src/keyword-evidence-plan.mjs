@@ -82,6 +82,64 @@ function validatePlan(plan, context) {
   return plan;
 }
 
+async function verifyRecoveryLineage(recovery, plan) {
+  assert(recovery && typeof recovery.directory === 'string' && Array.isArray(recovery.files),
+    'verified recovery lineage is required');
+  const selected = new Set(recovery.files.map(file => file.path));
+  for (const name of ['RAW_LINEAGE.json', 'keywords.json']) assert(selected.has(name),
+    `recovery selection must include ${name}`);
+  const readJson = async name => {
+    const path = join(recovery.directory, 'data', name);
+    return parseArtifactJson(await readArtifact(path, [recovery.directory]), path);
+  };
+  const [lineage, keywordData] = await Promise.all([readJson('RAW_LINEAGE.json'), readJson('keywords.json')]);
+  assert(lineage && !Array.isArray(lineage) && Array.isArray(lineage.rows) &&
+    Array.isArray(lineage.pendingIds), 'RAW_LINEAGE.json schema');
+  assert(keywordData && Array.isArray(keywordData.categories), 'keywords.json schema');
+  const keywords = keywordData.categories.flatMap(category => Array.isArray(category?.keywords)
+    ? category.keywords : []);
+  assert(keywords.length > 0 && keywords.every(keyword => text(keyword, 500)) &&
+    new Set(keywords).size === keywords.length, 'approved keyword set');
+  const approved = new Set(keywords), sourceRows = new Map();
+  for (const row of lineage.rows) {
+    const id = typeof row?.id === 'string' && /^\d+$/.test(row.id) ? Number(row.id) : row?.id;
+    assert(Number.isSafeInteger(id) && id > 0 && id <= 100000 && !sourceRows.has(id) &&
+      text(row.raw, 500) && (row.final === null || text(row.final, 500)), 'RAW_LINEAGE.json row');
+    assert(row.final === null || approved.has(row.final), `unapproved final keyword for raw row ${id}`);
+    sourceRows.set(id, { ...row, id });
+  }
+  const pendingIds = lineage.pendingIds.map(id => typeof id === 'string' && /^\d+$/.test(id) ? Number(id) : id);
+  assert(new Set(pendingIds).size === pendingIds.length && pendingIds.every(id =>
+    Number.isSafeInteger(id) && sourceRows.get(id)?.final === null), 'RAW_LINEAGE.json pending rows');
+  assert(same(pendingIds, plan.pendingRows.map(item => item.row)),
+    'plan must include every recovered pending row exactly once');
+  const decisions = new Map();
+  for (const item of plan.pendingRows) {
+    const source = sourceRows.get(item.row);
+    assert(source && source.raw === item.rawKeyword, `raw keyword mismatch for pending row ${item.row}`);
+    if (item.decision === 'MERGE') assert(approved.has(item.targetKeyword),
+      `MERGE target is not an approved keyword for raw row ${item.row}`);
+    if (item.decision === 'CREATE_PAGE') assert(!approved.has(item.targetKeyword),
+      `CREATE_PAGE target already exists for raw row ${item.row}`);
+    decisions.set(item.row, item);
+  }
+  const approvedByDecision = new Set([...plan.pendingRows]
+    .filter(item => ['MERGE', 'CREATE_PAGE'].includes(item.decision)).map(item => item.targetKeyword));
+  for (const task of plan.tasks) {
+    assert(approved.has(task.keyword) || approvedByDecision.has(task.keyword),
+      `task keyword is not approved by recovery lineage: ${task.keyword}`);
+    for (const rowId of task.rawRows) {
+      const source = sourceRows.get(rowId);
+      assert(source, `unknown raw row ${rowId}`);
+      const decision = decisions.get(rowId);
+      if (decision) assert(decision.targetKeyword === task.keyword,
+        `pending raw row ${rowId} is not approved for ${task.keyword}`);
+      else assert(source.final === task.keyword,
+        `raw row ${rowId} does not belong to ${task.keyword}`);
+    }
+  }
+}
+
 export async function verifyKeywordEvidencePlan(context, reference) {
   reference = keywordEvidencePlanReference(reference);
   let bytes;
@@ -92,6 +150,7 @@ export async function verifyKeywordEvidencePlan(context, reference) {
   try { plan = parseArtifactJson(bytes, reference.path); }
   catch (error) { throw Error(`KEYWORD_EVIDENCE_PLAN_INVALID: ${error.message}`); }
   validatePlan(plan, context);
+  await verifyRecoveryLineage(context.recovery, plan);
   return { path: reference.path, sha256: reference.sha256, plan: structuredClone(plan) };
 }
 
@@ -103,11 +162,20 @@ export async function keywordEvidenceState(nativeDirectory) {
   const blocker = join(nativeDirectory, 'SERVICE_BLOCKERS.json');
   try { await access(blocker); files.push(blocker); }
   catch (error) { if (error.code !== 'ENOENT') throw error; }
-  const state = {};
-  for (const file of files) state[relative(nativeDirectory, file)] = sha256(await readArtifact(file, [nativeDirectory]));
-  return state;
+  const evidence = {};
+  let serviceBlockerSha256 = null;
+  for (const file of files) {
+    const path = relative(nativeDirectory, file), fileSha256 = sha256(await readArtifact(file, [nativeDirectory]));
+    if (path === 'SERVICE_BLOCKERS.json') serviceBlockerSha256 = fileSha256;
+    else evidence[path] = fileSha256;
+  }
+  return { evidence, serviceBlockerSha256 };
 }
 
 export function keywordEvidenceChanges(before, after) {
-  return Object.keys(after).filter(path => before[path] !== after[path]).sort();
+  return {
+    evidenceFiles: Object.keys(after.evidence)
+      .filter(path => before.evidence[path] !== after.evidence[path]).sort(),
+    serviceBlockerChanged: before.serviceBlockerSha256 !== after.serviceBlockerSha256,
+  };
 }

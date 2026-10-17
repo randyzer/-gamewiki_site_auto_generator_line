@@ -113,7 +113,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       context.keywordRecovery = keywordRecovery;
       const evidencePlan = await verifyKeywordEvidencePlan({ runId: context.runId,
         recoverySha256: keywordRecovery.sha256, serviceStops: stoppedServices,
-        serviceResumes: resumedServices }, context.inputs.keywordEvidencePlan);
+        serviceResumes: resumedServices, recovery: keywordRecovery }, context.inputs.keywordEvidencePlan);
       context.keywordEvidencePlan = evidencePlan.plan;
     }
     const pythonStage = PYTHON_STAGES.includes(skill);
@@ -433,11 +433,14 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (keywordEvidenceBaseline) {
       const changedEvidence = keywordEvidenceChanges(keywordEvidenceBaseline,
         await keywordEvidenceState(context.nativeDirectory));
-      if (changedEvidence.length === 0) result = { ...result, status: 'BLOCKED', artifacts: [], missing_inputs: [],
+      if (changedEvidence.evidenceFiles.length === 0) result = { ...result,
+        status: result.status === 'PASSED' ? 'BLOCKED' : result.status,
+        artifacts: result.status === 'PASSED' ? [] : result.artifacts,
         evidence: [...result.evidence,
-          'KEYWORD_EVIDENCE_PLAN_NO_PROGRESS: worker produced no new or changed evidence file and no new service blocker; revise the reviewed plan before another retry.'] };
+          `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS: worker produced no new or changed evidence file${changedEvidence.serviceBlockerChanged ? '; a service blocker changed but is diagnostic only' : ''}; revise the reviewed plan before another retry.`] };
       else result.evidence = [...result.evidence,
-        `Keyword evidence plan changed ${changedEvidence.length} evidence file(s): ${changedEvidence.join(', ')}`];
+        `Keyword evidence plan changed ${changedEvidence.evidenceFiles.length} evidence file(s): ${changedEvidence.evidenceFiles.join(', ')}`,
+        ...(changedEvidence.serviceBlockerChanged ? ['A service blocker also changed; it is diagnostic and is not counted as research evidence.'] : [])];
     }
     let sourceAttempted = false, iconAttempted = false, iconEvidence = [];
     // The existing executor owns both bounded host handoffs; no second pipeline is needed.
