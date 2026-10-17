@@ -14,6 +14,7 @@ import { keywordResearchBudget } from './keyword-budget.mjs';
 import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
+import { keywordEvidencePlanReference, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -83,6 +84,7 @@ function checkInputs(value) {
   if (value.keywordServiceResumes !== undefined) keywordServiceResumes(value.keywordServiceResumes);
   if (value.keywordRecoveryDecision !== undefined)
     keywordRecoveryDecision(value.keywordRecoveryDecision, { recovery: value.keywordRecovery });
+  if (value.keywordEvidencePlan !== undefined) keywordEvidencePlanReference(value.keywordEvidencePlan);
   // Reject non-JSON values instead of silently dropping functions or cycles.
   const visit = item => {
     if (item === undefined) return;
@@ -466,6 +468,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         String(index), String(state.stages[index].checkpoint.attempt), 'keyword-recovery.json'));
       if ((state.inputs.keywordRecovery || previousSnapshot) && !state.inputs.keywordRecoveryDecision)
         missing.push('keywordRecoveryDecision');
+      if (state.inputs.keywordRecoveryDecision?.mode === 'recover' && !state.inputs.keywordEvidencePlan)
+        missing.push('keywordEvidencePlan');
     }
     if (state.stages[index].skill === STAGE.TEMPLATE_SELECTION && templateRoots.length === 0) missing.push('templateRoots (create a configured run)');
     if (state.stages[index].skill === STAGE.CONTENT_INTEGRATION) {
@@ -587,6 +591,14 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         recoveredKeywordServiceDecisions({ historicalStops,
           serviceStops: state.inputs.keywordServiceStops, serviceResumes: state.inputs.keywordServiceResumes,
           suppliedInputs: keywordExecutionInputs });
+        if (decision.mode === 'recover') {
+          assert(Object.hasOwn(keywordExecutionInputs, 'keywordEvidencePlan'),
+            'KEYWORD_EVIDENCE_PLAN_REQUIRED: current retry inputs must explicitly provide the reviewed plan');
+          await verifyKeywordEvidencePlan({ runId, recoverySha256: state.inputs.keywordRecovery.sha256,
+            serviceStops: state.inputs.keywordServiceStops, serviceResumes: state.inputs.keywordServiceResumes },
+          state.inputs.keywordEvidencePlan);
+        } else assert(!state.inputs.keywordEvidencePlan,
+          'KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with recover mode');
         assert(normalizedJson(keywordServiceStops(keywordExecutionInputs.keywordServiceStops)) ===
           normalizedJson(keywordServiceStops(state.inputs.keywordServiceStops)) &&
           normalizedJson(keywordServiceResumes(keywordExecutionInputs.keywordServiceResumes)) ===

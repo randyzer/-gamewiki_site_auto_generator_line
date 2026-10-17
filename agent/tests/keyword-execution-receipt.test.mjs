@@ -34,3 +34,17 @@ test('keyword recovery decision cannot silently mix fresh and recovered work', (
   assert.throws(() => keywordRecoveryDecision({ mode: 'fresh' }, { recovery: {} }), /cannot include keywordRecovery/);
   assert.throws(() => keywordRecoveryDecision({ mode: 'guess' }), /DECISION_INVALID/);
 });
+
+test('recovery receipt requires and binds the evidence plan reference', () => {
+  const value = base();
+  value.inputs = { ...value.inputs, keywordRecoveryDecision: { mode: 'recover' },
+    keywordRecovery: { manifestPath: '/tmp/recovery/manifest.json', sha256: 'a'.repeat(64), files: ['evidence.json'] },
+    keywordEvidencePlan: { path: '/tmp/evidence-plan.json', sha256: 'b'.repeat(64) } };
+  const receipt = createKeywordExecutionReceipt(value);
+  assert.deepEqual(receipt.evidencePlan, value.inputs.keywordEvidencePlan);
+  assert.throws(() => verifyKeywordExecutionReceipt(receipt, { runId: value.runId,
+    inputs: { ...value.inputs, keywordEvidencePlan: { ...value.inputs.keywordEvidencePlan, sha256: 'c'.repeat(64) } },
+    manifestBytes: value.manifestBytes }), /RECEIPT_INVALID/);
+  assert.throws(() => createKeywordExecutionReceipt({ ...value,
+    inputs: { ...value.inputs, keywordEvidencePlan: undefined } }), /EVIDENCE_PLAN_REQUIRED/);
+});

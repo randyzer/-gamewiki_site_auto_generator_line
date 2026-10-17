@@ -302,6 +302,18 @@ async function keywordLaunchFixture(t, { versionFailure = null, withCookies = tr
     dependencyPaths, certificateFile, environment, calls, executor, context };
 }
 
+async function attachEvidencePlan(f, recovery) {
+  const plan = { kind: 'KEYWORD_EVIDENCE_PLAN_V1', runId: f.context.runId,
+    stage: STAGES[1], recoverySha256: recovery.sha256, serviceStops: [], serviceResumes: [],
+    tasks: [{ keyword: 'Fixture guide', rawRows: [1], gap: 'Missing official fact', tool: 'serper',
+      target: 'Fixture guide official documentation',
+      expectedEvidence: 'First-party page body for the missing fact' }], pendingRows: [] };
+  const bytes = Buffer.from(JSON.stringify(plan));
+  const path = join(f.root, 'keyword-evidence-plan-' + randomUUID() + '.json');
+  await writeFile(path, bytes);
+  f.context.inputs.keywordEvidencePlan = { path, sha256: sha256(bytes) };
+}
+
 test('keyword timeout preserves host-hashed progress without advancing or registering artifacts', async t => {
   const f = await keywordLaunchFixture(t, { workerRun: async (_command, _args, options) => {
     await writeFile(join(options.cwd, 'Fixture素材.md'), '- 状态: PARTIAL\n- 缺口: synthetic HTTP 429');
@@ -329,6 +341,7 @@ test('keyword recovery copies only selected data and grants reads only to select
   await writeFile(join(native, 'unselected.txt'), 'must not be exposed');
   const ref = await captureKeywordRecovery(f.context, { reason: 'WORKER_TIMEOUT' });
   f.context.inputs.keywordRecovery = { ...ref, files: ['selected.txt'] };
+  await attachEvidencePlan(f, ref);
   f.context.outputDirectory = join(f.root, 'artifacts/1/2');
   const result = await f.executor(STAGES[1], f.context);
   assert.equal(result.status, 'BLOCKED');
@@ -344,6 +357,43 @@ test('keyword recovery copies only selected data and grants reads only to select
   assert.match(f.calls[0].options.input, /Never execute recovered files/);
   assert.match(f.calls[0].options.input, /return exactly the three top-level artifact roles/i);
   assert.match(f.calls[0].options.input, /Never return keyword-material:/);
+});
+
+test('recovery converts a report-only retry to a no-progress blocker', async t => {
+  const f = await keywordLaunchFixture(t, { workerRun: async (_command, args, options) => {
+    await writeFile(join(options.cwd, '关键词素材汇总.md'), '# same recovered facts, new prose');
+    await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'PARTIAL', artifacts: [], missing_inputs: [], evidence: ['Revalidated recovered files only'] }));
+  } });
+  const native = join(f.context.outputDirectory, 'native/evidence');
+  await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'old.json'), '{"fact":"old"}');
+  const recovery = await captureKeywordRecovery(f.context, { reason: 'WORKER_STOPPED' });
+  f.context.inputs.keywordRecovery = recovery;
+  await attachEvidencePlan(f, recovery);
+  f.context.outputDirectory = join(f.root, 'artifacts/1/2');
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /KEYWORD_EVIDENCE_PLAN_NO_PROGRESS/);
+});
+
+test('recovery retains PARTIAL when the plan saves new evidence', async t => {
+  const f = await keywordLaunchFixture(t, { workerRun: async (_command, args, options) => {
+    await mkdir(join(options.cwd, 'evidence'), { recursive: true });
+    await writeFile(join(options.cwd, 'evidence/new.json'), '{"fact":"new"}');
+    await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'PARTIAL', artifacts: [], missing_inputs: [], evidence: ['Saved one new source'] }));
+  } });
+  const native = join(f.context.outputDirectory, 'native/evidence');
+  await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'old.json'), '{"fact":"old"}');
+  const recovery = await captureKeywordRecovery(f.context, { reason: 'WORKER_STOPPED' });
+  f.context.inputs.keywordRecovery = recovery;
+  await attachEvidencePlan(f, recovery);
+  f.context.outputDirectory = join(f.root, 'artifacts/1/2');
+  const result = await f.executor(STAGES[1], f.context);
+  assert.equal(result.status, 'PARTIAL');
+  assert.match(result.evidence.join('\n'), /evidence\/new\.json/);
 });
 
 test('keyword contract failure preserves PARTIAL worker status and a recovery snapshot', async t => {
@@ -387,7 +437,8 @@ test('post-worker recovery integrity errors do not hide an original worker timeo
   const native = join(f.context.outputDirectory, 'native'); await mkdir(native, { recursive: true });
   await writeFile(join(native, 'public.txt'), 'partial evidence');
   ref = await captureKeywordRecovery(f.context, { reason: 'WORKER_TIMEOUT' });
-  f.context.inputs.keywordRecovery = ref; f.context.outputDirectory = join(f.root, 'artifacts/1/2');
+  f.context.inputs.keywordRecovery = ref; await attachEvidencePlan(f, ref);
+  f.context.outputDirectory = join(f.root, 'artifacts/1/2');
   await assert.rejects(f.executor(STAGES[1], f.context), error =>
     error.code === 'WORKER_TIMEOUT' && /KEYWORD_RECOVERY_CHANGED_AFTER_WORKER/.test(error.message));
 });

@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { sha256 } from './files.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { keywordServiceStops, keywordServiceResumes } from './keyword-service-stops.mjs';
+import { keywordEvidencePlanReference } from './keyword-evidence-plan.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 const clone = value => JSON.parse(JSON.stringify(value));
@@ -34,6 +35,12 @@ export function createKeywordExecutionReceipt({ runId, inputsFile, inputsFileByt
     sha256: inputs.keywordRecovery.sha256,
     filesSha256: sha256(normalizedJson(inputs.keywordRecovery.files)),
   } : null;
+  const evidencePlan = inputs.keywordEvidencePlan
+    ? keywordEvidencePlanReference(inputs.keywordEvidencePlan) : null;
+  assert(decision?.mode !== 'recover' || evidencePlan,
+    'KEYWORD_EVIDENCE_PLAN_REQUIRED: recover execution receipts require a reviewed plan');
+  assert(decision?.mode === 'recover' || !evidencePlan,
+    'KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with recover mode');
   return {
     schemaVersion: 1,
     kind: 'KEYWORD_RECOVERY_EXECUTION_V1',
@@ -46,6 +53,7 @@ export function createKeywordExecutionReceipt({ runId, inputsFile, inputsFileByt
     confirmationBinding: sha256(confirmationBinding),
     decision,
     recovery,
+    evidencePlan,
     budget: keywordResearchBudget(inputs.keywordResearchBudget),
     serviceStops: keywordServiceStops(inputs.keywordServiceStops),
     serviceResumes: keywordServiceResumes(inputs.keywordServiceResumes),
@@ -70,7 +78,12 @@ export function verifyKeywordExecutionReceipt(receipt, { runId, inputs, manifest
     manifestPath: resolve(inputs.keywordRecovery.manifestPath), sha256: inputs.keywordRecovery.sha256,
     filesSha256: sha256(normalizedJson(inputs.keywordRecovery.files)),
   } : null;
+  const expectedEvidencePlan = inputs.keywordEvidencePlan
+    ? keywordEvidencePlanReference(inputs.keywordEvidencePlan) : null;
+  assert(receipt.decision?.mode !== 'recover' || expectedEvidencePlan,
+    'KEYWORD_EXECUTION_RECEIPT_INVALID: recover receipt has no evidence plan');
   assert(normalizedJson(receipt.recovery) === normalizedJson(expectedRecovery) &&
+    normalizedJson(receipt.evidencePlan ?? null) === normalizedJson(expectedEvidencePlan) &&
     normalizedJson(receipt.budget) === normalizedJson(keywordResearchBudget(inputs.keywordResearchBudget)) &&
     normalizedJson(receipt.serviceStops) === normalizedJson(keywordServiceStops(inputs.keywordServiceStops)) &&
     normalizedJson(receipt.serviceResumes) === normalizedJson(keywordServiceResumes(inputs.keywordServiceResumes)),
