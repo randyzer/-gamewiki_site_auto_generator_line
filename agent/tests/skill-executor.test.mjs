@@ -303,11 +303,16 @@ async function keywordLaunchFixture(t, { versionFailure = null, withCookies = tr
 }
 
 async function attachEvidencePlan(f, recovery) {
-  const plan = { kind: 'KEYWORD_EVIDENCE_PLAN_V1', runId: f.context.runId,
+  const plan = { kind: 'KEYWORD_EVIDENCE_PLAN_V2', runId: f.context.runId,
     stage: STAGES[1], recoverySha256: recovery.sha256, serviceStops: [], serviceResumes: [],
     tasks: [{ keyword: 'Fixture guide', rawRows: [1], gap: 'Missing official fact', tool: 'serper',
       target: 'Fixture guide official documentation',
-      expectedEvidence: 'First-party page body for the missing fact' }], pendingRows: [] };
+      expectedEvidence: 'First-party page body for the missing fact',
+      acceptanceCriteria: ['Official body supports the missing fixture fact.'],
+      stopConditions: ['OFFICIAL_SOURCE_UNAVAILABLE'],
+      sourceRequirements: { allowedSourceTypes: ['FIRST_PARTY'], requiresBody: true,
+        requiresCurrentAccess: true }, fallbackDisposition: 'KEEP_PARTIAL',
+      expectedStatusTransition: { from: 'PARTIAL', to: 'COMPLETED' } }], pendingRows: [] };
   const bytes = Buffer.from(JSON.stringify(plan));
   const path = join(f.root, 'keyword-evidence-plan-' + randomUUID() + '.json');
   await writeFile(path, bytes);
@@ -321,11 +326,15 @@ async function writeRecoveryLineage(nativeDirectory) {
   await writeFile(join(nativeDirectory, 'keywords.json'), JSON.stringify({ categories: [
     { category: 'Guide', keywords: ['Fixture guide'] },
   ] }));
+  await writeFile(join(nativeDirectory, 'Fixture guide素材.md'),
+    '- 状态: PARTIAL\n- 缺口: Missing official fact\n');
 }
 
 test('keyword timeout preserves host-hashed progress without advancing or registering artifacts', async t => {
   const f = await keywordLaunchFixture(t, { workerRun: async (_command, _args, options) => {
     await writeFile(join(options.cwd, 'Fixture素材.md'), '- 状态: PARTIAL\n- 缺口: synthetic HTTP 429');
+    await writeFile(join(options.cwd, 'KEYWORD_EVIDENCE_OUTCOME_V2.json'),
+      '{"kind":"HOST_KEYWORD_EVIDENCE_OUTCOME_V2","classification":"PLAN_EXHAUSTED"}');
     throw Object.assign(Error('Worker timed out'), { code: 'WORKER_TIMEOUT' });
   } });
   const p = await createPipeline({ ...f.f.configuration, runId: 'keyword-env', inputs: f.f.inputs,
@@ -341,6 +350,7 @@ test('keyword timeout preserves host-hashed progress without advancing or regist
     outputDirectory: join(f.root, 'artifacts/1/2') }, ref);
   assert.equal(verified.sourceAttempt, 1);
   assert.match(await readFile(join(verified.directory, 'data/Fixture素材.md'), 'utf8'), /PARTIAL/);
+  assert.ok(!verified.files.some(file => file.path === 'KEYWORD_EVIDENCE_OUTCOME_V2.json'));
 });
 
 test('keyword recovery copies only selected data and grants reads only to selected immutable files', async t => {
@@ -350,7 +360,8 @@ test('keyword recovery copies only selected data and grants reads only to select
   await writeFile(join(native, 'unselected.txt'), 'must not be exposed');
   await writeRecoveryLineage(native);
   const ref = await captureKeywordRecovery(f.context, { reason: 'WORKER_TIMEOUT' });
-  f.context.inputs.keywordRecovery = { ...ref, files: ['selected.txt', 'RAW_LINEAGE.json', 'keywords.json'] };
+  f.context.inputs.keywordRecovery = { ...ref,
+    files: ['selected.txt', 'RAW_LINEAGE.json', 'keywords.json', 'Fixture guide素材.md'] };
   await attachEvidencePlan(f, ref);
   f.context.outputDirectory = join(f.root, 'artifacts/1/2');
   const result = await f.executor(STAGES[1], f.context);
@@ -388,6 +399,9 @@ test('recovery records no evidence progress without replacing the truthful PARTI
   assert.equal(result.status, 'PARTIAL');
   assert.match(result.evidence.join('\n'), /KEYWORD_EVIDENCE_PLAN_NO_PROGRESS/);
   assert.match(result.evidence.join('\n'), /service blocker changed but is diagnostic only/);
+  const outcome = JSON.parse(await readFile(join(f.context.outputDirectory,
+    'native/KEYWORD_EVIDENCE_OUTCOME_V2.json')));
+  assert.equal(outcome.classification, 'NO_PROGRESS');
 });
 
 test('recovery retains PARTIAL when the plan saves new evidence', async t => {
@@ -407,7 +421,10 @@ test('recovery retains PARTIAL when the plan saves new evidence', async t => {
   f.context.outputDirectory = join(f.root, 'artifacts/1/2');
   const result = await f.executor(STAGES[1], f.context);
   assert.equal(result.status, 'PARTIAL');
-  assert.match(result.evidence.join('\n'), /evidence\/new\.json/);
+  assert.match(result.evidence.join('\n'), /KEYWORD_EVIDENCE_PLAN_NEW_FILES/);
+  const outcome = JSON.parse(await readFile(join(f.context.outputDirectory,
+    'native/KEYWORD_EVIDENCE_OUTCOME_V2.json')));
+  assert.equal(outcome.classification, 'NEW_FILES');
 });
 
 test('keyword contract failure preserves PARTIAL worker status and a recovery snapshot', async t => {

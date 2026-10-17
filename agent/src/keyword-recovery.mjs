@@ -118,6 +118,9 @@ export async function verifyKeywordRecovery(context, ref) {
   assert((await readdir(directory)).sort().join(',') === 'data,manifest.json', 'unexpected snapshot entry');
   assert(Array.isArray(ref.files) && ref.files.length > 0 && new Set(ref.files).size === ref.files.length &&
     ref.files.every(path => names.has(path)), 'explicit file selection');
+  if (names.has('KEYWORD_EVIDENCE_OUTCOME_V2.json'))
+    assert(ref.files.includes('KEYWORD_EVIDENCE_OUTCOME_V2.json'),
+      'KEYWORD_EVIDENCE_OUTCOME_V2.json must be selected with recovered evidence');
   const historicalServiceStops = [];
   if (names.has('SERVICE_BLOCKERS.json')) {
     assert(ref.files.includes('SERVICE_BLOCKERS.json'), 'SERVICE_BLOCKERS.json must be selected with recovered evidence');

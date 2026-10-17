@@ -1,12 +1,20 @@
 import { access } from 'node:fs/promises';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { readArtifact, parseArtifactJson, sha256, treeFiles } from './files.mjs';
 import { STAGE } from './stages.mjs';
 import { keywordServiceStops, keywordServiceResumes } from './keyword-service-stops.mjs';
 
-const KIND = 'KEYWORD_EVIDENCE_PLAN_V1';
+const KIND = 'KEYWORD_EVIDENCE_PLAN_V2';
+const CLAIMS_KIND = 'KEYWORD_EVIDENCE_CLAIMS_V2';
+const OUTCOME_KIND = 'HOST_KEYWORD_EVIDENCE_OUTCOME_V2';
+export const KEYWORD_EVIDENCE_CLAIMS_FILE = 'KEYWORD_EVIDENCE_CLAIMS_V2.json';
+export const KEYWORD_EVIDENCE_OUTCOME_FILE = 'KEYWORD_EVIDENCE_OUTCOME_V2.json';
 const TOOLS = new Set(['serper', 'public-page', 'youtube-search', 'youtube-metadata',
   'youtube-subtitles', 'steam-community']);
+const MATERIAL_STATUSES = new Set(['COMPLETED', 'PARTIAL', 'BLOCKED']);
+const SOURCE_TYPES = new Set(['FIRST_PARTY', 'PLATFORM_FIRST_PARTY', 'PRIMARY_PROJECT']);
+const FALLBACKS = new Set(['KEEP_PARTIAL', 'KEEP_BLOCKED', 'WAIT_FOR_USER']);
+const ACCESS_RESULTS = new Set(['HTTP_200', 'TOOL_SUCCESS']);
 const SERVICE_BY_TOOL = Object.freeze({
   'youtube-subtitles': 'youtube-subtitles',
   'steam-community': 'steam-community',
@@ -35,7 +43,8 @@ export function keywordEvidencePlanReference(value) {
 function validatePlan(plan, context) {
   assert(exactKeys(plan, ['kind', 'runId', 'stage', 'recoverySha256', 'serviceStops',
     'serviceResumes', 'tasks', 'pendingRows']), 'top-level schema');
-  assert(plan.kind === KIND && plan.runId === context.runId && plan.stage === STAGE.KEYWORD_RESEARCH,
+  assert(plan.kind === KIND, `plan kind must be ${KIND}`);
+  assert(plan.runId === context.runId && plan.stage === STAGE.KEYWORD_RESEARCH,
     'run or stage binding');
   assert(digest(plan.recoverySha256) && plan.recoverySha256 === context.recoverySha256,
     'recovery snapshot binding');
@@ -58,9 +67,32 @@ function validatePlan(plan, context) {
     'at least one bounded evidence task is required');
   const signatures = new Set();
   for (const task of plan.tasks) {
-    assert(exactKeys(task, ['keyword', 'rawRows', 'gap', 'tool', 'target', 'expectedEvidence']) &&
+    assert(exactKeys(task, ['keyword', 'rawRows', 'gap', 'tool', 'target', 'expectedEvidence',
+      'acceptanceCriteria', 'stopConditions', 'sourceRequirements', 'fallbackDisposition',
+      'expectedStatusTransition']) &&
       text(task.keyword, 500) && text(task.gap, 2000) && TOOLS.has(task.tool) &&
       text(task.target, 4000) && text(task.expectedEvidence, 2000), 'evidence task schema');
+    assert(Array.isArray(task.acceptanceCriteria) && task.acceptanceCriteria.length > 0 &&
+      task.acceptanceCriteria.length <= 20 && new Set(task.acceptanceCriteria).size === task.acceptanceCriteria.length &&
+      task.acceptanceCriteria.every(item => text(item, 1000)), `acceptance criteria for ${task.keyword}`);
+    assert(Array.isArray(task.stopConditions) && task.stopConditions.length > 0 &&
+      task.stopConditions.length <= 20 && new Set(task.stopConditions).size === task.stopConditions.length &&
+      task.stopConditions.every(item => /^[A-Z][A-Z0-9_]{2,63}$/.test(item)),
+    `stop conditions for ${task.keyword}`);
+    assert(exactKeys(task.sourceRequirements, ['allowedSourceTypes', 'requiresBody', 'requiresCurrentAccess']) &&
+      Array.isArray(task.sourceRequirements.allowedSourceTypes) &&
+      task.sourceRequirements.allowedSourceTypes.length > 0 &&
+      new Set(task.sourceRequirements.allowedSourceTypes).size === task.sourceRequirements.allowedSourceTypes.length &&
+      task.sourceRequirements.allowedSourceTypes.every(item => SOURCE_TYPES.has(item)) &&
+      typeof task.sourceRequirements.requiresBody === 'boolean' &&
+      typeof task.sourceRequirements.requiresCurrentAccess === 'boolean',
+    `source requirements for ${task.keyword}`);
+    assert(FALLBACKS.has(task.fallbackDisposition), `fallback disposition for ${task.keyword}`);
+    assert(exactKeys(task.expectedStatusTransition, ['from', 'to']) &&
+      MATERIAL_STATUSES.has(task.expectedStatusTransition.from) &&
+      MATERIAL_STATUSES.has(task.expectedStatusTransition.to) &&
+      !(task.expectedStatusTransition.from === 'COMPLETED' && task.expectedStatusTransition.to !== 'COMPLETED'),
+    `status transition for ${task.keyword}`);
     assert(Array.isArray(task.rawRows) && task.rawRows.length > 0 && task.rawRows.length <= 100 &&
       new Set(task.rawRows).size === task.rawRows.length &&
       task.rawRows.every(row => Number.isSafeInteger(row) && row > 0 && row <= 100000),
@@ -80,6 +112,15 @@ function validatePlan(plan, context) {
     signatures.add(signature);
   }
   return plan;
+}
+
+export function keywordEvidencePlanStrategySha256(plan) {
+  return sha256(Buffer.from(JSON.stringify({
+    serviceStops: plan.serviceStops,
+    serviceResumes: plan.serviceResumes,
+    tasks: plan.tasks,
+    pendingRows: plan.pendingRows,
+  })));
 }
 
 async function verifyRecoveryLineage(recovery, plan) {
@@ -137,6 +178,12 @@ async function verifyRecoveryLineage(recovery, plan) {
       else assert(source.final === task.keyword,
         `raw row ${rowId} does not belong to ${task.keyword}`);
     }
+    const materialName = task.keyword.replace(/[\\/:*?"<>|\x00]/g, '-') + '素材.md';
+    assert(selected.has(materialName), `recovery selection must include ${materialName}`);
+    const material = materialRecord(await readArtifact(join(recovery.directory, 'data', materialName),
+      [recovery.directory]), materialName);
+    assert(material.status === task.expectedStatusTransition.from,
+      `expected starting material status for ${task.keyword}`);
   }
 }
 
@@ -151,7 +198,29 @@ export async function verifyKeywordEvidencePlan(context, reference) {
   catch (error) { throw Error(`KEYWORD_EVIDENCE_PLAN_INVALID: ${error.message}`); }
   validatePlan(plan, context);
   await verifyRecoveryLineage(context.recovery, plan);
+  const prior = context.recovery.files.find(file => file.path === KEYWORD_EVIDENCE_OUTCOME_FILE);
+  if (prior) {
+    const priorPath = join(context.recovery.directory, 'data', prior.path);
+    const outcome = parseArtifactJson(await readArtifact(priorPath, [context.recovery.directory]), priorPath);
+    assert(outcome && outcome.kind === OUTCOME_KIND && outcome.runId === context.runId &&
+      outcome.stage === STAGE.KEYWORD_RESEARCH && digest(outcome.planSha256) &&
+      digest(outcome.planStrategySha256) && digest(outcome.gapStateSha256) &&
+      Array.isArray(outcome.serviceStops) && Array.isArray(outcome.serviceResumes), 'prior host outcome');
+    const state = await keywordEvidenceState(join(context.recovery.directory, 'data'));
+    if (outcome.classification === 'PLAN_EXHAUSTED' &&
+        outcome.planStrategySha256 === keywordEvidencePlanStrategySha256(plan) &&
+        outcome.gapStateSha256 === state.gapStateSha256 &&
+        same(outcome.serviceStops, plan.serviceStops) && same(outcome.serviceResumes, plan.serviceResumes))
+      throw Error('KEYWORD_EVIDENCE_PLAN_EXHAUSTED: unchanged gaps, services and task strategy require a newly reviewed plan');
+  }
   return { path: reference.path, sha256: reference.sha256, plan: structuredClone(plan) };
+}
+
+function materialRecord(bytes, path) {
+  const body = bytes.toString('utf8');
+  const status = body.match(/^- 状态:\s*(COMPLETED|PARTIAL|BLOCKED)\s*$/m)?.[1] ?? null;
+  const gaps = [...body.matchAll(/^- 缺口(?:\s*\d*)?:\s*(.+?)\s*$/gm)].map(match => match[1]);
+  return { path, sha256: sha256(bytes), status, gaps };
 }
 
 export async function keywordEvidenceState(nativeDirectory) {
@@ -163,13 +232,22 @@ export async function keywordEvidenceState(nativeDirectory) {
   try { await access(blocker); files.push(blocker); }
   catch (error) { if (error.code !== 'ENOENT') throw error; }
   const evidence = {};
+  const materials = {};
   let serviceBlockerSha256 = null;
   for (const file of files) {
     const path = relative(nativeDirectory, file), fileSha256 = sha256(await readArtifact(file, [nativeDirectory]));
     if (path === 'SERVICE_BLOCKERS.json') serviceBlockerSha256 = fileSha256;
     else evidence[path] = fileSha256;
   }
-  return { evidence, serviceBlockerSha256 };
+  for (const file of await treeFiles(nativeDirectory)) {
+    const path = relative(nativeDirectory, file), name = basename(path);
+    if (!name.endsWith('素材.md') || name === '关键词素材汇总.md') continue;
+    const keyword = name.slice(0, -'素材.md'.length);
+    materials[keyword] = materialRecord(await readArtifact(file, [nativeDirectory]), path);
+  }
+  const gapStateSha256 = sha256(Buffer.from(JSON.stringify(Object.entries(materials).sort(([a], [b]) =>
+    a.localeCompare(b)).map(([keyword, value]) => [keyword, value.status, value.gaps]))));
+  return { evidence, materials, serviceBlockerSha256, gapStateSha256 };
 }
 
 export function keywordEvidenceChanges(before, after) {
@@ -177,5 +255,118 @@ export function keywordEvidenceChanges(before, after) {
     evidenceFiles: Object.keys(after.evidence)
       .filter(path => before.evidence[path] !== after.evidence[path]).sort(),
     serviceBlockerChanged: before.serviceBlockerSha256 !== after.serviceBlockerSha256,
+  };
+}
+
+function claimIndex(claims, plan, planSha256) {
+  if (!claims) return new Map();
+  assert(exactKeys(claims, ['kind', 'runId', 'stage', 'recoverySha256', 'planSha256', 'tasks']) &&
+    claims.kind === CLAIMS_KIND && claims.runId === plan.runId && claims.stage === plan.stage &&
+    claims.recoverySha256 === plan.recoverySha256 && claims.planSha256 === planSha256 &&
+    Array.isArray(claims.tasks) && claims.tasks.length === plan.tasks.length,
+  'worker evidence claims binding');
+  const result = new Map();
+  for (const claim of claims.tasks) {
+    assert(exactKeys(claim, ['keyword', 'gap', 'attemptedOperation', 'evidence', 'materialPath',
+      'materialSha256', 'finalStatus', 'remainingGaps', 'stopCondition']) && text(claim.keyword, 500) &&
+      text(claim.gap, 2000) && text(claim.attemptedOperation, 2000) && Array.isArray(claim.evidence) &&
+      typeof claim.materialPath === 'string' && digest(claim.materialSha256) &&
+      MATERIAL_STATUSES.has(claim.finalStatus) && Array.isArray(claim.remainingGaps) &&
+      claim.remainingGaps.every(item => text(item, 2000)) &&
+      (claim.stopCondition === null || /^[A-Z][A-Z0-9_]{2,63}$/.test(claim.stopCondition)) &&
+      !result.has(JSON.stringify([claim.keyword, claim.gap])), 'worker evidence claim schema');
+    result.set(JSON.stringify([claim.keyword, claim.gap]), claim);
+  }
+  for (const task of plan.tasks) {
+    const claim = result.get(JSON.stringify([task.keyword, task.gap]));
+    assert(claim && claim.gap === task.gap, `worker claim does not match task ${task.keyword}`);
+  }
+  return result;
+}
+
+async function verifyClaimEvidence(task, claim, before, after, nativeDirectory) {
+  const valid = [], reasons = [];
+  for (const descriptor of claim.evidence) {
+    if (!exactKeys(descriptor, ['path', 'url', 'sha256', 'accessResult', 'sourceType', 'supportedFacts']) ||
+        typeof descriptor.path !== 'string' || !descriptor.path.startsWith('evidence/') ||
+        isAbsolute(descriptor.path) || descriptor.path.split('/').some(part => !part || part === '.' || part === '..') ||
+        !httpsUrl(descriptor.url) || !digest(descriptor.sha256) || !ACCESS_RESULTS.has(descriptor.accessResult) ||
+        !task.sourceRequirements.allowedSourceTypes.includes(descriptor.sourceType) ||
+        !Array.isArray(descriptor.supportedFacts) || descriptor.supportedFacts.length === 0 ||
+        !descriptor.supportedFacts.every(fact => task.acceptanceCriteria.includes(fact))) {
+      reasons.push('evidence descriptor does not satisfy the approved source contract'); continue;
+    }
+    if (after.evidence[descriptor.path] !== descriptor.sha256 ||
+        before.evidence[descriptor.path] === after.evidence[descriptor.path]) {
+      reasons.push(`evidence file is absent, unchanged or has the wrong hash: ${descriptor.path}`); continue;
+    }
+    let body;
+    try { body = (await readArtifact(join(nativeDirectory, descriptor.path), [nativeDirectory])).toString('utf8'); }
+    catch { reasons.push(`evidence file cannot be read: ${descriptor.path}`); continue; }
+    if (![descriptor.url, descriptor.accessResult, ...descriptor.supportedFacts].every(value => body.includes(value))) {
+      reasons.push(`evidence file does not contain its URL, access result and supported facts: ${descriptor.path}`);
+      continue;
+    }
+    valid.push(descriptor);
+  }
+  return { valid, reasons };
+}
+
+function fallbackSatisfied(task, previous, current) {
+  if (!current) return false;
+  if (task.fallbackDisposition === 'KEEP_PARTIAL') return current.status === 'PARTIAL';
+  if (task.fallbackDisposition === 'KEEP_BLOCKED') return current.status === 'BLOCKED';
+  return current.status === previous?.status;
+}
+
+export async function assessKeywordEvidenceOutcome({ plan, planSha256, before, after,
+  nativeDirectory, claims }) {
+  assert(plan?.kind === KIND && digest(planSha256), 'host outcome plan binding');
+  const changes = keywordEvidenceChanges(before, after), claimsByTask = claimIndex(claims, plan, planSha256);
+  const tasks = [];
+  for (const task of plan.tasks) {
+    const claim = claimsByTask.get(JSON.stringify([task.keyword, task.gap])), previous = before.materials[task.keyword],
+      current = after.materials[task.keyword];
+    if (!claim) {
+      tasks.push({ keyword: task.keyword, gap: task.gap, classification: 'NO_PROGRESS',
+        reason: 'No bound worker evidence claim was returned.' });
+      continue;
+    }
+    const materialValid = current && claim.materialPath === current.path &&
+      claim.materialSha256 === current.sha256 && claim.finalStatus === current.status &&
+      JSON.stringify(claim.remainingGaps) === JSON.stringify(current.gaps);
+    const evidence = await verifyClaimEvidence(task, claim, before, after, nativeDirectory);
+    const supported = new Set(evidence.valid.flatMap(item => item.supportedFacts));
+    const allCriteria = task.acceptanceCriteria.every(item => supported.has(item));
+    const materialChanged = Boolean(previous && current && previous.sha256 !== current.sha256);
+    const statusChanged = Boolean(previous && current && previous.status !== current.status);
+    let classification = 'NO_PROGRESS', reason = evidence.reasons.join('; ');
+    if (materialValid && materialChanged && previous?.status === task.expectedStatusTransition.from && allCriteria &&
+        current.status === task.expectedStatusTransition.to && !current.gaps.includes(task.gap)) {
+      classification = 'GAP_RESOLVED'; reason = 'All acceptance criteria have changed evidence and the bound material transition.';
+    } else if (materialValid && statusChanged) {
+      classification = 'STATUS_CHANGED';
+      reason = reason || 'The material status changed, but the approved gap was not independently resolved.';
+    } else if (evidence.valid.length > 0) {
+      classification = 'NEW_VERIFIED_EVIDENCE'; reason = 'Changed evidence bytes satisfy the approved source descriptors.';
+    } else if (claim.stopCondition && task.stopConditions.includes(claim.stopCondition) && materialValid &&
+        fallbackSatisfied(task, previous, current)) {
+      classification = 'PLAN_EXHAUSTED'; reason = `Approved stop condition reached: ${claim.stopCondition}`;
+    } else reason ||= 'No changed evidence or verified material transition closed the approved gap.';
+    tasks.push({ keyword: task.keyword, gap: task.gap, classification, reason });
+  }
+  const classifications = new Set(tasks.map(task => task.classification));
+  let classification = 'NO_PROGRESS';
+  if (classifications.has('GAP_RESOLVED')) classification = 'GAP_RESOLVED';
+  else if (classifications.has('STATUS_CHANGED')) classification = 'STATUS_CHANGED';
+  else if (classifications.has('NEW_VERIFIED_EVIDENCE')) classification = 'NEW_VERIFIED_EVIDENCE';
+  else if (tasks.length && tasks.every(task => task.classification === 'PLAN_EXHAUSTED')) classification = 'PLAN_EXHAUSTED';
+  else if (changes.evidenceFiles.length > 0) classification = 'NEW_FILES';
+  return {
+    kind: OUTCOME_KIND, runId: plan.runId, stage: plan.stage, recoverySha256: plan.recoverySha256,
+    planSha256, planStrategySha256: keywordEvidencePlanStrategySha256(plan),
+    gapStateSha256: after.gapStateSha256, serviceStops: [...plan.serviceStops],
+    serviceResumes: [...plan.serviceResumes], classification, tasks,
+    evidenceFiles: changes.evidenceFiles, serviceBlockerChanged: changes.serviceBlockerChanged,
   };
 }

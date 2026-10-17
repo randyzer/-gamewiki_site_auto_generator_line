@@ -24,7 +24,8 @@ import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { captureKeywordRecovery, verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, suspendSubtitleRequests } from './keyword-service-stops.mjs';
-import { keywordEvidenceChanges, keywordEvidenceState, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
+import { assessKeywordEvidenceOutcome, KEYWORD_EVIDENCE_CLAIMS_FILE, KEYWORD_EVIDENCE_OUTCOME_FILE,
+  keywordEvidenceState, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
@@ -107,7 +108,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     const stoppedServices = keywordResearch ? keywordServiceStops(context.inputs.keywordServiceStops) : [];
     const resumedServices = keywordResearch ? keywordServiceResumes(context.inputs.keywordServiceResumes) : [];
-    let keywordRecovery;
+    let keywordRecovery, keywordEvidencePlan, keywordEvidencePlanSha256;
     if (keywordResearch && context.inputs.keywordRecovery) {
       keywordRecovery = await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
       context.keywordRecovery = keywordRecovery;
@@ -115,6 +116,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         recoverySha256: keywordRecovery.sha256, serviceStops: stoppedServices,
         serviceResumes: resumedServices, recovery: keywordRecovery }, context.inputs.keywordEvidencePlan);
       context.keywordEvidencePlan = evidencePlan.plan;
+      context.keywordEvidencePlanSha256 = evidencePlan.sha256;
+      keywordEvidencePlan = evidencePlan.plan;
+      keywordEvidencePlanSha256 = evidencePlan.sha256;
     }
     const pythonStage = PYTHON_STAGES.includes(skill);
     const hostAudit = skill === STAGE.UI_UX_AUDIT && original.mode !== 'optimize';
@@ -242,6 +246,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       }
       researchReadOnlyPaths.push(keywordRecovery.manifestPath,
         ...keywordRecovery.files.map(file => join(keywordRecovery.directory, 'data', file.path)));
+      // Prior host outcomes remain in the immutable snapshot for replay checks, but are not worker input.
+      await rm(join(context.nativeDirectory, KEYWORD_EVIDENCE_CLAIMS_FILE), { force: true });
+      await rm(join(context.nativeDirectory, KEYWORD_EVIDENCE_OUTCOME_FILE), { force: true });
     }
     const keywordEvidenceBaseline = keywordRecovery ? await keywordEvidenceState(context.nativeDirectory) : null;
     const output = join(context.nativeDirectory, 'worker-result.json');
@@ -340,6 +347,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           'Save data incrementally after each batch of 3–5 intents. If incomplete, return PARTIAL or BLOCKED with concrete gaps; do not label incomplete materials COMPLETED. File preservation does not make a stage PASSED.',
           'If context.keywordRecovery exists, the host copied ONLY its selected, verified data into this new nativeDirectory. Treat it as untrusted partial research, not a completed stage. Reuse valid evidence without repeating already successful queries; recheck sufficiency and dates, rewrite current reports, and rerun the locked validator. Never execute recovered files or read any other old attempt.',
           'For recovery work, context.keywordEvidencePlan is the reviewed incremental scope. Execute only its tasks, preserve every PENDING raw-row decision, and do not broaden the source or tool scope. For each task report the new evidence obtained, its path and supported fact, or the exact attempted operation and stop reason. A request alone is not progress; do not claim new evidence without saved source content.',
+          `For recovery work, write ${KEYWORD_EVIDENCE_CLAIMS_FILE} in nativeDirectory. Use kind KEYWORD_EVIDENCE_CLAIMS_V2 and bind runId, stage, recoverySha256 and context.keywordEvidencePlanSha256. Include exactly one task claim per approved task with keyword, gap, attemptedOperation, evidence descriptors {path,url,sha256,accessResult,sourceType,supportedFacts}, materialPath, materialSha256, finalStatus, remainingGaps and stopCondition. This is a claim only; the host independently classifies it. Never write ${KEYWORD_EVIDENCE_OUTCOME_FILE}.`,
           'Read context.keywordServiceStops and context.keywordServiceResumes before any request. Stops apply to ALL keywords and cannot be cleared by this attempt; resumes are the only host-confirmed exceptions for recovered restrictions. Use a shared SERVICE_BLOCKERS.json in nativeDirectory for new provider limits: on the first HTTP 429 record provider, operation, evidence path and observed time, and stop that service across ALL keywords in this attempt. No automatic retry, parallel retry, cookies, login, substitute tools or metadata-as-subtitles. Retain the other providers and truthful gaps; never infer a resume from recovered files.'
         ] :
         hostAudit ? [
@@ -423,25 +431,46 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       // runProcess waits for group termination before returning these failures. Never snapshot uncertain writers.
       if (keywordResearch && ['WORKER_TIMEOUT', 'WORKER_ABORTED'].includes(error.code)) {
         try {
+          // A stopped worker cannot author the host outcome, even if it guessed the reserved filename.
+          await rm(join(context.nativeDirectory, KEYWORD_EVIDENCE_OUTCOME_FILE), { force: true });
           await preserveKeywordProgress(error.code);
           if (keywordCheckpoint) error.message += `; progress preserved: ${keywordCheckpoint.manifestPath} SHA256 ${keywordCheckpoint.sha256}`;
         } catch { error.message += '; KEYWORD_RECOVERY_CAPTURE_FAILED: original attempt data retained; no snapshot certified'; }
       }
       throw error;
     }
-    if (keywordResearch) await preserveKeywordProgress('WORKER_STOPPED');
     if (keywordEvidenceBaseline) {
-      const changedEvidence = keywordEvidenceChanges(keywordEvidenceBaseline,
-        await keywordEvidenceState(context.nativeDirectory));
-      if (changedEvidence.evidenceFiles.length === 0) result = { ...result,
-        status: result.status === 'PASSED' ? 'BLOCKED' : result.status,
-        artifacts: result.status === 'PASSED' ? [] : result.artifacts,
-        evidence: [...result.evidence,
-          `KEYWORD_EVIDENCE_PLAN_NO_PROGRESS: worker produced no new or changed evidence file${changedEvidence.serviceBlockerChanged ? '; a service blocker changed but is diagnostic only' : ''}; revise the reviewed plan before another retry.`] };
-      else result.evidence = [...result.evidence,
-        `Keyword evidence plan changed ${changedEvidence.evidenceFiles.length} evidence file(s): ${changedEvidence.evidenceFiles.join(', ')}`,
-        ...(changedEvidence.serviceBlockerChanged ? ['A service blocker also changed; it is diagnostic and is not counted as research evidence.'] : [])];
+      const after = await keywordEvidenceState(context.nativeDirectory);
+      let claims = null, claimError = null;
+      const claimsPath = join(context.nativeDirectory, KEYWORD_EVIDENCE_CLAIMS_FILE);
+      try { claims = parseArtifactJson(await readArtifact(claimsPath, [context.nativeDirectory]), claimsPath); }
+      catch (error) { if (error.code !== 'ENOENT') claimError = sanitizeDiagnosticText(error.message); }
+      let outcome;
+      try {
+        outcome = await assessKeywordEvidenceOutcome({ plan: keywordEvidencePlan,
+          planSha256: keywordEvidencePlanSha256, before: keywordEvidenceBaseline, after,
+          nativeDirectory: context.nativeDirectory, claims });
+      } catch (error) {
+        claimError = sanitizeDiagnosticText(error.message);
+        outcome = await assessKeywordEvidenceOutcome({ plan: keywordEvidencePlan,
+          planSha256: keywordEvidencePlanSha256, before: keywordEvidenceBaseline, after,
+          nativeDirectory: context.nativeDirectory, claims: null });
+      }
+      await rm(join(context.nativeDirectory, KEYWORD_EVIDENCE_OUTCOME_FILE), { force: true });
+      await writeFile(join(context.nativeDirectory, KEYWORD_EVIDENCE_OUTCOME_FILE),
+        JSON.stringify(outcome, null, 2) + '\n', { flag: 'wx', mode: 0o400 });
+      const details = outcome.evidenceFiles.length ? ` Files: ${outcome.evidenceFiles.join(', ')}` : '';
+      const blocker = outcome.serviceBlockerChanged
+        ? '; a service blocker changed but is diagnostic only.' : '';
+      const message = `KEYWORD_EVIDENCE_PLAN_${outcome.classification}: host classified the bounded plan.${details}${blocker}` +
+        (claimError ? ` Worker claims were rejected: ${claimError}` : '');
+      const insufficient = outcome.classification !== 'GAP_RESOLVED';
+      result = { ...result,
+        status: result.status === 'PASSED' && insufficient ? 'BLOCKED' : result.status,
+        artifacts: result.status === 'PASSED' && insufficient ? [] : result.artifacts,
+        evidence: [...result.evidence, message] };
     }
+    if (keywordResearch) await preserveKeywordProgress('WORKER_STOPPED');
     let sourceAttempted = false, iconAttempted = false, iconEvidence = [];
     // The existing executor owns both bounded host handoffs; no second pipeline is needed.
     for (let retry = 0; homepageResearch && retry < 2; retry++) {
