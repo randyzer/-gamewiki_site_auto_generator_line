@@ -114,7 +114,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
         installSiteDependencies: executor.installDependencies, runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined,
-        keywordExecutionReceipt, inputs: resume ? {} : inputs });
+        keywordExecutionReceipt, keywordExecutionInputs: supplied, inputs: resume ? {} : inputs });
       if (resume) {
         if (pipeline.snapshot().stages.some(s => s.status === 'IN_PROGRESS')) await pipeline.advance();
         const old = pipeline.snapshot().inputs;

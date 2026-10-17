@@ -5,6 +5,8 @@ import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
+import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
+import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -630,6 +632,41 @@ test('keyword worker receives immutable run-local copies without original source
   assert.equal((await stat(sourceLineage.copyPath)).mode & 0o777, 0o400);
   assert.equal(raw.sha256, hash(await readFile(raw.copyPath)));
   assert.equal(sourceLineage.sha256, hash(await readFile(sourceLineage.copyPath)));
+});
+
+test('direct pipeline recovery rejects incomplete historical service decisions before invoking the worker', async t => {
+  const f = await fixture(t);
+  let keywordCalls = 0;
+  const executor = async (skill, context) => {
+    f.calls.push({ skill, context });
+    if (skill !== api.STAGES[1]) return f.good(skill, context);
+    keywordCalls++;
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true });
+    await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+    await writeFile(join(native, 'SERVICE_BLOCKERS.json'), JSON.stringify({ resumeAuthorized: false, stops: [
+      { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
+      { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
+    ] }));
+    return { status: 'BLOCKED', artifacts: [], evidence: ['SYNTHETIC provider stops'], missing_inputs: [] };
+  };
+  const first = await f.create({ executor });
+  await advance(first, 2);
+  assert.equal(keywordCalls, 1);
+  const runId = first.snapshot().runId;
+  const runDirectory = join(f.workspace, 'runs', runId);
+  const recovery = await captureStoppedKeywordAttempt(runDirectory, 1);
+  const patch = { keywordRecovery: recovery, keywordRecoveryDecision: { mode: 'recover' },
+    keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [] };
+  const manifestBytes = await readFile(first.manifestPath);
+  const receipt = createKeywordExecutionReceipt({ runId, inputsFile: join(f.root, 'retry-inputs.json'),
+    inputsFileBytes: Buffer.from(JSON.stringify(patch)), inputs: patch, manifestBytes,
+    confirmationBinding: 'confirmation-code:fixture' });
+  const resumed = await f.create({ runId, resume: true, inputs: {}, executor,
+    keywordExecutionReceipt: receipt, keywordExecutionInputs: patch });
+  await resumed.updateUserInputs(patch, { retry: true });
+  await assert.rejects(resumed.advance(), /KEYWORD_SERVICE_DECISION_REQUIRED.*steam-community/);
+  assert.equal(keywordCalls, 1, 'incomplete recovery decisions must fail before the worker is called');
 });
 
 test('resume blocks on a changed or out-of-run keyword input copy and names the file', async t => {
