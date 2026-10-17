@@ -24,6 +24,14 @@ const definitions = new Map([
     producer: 'HOST_EVIDENCE_BROKER', validator: 'CONTRACT_REGISTRY', schema: load('host-observation.v1.json') }],
   ['EVIDENCE_OUTCOME:3', { kind: 'EVIDENCE_OUTCOME', schemaVersion: 3,
     producer: 'EVIDENCE_ASSESSOR', validator: 'CONTRACT_REGISTRY', schema: load('evidence-outcome.v3.json') }],
+  ['STATE_EVENT:1', { kind: 'STATE_EVENT', schemaVersion: 1,
+    producer: 'STATE_ENGINE', validator: 'CONTRACT_REGISTRY', schema: load('state-event.v1.json') }],
+  ['STAGE_COMMIT_CANDIDATE:1', { kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 1,
+    producer: 'STATE_ENGINE', validator: 'CONTRACT_REGISTRY', schema: load('stage-commit-candidate.v1.json') }],
+  ['STAGE_COMMIT_RECORD:1', { kind: 'STAGE_COMMIT_RECORD', schemaVersion: 1,
+    producer: 'STAGE_COMMIT_STORE', validator: 'CONTRACT_REGISTRY', schema: load('stage-commit-record.v1.json') }],
+  ['STAGE_CHECKPOINT:1', { kind: 'STAGE_CHECKPOINT', schemaVersion: 1,
+    producer: 'STATE_RECOVERY', validator: 'CONTRACT_REGISTRY', schema: load('stage-checkpoint.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

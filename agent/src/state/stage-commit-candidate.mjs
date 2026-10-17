@@ -1,0 +1,82 @@
+import { readFile, realpath } from 'node:fs/promises';
+import { isAbsolute, relative, resolve } from 'node:path';
+import { createHash } from 'node:crypto';
+import { ContractError } from '../contracts/errors.mjs';
+import { validateContract } from '../contracts/registry.mjs';
+import { assertStageState } from './state-engine.mjs';
+import { computeCandidateDigest } from './state-records.mjs';
+import { assertRequestScopeAssessment } from './request-scope.mjs';
+
+const sha256 = value => createHash('sha256').update(value).digest('hex');
+const contains = (root, path) => {
+  const part = relative(resolve(root), resolve(path));
+  return part === '' || (!part.startsWith('../') && !isAbsolute(part));
+};
+const fail = (code, message) => { throw new ContractError(code, message); };
+
+async function verifyStagedObject(stagingRoot, object) {
+  if (!object.sourcePath || object.sourcePath.startsWith('/') || object.sourcePath.includes('\\') ||
+      object.sourcePath.split('/').some(part => !part || part === '.' || part === '..'))
+    fail('CONTRACT_PATH_INVALID', `Unsafe staged object path: ${String(object.sourcePath)}`);
+  const root = await realpath(stagingRoot);
+  const path = await realpath(resolve(stagingRoot, object.sourcePath)).catch(() => null);
+  if (!path || !contains(root, path)) fail('CONTRACT_PATH_INVALID', 'Staged object escapes its bound root');
+  const bytes = await readFile(path);
+  if (bytes.length !== object.byteLength || sha256(bytes) !== object.sha256)
+    fail('CONTRACT_DIGEST_MISMATCH', `Staged object does not match ${object.role}`);
+}
+
+export async function createStageCommitCandidate(input) {
+  if (!input.workerStop || input.workerStop.phase !== 'STOPPED')
+    fail('STATE_CANDIDATE_INVALID', 'Stage Commit Candidate requires a Worker stop record');
+  if (input.state?.gate?.status === 'APPROVED')
+    fail('STATE_APPROVAL_ENGINE_UNAVAILABLE', 'P3 cannot persist APPROVED until P4 provides a trusted Approval Engine');
+  assertStageState(input.state, { approvalBindingVerified: input.state.gate.status !== 'APPROVED' });
+  assertRequestScopeAssessment(input.requestScope);
+  if (input.state.execution.phase !== 'STOPPED' || input.state.execution.reason !== input.workerStop.reason)
+    fail('STATE_CANDIDATE_INVALID', 'Worker stop and State Engine result disagree');
+  if (!Array.isArray(input.objects) || input.objects.length === 0)
+    fail('STATE_CANDIDATE_INVALID', 'Stage Commit Candidate requires at least one immutable object');
+  if (new Set(input.objects.map(object => object.role)).size !== input.objects.length)
+    fail('STATE_CANDIDATE_INVALID', 'Immutable object roles must be unique');
+  await Promise.all(input.objects.map(object => verifyStagedObject(input.stagingRoot, object)));
+  const events = input.events.map(item => ({ ...item }));
+  const eventIds = new Set();
+  for (let index = 0; index < events.length; index += 1) {
+    const event = events[index];
+    validateContract('STATE_EVENT', 1, { kind: 'STATE_EVENT', schemaVersion: 1,
+      producer: 'STATE_ENGINE', ...event });
+    if (event.sequence !== index + 1) fail('STATE_EVENT_SEQUENCE_INVALID', 'Candidate event sequence must be contiguous');
+    if (eventIds.has(event.eventId)) fail('STATE_EVENT_SEQUENCE_INVALID', 'Candidate event identities must be unique');
+    eventIds.add(event.eventId);
+    for (const [key, expected] of Object.entries({ runId: input.runId, stageId: input.stageId,
+      attemptId: input.attemptId, contextDigest: input.contextDigest, schemaBundleDigest: input.schemaBundleDigest })) {
+      if (event[key] !== expected) fail('CONTRACT_BINDING_MISMATCH', `State Event does not match ${key}`);
+    }
+    if (!Number.isFinite(Date.parse(event.timestamp))) fail('CONTRACT_SCHEMA_INVALID', 'State Event timestamp is invalid');
+  }
+  for (const required of ['ATTEMPT_STARTED', 'WORKER_STOPPED', 'STAGE_CHECKPOINT_COMMITTED']) {
+    if (!events.some(event => event.type === required)) fail('STATE_CANDIDATE_INVALID', `Missing event: ${required}`);
+  }
+  const base = { kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 1, producer: 'STATE_ENGINE',
+    mode: input.mode, runId: input.runId, stageId: input.stageId, attemptId: input.attemptId,
+    contextDigest: input.contextDigest, schemaBundleDigest: input.schemaBundleDigest,
+    expectedPrevious: { ...input.expectedPrevious }, workerStop: { ...input.workerStop },
+    objects: input.objects.map(object => ({ ...object })), requestScope: structuredClone(input.requestScope),
+    state: structuredClone(input.state),
+    nextAction: input.nextAction, errors: (input.errors ?? []).map(item => ({ ...item })), events };
+  const candidate = { ...base, candidateDigest: computeCandidateDigest(base) };
+  validateContract('STAGE_COMMIT_CANDIDATE', 1, candidate);
+  if (candidate.state.gate.status === 'APPROVED')
+    fail('STATE_APPROVAL_ENGINE_UNAVAILABLE', 'P3 cannot validate APPROVED without P4');
+  assertRequestScopeAssessment(candidate.requestScope);
+  return Object.freeze(candidate);
+}
+
+export function assertStageCommitCandidate(candidate) {
+  validateContract('STAGE_COMMIT_CANDIDATE', 1, candidate);
+  assertStageState(candidate.state, { approvalBindingVerified: candidate.state.gate.status !== 'APPROVED' });
+  if (computeCandidateDigest(candidate) !== candidate.candidateDigest)
+    fail('CONTRACT_DIGEST_MISMATCH', 'Stage Commit Candidate digest does not match its payload');
+  return candidate;
+}

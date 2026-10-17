@@ -1,0 +1,12 @@
+{
+  "fixture": "attempt-10-state-projection",
+  "source": "sanitized Attempt 10 summary",
+  "stageId": "stage-2",
+  "attemptId": 10,
+  "counts": { "completed": 2, "partial": 25, "blocked": 4 },
+  "pendingLines": [36, 84, 96, 100],
+  "workerStop": "PARTIAL",
+  "handoffError": "RESEARCH_HANDOFF_INVALID",
+  "expectedLegacyStatus": "PARTIAL",
+  "stageSatisfied": false
+}

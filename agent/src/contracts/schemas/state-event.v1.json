@@ -1,0 +1,21 @@
+{
+  "$id": "STATE_EVENT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "eventId", "sequence", "runId", "stageId", "attemptId", "contextDigest", "schemaBundleDigest", "timestamp", "type", "reasonCode"],
+  "properties": {
+    "kind": { "const": "STATE_EVENT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "STATE_ENGINE" },
+    "eventId": { "type": "string", "pattern": "^event-[a-f0-9]{24}$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "timestamp": { "type": "string", "minLength": 1 },
+    "type": { "enum": ["RUN_CREATED", "APPROVAL_CREATED", "APPROVAL_CONSUMED", "STAGE_READY", "ATTEMPT_STARTED", "HOST_OBSERVATION_RECORDED", "WORKER_STOPPED", "ARTIFACT_VALIDATED", "CONTRACT_REJECTED", "EVIDENCE_CLASSIFIED", "RECOVERY_CAPTURED", "HANDOFF_CREATED", "STAGE_CHECKPOINT_COMMITTED", "STAGE_BLOCKED"] },
+    "reasonCode": { "type": "string", "minLength": 1 }
+  }
+}
