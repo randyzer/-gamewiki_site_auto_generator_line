@@ -92,10 +92,11 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 
 宿主重新计算数据文件哈希，绑定 run、游戏、源 attempt、原始关键词、可选 lineage 和 Skill。快照文件只读且创建后不覆盖；新 worker 只能读取选中文件，宿主将它们复制进新 attempt。每次使用前重新验证全部快照文件。哈希验证仅证明快照未变，不证明来源真实、事实新鲜或内容完整；`PARTIAL/BLOCKED` 不会自动成为正式 artifacts 或 `PASSED`。
 
-阶段 2 的两个可选配置如下，修改它们会改变确认码，并从阶段 2 重新执行：
+阶段 2 的恢复决策和两个可选配置如下，修改它们会改变确认码，并从阶段 2 重新执行：
 
 ```json
 {
+  "keywordRecoveryDecision": { "mode": "recover" },
   "keywordResearchBudget": { "timeoutMs": 1800000, "handoffMarginMs": 180000 },
   "keywordServiceStops": ["youtube-subtitles", "steam-community"]
 }
@@ -104,6 +105,8 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 阶段 2 默认硬上限 30 分钟，其他阶段保留 10 分钟。可信宿主显式传入的 `timeoutMs` 仍是所有阶段的上限，任务输入不能提高它；环境自检现有的 5 分钟限制因此保持有效。可配置硬上限为 1–60 分钟；收尾提示余量为 30 秒–5 分钟且须小于硬上限。余量用于提示 worker 提前停止新调研、验证和返回结构化结果，属于协作约定，不能保证模型一定及时收尾。硬超时仍为 `FAILED/WORKER_TIMEOUT`，宿主在进程组终止后保存快照引用到该 attempt 的 `keyword-recovery.json`。保存失败会明确报告，不改写历史数据，也不掩盖原超时。
 
 `keywordServiceStops` 是所有关键词共享的继承暂停项；恢复时必须在预览中明确展示。暂停字幕时固定 yt-dlp 入口会拒绝字幕参数，仍允许元数据查询。Steam 社区暂停以及新发现的 429 由 worker 的共享 `SERVICE_BLOCKERS.json` 和指令执行，当前不构成按域名的网络防火墙。禁止自动退避重试、换工具、增加登录或将元数据当作字幕；解除暂停须明确改输入并取得新确认码。暂停不意味着限流已解除。
+
+存在上一 attempt 的 `keyword-recovery.json` 时，Stage 2 retry 必须显式设置 `keywordRecoveryDecision`。`{"mode":"recover"}` 必须同时提供 `keywordRecovery`；`{"mode":"fresh"}` 必须移除或置空 `keywordRecovery`。预览与确认会生成宿主执行凭据，绑定输入文件 SHA256、恢复选择、预算、暂停项、当时的 manifest 与确认码；缺失或变化会在 worker 启动前拒绝执行。
 
 worker 每处理 3–5 个意图应保存进度文件；当前宿主只在 worker 停止后创建一致快照，不承诺运行期间定时捕获。快照排除脚本、HTML、日志、隐藏文件及 worker 自报的完整性清单。原始目录仍保留这些文件，宿主不执行它们。
 

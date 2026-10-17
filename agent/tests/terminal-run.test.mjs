@@ -145,7 +145,8 @@ test('retry preview validates selected recovery bytes and confirms selection and
   await writeFile(join(native, 'one.txt'), 'public evidence one');
   await writeFile(join(native, 'two.txt'), 'public evidence two');
   const ref = await captureStoppedKeywordAttempt(runDirectory, 1);
-  const inputs = { ...s.f.inputs, keywordRecovery: ref, keywordServiceStops: ['youtube-subtitles'] };
+  const inputs = { ...s.f.inputs, keywordRecovery: ref, keywordRecoveryDecision: { mode: 'recover' },
+    keywordServiceStops: ['youtube-subtitles'] };
   const preview = async value => {
     await writeFile(s.inputsFile, JSON.stringify(value));
     const io = terminal(null, { isTTY: false });
@@ -167,6 +168,45 @@ test('retry preview validates selected recovery bytes and confirms selection and
   const manifest = JSON.parse(await readFile(manifestPath(s.f, runId)));
   assert.equal(manifest.stages[1].status, 'BLOCKED');
   assert.equal(manifest.stages[1].checkpoint.attempt, 1);
+});
+
+test('a stopped keyword attempt with a recovery snapshot requires an explicit recovery decision', async t => {
+  const s = await setup(t), runId = 'recovery-decision';
+  const stopped = async (skill, context) => {
+    s.calls.push(skill);
+    if (skill !== STAGE.KEYWORD_RESEARCH) return goodResult(skill, context);
+    await mkdir(context.outputDirectory, { recursive: true });
+    await writeFile(join(context.outputDirectory, 'keyword-recovery.json'), JSON.stringify({ synthetic: true }));
+    return { status: 'FAILED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC stopped research'] };
+  };
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: stopped, ...terminal('y') });
+
+  await assert.rejects(runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...terminal(null, { isTTY: false }) }),
+  /KEYWORD_RECOVERY_DECISION_REQUIRED/);
+
+  const inheritedPath = manifestPath(s.f, runId);
+  const inherited = JSON.parse(await readFile(inheritedPath));
+  inherited.inputs.keywordRecoveryDecision = { mode: 'fresh' };
+  await writeFile(inheritedPath, JSON.stringify(inherited));
+  await assert.rejects(runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...terminal(null, { isTTY: false }) }),
+  /KEYWORD_RECOVERY_DECISION_REQUIRED/, 'the current input file must make the decision explicitly');
+
+  await writeFile(s.inputsFile, JSON.stringify({ ...s.f.inputs, keywordRecoveryDecision: { mode: 'fresh' } }));
+  const previewIo = terminal(null, { isTTY: false });
+  const previewResult = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...previewIo });
+  assert.match(previewIo.text(), /Keyword recovery decision: fresh/);
+  const confirmed = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, confirm: previewResult.confirmation_code,
+    ...terminal(null, { isTTY: false }) });
+  assert.notEqual(confirmed.status, 'FAILED');
+  const manifest = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  assert.equal(manifest.stages[1].checkpoint.executionReceipt.decision.mode, 'fresh');
+  assert.match(manifest.stages[1].checkpoint.executionReceipt.inputsFileSha256, /^[a-f0-9]{64}$/);
+  assert.match(manifest.stages[1].checkpoint.executionReceipt.manifestSha256, /^[a-f0-9]{64}$/);
 });
 
 test('a terminal run executes the approved plan on retry and reports the deployment', async t => {

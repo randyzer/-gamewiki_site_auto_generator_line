@@ -116,6 +116,26 @@ test('partial keyword material cannot be labeled PASSED', async t => {
   await writeFile(file, (await readFile(file, 'utf8')).replace('COMPLETED', 'PARTIAL'));
   await assert.rejects(f.validate(), /Incomplete keyword/);
 });
+
+test('keyword PARTIAL accepts only canonical top-level roles and registers no official artifacts', async t => {
+  const f = await nativeFixture(t, 1);
+  f.result.status = 'PARTIAL';
+  const result = await f.validate();
+  assert.equal(result.status, 'PARTIAL');
+  assert.deepEqual(result.artifacts, []);
+});
+
+test('keyword material roles remain host-owned and malformed PARTIAL descriptors are rejected', async t => {
+  const f = await nativeFixture(t, 1);
+  f.result.status = 'PARTIAL';
+  const material = join(f.context.nativeDirectory, 'Offline Fixture guide素材.md');
+  f.result.artifacts.push({ kind: 'keyword-material:Offline Fixture guide', path: material });
+  await assert.rejects(f.validate(), /host-derived|Unexpected keyword artifact role/);
+
+  f.result.artifacts.at(-1).kind = 'KEYWORD_MATERIALS.md';
+  f.result.artifacts.push({ kind: 'KEYWORD_MATERIALS.md', path: material });
+  await assert.rejects(f.validate(), /Duplicate artifact role/);
+});
 test('template mismatch and nonexistent content source fail validation', async t => {
   const f = await nativeFixture(t, 2); await writeFile(join(f.context.inputs.projectPath, 'index.html'), 'tampered');
   await assert.rejects(f.validate(), /content mismatch/);

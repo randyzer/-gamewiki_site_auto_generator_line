@@ -20,3 +20,13 @@ test('diagnostics redact credential assignments, headers, URL credentials, priva
   assert.doesNotMatch(failureDiagnostic(new SyntaxError('Unexpected token PRIVATE_PARSE_VALUE')).reason, /PRIVATE_PARSE_VALUE/);
   assert.ok(sanitizeDiagnosticText('x'.repeat(10000)).length <= 1600);
 });
+
+test('artifact contract failures preserve worker status separately from host validation', async () => {
+  const { failureDiagnostic } = await import('../src/diagnostics.mjs');
+  const error = Object.assign(Error('Duplicate artifact role'), {
+    diagnosticOperation: 'validate-native-artifacts', workerStatus: 'PARTIAL', hostValidation: 'FAILED' });
+  const diagnostic = failureDiagnostic(error, { stage: 'game-innerpage-keyword-information-research', attempt: 6 });
+  assert.equal(diagnostic.operation, 'validate-native-artifacts');
+  assert.equal(diagnostic.workerStatus, 'PARTIAL');
+  assert.equal(diagnostic.hostValidation, 'FAILED');
+});
