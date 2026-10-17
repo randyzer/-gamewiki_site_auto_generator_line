@@ -1,0 +1,25 @@
+{
+  "statusCounts": {
+    "COMPLETED": 2,
+    "PARTIAL": 25,
+    "BLOCKED": 4
+  },
+  "contractIncompatibleFiles": [
+    "Wallpaper Engine Steam ID素材.md",
+    "Wallpaper Engine for mac素材.md"
+  ],
+  "contractValidityCounts": {
+    "VALID": 29,
+    "INVALID": 2
+  },
+  "unresolvedGapCount": 68,
+  "unclassifiedItemCount": 2,
+  "reviewNoteCount": 0,
+  "pendingIds": [
+    36,
+    84,
+    96,
+    100
+  ],
+  "skillContractSha256": "5b6cc70c15b9038a35c2bcc5545ef854f5ecc3e1cb0abab19f012c54d926e997"
+}

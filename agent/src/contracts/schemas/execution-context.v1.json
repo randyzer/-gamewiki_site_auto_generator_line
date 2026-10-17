@@ -1,0 +1,78 @@
+{
+  "$id": "EXECUTION_CONTEXT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "runId", "stageId", "attemptId", "requestedOperation", "code", "inputs", "execution", "research", "site"],
+  "properties": {
+    "kind": { "const": "EXECUTION_CONTEXT" },
+    "schemaVersion": { "const": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "requestedOperation": { "type": "string", "minLength": 1 },
+    "code": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceCommit", "workspaceDigest", "skillLockDigest", "schemaBundleDigest", "policyVersion", "featureGate"],
+      "properties": {
+        "sourceCommit": { "type": "string", "format": "git-sha" },
+        "workspaceDigest": { "type": "string", "format": "sha256" },
+        "skillLockDigest": { "type": "string", "format": "sha256" },
+        "schemaBundleDigest": { "type": "string", "format": "sha256" },
+        "policyVersion": { "type": "integer", "minimum": 1 },
+        "featureGate": { "enum": ["legacy", "shadow", "v2"] }
+      }
+    },
+    "inputs": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "sha256", "kind", "lineageDigest"],
+        "properties": {
+          "path": { "type": "string", "format": "relative-posix-path" },
+          "sha256": { "type": "string", "format": "sha256" },
+          "kind": { "type": "string", "minLength": 1 },
+          "lineageDigest": { "type": ["string", "null"], "format": "sha256" }
+        }
+      }
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["permissionProfile", "budget", "timeoutMs", "hostCapabilities"],
+      "properties": {
+        "permissionProfile": { "type": "string", "minLength": 1 },
+        "budget": { "type": "integer", "minimum": 0 },
+        "timeoutMs": { "type": "integer", "minimum": 1 },
+        "hostCapabilities": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "research": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidencePlanDigest", "recoveryDigest", "serviceDecisions", "targetPlatforms"],
+      "properties": {
+        "evidencePlanDigest": { "type": ["string", "null"], "format": "sha256" },
+        "recoveryDigest": { "type": ["string", "null"], "format": "sha256" },
+        "serviceDecisions": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["service", "decision"],
+            "properties": {
+              "service": { "type": "string", "minLength": 1 },
+              "decision": { "enum": ["ACTIVE", "PAUSED", "RESUME_APPROVED"] }
+            }
+          }
+        },
+        "targetPlatforms": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "site": {
+      "type": "object", "additionalProperties": false,
+      "required": ["siteRevision", "domain", "baselineDigest"],
+      "properties": {
+        "siteRevision": { "type": ["string", "null"], "minLength": 1 },
+        "domain": { "type": ["string", "null"], "minLength": 1 },
+        "baselineDigest": { "type": ["string", "null"], "format": "sha256" }
+      }
+    }
+  }
+}
