@@ -1,0 +1,25 @@
+{
+  "$id": "STAGE_CHECKPOINT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "stageId", "attemptId", "sequence", "commitDigest", "contextDigest", "schemaBundleDigest", "workerStop", "requestScope", "state", "nextAction", "errors", "objects"],
+  "properties": {
+    "kind": { "const": "STAGE_CHECKPOINT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "STATE_RECOVERY" },
+    "mode": { "const": "SHADOW" },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "commitDigest": { "type": "string", "format": "sha256" },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "workerStop": { "type": "object" },
+    "requestScope": { "type": "object" },
+    "state": { "type": "object" },
+    "nextAction": { "type": "string", "minLength": 1 },
+    "errors": { "type": "array", "items": { "type": "object" } },
+    "objects": { "type": "array", "minItems": 1, "items": { "type": "object" } }
+  }
+}

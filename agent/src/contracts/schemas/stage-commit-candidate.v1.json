@@ -1,0 +1,69 @@
+{
+  "$id": "STAGE_COMMIT_CANDIDATE_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "stageId", "attemptId", "contextDigest", "schemaBundleDigest", "expectedPrevious", "workerStop", "objects", "requestScope", "state", "nextAction", "errors", "events", "candidateDigest"],
+  "properties": {
+    "kind": { "const": "STAGE_COMMIT_CANDIDATE" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "STATE_ENGINE" },
+    "mode": { "const": "SHADOW" },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "expectedPrevious": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "commitDigest"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 0 },
+        "commitDigest": { "type": ["string", "null"], "format": "sha256" }
+      }
+    },
+    "workerStop": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase", "reason"],
+      "properties": {
+        "phase": { "const": "STOPPED" },
+        "reason": { "enum": ["SUCCEEDED", "PARTIAL", "BLOCKED", "FAILED", "TIMEOUT", "CANCELLED"] }
+      }
+    },
+    "objects": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["role", "contractKind", "schemaVersion", "sourcePath", "sha256", "byteLength"],
+        "properties": {
+          "role": { "type": "string", "minLength": 1 },
+          "contractKind": { "type": "string", "minLength": 1 },
+          "schemaVersion": { "type": "integer", "minimum": 1 },
+          "sourcePath": { "type": "string", "format": "relative-posix-path" },
+          "sha256": { "type": "string", "format": "sha256" },
+          "byteLength": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "requestScope": { "type": "object", "additionalProperties": false, "required": ["mode", "required", "satisfied", "scopeDigest"], "properties": { "mode": { "const": "SHADOW" }, "required": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }, "satisfied": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }, "scopeDigest": { "type": "string", "format": "sha256" } } },
+    "state": {
+      "type": "object", "additionalProperties": false,
+      "required": ["execution", "artifact", "gate"],
+      "properties": {
+        "execution": {
+          "type": "object", "additionalProperties": false,
+          "required": ["phase", "reason"],
+          "properties": {
+            "phase": { "enum": ["NOT_STARTED", "READY", "RUNNING", "STOPPED"] },
+            "reason": { "type": ["string", "null"], "enum": [null, "SUCCEEDED", "PARTIAL", "BLOCKED", "FAILED", "TIMEOUT", "CANCELLED"] }
+          }
+        },
+        "artifact": { "type": "object", "additionalProperties": false, "required": ["status"], "properties": { "status": { "enum": ["UNVERIFIED", "VALIDATED_COMPLETE", "VALIDATED_PARTIAL", "INVALID"] } } },
+        "gate": { "type": "object", "additionalProperties": false, "required": ["status", "approvalDigest"], "properties": { "status": { "enum": ["NOT_EVALUATED", "ELIGIBLE", "WAITING_FOR_APPROVAL", "APPROVED", "DENIED"] }, "approvalDigest": { "type": ["string", "null"], "format": "sha256" } } }
+      }
+    },
+    "nextAction": { "type": "string", "minLength": 1 },
+    "errors": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["category", "code", "message"], "properties": { "category": { "enum": ["CONTRACT_ERROR", "ENVIRONMENT_ERROR", "EXECUTION_ERROR", "EVIDENCE_GAP", "USER_INPUT_REQUIRED", "SERVICE_RESTRICTED", "POLICY_DENIED"] }, "code": { "type": "string", "minLength": 1 }, "message": { "type": "string", "minLength": 1 } } } },
+    "events": { "type": "array", "minItems": 2, "items": { "type": "object", "additionalProperties": false, "required": ["eventId", "sequence", "runId", "stageId", "attemptId", "contextDigest", "schemaBundleDigest", "timestamp", "type", "reasonCode"], "properties": { "eventId": { "type": "string", "pattern": "^event-[a-f0-9]{24}$" }, "sequence": { "type": "integer", "minimum": 1 }, "runId": { "type": "string", "minLength": 1 }, "stageId": { "type": "string", "minLength": 1 }, "attemptId": { "type": "integer", "minimum": 1 }, "contextDigest": { "type": "string", "format": "sha256" }, "schemaBundleDigest": { "type": "string", "format": "sha256" }, "timestamp": { "type": "string", "minLength": 1 }, "type": { "enum": ["RUN_CREATED", "APPROVAL_CREATED", "APPROVAL_CONSUMED", "STAGE_READY", "ATTEMPT_STARTED", "HOST_OBSERVATION_RECORDED", "WORKER_STOPPED", "ARTIFACT_VALIDATED", "CONTRACT_REJECTED", "EVIDENCE_CLASSIFIED", "RECOVERY_CAPTURED", "HANDOFF_CREATED", "STAGE_CHECKPOINT_COMMITTED", "STAGE_BLOCKED"] }, "reasonCode": { "type": "string", "minLength": 1 } } } },
+    "candidateDigest": { "type": "string", "format": "sha256" }
+  }
+}
