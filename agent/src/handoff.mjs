@@ -28,9 +28,19 @@ async function prepareControlledKeywordResearch(context, destination) {
   const recovery = parseArtifactJson(recoveryBytes, manifestPath);
   if (recovery.kind !== 'HOST_KEYWORD_RECOVERY_V1' || !Array.isArray(recovery.files))
     throw Error('Research handoff recovery manifest is invalid');
+  const inventory = recovery.files.map(file => ({ path: file.path, bytes: file.bytes, sha256: file.sha256 }));
+  if (JSON.stringify(inventory) !== JSON.stringify(controlled.manifest.recovery.inventory) ||
+    recovery.binding?.runId !== context.runId ||
+    recovery.sourceAttempt !== controlled.manifest.recovery.sourceAttempt)
+    throw Error('Research handoff recovery binding changed');
+  const selected = controlled.manifest.recovery.selectedFiles;
+  if (!Array.isArray(selected) || selected.length === 0 || new Set(selected).size !== selected.length)
+    throw Error('Research handoff recovery selection is invalid');
+  const descriptors = new Map(recovery.files.map(file => [file.path, file]));
   const sourceRoot = join(dirname(manifestPath), 'data');
-  for (const file of recovery.files) {
-    if (typeof file.path !== 'string' || !/^[a-f0-9]{64}$/.test(file.sha256 ?? ''))
+  for (const path of selected) {
+    const file = descriptors.get(path);
+    if (!file || typeof file.path !== 'string' || !/^[a-f0-9]{64}$/.test(file.sha256 ?? ''))
       throw Error('Research handoff recovery file descriptor is invalid');
     await copyResearchFile(join(sourceRoot, file.path), join(destination, file.path),
       [sourceRoot], destination, file.sha256);

@@ -52,3 +52,20 @@ test('route discovery finds static source and rendered routes and fails closed o
   assert.deepEqual(found.routes.sort(), ['/', '/guides', '/help', '/rendered']);
   assert.deepEqual(found.unprovable, ['app/[slug]/page.tsx']);
 });
+
+test('route discovery fails closed on app route handlers and Next route remapping', async t => {
+  const project = await mkdtemp(resolve('.route-discovery-next-test-'));
+  t.after(() => rm(project, { recursive: true, force: true }));
+  await mkdir(join(project, 'app/hidden'), { recursive: true });
+  await writeFile(join(project, 'app/hidden/route.ts'), 'export function GET() { return new Response("html") }');
+  await writeFile(join(project, 'middleware.ts'), 'export function middleware() {}');
+  await writeFile(join(project, 'next.config.mjs'), 'const rewrites = async () => []; export default { rewrites, redirects: async () => [] }');
+  const found = await discoverProjectRoutes(project);
+  assert.deepEqual(found.routes, []);
+  assert.deepEqual(found.unprovable, [
+    'app/hidden/route.ts',
+    'middleware.ts',
+    'next.config.mjs#redirects',
+    'next.config.mjs#rewrites',
+  ]);
+});

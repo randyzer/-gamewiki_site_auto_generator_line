@@ -1,4 +1,4 @@
-import { lstat } from 'node:fs/promises';
+import { lstat, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { treeFiles } from './files.mjs';
 import { publicationRoute } from './route-publication.mjs';
@@ -13,6 +13,7 @@ function sourceRoute(relativePath, kind) {
   if (!extension.test(relativePath)) return null;
   let parts = relativePath.replace(extension, '').split('/');
   if (kind === 'app') {
+    if (parts.at(-1) === 'route') return { unprovable: relativePath };
     if (parts.at(-1) !== 'page') return null;
     parts = parts.slice(0, -1).filter(part => !/^\(.+\)$/.test(part));
   } else {
@@ -47,6 +48,19 @@ export async function discoverProjectRoutes(project) {
       const route = renderedRoute(relative(directory, path));
       if (route) routes.add(route);
     }
+  }
+  for (const path of ['middleware.js', 'middleware.jsx', 'middleware.ts', 'middleware.tsx',
+    'src/middleware.js', 'src/middleware.jsx', 'src/middleware.ts', 'src/middleware.tsx']) {
+    try {
+      if ((await lstat(join(project, path))).isFile()) unprovable.push(path);
+    } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  }
+  for (const path of ['next.config.js', 'next.config.mjs', 'next.config.cjs', 'next.config.ts']) {
+    try {
+      const body = await readFile(join(project, path), 'utf8');
+      for (const hook of ['rewrites', 'redirects'])
+        if (new RegExp(`\\b${hook}\\b`).test(body)) unprovable.push(`${path}#${hook}`);
+    } catch (error) { if (error.code !== 'ENOENT') throw error; }
   }
   return { routes: [...routes], unprovable: [...new Set(unprovable)].sort() };
 }

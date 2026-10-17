@@ -28,8 +28,11 @@ function disposition(status) {
 }
 
 async function recoveryData(recoveryRef, runDirectory) {
+  const selectedFiles = recoveryRef?.selectedFiles ?? recoveryRef?.files;
   assert(recoveryRef && isAbsolute(recoveryRef.manifestPath ?? '') && digest(recoveryRef.sha256) &&
-    Array.isArray(recoveryRef.files), 'recovery reference');
+    Array.isArray(selectedFiles) && selectedFiles.length > 0 &&
+    selectedFiles.every(path => typeof path === 'string') &&
+    new Set(selectedFiles).size === selectedFiles.length, 'recovery reference');
   const recoveryRoot = join(runDirectory, 'keyword-recovery');
   assert(resolve(recoveryRef.manifestPath) === recoveryRef.manifestPath &&
     relative(recoveryRoot, recoveryRef.manifestPath).split('/').every(part => part && part !== '..'),
@@ -39,17 +42,22 @@ async function recoveryData(recoveryRef, runDirectory) {
   const manifest = parseArtifactJson(bytes, recoveryRef.manifestPath);
   assert(manifest.kind === RECOVERY_KIND && manifest.countsAsStageArtifact === false &&
     manifest.contentValidated === false && Array.isArray(manifest.files), 'recovery manifest');
-  const directory = dirname(recoveryRef.manifestPath), files = new Map();
+  const directory = dirname(recoveryRef.manifestPath), allFiles = new Map();
   for (const descriptor of manifest.files) {
-    assert(typeof descriptor.path === 'string' && digest(descriptor.sha256) && !files.has(descriptor.path),
+    assert(typeof descriptor.path === 'string' && digest(descriptor.sha256) && !allFiles.has(descriptor.path),
       'recovery file descriptor');
     const content = await readArtifact(join(directory, 'data', descriptor.path), [join(directory, 'data')]);
     assert(content.length === descriptor.bytes && sha256(content) === descriptor.sha256,
       `recovery file changed: ${descriptor.path}`);
-    files.set(descriptor.path, { ...descriptor, content });
+    allFiles.set(descriptor.path, { ...descriptor, content });
   }
-  return { manifest, files };
+  assert(selectedFiles.every(path => allFiles.has(path)), 'recovery selected file');
+  return { manifest, files: new Map(selectedFiles.map(path => [path, allFiles.get(path)])) };
 }
+
+const recoveryInventory = manifest => manifest.files.map(file => ({
+  path: file.path, bytes: file.bytes, sha256: file.sha256,
+}));
 
 export async function createResearchHandoffCandidate({ runId, runDirectory, attempt, recoveryRef,
   siteRevision, domain }) {
@@ -92,7 +100,8 @@ export async function createResearchHandoffCandidate({ runId, runDirectory, atte
   const candidate = {
     kind: RESEARCH_HANDOFF_KIND, runId, stage: STAGE.KEYWORD_RESEARCH, attempt,
     recovery: { manifestPath: recoveryRef.manifestPath, sha256: recoveryRef.sha256,
-      sourceAttempt: recovery.sourceAttempt },
+      sourceAttempt: recovery.sourceAttempt, selectedFiles: [...recoveryRef.files],
+      inventory: recoveryInventory(recovery) },
     lineage: { rawLineageSha256: lineageFile.sha256, keywordsSha256: keywordsFile.sha256 },
     siteRevision, domain, pendingRows, materials,
     publicationPolicy: { COMPLETED: 'PUBLISH', PARTIAL: 'DRAFT_ONLY', BLOCKED: 'OMIT' },
@@ -133,6 +142,22 @@ export async function verifyResearchHandoffCandidate(reference, { runId, runDire
     candidate.bindings?.pendingRowsSha256 === jsonDigest(candidate.pendingRows) &&
     candidate.bindings?.routePolicySha256 === jsonDigest(candidate.publicationPolicy),
   'candidate binding changed');
+  const { manifest: recovery, files } = await recoveryData(candidate.recovery, runDirectory);
+  assert(recovery.binding?.runId === runId && recovery.binding.stage === STAGE.KEYWORD_RESEARCH &&
+    recovery.sourceAttempt === attempt && candidate.recovery.sourceAttempt === attempt &&
+    isDeepStrictEqual(candidate.recovery.inventory, recoveryInventory(recovery)),
+  'recovery binding changed');
+  const lineageFile = files.get('RAW_LINEAGE.json'), keywordsFile = files.get('keywords.json');
+  assert(lineageFile?.sha256 === candidate.lineage?.rawLineageSha256 &&
+    keywordsFile?.sha256 === candidate.lineage?.keywordsSha256, 'recovery lineage changed');
+  const currentMaterials = candidate.materials.map(item => {
+    const descriptor = files.get(item.path);
+    assert(descriptor?.sha256 === item.sha256, `recovery material changed: ${item.path}`);
+    const parsed = material(descriptor.content, item.path);
+    return { ...item, status: parsed.status, gaps: parsed.gaps,
+      publicationDisposition: disposition(parsed.status) };
+  });
+  assert(isDeepStrictEqual(currentMaterials, candidate.materials), 'recovery material state changed');
   return candidate;
 }
 

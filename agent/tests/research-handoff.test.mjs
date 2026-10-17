@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { captureKeywordRecovery } from '../src/keyword-recovery.mjs';
 import { createResearchHandoffCandidate, researchHandoffApprovalTemplate,
   verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from '../src/research-handoff.mjs';
@@ -70,6 +70,25 @@ test('candidate rejects missing materials and detects immutable byte tampering',
   await chmod(reference.path, 0o600); await writeFile(reference.path, '{}');
   await assert.rejects(verifyResearchHandoffCandidate(reference, { ...changed, attempt: 1,
     siteRevision: 'rev-1', domain: 'example.test' }), /candidate digest changed/);
+});
+
+test('approved candidate continuously verifies recovery manifest and file bytes', async t => {
+  const fileChanged = await fixture(t);
+  const reference = await createResearchHandoffCandidate({ ...fileChanged, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' });
+  const materialPath = join(dirname(fileChanged.recoveryRef.manifestPath), 'data', 'Partial guide素材.md');
+  await chmod(materialPath, 0o600);
+  await writeFile(materialPath, '- 状态: PARTIAL\n- 缺口: changed after approval\n');
+  await assert.rejects(verifyResearchHandoffCandidate(reference, { ...fileChanged, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' }), /recovery file changed/);
+
+  const manifestChanged = await fixture(t);
+  const second = await createResearchHandoffCandidate({ ...manifestChanged, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' });
+  await chmod(manifestChanged.recoveryRef.manifestPath, 0o600);
+  await writeFile(manifestChanged.recoveryRef.manifestPath, '{}');
+  await assert.rejects(verifyResearchHandoffCandidate(second, { ...manifestChanged, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' }), /recovery manifest digest/);
 });
 
 test('approved partial research is copied from the verified recovery snapshot for content integration', async t => {
