@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFile, readFile, access, mkdir, readdir, chmod } from 'node:fs/promises';
+import { writeFile, readFile, access, mkdir, chmod, rm } from 'node:fs/promises';
+import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { runFromTerminal, describeRun } from '../src/terminal-run.mjs';
@@ -288,6 +289,15 @@ test('recovery preview refuses to launch without a bound incremental evidence pl
     ...terminal(null, { isTTY: false }) });
   assert.notEqual(first.confirmation_code, second.confirmation_code);
   assert.equal(s.calls.length, 0, 'preview never invokes the executor');
+  await rm(s.inputsFile);
+  await rm(changedPlan.path);
+  const result = await runFromTerminal({ command: 'retry', previewId: second.preview_id,
+    confirm: second.confirmation_code, runId, configuration: s.f.configuration,
+    executor: s.executor, ...terminal(null, { isTTY: false }) });
+  assert.notEqual(result.status, 'FAILED');
+  const completed = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  assert.equal(completed.stages[1].checkpoint.executionReceipt.kind, 'KEYWORD_RECOVERY_EXECUTION_V2');
+  assert.equal(completed.stages[1].checkpoint.executionReceipt.previewSnapshot.previewId, second.preview_id);
 });
 
 test('a stopped keyword attempt with a recovery snapshot requires an explicit recovery decision', async t => {
@@ -359,16 +369,94 @@ async function preview(s, { command = 'run', runId = 'code-run' } = {}) {
   assert.ok(match, io.text());
   assert.equal(result.status, 'PREVIEW');
   assert.doesNotMatch(io.text(), /Start this run/);
-  return { code: match[1], text: io.text() };
+  assert.match(result.preview_id, /^[a-f0-9-]{36}$/);
+  return { code: match[1], previewId: result.preview_id, text: io.text() };
 }
 
 const confirmRun = (s, code, { command = 'run', runId = 'code-run', io = terminal(null, { isTTY: false }) } = {}) =>
   runFromTerminal({ command, runId, inputsFile: s.inputsFile, configuration: s.f.configuration,
     executor: s.executor, confirm: code, ...io });
 
-test('preview prints the exact summary and deterministic SHA256 code without creating runs or executing', async t => {
+const confirmSnapshot = (s, preview, { command = 'run', runId = 'code-run',
+  io = terminal(null, { isTTY: false }) } = {}) => runFromTerminal({ command, runId,
+  previewId: preview.previewId, configuration: s.f.configuration, executor: s.executor,
+  confirm: preview.code, ...io });
+
+test('snapshot confirmation survives removal of the caller-owned inputs file', async t => {
   const s = await setup(t);
-  const before = await readdir(s.f.configuration.workspace);
+  const approved = await preview(s, { runId: 'durable-inputs' });
+  await assert.rejects(runFromTerminal({ command: 'run', runId: 'durable-inputs',
+    previewId: approved.previewId, confirm: 'wrong-code', configuration: s.f.configuration,
+    executor: s.executor, ...terminal(null, { isTTY: false }) }), /CONFIRMATION_CODE_MISMATCH/);
+  await rm(s.inputsFile);
+  const result = await confirmSnapshot(s, approved, { runId: 'durable-inputs' });
+  assert.equal(result.run_id, 'durable-inputs');
+  assert.equal(s.calls[0], STAGE.HOMEPAGE_RESEARCH);
+  await access(manifestPath(s.f, 'durable-inputs'));
+});
+
+test('two CLI processes cannot execute the same snapshot confirmation twice', async t => {
+  const s = await setup(t), runId = 'snapshot-concurrent-cli';
+  const approved = await preview(s, { runId });
+  const configurationPath = join(s.f.root, 'configuration.json');
+  const markerPath = join(s.f.root, 'executor-pids.txt');
+  const childPath = join(s.f.root, 'confirm-child.mjs');
+  await writeFile(configurationPath, JSON.stringify(s.f.configuration));
+  await writeFile(childPath, `
+import { appendFile, readFile } from 'node:fs/promises';
+import { runFromTerminal } from ${JSON.stringify(new URL('../src/terminal-run.mjs', import.meta.url).href)};
+import { goodResult } from ${JSON.stringify(new URL('./helpers.mjs', import.meta.url).href)};
+const configuration = JSON.parse(await readFile(process.argv[2], 'utf8'));
+const executor = async (skill, context) => {
+  await appendFile(process.argv[6], process.pid + '\\n');
+  await new Promise(resolve => setTimeout(resolve, 25));
+  return goodResult(skill, context);
+};
+try {
+  const result = await runFromTerminal({ command: 'run', previewId: process.argv[3],
+    confirm: process.argv[4], runId: process.argv[5], configuration, executor });
+  process.stdout.write(JSON.stringify(result));
+} catch (error) {
+  process.stderr.write(error.message + '\\n');
+  process.exitCode = 1;
+}
+`);
+  const invoke = () => new Promise(resolve => {
+    const child = spawn(process.execPath, [childPath, configurationPath, approved.previewId,
+      approved.code, runId, markerPath], { stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = '', stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    child.on('close', code => resolve({ code, stdout, stderr }));
+  });
+  const results = await Promise.all([invoke(), invoke()]);
+  assert.equal(results.filter(result => result.code === 0).length, 1, JSON.stringify(results));
+  assert.equal(results.filter(result => result.code !== 0 &&
+    /RUN_PREVIEW_ALREADY_CONSUMED|RUN_ALREADY_EXISTS/.test(result.stderr)).length, 1, JSON.stringify(results));
+  const executorPids = (await readFile(markerPath, 'utf8')).trim().split('\n');
+  assert.equal(new Set(executorPids).size, 1, 'only one CLI process may invoke the executor');
+});
+
+test('snapshot confirmation rejects manifest drift before invoking the executor', async t => {
+  const s = await setup(t), runId = 'snapshot-manifest-drift';
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
+  const approved = await preview(s, { command: 'retry', runId });
+  const path = manifestPath(s.f, runId), original = await readFile(path);
+  const manifest = JSON.parse(original);
+  manifest.sequence++;
+  await writeFile(path, JSON.stringify(manifest));
+  const before = s.calls.length;
+  await assert.rejects(confirmSnapshot(s, approved, { command: 'retry', runId }),
+    /RUN_PREVIEW_STALE/);
+  assert.equal(s.calls.length, before);
+  await writeFile(path, original);
+  const resumed = await confirmSnapshot(s, approved, { command: 'retry', runId });
+  assert.notEqual(resumed.status, 'FAILED');
+});
+
+test('preview prints the exact summary and deterministic SHA256 code without creating a manifest or executing', async t => {
+  const s = await setup(t);
   const first = await preview(s), second = await preview(s);
   assert.equal(first.code, second.code);
   const summary = await describeRun({ command: 'run', runId: 'code-run', inputs: s.f.inputs, configuration: s.f.configuration });
@@ -376,8 +464,9 @@ test('preview prints the exact summary and deterministic SHA256 code without cre
   JSON.stringify(s.f.inputs, (key, value) => { keys.add(key); return value; });
   const normalized = JSON.stringify(s.f.inputs, [...keys].sort());
   assert.equal(first.code, sha256('run' + 'code-run' + summary + normalized).slice(0, 16));
-  assert.equal(first.text, summary + `Confirmation code: ${first.code}\n`);
-  assert.deepEqual(await readdir(s.f.configuration.workspace), before);
+  assert.equal(first.text, summary + `Preview ID: ${first.previewId}\nConfirmation code: ${first.code}\n`);
+  assert.notEqual(first.previewId, second.previewId);
+  await assert.rejects(access(manifestPath(s.f, 'code-run')), { code: 'ENOENT' });
   assert.equal(s.calls.length, 0);
 });
 
@@ -406,7 +495,7 @@ test('wrong and empty codes refuse even interactive y, include both codes, and c
     });
   }
   assert.equal(s.calls.length, 0);
-  await assert.rejects(access(join(s.f.configuration.workspace, 'runs')), { code: 'ENOENT' });
+  await assert.rejects(access(manifestPath(s.f, 'code-run')), { code: 'ENOENT' });
 });
 
 for (const [field, value] of [['objective', 'Changed objective'], ['domain', 'changed.test'], ['repo', 'changed/repo'],
@@ -423,7 +512,7 @@ for (const [field, value] of [['objective', 'Changed objective'], ['domain', 'ch
       return true;
     });
     assert.equal(s.calls.length, 0);
-    await assert.rejects(access(join(s.f.configuration.workspace, 'runs')), { code: 'ENOENT' });
+    await assert.rejects(access(manifestPath(s.f, 'code-run')), { code: 'ENOENT' });
   });
 }
 

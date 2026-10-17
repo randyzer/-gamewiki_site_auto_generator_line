@@ -6,6 +6,7 @@ import { keywordEvidencePlanReference } from './keyword-evidence-plan.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 const clone = value => JSON.parse(JSON.stringify(value));
+const previewId = value => /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value ?? '');
 
 export function normalizedJson(value) {
   if (Array.isArray(value)) return '[' + value.map(normalizedJson).join(',') + ']';
@@ -27,7 +28,7 @@ export function keywordRecoveryDecision(value, { recovery } = {}) {
 }
 
 export function createKeywordExecutionReceipt({ runId, inputsFile, inputsFileBytes, inputs,
-  manifestBytes, confirmationBinding }) {
+  manifestBytes, confirmationBinding, previewSnapshot = null }) {
   const decision = keywordRecoveryDecision(inputs.keywordRecoveryDecision, { recovery: inputs.keywordRecovery });
   if (!decision) return null;
   const recovery = inputs.keywordRecovery ? {
@@ -41,9 +42,16 @@ export function createKeywordExecutionReceipt({ runId, inputsFile, inputsFileByt
     'KEYWORD_EVIDENCE_PLAN_REQUIRED: recover execution receipts require a reviewed plan');
   assert(decision?.mode === 'recover' || !evidencePlan,
     'KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with recover mode');
+  if (previewSnapshot) assert(previewSnapshot && typeof previewSnapshot === 'object' &&
+    previewId(previewSnapshot.previewId) &&
+    ['snapshotSha256', 'approvedSummarySha256', 'effectiveInputsSha256'].every(key =>
+      /^[a-f0-9]{64}$/.test(previewSnapshot[key] ?? '')) &&
+    (previewSnapshot.effectiveEvidencePlanSha256 === null ||
+      /^[a-f0-9]{64}$/.test(previewSnapshot.effectiveEvidencePlanSha256 ?? '')),
+  'KEYWORD_EXECUTION_RECEIPT_INVALID: preview snapshot binding');
   return {
-    schemaVersion: 1,
-    kind: 'KEYWORD_RECOVERY_EXECUTION_V1',
+    schemaVersion: previewSnapshot ? 2 : 1,
+    kind: previewSnapshot ? 'KEYWORD_RECOVERY_EXECUTION_V2' : 'KEYWORD_RECOVERY_EXECUTION_V1',
     runId,
     command: 'retry',
     inputsFile: resolve(inputsFile),
@@ -57,12 +65,22 @@ export function createKeywordExecutionReceipt({ runId, inputsFile, inputsFileByt
     budget: keywordResearchBudget(inputs.keywordResearchBudget),
     serviceStops: keywordServiceStops(inputs.keywordServiceStops),
     serviceResumes: keywordServiceResumes(inputs.keywordServiceResumes),
+    ...(previewSnapshot ? { previewSnapshot: clone(previewSnapshot) } : {}),
   };
 }
 
 export function verifyKeywordExecutionReceipt(receipt, { runId, inputs, manifestBytes }) {
   if (!receipt) return null;
-  assert(receipt.schemaVersion === 1 && receipt.kind === 'KEYWORD_RECOVERY_EXECUTION_V1' &&
+  const v1 = receipt.schemaVersion === 1 && receipt.kind === 'KEYWORD_RECOVERY_EXECUTION_V1' &&
+    receipt.previewSnapshot === undefined;
+  const v2 = receipt.schemaVersion === 2 && receipt.kind === 'KEYWORD_RECOVERY_EXECUTION_V2' &&
+    receipt.previewSnapshot && typeof receipt.previewSnapshot === 'object' &&
+    previewId(receipt.previewSnapshot.previewId) &&
+    ['snapshotSha256', 'approvedSummarySha256', 'effectiveInputsSha256'].every(key =>
+      /^[a-f0-9]{64}$/.test(receipt.previewSnapshot[key] ?? '')) &&
+    (receipt.previewSnapshot.effectiveEvidencePlanSha256 === null ||
+      /^[a-f0-9]{64}$/.test(receipt.previewSnapshot.effectiveEvidencePlanSha256 ?? ''));
+  assert((v1 || v2) &&
     receipt.runId === runId && receipt.command === 'retry', 'KEYWORD_EXECUTION_RECEIPT_INVALID: identity mismatch');
   assert(receipt.inputPatchSha256 === sha256(normalizedJson(inputs)),
     'KEYWORD_EXECUTION_RECEIPT_INVALID: input patch changed');
