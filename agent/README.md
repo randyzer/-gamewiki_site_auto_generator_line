@@ -98,15 +98,16 @@ node scripts/keyword-recovery.mjs runs/wallpaper-engine-002 5
 {
   "keywordRecoveryDecision": { "mode": "recover" },
   "keywordResearchBudget": { "timeoutMs": 1800000, "handoffMarginMs": 180000 },
-  "keywordServiceStops": ["youtube-subtitles", "steam-community"]
+  "keywordServiceStops": ["youtube-subtitles", "steam-community"],
+  "keywordServiceResumes": []
 }
 ```
 
 阶段 2 默认硬上限 30 分钟，其他阶段保留 10 分钟。可信宿主显式传入的 `timeoutMs` 仍是所有阶段的上限，任务输入不能提高它；环境自检现有的 5 分钟限制因此保持有效。可配置硬上限为 1–60 分钟；收尾提示余量为 30 秒–5 分钟且须小于硬上限。余量用于提示 worker 提前停止新调研、验证和返回结构化结果，属于协作约定，不能保证模型一定及时收尾。硬超时仍为 `FAILED/WORKER_TIMEOUT`，宿主在进程组终止后保存快照引用到该 attempt 的 `keyword-recovery.json`。保存失败会明确报告，不改写历史数据，也不掩盖原超时。
 
-`keywordServiceStops` 是所有关键词共享的继承暂停项；恢复时必须在预览中明确展示。暂停字幕时固定 yt-dlp 入口会拒绝字幕参数，仍允许元数据查询。Steam 社区暂停以及新发现的 429 由 worker 的共享 `SERVICE_BLOCKERS.json` 和指令执行，当前不构成按域名的网络防火墙。禁止自动退避重试、换工具、增加登录或将元数据当作字幕；解除暂停须明确改输入并取得新确认码。暂停不意味着限流已解除。
+`keywordServiceStops` 是所有关键词共享的继续暂停项，`keywordServiceResumes` 是操作者明确批准恢复的项目。若选中的恢复快照含 `SERVICE_BLOCKERS.json`，宿主会从中提取已知的 YouTube 字幕和 Steam Community 429；当前输入文件必须同时显式提供两个数组，并把每个历史受限服务恰好放入其中一个，否则预览不会生成确认码。暂停字幕时固定 yt-dlp 入口会拒绝字幕参数，仍允许元数据查询。Steam 社区暂停以及新发现的 429 由 worker 的共享阻断记录和指令执行，当前不构成按域名的网络防火墙。禁止自动退避重试、换工具、增加登录或将元数据当作字幕；任何恢复决定都会改变确认码。暂停不意味着限流已解除。
 
-存在上一 attempt 的 `keyword-recovery.json` 时，Stage 2 retry 必须显式设置 `keywordRecoveryDecision`。`{"mode":"recover"}` 必须同时提供 `keywordRecovery`；`{"mode":"fresh"}` 必须移除或置空 `keywordRecovery`。预览与确认会生成宿主执行凭据，绑定输入文件 SHA256、恢复选择、预算、暂停项、当时的 manifest 与确认码；缺失或变化会在 worker 启动前拒绝执行。
+存在上一 attempt 的 `keyword-recovery.json` 时，Stage 2 retry 必须显式设置 `keywordRecoveryDecision`。`{"mode":"recover"}` 必须同时提供 `keywordRecovery`；`{"mode":"fresh"}` 必须移除或置空 `keywordRecovery`。预览与确认会生成宿主执行凭据，绑定输入文件 SHA256、恢复选择、预算、暂停项、恢复授权、当时的 manifest 与确认码；缺失或变化会在 worker 启动前拒绝执行。历史 receipt 与 attempt 只保留审计用途，不会被新决定改写。
 
 worker 每处理 3–5 个意图应保存进度文件；当前宿主只在 worker 停止后创建一致快照，不承诺运行期间定时捕获。快照排除脚本、HTML、日志、隐藏文件及 worker 自报的完整性清单。原始目录仍保留这些文件，宿主不执行它们。
 

@@ -108,6 +108,25 @@ test('a file selection does not silently include the rest of a snapshot', async 
     await assert.rejects(recovery.verifyKeywordRecovery(next, { ...ref, files }), /RECOVERY/);
 });
 
+test('verified recovery exposes known unresolved provider stops from selected blocker evidence', async t => {
+  const { context, next } = await setup(t);
+  await writeFile(join(context.nativeDirectory, 'SERVICE_BLOCKERS.json'), JSON.stringify({
+    resumeAuthorized: false,
+    stops: [
+      { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
+      { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
+      { provider: 'steamdb.info', operation: 'page open', reason: 'HTTP 403' },
+    ],
+  }));
+  const ref = await recovery.captureKeywordRecovery(context, { reason: 'WORKER_STOPPED' });
+  const verified = await recovery.verifyKeywordRecovery(next, ref);
+  assert.deepEqual(verified.historicalServiceStops, ['steam-community', 'youtube-subtitles']);
+
+  await assert.rejects(recovery.verifyKeywordRecovery(next, {
+    ...ref, files: ref.files.filter(path => path !== 'SERVICE_BLOCKERS.json'),
+  }), /SERVICE_BLOCKERS/);
+});
+
 test('stopped-attempt capture holds the run lock and leaves the run manifest unchanged', async t => {
   const { context } = await setup(t);
   const manifestPath = join(context.runDirectory, 'manifest.json');

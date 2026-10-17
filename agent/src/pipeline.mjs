@@ -11,7 +11,8 @@ import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './pat
 import { isDeepStrictEqual } from 'node:util';
 import { publishResearchArtifacts } from './handoff.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
-import { keywordServiceStops } from './keyword-service-stops.mjs';
+import { verifyKeywordRecovery } from './keyword-recovery.mjs';
+import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
@@ -79,6 +80,7 @@ function checkInputs(value) {
   assert(value.mode === undefined || ['new-site', 'existing-project'].includes(value.mode), 'Unknown project mode');
   if (value.keywordResearchBudget !== undefined) keywordResearchBudget(value.keywordResearchBudget);
   if (value.keywordServiceStops !== undefined) keywordServiceStops(value.keywordServiceStops);
+  if (value.keywordServiceResumes !== undefined) keywordServiceResumes(value.keywordServiceResumes);
   if (value.keywordRecoveryDecision !== undefined)
     keywordRecoveryDecision(value.keywordRecoveryDecision, { recovery: value.keywordRecovery });
   // Reject non-JSON values instead of silently dropping functions or cycles.
@@ -168,13 +170,14 @@ export async function recoverDeadRunLock(lockPath) {
 
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
-  expectedManifestSha256, keywordExecutionReceipt, deploymentExecution = false,
+  expectedManifestSha256, keywordExecutionReceipt, keywordExecutionInputs, deploymentExecution = false,
   installSiteDependencies = executor?.installDependencies } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
   assert(/^[a-zA-Z0-9_-]{1,100}$/.test(runId), 'Unsafe runId');
   assert(Array.isArray(templateRoots) && templateRoots.every(p => typeof p === 'string' && isAbsolute(p)), 'Absolute templateRoots required');
+  keywordExecutionInputs = keywordExecutionInputs === undefined ? {} : checkInputs(keywordExecutionInputs);
   workspace = resolve(workspace); inventoryPath = resolve(inventoryPath);
   templateRoots = templateRoots.map(p => resolve(p));
   const runDirectory = join(workspace, 'runs', runId);
@@ -573,6 +576,22 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         assert(keywordExecutionReceipt && keywordExecutionReceipt.runId === runId &&
           normalizedJson(keywordExecutionReceipt.decision) === normalizedJson(decision),
         'KEYWORD_EXECUTION_RECEIPT_REQUIRED: preview and confirm this explicit recovery decision');
+        let historicalStops = [];
+        if (decision.mode === 'recover') {
+          const recovery = await verifyKeywordRecovery({ runId, runDirectory, inputs: state.inputs,
+            outputDirectory: join(runDirectory, 'artifacts', String(index), String(stage.checkpoint.attempt + 1)),
+            checkpoint: stage.checkpoint, skillLock: state.lock.skills.find(skill => skill.name === STAGE.KEYWORD_RESEARCH) },
+          state.inputs.keywordRecovery);
+          historicalStops = recovery.historicalServiceStops;
+        }
+        recoveredKeywordServiceDecisions({ historicalStops,
+          serviceStops: state.inputs.keywordServiceStops, serviceResumes: state.inputs.keywordServiceResumes,
+          suppliedInputs: keywordExecutionInputs });
+        assert(normalizedJson(keywordServiceStops(keywordExecutionInputs.keywordServiceStops)) ===
+          normalizedJson(keywordServiceStops(state.inputs.keywordServiceStops)) &&
+          normalizedJson(keywordServiceResumes(keywordExecutionInputs.keywordServiceResumes)) ===
+          normalizedJson(keywordServiceResumes(state.inputs.keywordServiceResumes)),
+        'KEYWORD_EXECUTION_RECEIPT_INVALID: current service decisions changed');
         stage.checkpoint.executionReceipt = clone(keywordExecutionReceipt);
       }
       if (stage.skill === STAGE.TEMPLATE_SELECTION) {

@@ -170,6 +170,48 @@ test('retry preview validates selected recovery bytes and confirms selection and
   assert.equal(manifest.stages[1].checkpoint.attempt, 1);
 });
 
+test('retry preview requires an explicit current decision for every recovered provider stop', async t => {
+  const s = await setup(t), runId = 'recovered-provider-stops';
+  const pausing = async (skill, context) => skill === STAGE.KEYWORD_RESEARCH
+    ? { status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC stop'] } : goodResult(skill, context);
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: pausing, ...terminal('y') });
+  const runDirectory = join(s.f.configuration.workspace, 'runs', runId);
+  const native = join(runDirectory, 'artifacts/1/1/native');
+  await mkdir(native, { recursive: true });
+  await writeFile(join(native, 'evidence.txt'), 'saved evidence');
+  await writeFile(join(native, 'SERVICE_BLOCKERS.json'), JSON.stringify({ resumeAuthorized: false, stops: [
+    { provider: 'youtube', operation: 'youtube-subs', reason: 'HTTP 429' },
+    { provider: 'steamcommunity.com', operation: 'selected public page open', reason: 'HTTP 429' },
+  ] }));
+  const ref = await captureStoppedKeywordAttempt(runDirectory, 1);
+  const common = { ...s.f.inputs, keywordRecovery: ref, keywordRecoveryDecision: { mode: 'recover' } };
+  const preview = async value => {
+    await writeFile(s.inputsFile, JSON.stringify(value));
+    const io = terminal(null, { isTTY: false });
+    const result = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+      configuration: s.f.configuration, executor: s.executor, preview: true, ...io });
+    return { ...result, text: io.text() };
+  };
+
+  await assert.rejects(preview(common), /KEYWORD_SERVICE_DECISION_REQUIRED.*steam-community.*youtube-subtitles/);
+  await assert.rejects(preview({ ...common, keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: [] }),
+    /KEYWORD_SERVICE_DECISION_REQUIRED.*steam-community/);
+
+  const suspended = await preview({ ...common,
+    keywordServiceStops: ['steam-community', 'youtube-subtitles'], keywordServiceResumes: [] });
+  assert.match(suspended.text, /Recovered service restrictions: steam-community, youtube-subtitles/);
+  assert.match(suspended.text, /Explicitly resumed services: \(none\)/);
+
+  const resumed = await preview({ ...common,
+    keywordServiceStops: ['steam-community'], keywordServiceResumes: ['youtube-subtitles'] });
+  assert.notEqual(suspended.confirmation_code, resumed.confirmation_code);
+  assert.match(resumed.text, /Explicitly resumed services: youtube-subtitles/);
+  await assert.rejects(preview({ ...common,
+    keywordServiceStops: ['youtube-subtitles'], keywordServiceResumes: ['youtube-subtitles', 'steam-community'] }),
+  /KEYWORD_SERVICE_DECISION_INVALID/);
+});
+
 test('a stopped keyword attempt with a recovery snapshot requires an explicit recovery decision', async t => {
   const s = await setup(t), runId = 'recovery-decision';
   const stopped = async (skill, context) => {

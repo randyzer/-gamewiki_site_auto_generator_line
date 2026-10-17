@@ -198,6 +198,7 @@ test('an explicit trusted-host timeout still caps keyword research and cannot be
 test('inherited provider stops are shared readonly policy and suspend subtitle CLI requests', async t => {
   const f = await keywordLaunchFixture(t);
   f.context.inputs.keywordServiceStops = ['youtube-subtitles', 'steam-community'];
+  f.context.inputs.keywordServiceResumes = [];
   await f.executor(STAGES[1], f.context);
   const policy = join(f.context.outputDirectory, 'keyword-service-stops.json');
   assert.deepEqual(JSON.parse(await readFile(policy)).services, f.context.inputs.keywordServiceStops);
@@ -211,6 +212,18 @@ test('inherited provider stops are shared readonly policy and suspend subtitle C
   f.context.inputs.keywordServiceStops = ['unknown-provider'];
   await assert.rejects(f.executor(STAGES[1], f.context), /KEYWORD_SERVICE_STOPS_INVALID/);
   assert.equal(f.calls.length, 1);
+});
+
+test('explicit recovered-service resumes reach the worker context without weakening other stops', async t => {
+  const f = await keywordLaunchFixture(t);
+  f.context.inputs.keywordServiceStops = ['steam-community'];
+  f.context.inputs.keywordServiceResumes = ['youtube-subtitles'];
+  await f.executor(STAGES[1], f.context);
+  assert.match(f.calls[0].options.input,
+    /"keywordServiceResumes":\{"services":\["youtube-subtitles"\]\}/);
+  assert.match(f.calls[0].options.input, /resumes are the only host-confirmed exceptions/);
+  const policy = JSON.parse(await readFile(join(f.context.outputDirectory, 'keyword-service-stops.json')));
+  assert.deepEqual(policy.services, ['steam-community']);
 });
 
 async function keywordLaunchFixture(t, { versionFailure = null, withCookies = true,

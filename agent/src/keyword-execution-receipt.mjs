@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { sha256 } from './files.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
-import { keywordServiceStops } from './keyword-service-stops.mjs';
+import { keywordServiceStops, keywordServiceResumes } from './keyword-service-stops.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 const clone = value => JSON.parse(JSON.stringify(value));
@@ -48,6 +48,7 @@ export function createKeywordExecutionReceipt({ runId, inputsFile, inputsFileByt
     recovery,
     budget: keywordResearchBudget(inputs.keywordResearchBudget),
     serviceStops: keywordServiceStops(inputs.keywordServiceStops),
+    serviceResumes: keywordServiceResumes(inputs.keywordServiceResumes),
   };
 }
 
@@ -71,7 +72,8 @@ export function verifyKeywordExecutionReceipt(receipt, { runId, inputs, manifest
   } : null;
   assert(normalizedJson(receipt.recovery) === normalizedJson(expectedRecovery) &&
     normalizedJson(receipt.budget) === normalizedJson(keywordResearchBudget(inputs.keywordResearchBudget)) &&
-    normalizedJson(receipt.serviceStops) === normalizedJson(keywordServiceStops(inputs.keywordServiceStops)),
+    normalizedJson(receipt.serviceStops) === normalizedJson(keywordServiceStops(inputs.keywordServiceStops)) &&
+    normalizedJson(receipt.serviceResumes) === normalizedJson(keywordServiceResumes(inputs.keywordServiceResumes)),
   'KEYWORD_EXECUTION_RECEIPT_INVALID: recovery controls changed');
   return clone(receipt);
 }

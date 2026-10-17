@@ -8,7 +8,7 @@ import { sha256 } from './files.mjs';
 import { resolveInputPaths } from './paths.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { verifyKeywordRecovery } from './keyword-recovery.mjs';
-import { keywordServiceStops } from './keyword-service-stops.mjs';
+import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { createKeywordExecutionReceipt, keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
@@ -58,6 +58,7 @@ export async function describeRun({ command, runId, inputs, configuration }) {
   const stages = inputs.adsEnabled === true ? [...STAGES, 'game-site-adsterra-ad-integration'] : STAGES;
   const budget = keywordResearchBudget(inputs.keywordResearchBudget);
   const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
+  const serviceResumes = keywordServiceResumes(inputs.keywordServiceResumes);
   let recovery;
   if (inputs.keywordRecovery) {
     if (!manifest) throw Error('KEYWORD_RECOVERY_INVALID: recovery requires an existing run');
@@ -66,6 +67,12 @@ export async function describeRun({ command, runId, inputs, configuration }) {
       outputDirectory: join(runDirectory, 'artifacts/1', String(stage.checkpoint.attempt + 1)),
       skillLock: manifest.lock.skills.find(skill => skill.name === STAGE.KEYWORD_RESEARCH) }, inputs.keywordRecovery);
   }
+  const serviceDecisions = recoveredKeywordServiceDecisions({
+    historicalStops: recovery?.historicalServiceStops,
+    serviceStops,
+    serviceResumes,
+    suppliedInputs,
+  });
   return [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
     ...(manifestBytes ? [`Resume manifest SHA256: ${sha256(manifestBytes)}`] : []),
@@ -78,6 +85,8 @@ export async function describeRun({ command, runId, inputs, configuration }) {
     `Templates: ${template}`,
     `Keyword research budget: ${budget.timeoutMs} ms; handoff margin: ${budget.handoffMarginMs} ms; source: ${budget.configurationSource}`,
     `Suspended services (all keywords): ${serviceStops.join(', ') || '(none)'}`,
+    `Recovered service restrictions: ${serviceDecisions.historicalStops.join(', ') || '(none)'}`,
+    `Explicitly resumed services: ${serviceResumes.join(', ') || '(none)'}`,
     `Keyword recovery decision: ${decision?.mode ?? '(not required)'}`,
     'Handoff deadline is cooperative; a hard timeout remains FAILED. Recovery snapshots are unvalidated progress, never a completion waiver.',
     ...(recovery ? [
