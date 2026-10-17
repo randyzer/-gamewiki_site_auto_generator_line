@@ -1,7 +1,7 @@
 import { STAGE, findStage } from './stages.mjs';
 import { mkdir, writeFile, unlink } from 'node:fs/promises';
-import { join, basename } from 'node:path';
-import { safePath, readArtifact, sha256, treeFiles } from './files.mjs';
+import { join, basename, dirname } from 'node:path';
+import { safePath, readArtifact, sha256, treeFiles, parseArtifactJson } from './files.mjs';
 
 async function copyResearchFile(source, target, sourceRoots, targetRoot, expected) {
   const bytes = await readArtifact(source, sourceRoots);
@@ -14,6 +14,38 @@ async function copyResearchFile(source, target, sourceRoots, targetRoot, expecte
     if (sha256(await readArtifact(target, [targetRoot])) !== sha256(bytes))
       throw Error(`Existing research file conflicts; refusing to overwrite: ${target}`);
   }
+}
+
+async function prepareControlledKeywordResearch(context, destination) {
+  const controlled = context.researchHandoff;
+  if (!controlled?.manifest) return null;
+  if (controlled.reference?.approved !== true || controlled.manifest.kind !== 'RESEARCH_HANDOFF_MANIFEST_V1')
+    throw Error('Research handoff is not approved');
+  const manifestPath = controlled.manifest.recovery?.manifestPath;
+  const recoveryBytes = await readArtifact(manifestPath, [context.runDirectory]);
+  if (sha256(recoveryBytes) !== controlled.manifest.recovery.sha256)
+    throw Error('Research handoff recovery manifest changed');
+  const recovery = parseArtifactJson(recoveryBytes, manifestPath);
+  if (recovery.kind !== 'HOST_KEYWORD_RECOVERY_V1' || !Array.isArray(recovery.files))
+    throw Error('Research handoff recovery manifest is invalid');
+  const inventory = recovery.files.map(file => ({ path: file.path, bytes: file.bytes, sha256: file.sha256 }));
+  if (JSON.stringify(inventory) !== JSON.stringify(controlled.manifest.recovery.inventory) ||
+    recovery.binding?.runId !== context.runId ||
+    recovery.sourceAttempt !== controlled.manifest.recovery.sourceAttempt)
+    throw Error('Research handoff recovery binding changed');
+  const selected = controlled.manifest.recovery.selectedFiles;
+  if (!Array.isArray(selected) || selected.length === 0 || new Set(selected).size !== selected.length)
+    throw Error('Research handoff recovery selection is invalid');
+  const descriptors = new Map(recovery.files.map(file => [file.path, file]));
+  const sourceRoot = join(dirname(manifestPath), 'data');
+  for (const path of selected) {
+    const file = descriptors.get(path);
+    if (!file || typeof file.path !== 'string' || !/^[a-f0-9]{64}$/.test(file.sha256 ?? ''))
+      throw Error('Research handoff recovery file descriptor is invalid');
+    await copyResearchFile(join(sourceRoot, file.path), join(destination, file.path),
+      [sourceRoot], destination, file.sha256);
+  }
+  return { reference: controlled.reference, manifest: controlled.manifest };
 }
 
 export async function publishResearchArtifacts(context, skill, artifacts) {
@@ -45,7 +77,9 @@ export async function prepareResearchHandoff(context) {
     }
     for (const file of await treeFiles(source))
       await copyResearchFile(file, join(destination, file.slice(source.length + 1)), [source], project);
-    return { homepageRoot: destination, keywordsRoot: join(destination, 'keyword-materials') };
+    const controlled = await prepareControlledKeywordResearch(context, join(destination, 'keyword-materials'));
+    return { homepageRoot: destination, keywordsRoot: join(destination, 'keyword-materials'),
+      ...(controlled ?? {}) };
   }
   // Old manifests may use the historical underscored directory name.
   const researchRoot = join(project, context.inputs.researchRootName === 'background_information' ? 'background_information' : 'backgroundinformation');
@@ -68,7 +102,9 @@ export async function prepareResearchHandoff(context) {
       }
     }
   }
-  return { homepageRoot: researchRoot, keywordsRoot: join(researchRoot, 'keyword-materials') };
+  const controlled = await prepareControlledKeywordResearch(context, join(researchRoot, 'keyword-materials'));
+  return { homepageRoot: researchRoot, keywordsRoot: join(researchRoot, 'keyword-materials'),
+    ...(controlled ?? {}) };
 }
 
 export async function publishDeploymentPlan(context, result, { write = writeFile } = {}) {

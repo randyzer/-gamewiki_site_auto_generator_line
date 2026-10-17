@@ -167,7 +167,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (skill === STAGE.CONTENT_INTEGRATION) {
       if (context.inputs.mode === 'existing-project') {
         try {
-          context.researchHandoff ??= await prepareResearchHandoff(context);
+          context.researchHandoff = await prepareResearchHandoff(context);
           context.existingContent ??= await prepareExistingContent(context);
         } catch (error) {
           if (error.code !== 'CONTRACT_INCOMPATIBLE') throw error;
@@ -357,6 +357,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
             : 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
         ] : hostPrelaunch ? [
           'Read context.hostEvidence and verify every SHA256. Use view_image to inspect the host screenshots. Do not invoke browser commands, network requests, build/test/lint/typecheck commands, or site repairs; the host already collected those results.',
+          'Read context.hostEvidence.routePublicationViolations and the routePublication section of HOST_EVIDENCE.json. Any violation, unprovable dynamic route, published noindex page, draft without noindex, draft sitemap entry, or public link to a draft requires a non-PASSED result.',
           `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
       'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.',
@@ -366,6 +367,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'Write TEMPLATE_SELECTION_REPORT.md and TEMPLATE_RESIDUE_SCAN.json under templateCopyDestination/docs. Return these and templateCopyDestination/docs/template-copy-manifest.json as artifacts. Leave the manifest and copied files unchanged. The host checks and merges the complete temporary tree into projectPath, rewrites only manifest.destination, then removes the temporary directory. Never merge, rename or delete any site files yourself.'
       ] : []),
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
+      ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
+        'The host verified and approved context.researchHandoff. Its manifest is the only authority for keyword material status and publication disposition: COMPLETED must be PUBLISHED, PARTIAL may only be DRAFT with noindex or have no route/source, and BLOCKED must have no route/source. Preserve every PENDING row. The host derives ROUTE_PUBLICATION_MANIFEST.json; do not return that host-owned artifact role.'
+      ] : []),
       ...(context.inputs.keywordSourceLineageFile ? [
         'Read the approved keywordSourceLineageFile alongside approved rawKeywordsFile. Only complete retained terms are eligible; pending truncated and missing rows remain pending, never fabricate or restore them. Preserve original SHA256 and source/table line references in the native keyword processing record.'
       ] : []),

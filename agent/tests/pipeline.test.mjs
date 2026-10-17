@@ -7,6 +7,7 @@ import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
+import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -430,6 +431,76 @@ test('explicit retry retains attempt history and can resume partial work', async
   assert.equal(p.snapshot().stages[0].checkpoint.attempt, 2);
 });
 
+test('Stage 2 PARTIAL advances only after exact immutable handoff approval', async t => {
+  const f = await fixture(t);
+  let templateContext;
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[1]) {
+      if (skill === api.STAGES[2]) templateContext = context;
+      return f.good(skill, context);
+    }
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true });
+    await writeFixtureRecoveryLineage(native);
+    const runDirectory = join(f.workspace, 'runs', context.runId);
+    const recovery = await (await import('../src/keyword-recovery.mjs')).captureKeywordRecovery({
+      ...context, runDirectory, nativeDirectory: native,
+    }, { reason: 'WORKER_STOPPED' });
+    await writeFile(join(context.outputDirectory, 'keyword-recovery.json'), JSON.stringify(recovery));
+    return { status: 'PARTIAL', artifacts: [], evidence: ['incomplete research'], missing_inputs: [] };
+  };
+  const pipeline = await f.create({ executor });
+  await advance(pipeline, 2);
+  const state = pipeline.snapshot(), stage = state.stages[1];
+  assert.equal(stage.status, 'PARTIAL');
+  assert.equal(state.stages[2].status, 'NOT_STARTED');
+  assert.equal(stage.checkpoint.researchHandoff.kind, 'RESEARCH_HANDOFF_MANIFEST_V1');
+  assert.equal(stage.checkpoint.researchHandoff.approved, false);
+  assert.equal(stage.artifacts.length, 0);
+  const candidate = JSON.parse(await readFile(stage.checkpoint.researchHandoff.path));
+  assert.equal(candidate.materials[0].publicationDisposition, 'DRAFT_ONLY');
+  assert.equal(candidate.approval, null);
+
+  const resumed = await f.create({ runId: state.runId, resume: true, inputs: {}, executor });
+  await resumed.advance();
+  assert.equal(resumed.snapshot().stages[2].status, 'NOT_STARTED');
+  const approval = researchHandoffApprovalTemplate(stage.checkpoint.researchHandoff, candidate);
+  await assert.rejects(resumed.updateUserInputs({ researchHandoffApproval: {
+    ...approval, domain: 'other.test',
+  } }), /exactly match/);
+  await resumed.updateUserInputs({ researchHandoffApproval: approval });
+  assert.equal(resumed.snapshot().stages[1].status, 'PARTIAL');
+  assert.equal(resumed.snapshot().stages[1].checkpoint.researchHandoff.approved, true);
+  await resumed.advance();
+  const advanced = resumed.snapshot();
+  assert.equal(advanced.stages[2].status, 'PASSED');
+  assert.equal(templateContext.researchHandoff.manifest.bindings.pendingRowsSha256,
+    candidate.bindings.pendingRowsSha256);
+  assert.equal(templateContext.upstream[1].status, 'PARTIAL');
+});
+
+test('approved research handoff is invalidated by bound revision changes', async t => {
+  const f = await fixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[1]) return f.good(skill, context);
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true }); await writeFixtureRecoveryLineage(native);
+    const recovery = await (await import('../src/keyword-recovery.mjs')).captureKeywordRecovery({
+      ...context, runDirectory: join(f.workspace, 'runs', context.runId), nativeDirectory: native,
+    }, { reason: 'WORKER_STOPPED' });
+    await writeFile(join(context.outputDirectory, 'keyword-recovery.json'), JSON.stringify(recovery));
+    return { status: 'PARTIAL', artifacts: [], evidence: ['incomplete research'], missing_inputs: [] };
+  };
+  const p = await f.create({ executor }); await advance(p, 2);
+  const handoff = p.snapshot().stages[1].checkpoint.researchHandoff;
+  const candidate = JSON.parse(await readFile(handoff.path));
+  await p.updateUserInputs({ researchHandoffApproval: researchHandoffApprovalTemplate(handoff, candidate) });
+  await p.updateUserInputs({ siteRevision: 'reviewed-tree-2' });
+  assert.equal(p.snapshot().stages[1].status, 'NOT_STARTED');
+  assert.equal(p.snapshot().stages[1].checkpoint.researchHandoff, undefined);
+  assert.equal(p.snapshot().inputs.researchHandoffApproval, undefined);
+});
+
 test('later input updates do not repeat a pending deployment plan', async t => {
   const f = await fixture(t, { adsEnabled: true });
   const p = await f.create(); await advance(p, 7);
@@ -572,7 +643,7 @@ test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck art
       const directory = join(context.inputs.projectPath, 'docs/prelaunch', context.runId, 'host-evidence');
       await mkdir(directory, { recursive: true });
       await writeFile(join(directory, 'HOST_EVIDENCE.json'), '{"synthetic":true}');
-      return { ...await snapshotSiteEvidence(directory), routes: ['/'] };
+      return { ...await snapshotSiteEvidence(directory), routes: ['/'], routePublicationViolations: [] };
     },
     validationOptions: { run: async () => ({ exitCode: 0 }) },
     run: async (_command, args, options) => {

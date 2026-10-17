@@ -1,9 +1,11 @@
 import { dirname, join, basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { writeFile } from 'node:fs/promises';
 import { readArtifact, sha256, treeFiles, parseArtifactJson } from './files.mjs';
 import { runProcess } from './process.mjs';
 import { STAGE, stageDefinition, findStage } from './stages.mjs';
 import { validateExistingContentArtifacts } from './existing-content-validator.mjs';
+import { createRoutePublicationManifest, ROUTE_PUBLICATION_ARTIFACT } from './route-publication.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 
@@ -26,9 +28,13 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     for (const kind of byKind.keys()) assert(workerOwned.has(kind),
       `Unexpected keyword artifact role ${kind}; keyword material artifacts are host-derived`);
   }
+  if (skill === STAGE.CONTENT_INTEGRATION)
+    assert(!byKind.has(ROUTE_PUBLICATION_ARTIFACT),
+      `${ROUTE_PUBLICATION_ARTIFACT} is host-derived`);
   if (result.status !== 'PASSED') return { ...result, artifacts: [] };
   assert(result.missing_inputs.length === 0 && result.evidence.length > 0, 'False success with missing inputs/evidence');
-  const required = context.requiredArtifacts.filter(k => k !== 'KEYWORD_MATERIALS.md');
+  const hostDerived = new Set(['KEYWORD_MATERIALS.md', ROUTE_PUBLICATION_ARTIFACT]);
+  const required = context.requiredArtifacts.filter(kind => !hostDerived.has(kind));
   for (const key of required) assert(byKind.has(key), 'Required native output missing: ' + key);
   const scriptRoot = join(dirname(context.skillLock.source), 'scripts');
   const python = async (name, args) => run('python3', [join(scriptRoot, name), ...args], { cwd: context.nativeDirectory, timeoutMs: 30000 });
@@ -86,7 +92,10 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     const data = parseArtifactJson(get('CONTENT_PAGE_MANIFEST.json').bytes, get('CONTENT_PAGE_MANIFEST.json').path);
     assert(data.schema_version === 1 && data.game === context.inputs.gameIdentity && Array.isArray(data.pages), 'Content manifest identity mismatch');
     const upstream = findStage(context.upstream, STAGE.KEYWORD_RESEARCH).artifacts.find(a => a.kind === 'keywords.json');
-    const keywords = parseArtifactJson(await readArtifact(upstream.path, [context.runDirectory]), upstream.path).categories.flatMap(c => c.keywords);
+    const keywords = context.researchHandoff?.manifest
+      ? context.researchHandoff.manifest.materials.map(item => item.keyword)
+      : parseArtifactJson(await readArtifact(upstream.path, [context.runDirectory]), upstream.path)
+        .categories.flatMap(c => c.keywords);
     assert(data.pages.length === keywords.length && new Set(data.pages.map(p => p.keyword)).size === keywords.length, 'Content keyword coverage mismatch');
     const counts = { PUBLISHED: 0, DRAFT: 0, BLOCKED: 0 };
     for (const page of data.pages) {
@@ -99,6 +108,12 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
       assert(get('CONTENT_PROVENANCE.md').bytes.toString().includes(page.keyword) || page.outcome === 'BLOCKED', 'Missing page provenance');
     }
     assert(data.counts?.keywords === keywords.length && data.counts.published === counts.PUBLISHED && data.counts.draft === counts.DRAFT && data.counts.blocked === counts.BLOCKED, 'Page counts mismatch');
+    const publication = createRoutePublicationManifest(context, data);
+    const publicationPath = join(context.nativeDirectory, ROUTE_PUBLICATION_ARTIFACT);
+    const publicationBytes = Buffer.from(JSON.stringify(publication, null, 2) + '\n');
+    await writeFile(publicationPath, publicationBytes, { flag: 'wx', mode: 0o600 });
+    artifacts.push({ kind: ROUTE_PUBLICATION_ARTIFACT, path: publicationPath,
+      bytes: publicationBytes, originalSha256: sha256(publicationBytes) });
   }
   if (skill === STAGE.UI_UX_AUDIT) {
     await python('validate_audit.py', ['--workspace', context.inputs.projectPath, '--run-dir', dirname(get('UI_UX_AUDIT.json').path), ...(context.mode === 'optimize' ? ['--expect-optimization'] : [])]);
@@ -116,8 +131,22 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     assert(['可以上线', '可以上线，但有P2待办'].includes(report.disposition), 'Prelaunch does not permit planning');
     assert(Array.isArray(report.pages) && report.pages.length > 0 && report.coverage && typeof report.coverage === 'object', 'Empty prelaunch coverage');
     assert(Number.isInteger(report.coverage.routes_expected) && report.coverage.routes_expected > 0 && report.coverage.routes_checked === report.coverage.routes_expected && report.pages.length === report.coverage.routes_checked, 'Incomplete prelaunch coverage');
-    if (context.hostEvidence) assert(JSON.stringify(report.pages.map(page => page.path).sort()) ===
-      JSON.stringify([...context.hostEvidence.routes].sort()), 'Prelaunch host route coverage mismatch');
+    if (context.hostEvidence) {
+      assert(JSON.stringify(report.pages.map(page => page.path).sort()) ===
+        JSON.stringify([...context.hostEvidence.routes].sort()), 'Prelaunch host route coverage mismatch');
+      assert(Array.isArray(context.hostEvidence.routePublicationViolations),
+        'Prelaunch route publication proof is missing');
+      assert(context.hostEvidence.routePublicationViolations.length === 0,
+        'Prelaunch route publication violations remain');
+      if (context.hostEvidence.evidencePath) {
+        const evidence = parseArtifactJson(await readArtifact(context.hostEvidence.evidencePath,
+          [context.inputs.projectPath]), context.hostEvidence.evidencePath);
+        assert(evidence.routePublication?.manifestKind === 'ROUTE_PUBLICATION_MANIFEST_V1' &&
+          Array.isArray(evidence.routePublication.violations) &&
+          evidence.routePublication.violations.length === 0,
+        'Prelaunch route publication evidence is incomplete');
+      }
+    }
   }
   if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute') {
     const report = parseArtifactJson(get('DEPLOYMENT_REPORT.json').bytes, get('DEPLOYMENT_REPORT.json').path);

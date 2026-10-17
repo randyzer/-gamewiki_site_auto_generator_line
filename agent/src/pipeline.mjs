@@ -15,6 +15,8 @@ import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
 import { keywordEvidencePlanReference, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
+import { createResearchHandoffCandidate, RESEARCH_HANDOFF_KIND,
+  verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from './research-handoff.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -42,6 +44,9 @@ const overlaps = (a, b) => inside(a, b) || inside(b, a);
 const now = () => new Date().toISOString();
 const assert = (ok, message) => { if (!ok) throw new Error(message); };
 const INPUT_COPY_PREFIX = Object.freeze({ rawKeywordsFile: 'raw', keywordSourceLineageFile: 'lineage' });
+const controlledResearchPartial = stage => stage?.skill === STAGE.KEYWORD_RESEARCH &&
+  stage.status === 'PARTIAL' && stage.checkpoint?.researchHandoff?.approved === true;
+const stageSatisfied = stage => ['PASSED', 'SKIPPED'].includes(stage.status) || controlledResearchPartial(stage);
 
 async function exists(path) {
   try { await lstat(path); return true; }
@@ -150,9 +155,19 @@ function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
       Array.isArray(stage.missing_inputs) && Number.isSafeInteger(stage.checkpoint?.attempt) && stage.checkpoint.attempt >= 0,
     'Invalid stage checkpoint');
     assert(stage.status !== 'SKIPPED' || (stage.skill === STAGE.ADVERTISING_PLAN && m.inputs.adsEnabled !== true) || (stage.skill === STAGE.TEMPLATE_SELECTION && m.inputs.mode === 'existing-project'), 'Mandatory stage cannot be skipped');
+    if (stage.checkpoint.researchHandoff !== undefined) {
+      const handoff = stage.checkpoint.researchHandoff;
+      assert(stage.skill === STAGE.KEYWORD_RESEARCH && handoff?.kind === RESEARCH_HANDOFF_KIND &&
+        typeof handoff.approved === 'boolean' && handoff.attempt === stage.checkpoint.attempt &&
+        typeof handoff.path === 'string' && isAbsolute(handoff.path) &&
+        /^[a-f0-9]{64}$/.test(handoff.sha256 ?? '') &&
+        /^[a-f0-9]{64}$/.test(handoff.recoverySha256 ?? '') &&
+        (!handoff.approved || /^[a-f0-9]{64}$/.test(handoff.approvalSha256 ?? '')),
+      'Invalid research handoff checkpoint');
+    }
     if (stage.status !== 'SKIPPED') {
       assert(!pending || stage.status === 'NOT_STARTED', 'Invalid out-of-order checkpoint');
-      if (stage.status !== 'PASSED') pending = true;
+      if (!stageSatisfied(stage)) pending = true;
     }
     if (stage.status === 'PASSED') assert(stage.artifacts.length > 0 && stage.evidence.length > 0 && m.lock, 'Passed stage lacks evidence');
   }
@@ -312,6 +327,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     state = JSON.parse((await regularFile(manifestPath)).toString('utf8'));
     validateManifest(state, runId, workspace, inventoryPath, templateRoots);
     await validateProject(state.inputs.projectPath);
+    const handoff = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.researchHandoff;
+    if (handoff) {
+      const candidate = await verifyResearchHandoffCandidate(handoff, { runId, runDirectory,
+        attempt: handoff.attempt, siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
+      if (handoff.approved) assert(verifyResearchHandoffApproval(state.inputs.researchHandoffApproval,
+        handoff, candidate) === handoff.approvalSha256, 'Research handoff approval digest changed');
+    }
   } else {
     inputs = resolveInputPaths(checkInputs(inputs));
     await validateInputPaths(inputs, { workspace, protectedRoots, emptySite: true });
@@ -399,6 +421,14 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   async function verifyArtifacts(index) {
     const stage = state.stages[index];
     if (stage.skill === STAGE.TEMPLATE_SELECTION && stage.status === 'SKIPPED' && state.inputs.mode === 'existing-project') return;
+    if (controlledResearchPartial(stage)) {
+      const handoff = stage.checkpoint.researchHandoff;
+      const candidate = await verifyResearchHandoffCandidate(handoff, { runId, runDirectory,
+        attempt: handoff.attempt, siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
+      assert(verifyResearchHandoffApproval(state.inputs.researchHandoffApproval, handoff, candidate) ===
+        handoff.approvalSha256, 'Research handoff approval digest changed');
+      return candidate;
+    }
     for (const kind of requiredArtifacts(index)) assert(stage.artifacts.some(a => a.kind === kind), `Missing upstream artifact: ${kind}`);
     for (const artifact of stage.artifacts) {
       await safeOutput(artifact.path);
@@ -502,12 +532,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   }
 
   function inputChecklist() {
-    const current = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
+    const current = state.stages.findIndex(stage => !stageSatisfied(stage));
     return Object.entries(INPUT_STAGE).filter(([key]) => state.inputs.adsEnabled === true || !['adCode', 'adApproval', 'liveUrl'].includes(key))
       .sort((a, b) => stageIndex(a[1]) - stageIndex(b[1])).map(([key, stage]) => ({ key, skill: stage, stageLabel: stageDefinition(stage).label,
         requiredByStage: stageIndex(stage) + 1, timing: stageIndex(stage) <= current ? 'now' : 'later',
         provided: state.inputs[key] !== undefined && state.inputs[key] !== '',
-        conditional: ['canonicalOrigin', 'uiApproval', 'adCode', 'adApproval', 'liveUrl', 'deploymentPlanApproval'].includes(key),
+        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'uiApproval', 'adCode', 'adApproval',
+          'liveUrl', 'deploymentPlanApproval'].includes(key),
         pathOrInformation: key === 'rawKeywordsFile' ? 'User-supplied absolute Markdown file path' :
           key === 'projectPath' ? 'Resolved paths.siteDirectory (legacy runs retain their project directory)'
           : key === 'paths' ? 'User-supplied absolute site, research and keyword paths' : key,
@@ -548,7 +579,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   async function advance() {
     return exclusive(async () => {
       state.inputCopies ??= {};
-      const index = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
+      const index = state.stages.findIndex(stage => !stageSatisfied(stage));
       if (index < 0) return clone(state);
       const stage = state.stages[index];
       if (['PARTIAL', 'BLOCKED', 'FAILED', 'WAITING_FOR_USER'].includes(stage.status)) return clone(state);
@@ -637,11 +668,17 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           : stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? 'optimize' : 'audit-only';
         const inputCopyPaths = Object.fromEntries(Object.entries(state.inputCopies ?? {}).map(([key, copy]) => [key, copy.copyPath]));
         const workerInputs = { ...state.inputs, ...inputCopyPaths };
+        const researchHandoff = index > stageIndex(STAGE.KEYWORD_RESEARCH)
+          ? await verifyArtifacts(stageIndex(STAGE.KEYWORD_RESEARCH)) : null;
         const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths, outputDirectory, templateRoots,
           ...(state.inputs.paths ? { readOnlyInputPaths: Object.keys(INPUT_COPY_PREFIX).map(key => state.inputs[key]).filter(nonempty) } : {}),
           templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
           skillLock: state.lock.skills.find(s => s.name === stage.skill),
           upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint, mode,
+          ...(researchHandoff ? { researchHandoff: {
+            reference: findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.researchHandoff,
+            manifest: researchHandoff,
+          } } : {}),
           ...(executing ? { approvedPlan: { digest: stage.checkpoint.approvedPlanDigest, artifacts: stage.artifacts } } : {}),
           permissions: { uiChanges: stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize',
             gitPush: executing, dns: executing, productionDeployment: executing, gsc: executing, ga4: executing, advertisingScripts: false,
@@ -688,6 +725,24 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         // The execute pass keeps the approved plan next to its report so the run records what was approved.
         stage.artifacts = executing ? [...stage.artifacts, ...saved] : saved;
         operation = 'save-stage-checkpoint';
+        if (stage.skill === STAGE.KEYWORD_RESEARCH && status === 'PARTIAL') {
+          const recoveryPath = join(outputDirectory, 'keyword-recovery.json');
+          try {
+            const recoveryRef = parseArtifactJson(await regularFile(recoveryPath), recoveryPath);
+            if (nonempty(state.inputs.siteRevision) && nonempty(state.inputs.domain)) {
+              stage.checkpoint.researchHandoff = await createResearchHandoffCandidate({ runId,
+                runDirectory, attempt: stage.checkpoint.attempt, recoveryRef,
+                siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
+              evidence = [...evidence,
+                `Immutable research handoff candidate: ${stage.checkpoint.researchHandoff.path} SHA256 ${stage.checkpoint.researchHandoff.sha256}; approval is still required.`];
+            } else evidence = [...evidence,
+              'Research handoff candidate not created: siteRevision and domain are required for immutable binding.'];
+          } catch (error) {
+            if (error.code !== 'ENOENT') throw error;
+            evidence = [...evidence,
+              'Research handoff candidate not created: no host recovery checkpoint was returned.'];
+          }
+        }
         if (stage.skill === STAGE.UI_UX_AUDIT && status === 'PASSED') stage.checkpoint.projectDigest = await projectDigest();
         if (stage.skill === STAGE.DEPLOYMENT_PLAN && status === 'PASSED' && !executing) {
           stage.checkpoint.planDigest = hash(JSON.stringify(stage.artifacts.map(a => a.sha256)));
@@ -727,7 +782,26 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           if (JSON.stringify(updated[key]) !== JSON.stringify(state.inputs[key])) patch[key] = updated[key];
       } else await validateProject(updated.projectPath);
       if (Object.hasOwn(patch, 'adsEnabled')) assert(patch.adsEnabled === state.inputs.adsEnabled, 'Ad branch is locked at creation');
-      const current = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
+      const current = state.stages.findIndex(stage => !stageSatisfied(stage));
+      const keywordStage = findStage(state.stages, STAGE.KEYWORD_RESEARCH);
+      if (keywordStage.status === 'PARTIAL' && keywordStage.checkpoint.researchHandoff &&
+        Object.hasOwn(patch, 'researchHandoffApproval')) {
+        assert(Object.keys(patch).length === 1,
+          'Approve the exact research handoff separately from input changes');
+        const handoff = keywordStage.checkpoint.researchHandoff;
+        assert(handoff.approved === false, 'Research handoff is already approved');
+        const candidate = await verifyResearchHandoffCandidate(handoff, { runId, runDirectory,
+          attempt: handoff.attempt, siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
+        const approvalSha256 = verifyResearchHandoffApproval(patch.researchHandoffApproval,
+          handoff, candidate);
+        state.inputs = updated;
+        keywordStage.checkpoint.researchHandoff = { ...handoff, approved: true, approvalSha256 };
+        keywordStage.checkpoint.updatedAt = now();
+        keywordStage.checkpoint.next = 'Advance using the approved constrained research handoff';
+        keywordStage.evidence = [...keywordStage.evidence,
+          `Research handoff ${handoff.sha256} approved with exact scope ${approvalSha256}.`];
+        await save(); return clone(state);
+      }
       if (state.stages[current]?.skill === STAGE.DEPLOYMENT_PLAN && findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest && Object.hasOwn(patch, 'deploymentPlanApproval')) {
         assert(Object.keys(patch).length === 1, 'Approve the exact plan separately from input changes');
         const approval = patch.deploymentPlanApproval;
@@ -760,20 +834,26 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (digest !== state.inputCopies[key].sha256 && !changed.includes(key)) changed.push(key);
       }
       let start = changed.length ? Math.min(...changed.map(k => stageIndex(INPUT_STAGE[k]))) : retry ? current : Infinity;
+      if (keywordStage.checkpoint.researchHandoff &&
+        changed.some(key => ['siteRevision', 'domain'].includes(key)))
+        start = Math.min(start, stageIndex(STAGE.KEYWORD_RESEARCH));
       // Supplying a currently requested fact is the only automatic resume trigger.
       if (current >= 0 && state.stages[current].status === 'WAITING_FOR_USER' &&
         state.stages[current].missing_inputs.some(key => Object.hasOwn(patch, key))) start = Math.min(start, current);
       if (!changed.length && !Object.keys(patch).length && !retry) return clone(state);
       state.inputs = updated;
       if (updated.paths) state.paths = clone(updated.paths);
-      if (start <= stageIndex(STAGE.KEYWORD_RESEARCH))
+      if (start <= stageIndex(STAGE.KEYWORD_RESEARCH)) {
         for (const key of Object.keys(INPUT_COPY_PREFIX)) delete state.inputCopies[key];
+        delete state.inputs.researchHandoffApproval;
+      }
       if (start >= 0) for (let i = start; i < state.stages.length; i++) {
         const stage = state.stages[i];
         if (stage.status === 'SKIPPED' || stage.status === 'NOT_STARTED') continue;
         transition(stage, 'NOT_STARTED', ['Explicit user input update/retry; previous attempt retained in history']);
         stage.artifacts = [];
-        for (const key of ['planDigest', 'approvedPlanDigest', 'projectDigest', 'keywordSha256']) delete stage.checkpoint[key];
+        for (const key of ['planDigest', 'approvedPlanDigest', 'projectDigest', 'keywordSha256',
+          'researchHandoff']) delete stage.checkpoint[key];
       }
       if (start <= stageIndex(STAGE.DEPLOYMENT_PLAN)) delete state.inputs.deploymentPlanApproval;
       await save(); return clone(state);

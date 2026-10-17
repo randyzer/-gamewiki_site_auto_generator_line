@@ -1,6 +1,6 @@
 import { readArtifact, sha256, treeFiles, safePath } from './files.mjs';
 import { join } from 'node:path';
-import { STAGE } from './stages.mjs';
+import { publicationRoutes } from './route-publication.mjs';
 
 export const AUDIT_VIEWPORTS = Object.freeze([360, 390, 768, 1024, 1440, 1920]);
 export function siteRoute(route) {
@@ -11,11 +11,7 @@ export function siteRoute(route) {
   return route;
 }
 export async function publishedRoutes(context) {
-  const artifact = context.upstream?.find(stage => stage.skill === STAGE.CONTENT_INTEGRATION)?.artifacts.find(item => item.kind === 'CONTENT_PAGE_MANIFEST.json');
-  if (!artifact) throw Error(`SITE_CONTENT_MANIFEST_MISSING: run ${context.runId}`);
-  const manifest = JSON.parse(await readArtifact(artifact.path, [context.runDirectory, context.inputs.projectPath]));
-  if (!Array.isArray(manifest.pages)) throw Error(`SITE_CONTENT_MANIFEST_INVALID: ${artifact.path}`);
-  return [...new Set(['/', ...manifest.pages.filter(page => page.outcome === 'PUBLISHED').map(page => siteRoute(page.route))])];
+  return publicationRoutes(context);
 }
 export async function snapshotSiteEvidence(directory) {
   await safePath(directory, [directory]);
