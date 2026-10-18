@@ -1,0 +1,18 @@
+{
+  "$id": "STAGE_GATE_BINDING_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "runtimeScope", "runId", "canonicalStageId", "mappingVersion", "contextDigest", "featureGate", "authoritative"],
+  "properties": {
+    "kind": { "const": "STAGE_GATE_BINDING" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "V2_OFFLINE_HOST" },
+    "runtimeScope": { "const": "OFFLINE" },
+    "runId": { "type": "string", "minLength": 1 },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan", "advertising-plan"] },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "featureGate": { "enum": ["legacy", "shadow", "v2"] },
+    "authoritative": { "const": false }
+  }
+}
