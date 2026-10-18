@@ -128,7 +128,7 @@ test('plan digest covers resources, rollback and every closed-contract field', a
   assert.throws(() => replay(base, scopeDrift), error => error.code === 'CONTRACT_DIGEST_MISMATCH');
 
   const rollbackDrift = structuredClone(base.deployment);
-  rollbackDrift.rollback.steps[0] = 'Do something else';
+  rollbackDrift.rollback.steps[0].action = 'Do something else';
   assert.throws(() => replay(base, rollbackDrift), error => error.code === 'CONTRACT_DIGEST_MISMATCH');
 
   const duplicate = structuredClone(base.deployment);
@@ -146,6 +146,50 @@ test('plan digest covers resources, rollback and every closed-contract field', a
   const unknown = structuredClone(base.deployment);
   unknown.executor = 'caller-controlled'; resignDeployment(unknown);
   assert.throws(() => replay(base, unknown), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+});
+
+test('every required action binds the exact resource kinds in the safe order', async t => {
+  const base = await upstream(t);
+  const dnsToMeasurement = structuredClone(base.deployment);
+  dnsToMeasurement.steps.find(item => item.action === 'PLAN_DNS_UPDATE').resourceIds = ['measurement'];
+  resignDeployment(dnsToMeasurement);
+  assert.throws(() => replay(base, dnsToMeasurement), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+
+  const hostingWithoutHost = structuredClone(base.deployment);
+  hostingWithoutHost.steps.find(item => item.action === 'PLAN_HOSTING_DEPLOYMENT').resourceIds = ['repository'];
+  resignDeployment(hostingWithoutHost);
+  assert.throws(() => replay(base, hostingWithoutHost), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+
+  for (const action of ['PLAN_DNS_UPDATE', 'PLAN_MEASUREMENT_SETUP']) {
+    const missing = structuredClone(base.deployment);
+    missing.steps = missing.steps.filter(item => item.action !== action); resignDeployment(missing);
+    assert.throws(() => replay(base, missing), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+  }
+
+  const reordered = structuredClone(base.deployment);
+  [reordered.steps[1], reordered.steps[2]] = [reordered.steps[2], reordered.steps[1]];
+  resignDeployment(reordered);
+  assert.throws(() => replay(base, reordered), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+});
+
+test('rollback has one structured manual action for every mutable resource', async t => {
+  const base = await upstream(t);
+  for (const resourceId of ['dns', 'measurement']) {
+    const missing = structuredClone(base.deployment);
+    missing.rollback.resourceIds = missing.rollback.resourceIds.filter(id => id !== resourceId);
+    missing.rollback.steps = missing.rollback.steps.filter(item => item.resourceId !== resourceId);
+    resignDeployment(missing);
+    assert.throws(() => replay(base, missing), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+  }
+
+  const mismatched = structuredClone(base.deployment);
+  mismatched.rollback.steps.find(item => item.resourceId === 'dns').resourceId = 'measurement';
+  resignDeployment(mismatched);
+  assert.throws(() => replay(base, mismatched), error => error.code === 'CONTRACT_SCHEMA_INVALID');
+
+  const automatic = structuredClone(base.deployment);
+  automatic.rollback.steps[0].manualConfirmationRequired = false; resignDeployment(automatic);
+  assert.throws(() => replay(base, automatic), error => error.code === 'CONTRACT_SCHEMA_INVALID');
 });
 
 test('deployment recomputes trusted prelaunch evidence and rejects clones or unverified inputs', async t => {

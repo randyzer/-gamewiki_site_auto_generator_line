@@ -101,9 +101,21 @@
       "measurement"
     ],
     "steps": [
-      "Restore the prior hosting production alias",
-      "Restore the reviewed DNS record set",
-      "Disable only measurement resources created by the approved execution"
+      {
+        "resourceId": "hosting",
+        "action": "Restore the prior hosting production alias",
+        "manualConfirmationRequired": true
+      },
+      {
+        "resourceId": "dns",
+        "action": "Restore the reviewed DNS record set",
+        "manualConfirmationRequired": true
+      },
+      {
+        "resourceId": "measurement",
+        "action": "Disable only measurement resources created by the approved execution",
+        "manualConfirmationRequired": true
+      }
     ],
     "manualConfirmationRequired": true
   },
@@ -111,6 +123,6 @@
     "purpose": "DEPLOYMENT_EXECUTION",
     "status": "AWAITING_CONFIRMATION"
   },
-  "planDigest": "3a2f5942c5aeb45378bdfa88e1bb6b87ab3204e36266ecbc91f650ee132fce28",
-  "fixtureDigest": "0f53ecf05df5777912dc4bba724f7f5910fd3d974636bcce139ed11d8ac49763"
+  "planDigest": "aa77ae7ed17417534857ead11a78e20cac551ec73e2e1469591d2e158b0195d3",
+  "fixtureDigest": "5633269a61015d357516d6cea0af4c336ac678c675a1d1970d42ff535e5ef1b8"
 }

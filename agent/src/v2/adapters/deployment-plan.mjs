@@ -11,8 +11,14 @@ const safeDomainPattern = /^(?=.{1,253}$)(?!-)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0
 const repositoryPattern = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
 const resourceKinds = new Set(['GITHUB_REPOSITORY', 'HOSTING_PROJECT', 'DNS_ZONE', 'MEASUREMENT_PROPERTY']);
 const effectStates = new Set(['NONE', 'UNKNOWN', 'PARTIAL', 'CONFIRMED_EFFECT']);
-const actionKinds = new Set(['VERIFY_SOURCE_REVISION', 'PLAN_HOSTING_DEPLOYMENT',
-  'PLAN_DNS_UPDATE', 'PLAN_MEASUREMENT_SETUP']);
+const requiredActions = Object.freeze([
+  Object.freeze({ action: 'VERIFY_SOURCE_REVISION', kinds: Object.freeze(['GITHUB_REPOSITORY']) }),
+  Object.freeze({ action: 'PLAN_HOSTING_DEPLOYMENT',
+    kinds: Object.freeze(['GITHUB_REPOSITORY', 'HOSTING_PROJECT']) }),
+  Object.freeze({ action: 'PLAN_DNS_UPDATE', kinds: Object.freeze(['HOSTING_PROJECT', 'DNS_ZONE']) }),
+  Object.freeze({ action: 'PLAN_MEASUREMENT_SETUP', kinds: Object.freeze(['MEASUREMENT_PROPERTY']) }),
+]);
+const mutableResourceKinds = new Set(['HOSTING_PROJECT', 'DNS_ZONE', 'MEASUREMENT_PROPERTY']);
 const fail = (code, message) => { throw new ContractError(code, message); };
 const nonempty = value => typeof value === 'string' && value.trim() === value && value.length > 0;
 const digest = (domain, value) => createHash('sha256')
@@ -84,13 +90,16 @@ function validateFixture(manifest) {
   if (!Array.isArray(manifest.resourceScope) || !manifest.resourceScope.length)
     fail('CONTRACT_SCHEMA_INVALID', 'Deployment resource scope is empty');
   const resourceIds = new Set(); const seenResourceKinds = new Set();
+  const resourceLocators = new Set(); const resourceById = new Map();
   for (const resource of manifest.resourceScope) {
     exactObject(resource, ['resourceId', 'kind', 'locator', 'access'], 'deployment resource');
     if (!nonempty(resource.resourceId) || resourceIds.has(resource.resourceId) ||
         !resourceKinds.has(resource.kind) || seenResourceKinds.has(resource.kind) ||
-        !nonempty(resource.locator) || resource.access !== 'PLANNED_ONLY')
+        !nonempty(resource.locator) || resourceLocators.has(resource.locator) ||
+        resource.access !== 'PLANNED_ONLY')
       fail('CONTRACT_SCHEMA_INVALID', 'Deployment resources must be unique and plan-only');
     resourceIds.add(resource.resourceId); seenResourceKinds.add(resource.kind);
+    resourceLocators.add(resource.locator); resourceById.set(resource.resourceId, resource);
   }
   if (seenResourceKinds.size !== resourceKinds.size ||
       manifest.resourceScope.find(item => item.kind === 'GITHUB_REPOSITORY')?.locator !==
@@ -98,31 +107,48 @@ function validateFixture(manifest) {
       !manifest.resourceScope.find(item => item.kind === 'DNS_ZONE')?.locator.endsWith(`:${manifest.domain}`))
     fail('CONTRACT_SCHEMA_INVALID', 'Deployment resources do not cover the exact target scope');
 
-  if (!Array.isArray(manifest.steps) || !manifest.steps.length)
-    fail('CONTRACT_SCHEMA_INVALID', 'Deployment steps are empty');
+  if (!Array.isArray(manifest.steps) || manifest.steps.length !== requiredActions.length)
+    fail('CONTRACT_SCHEMA_INVALID', 'Deployment steps do not cover the required actions');
   const stepIds = new Set();
-  for (const step of manifest.steps) {
+  for (const [index, step] of manifest.steps.entries()) {
     exactObject(step, ['stepId', 'action', 'resourceIds', 'expectedEffect', 'stopCondition'],
       'deployment step');
-    if (!nonempty(step.stepId) || stepIds.has(step.stepId) || !actionKinds.has(step.action) ||
+    const required = requiredActions[index];
+    if (!nonempty(step.stepId) || stepIds.has(step.stepId) || step.action !== required.action ||
         !Array.isArray(step.resourceIds) || !step.resourceIds.length ||
         step.resourceIds.some(id => !resourceIds.has(id)) ||
         new Set(step.resourceIds).size !== step.resourceIds.length ||
         !nonempty(step.expectedEffect) || !nonempty(step.stopCondition))
       fail('CONTRACT_SCHEMA_INVALID', 'Deployment step is invalid');
+    const actualKinds = step.resourceIds.map(id => resourceById.get(id).kind).sort();
+    if (canonicalJson(actualKinds) !== canonicalJson([...required.kinds].sort()))
+      fail('CONTRACT_SCHEMA_INVALID', `Deployment action ${step.action} has invalid resource kinds`);
     stepIds.add(step.stepId);
   }
 
   exactObject(manifest.rollback, ['strategy', 'resourceIds', 'steps', 'manualConfirmationRequired'],
     'deployment rollback');
+  const mutableResourceIds = manifest.resourceScope
+    .filter(resource => mutableResourceKinds.has(resource.kind)).map(resource => resource.resourceId).sort();
   if (manifest.rollback.strategy !== 'MANUAL_APPROVAL_REQUIRED' ||
       manifest.rollback.manualConfirmationRequired !== true ||
       !Array.isArray(manifest.rollback.resourceIds) || !manifest.rollback.resourceIds.length ||
       manifest.rollback.resourceIds.some(id => !resourceIds.has(id)) ||
       new Set(manifest.rollback.resourceIds).size !== manifest.rollback.resourceIds.length ||
-      !Array.isArray(manifest.rollback.steps) || !manifest.rollback.steps.length ||
-      manifest.rollback.steps.some(value => !nonempty(value)))
+      canonicalJson([...manifest.rollback.resourceIds].sort()) !== canonicalJson(mutableResourceIds) ||
+      !Array.isArray(manifest.rollback.steps) ||
+      manifest.rollback.steps.length !== mutableResourceIds.length)
     fail('CONTRACT_SCHEMA_INVALID', 'Deployment rollback is invalid');
+  const rollbackResources = new Set();
+  for (const step of manifest.rollback.steps) {
+    exactObject(step, ['resourceId', 'action', 'manualConfirmationRequired'], 'deployment rollback step');
+    if (!mutableResourceIds.includes(step.resourceId) || rollbackResources.has(step.resourceId) ||
+        !nonempty(step.action) || step.manualConfirmationRequired !== true)
+      fail('CONTRACT_SCHEMA_INVALID', 'Deployment rollback step is invalid');
+    rollbackResources.add(step.resourceId);
+  }
+  if (canonicalJson([...rollbackResources].sort()) !== canonicalJson(mutableResourceIds))
+    fail('CONTRACT_SCHEMA_INVALID', 'Deployment rollback does not cover mutable resources');
   exactObject(manifest.approval, ['purpose', 'status'], 'deployment approval');
   if (manifest.approval.purpose !== 'DEPLOYMENT_EXECUTION' ||
       manifest.approval.status !== 'AWAITING_CONFIRMATION')
