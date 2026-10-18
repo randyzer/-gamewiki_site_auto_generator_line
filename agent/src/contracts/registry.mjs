@@ -52,6 +52,12 @@ const definitions = new Map([
     producer: 'SIMULATED_HOST_ROUTE_DISCOVERY', validator: 'CONTRACT_REGISTRY', schema: load('route-coverage.v1.json') }],
   ['PUBLICATION_PROOF:1', { kind: 'PUBLICATION_PROOF', schemaVersion: 1,
     producer: 'PUBLICATION_PROOF_VALIDATOR', validator: 'CONTRACT_REGISTRY', schema: load('publication-proof.v1.json') }],
+  ['STAGE_ADAPTER_INPUT:1', { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1,
+    producer: 'V2_OFFLINE_HOST', validator: 'CONTRACT_REGISTRY', schema: load('stage-adapter-input.v1.json') }],
+  ['STAGE_ADAPTER_RESULT:1', { kind: 'STAGE_ADAPTER_RESULT', schemaVersion: 1,
+    producer: 'V2_STAGE_ADAPTER', validator: 'CONTRACT_REGISTRY', schema: load('stage-adapter-result.v1.json') }],
+  ['STAGE_GATE_BINDING:1', { kind: 'STAGE_GATE_BINDING', schemaVersion: 1,
+    producer: 'V2_OFFLINE_HOST', validator: 'CONTRACT_REGISTRY', schema: load('stage-gate-binding.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

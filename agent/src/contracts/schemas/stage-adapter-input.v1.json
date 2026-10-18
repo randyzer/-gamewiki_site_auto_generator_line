@@ -1,0 +1,19 @@
+{
+  "$id": "STAGE_ADAPTER_INPUT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "canonicalStageId", "mappingVersion", "contextDigest", "featureGate", "gateBindingDigest", "payloadDigest"],
+  "properties": {
+    "kind": { "const": "STAGE_ADAPTER_INPUT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "V2_OFFLINE_HOST" },
+    "mode": { "const": "OFFLINE" },
+    "runId": { "type": "string", "minLength": 1 },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan"] },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "featureGate": { "enum": ["legacy", "shadow", "v2"] },
+    "gateBindingDigest": { "type": "string", "format": "sha256" },
+    "payloadDigest": { "type": "string", "format": "sha256" }
+  }
+}

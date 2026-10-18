@@ -1,0 +1,21 @@
+{
+  "$id": "STAGE_ADAPTER_RESULT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "canonicalStageId", "mappingVersion", "contextDigest", "inputDigest", "status", "authoritative", "artifactDigests", "errorCodes"],
+  "properties": {
+    "kind": { "const": "STAGE_ADAPTER_RESULT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "V2_STAGE_ADAPTER" },
+    "mode": { "const": "OFFLINE" },
+    "runId": { "type": "string", "minLength": 1 },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan"] },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "inputDigest": { "type": "string", "format": "sha256" },
+    "status": { "enum": ["COMPLETED", "PARTIAL", "BLOCKED", "FAILED"] },
+    "authoritative": { "const": false },
+    "artifactDigests": { "type": "array", "uniqueItems": true, "items": { "type": "string", "format": "sha256" } },
+    "errorCodes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}
