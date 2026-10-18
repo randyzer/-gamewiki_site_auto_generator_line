@@ -1,0 +1,19 @@
+{
+  "$id": "APPROVAL_RECORD_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "namespace", "approvalId", "runId", "stageId", "attemptId", "contextDigest", "schemaBundleDigest", "purpose", "purposePayload", "purposeDigest", "decision", "issuedAtMs", "expiresAtMs", "issuer", "nonce", "policyVersion", "recordDigest"],
+  "properties": {
+    "kind": { "const": "APPROVAL_RECORD" }, "schemaVersion": { "const": 1 },
+    "producer": { "enum": ["SIMULATED_APPROVAL_AUTHORITY", "PRODUCTION_APPROVAL_AUTHORITY"] },
+    "mode": { "enum": ["SIMULATED", "PRODUCTION"] }, "namespace": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+    "approvalId": { "type": "string", "pattern": "^approval-[0-9a-f-]+$" },
+    "runId": { "type": "string", "minLength": 1 }, "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 }, "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "purpose": { "enum": ["RUN_EXECUTION", "SERVICE_RESUME", "PARTIAL_HANDOFF", "UI_MODIFICATION", "DEPLOYMENT_PLAN", "DEPLOYMENT_EXECUTION"] },
+    "purposePayload": { "type": "object" }, "purposeDigest": { "type": "string", "format": "sha256" },
+    "decision": { "enum": ["APPROVED", "DENIED"] }, "issuedAtMs": { "type": "integer", "minimum": 0 },
+    "expiresAtMs": { "type": "integer", "minimum": 1 }, "issuer": { "type": "string", "minLength": 1 },
+    "nonce": { "type": "string", "minLength": 16 }, "policyVersion": { "type": "string", "minLength": 1 },
+    "recordDigest": { "type": "string", "format": "sha256" }
+  }
+}

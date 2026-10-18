@@ -1,0 +1,20 @@
+{
+  "$id": "ROUTE_PUBLICATION_V2", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "stageId", "contextDigest", "siteRevision", "buildDigest", "domain", "handoffDigest", "routePolicyVersion", "pages", "publicationDigest"],
+  "properties": {
+    "kind": { "const": "ROUTE_PUBLICATION" }, "schemaVersion": { "const": 2 },
+    "producer": { "const": "PUBLICATION_ENGINE" }, "mode": { "const": "SIMULATED" },
+    "runId": { "type": "string", "minLength": 1 }, "stageId": { "type": "string", "minLength": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" }, "siteRevision": { "type": "string", "format": "sha256" },
+    "buildDigest": { "type": "string", "format": "sha256" }, "domain": { "type": "string", "minLength": 1 },
+    "handoffDigest": { "type": "string", "format": "sha256" }, "routePolicyVersion": { "const": "p4-shadow-v1" },
+    "pages": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false,
+      "required": ["pageId", "route", "eligibility", "sourceDigest", "disposition", "noindexRequired"], "properties": {
+        "pageId": { "type": "string", "minLength": 1 }, "route": { "type": "string", "pattern": "^/" },
+        "eligibility": { "enum": ["ELIGIBLE", "DRAFT_ONLY", "OMIT", "UNPROVEN"] },
+        "sourceDigest": { "type": "string", "format": "sha256" },
+        "disposition": { "enum": ["PUBLISH", "DRAFT_ONLY", "OMIT", "UNKNOWN"] }, "noindexRequired": { "type": "boolean" }
+      } } },
+    "publicationDigest": { "type": "string", "format": "sha256" }
+  }
+}

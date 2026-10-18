@@ -1,0 +1,12 @@
+{
+  "$id": "APPROVAL_CONSUMPTION_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "namespace", "sequence", "previousDigest", "approvalId", "nonce", "contextDigest", "purposeDigest", "consumedAtMs", "consumptionDigest"],
+  "properties": {
+    "kind": { "const": "APPROVAL_CONSUMPTION" }, "schemaVersion": { "const": 1 },
+    "producer": { "const": "APPROVAL_CONSUMPTION_STORE" }, "namespace": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+    "sequence": { "type": "integer", "minimum": 1 }, "previousDigest": { "type": ["string", "null"], "format": "sha256" },
+    "approvalId": { "type": "string", "pattern": "^approval-[0-9a-f-]+$" }, "nonce": { "type": "string", "minLength": 16 },
+    "contextDigest": { "type": "string", "format": "sha256" }, "purposeDigest": { "type": "string", "format": "sha256" },
+    "consumedAtMs": { "type": "integer", "minimum": 0 }, "consumptionDigest": { "type": "string", "format": "sha256" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$id": "PUBLICATION_PROOF_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "status", "decisionDigest", "coverageDigest", "failures", "proofDigest"],
+  "properties": {
+    "kind": { "const": "PUBLICATION_PROOF" }, "schemaVersion": { "const": 1 },
+    "producer": { "const": "PUBLICATION_PROOF_VALIDATOR" }, "mode": { "const": "SIMULATED" },
+    "status": { "enum": ["VERIFIED", "REJECTED", "UNPROVEN"] },
+    "decisionDigest": { "type": "string", "format": "sha256" }, "coverageDigest": { "type": "string", "format": "sha256" },
+    "failures": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "proofDigest": { "type": "string", "format": "sha256" }
+  }
+}

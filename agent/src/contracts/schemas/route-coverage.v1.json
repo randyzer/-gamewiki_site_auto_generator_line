@@ -1,0 +1,32 @@
+{
+  "$id": "ROUTE_COVERAGE_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "discoveryToolId", "discoveryVersion", "runId", "contextDigest", "siteRevision", "buildDigest", "domain", "handoffDigest", "decisionDigest", "complete", "gaps", "dynamicRouteCoverage", "unprovenRoutes", "routeUniverseDigest", "staticRoutes", "dynamicRoutes", "sitemapRoutes", "navigationRoutes", "navigationDigest", "sitemapDigest", "responses", "responseEvidenceDigest", "coverageDigest"],
+  "properties": {
+    "kind": { "const": "ROUTE_COVERAGE" }, "schemaVersion": { "const": 1 },
+    "producer": { "const": "SIMULATED_HOST_ROUTE_DISCOVERY" }, "mode": { "const": "SIMULATED" },
+    "discoveryToolId": { "type": "string", "minLength": 1 }, "discoveryVersion": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" }, "siteRevision": { "type": "string", "format": "sha256" },
+    "buildDigest": { "type": "string", "format": "sha256" }, "domain": { "type": "string", "minLength": 1 },
+    "handoffDigest": { "type": "string", "format": "sha256" }, "decisionDigest": { "type": "string", "format": "sha256" },
+    "complete": { "type": "boolean" }, "gaps": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "dynamicRouteCoverage": { "enum": ["COMPLETE", "BOUNDED", "UNPROVEN"] },
+    "unprovenRoutes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^/" } },
+    "routeUniverseDigest": { "type": "string", "format": "sha256" },
+    "staticRoutes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^/" } },
+    "dynamicRoutes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^/" } },
+    "sitemapRoutes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^/" } },
+    "navigationRoutes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^/" } },
+    "navigationDigest": { "type": "string", "format": "sha256" }, "sitemapDigest": { "type": "string", "format": "sha256" },
+    "responses": { "type": "array", "items": { "type": "object", "additionalProperties": false,
+      "required": ["route", "status", "redirect", "robots", "responseSha256", "observedAtMs", "source", "byteLength"], "properties": {
+        "route": { "type": "string", "pattern": "^/" }, "status": { "type": "integer", "minimum": 100, "maximum": 599 },
+        "redirect": { "type": ["string", "null"] }, "robots": { "enum": ["index", "noindex", null] },
+        "responseSha256": { "type": "string", "format": "sha256" },
+        "observedAtMs": { "type": "integer", "minimum": 0 }, "source": { "const": "SIMULATED_HOST" },
+        "byteLength": { "type": "integer", "minimum": 0 }
+      } } },
+    "responseEvidenceDigest": { "type": "string", "format": "sha256" },
+    "coverageDigest": { "type": "string", "format": "sha256" }
+  }
+}
