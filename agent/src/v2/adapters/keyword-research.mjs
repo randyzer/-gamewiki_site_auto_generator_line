@@ -3,7 +3,7 @@ import { canonicalJson, deepFreeze } from '../../contracts/canonical-json.mjs';
 import { ContractError } from '../../contracts/errors.mjs';
 import { inspectKeywordMaterial } from '../../contracts/adapters/keyword-skill-v1.mjs';
 import { validateContract } from '../../contracts/registry.mjs';
-import { createTestValidatedInputHarness } from '../../handoff-v2/canonical-handoff.mjs';
+import { createCanonicalHandoff, createTestValidatedInputHarness } from '../../handoff-v2/canonical-handoff.mjs';
 import { validateStageAdapterInput, validateStageAdapterResult } from '../stage-adapter-contract.mjs';
 import { resolveStageIdentity } from '../stage-identity.mjs';
 
@@ -16,28 +16,48 @@ function bytesFor(materialBytes, path) {
   return Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
 }
 
-export function keywordReplayPayloadDigest({ fixtureManifest, expected, lineage, materialBytes }) {
+export function keywordReplayPayloadDigest({ fixtureManifest, expected, lineage, legacyIdentity, materialBytes }) {
   const materials = fixtureManifest.materials.map(item => ({
     fixturePath: item.fixturePath,
     manifestDigest: item.fixtureSha256,
     actualDigest: sha256(bytesFor(materialBytes, item.fixturePath)),
   }));
-  return digest('AGENT_KEYWORD_REPLAY_PAYLOAD_V1', { fixtureManifest, expected, lineage, materials });
+  return digest('AGENT_KEYWORD_REPLAY_PAYLOAD_V1', {
+    fixtureManifest, expected, lineage, legacyIdentity, materials,
+  });
+}
+
+function legacySourceDigest({ fixtureManifest, expected, lineage }) {
+  return digest('AGENT_KEYWORD_LEGACY_SOURCE_V1', { fixtureManifest, expected, lineage });
+}
+
+export function createKeywordLegacyIdentityBinding({ fixtureManifest, expected, lineage,
+  originalNamespace, originalValue, sourceAttempt }) {
+  return deepFreeze({ originalNamespace, originalValue, sourceAttempt,
+    lineageDigest: digest('AGENT_KEYWORD_LINEAGE_V1', lineage),
+    sourceDigest: legacySourceDigest({ fixtureManifest, expected, lineage }) });
 }
 
 function createIdentitySnapshot({ adapterInput, sourceAttempt, schemaBundleDigest, recoveryDigest,
-  fixtureManifest, expected, lineage }) {
-  const identity = resolveStageIdentity({ namespace: 'p3-shadow-alias', value: 'stage-2',
+  fixtureManifest, expected, lineage, legacyIdentity }) {
+  if (!legacyIdentity || legacyIdentity.sourceAttempt !== sourceAttempt ||
+      legacyIdentity.originalNamespace !== 'p3-shadow-alias' ||
+      legacyIdentity.lineageDigest !== digest('AGENT_KEYWORD_LINEAGE_V1', lineage) ||
+      legacyIdentity.sourceDigest !== legacySourceDigest({ fixtureManifest, expected, lineage })) {
+    throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Legacy identity is not bound to this replay source');
+  }
+  const identity = resolveStageIdentity({ namespace: legacyIdentity.originalNamespace,
+    value: legacyIdentity.originalValue,
     mappingVersion: adapterInput.mappingVersion });
   if (identity.canonicalStageId !== adapterInput.canonicalStageId) {
     throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Legacy stage identity does not map to adapter stage');
   }
-  const sourceDigest = digest('AGENT_KEYWORD_LEGACY_SOURCE_V1', { fixtureManifest, expected, lineage });
+  const sourceDigest = legacyIdentity.sourceDigest;
   const base = {
     kind: 'KEYWORD_LEGACY_SNAPSHOT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
     runId: adapterInput.runId, contextDigest: adapterInput.contextDigest, schemaBundleDigest, recoveryDigest,
     mappingVersion: identity.mappingVersion, canonicalStageId: identity.canonicalStageId,
-    originalNamespace: 'p3-shadow-alias', originalValue: identity.shadowAlias,
+    originalNamespace: legacyIdentity.originalNamespace, originalValue: legacyIdentity.originalValue,
     legacySkillName: identity.legacySkillName, legacyArrayIndex: identity.legacyArrayIndex,
     sourceAttempt, sourceDigest,
   };
@@ -122,4 +142,18 @@ export function replayKeywordResearchAttempt(input) {
   };
   validateStageAdapterResult(stageResult);
   return deepFreeze({ identitySnapshot, validatedResult, stageResult, summary });
+}
+
+export function createKeywordResearchHandoff({ replay, consumerCanonicalStageId }) {
+  validateStageAdapterResult(replay?.stageResult);
+  if (replay.stageResult.canonicalStageId !== 'keyword-research') {
+    throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Handoff producer is not keyword-research');
+  }
+  if (consumerCanonicalStageId !== 'template-selection') {
+    throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Keyword research can hand off only to template-selection');
+  }
+  const consumer = resolveStageIdentity({ namespace: 'canonical-stage-id', value: consumerCanonicalStageId,
+    mappingVersion: replay.stageResult.mappingVersion });
+  return createCanonicalHandoff({ validatedInput: replay.validatedResult,
+    consumerStage: consumer.shadowAlias });
 }

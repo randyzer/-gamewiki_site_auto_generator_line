@@ -60,6 +60,36 @@ test('shadow diff contract is closed and all six classifications fail closed cor
   assert.equal(report.authoritative, 'LEGACY');
   assert.equal(report.blocking, true);
   assert.equal(report.diffs.length, 2);
+  assert.throws(() => createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research',
+    mappingVersion: 'stage-identity-v1', attemptId: 10, contextDigest: sha('a'),
+    legacySnapshotDigest: sha('b'), v2ResultDigest: sha('c'), comparisons: [
+      { fieldPath: '/status', diffClass: 'MATCH', legacyValue: 'PARTIAL', v2Value: 'COMPLETED',
+        reasonCode: 'FALSE_MATCH', evidenceReferences: [] },
+    ] }), error => error.code === 'SHADOW_DIFF_CLASSIFICATION_INVALID');
+  assert.throws(() => createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research',
+    mappingVersion: 'stage-identity-v1', attemptId: 10, contextDigest: sha('a'),
+    legacySnapshotDigest: sha('b'), v2ResultDigest: sha('c'), comparisons: [
+      { fieldPath: '/stage', diffClass: 'EXPECTED_FORMAT_DIFFERENCE', legacyValue: 'wrong-stage',
+        v2Value: 'keyword-research', formatRule: 'STAGE_IDENTITY_ALIAS', reasonCode: 'FALSE_FORMAT',
+        evidenceReferences: [] },
+    ] }), error => error.code === 'SHADOW_DIFF_CLASSIFICATION_INVALID');
+  assert.throws(() => createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research',
+    mappingVersion: 'stage-identity-v1', attemptId: 10, contextDigest: sha('a'),
+    legacySnapshotDigest: sha('b'), v2ResultDigest: sha('c'), comparisons: [
+      { fieldPath: '/status', diffClass: 'EXPECTED_FORMAT_DIFFERENCE', legacyValue: 'stage-2',
+        v2Value: 'keyword-research', formatRule: 'STAGE_IDENTITY_ALIAS', reasonCode: 'WRONG_FIELD',
+        evidenceReferences: ['identity-snapshot'] },
+    ] }), error => error.code === 'SHADOW_DIFF_CLASSIFICATION_INVALID');
+  const identityFormat = createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research',
+    mappingVersion: 'stage-identity-v1', attemptId: 10, contextDigest: sha('a'),
+    legacySnapshotDigest: sha('b'), v2ResultDigest: sha('c'), comparisons: [
+      { fieldPath: '/identity/stage', diffClass: 'EXPECTED_FORMAT_DIFFERENCE', legacyValue: 'stage-2',
+        v2Value: 'keyword-research', formatRule: 'STAGE_IDENTITY_ALIAS', reasonCode: 'EXPLICIT_ALIAS',
+        evidenceReferences: ['identity-snapshot'] },
+    ] });
+  assert.equal(identityFormat.blocking, false);
+  assert.equal(classifyShadowDiff({ diffClass: 'LEGACY_DEFECT', fieldPath: '/publicationEligibility',
+    safetyImpact: false }).blocking, true);
   assert.equal(contractDefinition('SHADOW_DIFF', 1).schema.additionalProperties, false);
   assert.throws(() => validateContract('SHADOW_DIFF', 1, { ...report, extra: true }),
     error => error.code === 'CONTRACT_SCHEMA_INVALID');

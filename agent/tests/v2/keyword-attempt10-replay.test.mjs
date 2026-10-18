@@ -1,10 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createCanonicalHandoff } from '../../src/handoff-v2/canonical-handoff.mjs';
+import { createApprovalRequest, createTestApprovalHarness } from '../../src/approval/approval-engine.mjs';
+import { assertConsumableHandoff, authorizeCanonicalHandoff,
+  partialHandoffPurposePayload } from '../../src/handoff-v2/canonical-handoff.mjs';
 import {
+  createKeywordLegacyIdentityBinding,
+  createKeywordResearchHandoff,
   keywordReplayPayloadDigest,
   replayKeywordResearchAttempt,
 } from '../../src/v2/adapters/keyword-research.mjs';
@@ -20,7 +26,9 @@ async function fixture() {
   for (const item of fixtureManifest.materials) {
     materialBytes.set(item.fixturePath, await readFile(join(fixtureRoot, item.fixturePath)));
   }
-  return { fixtureManifest, expected, lineage, materialBytes };
+  const legacyIdentity = createKeywordLegacyIdentityBinding({ fixtureManifest, expected, lineage,
+    originalNamespace: 'p3-shadow-alias', originalValue: 'stage-2', sourceAttempt: 10 });
+  return { fixtureManifest, expected, lineage, materialBytes, legacyIdentity };
 }
 
 test('attempt 10 replay produces a trusted canonical result without upgrading content authority', async () => {
@@ -56,12 +64,78 @@ test('attempt 10 replay produces a trusted canonical result without upgrading co
     sourceDigest: replay.identitySnapshot.sourceDigest, snapshotDigest: replay.identitySnapshot.snapshotDigest,
   });
 
-  const handoff = createCanonicalHandoff({ validatedInput: replay.validatedResult, consumerStage: 'stage-3' });
+  const handoff = createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'template-selection' });
   const dispositions = Object.groupBy(handoff.materials, item => item.publicationEligibility);
   assert.equal(dispositions.UNPROVEN.length, 2);
   assert.equal(dispositions.DRAFT_ONLY.length, 25);
   assert.equal(dispositions.OMIT.length, 4);
   assert.equal(handoff.authorizationStatus, 'REQUIRED');
+});
+
+test('attempt 10 identity is proven from the bound legacy source rather than a hard-coded alias', async () => {
+  const payload = await fixture();
+  const baseInput = { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: sha('a'), featureGate: 'shadow', gateBindingDigest: sha('b') };
+  const options = { sourceAttempt: 10, recoveryDigest: sha('c'), schemaBundleDigest: sha('d'),
+    evidenceOutcomeDigest: sha('e'), siteRevision: sha('f'), domain: 'wallpaper-engine.example' };
+  for (const mutation of [
+    { originalValue: 'stage-1' },
+    { originalValue: 'stage-3' },
+    { originalNamespace: 'legacy-skill-name' },
+    { originalNamespace: 'legacy-array-index', originalValue: 1 },
+    { sourceAttempt: 9 },
+    { lineageDigest: sha('0') },
+  ]) {
+    const bad = { ...payload, legacyIdentity: { ...payload.legacyIdentity, ...mutation } };
+    const adapterInput = { ...baseInput, payloadDigest: keywordReplayPayloadDigest(bad) };
+    assert.throws(() => replayKeywordResearchAttempt({ adapterInput, ...options, ...bad }),
+      error => ['CONTRACT_BINDING_MISMATCH', 'STAGE_ID_UNKNOWN'].includes(error.code), JSON.stringify(mutation));
+  }
+});
+
+test('partial handoff advances only with an exact trusted P4 approval', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'p5-c-handoff-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const payload = await fixture();
+  const adapterInput = { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: sha('a'), featureGate: 'shadow', gateBindingDigest: sha('b'),
+    payloadDigest: keywordReplayPayloadDigest(payload) };
+  const replay = replayKeywordResearchAttempt({ adapterInput, sourceAttempt: 10, ...payload,
+    recoveryDigest: sha('c'), schemaBundleDigest: sha('d'), evidenceOutcomeDigest: sha('e'),
+    siteRevision: sha('f'), domain: 'wallpaper-engine.example' });
+  const candidate = createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'template-selection' });
+  assert.throws(() => assertConsumableHandoff(candidate), error => error.code === 'HANDOFF_APPROVAL_REQUIRED');
+
+  const approvals = await createTestApprovalHarness({ rootDirectory: root, namespace: 'p5-c' });
+  const binding = { runId: candidate.runId, stageId: candidate.stageId, attemptId: candidate.attemptId,
+    contextDigest: candidate.contextDigest, schemaBundleDigest: candidate.schemaBundleDigest,
+    purpose: 'PARTIAL_HANDOFF', purposePayload: partialHandoffPurposePayload(candidate) };
+  const reference = await approvals.authority.issue(createApprovalRequest(binding),
+    { decision: 'APPROVED', nowMs: 1000, expiresAtMs: 2000 });
+  const consumption = await approvals.consumer.consume(reference, { ...binding, nowMs: 1500 });
+  const authorized = authorizeCanonicalHandoff({ candidate, approvalConsumption: consumption });
+  assert.equal(assertConsumableHandoff(authorized), authorized);
+  assert.throws(() => authorizeCanonicalHandoff({ candidate, approvalConsumption: structuredClone(consumption) }),
+    error => error.code === 'APPROVAL_CONSUMPTION_UNTRUSTED');
+
+  assert.throws(() => createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'content-integration' }),
+    error => error.code === 'CONTRACT_BINDING_MISMATCH');
+  const wrongPurposeBinding = { ...binding, purpose: 'UI_MODIFICATION', purposePayload: { handoff: candidate.handoffDigest } };
+  const wrongPurposeRef = await approvals.authority.issue(createApprovalRequest(wrongPurposeBinding),
+    { decision: 'APPROVED', nowMs: 1000, expiresAtMs: 2000 });
+  const wrongPurpose = await approvals.consumer.consume(wrongPurposeRef, { ...wrongPurposeBinding, nowMs: 1500 });
+  assert.throws(() => authorizeCanonicalHandoff({ candidate, approvalConsumption: wrongPurpose }),
+    error => error.code === 'HANDOFF_APPROVAL_BINDING_MISMATCH');
+
+  const drifted = replayKeywordResearchAttempt({ adapterInput, sourceAttempt: 10, ...payload,
+    recoveryDigest: sha('9'), schemaBundleDigest: sha('d'), evidenceOutcomeDigest: sha('e'),
+    siteRevision: sha('f'), domain: 'wallpaper-engine.example' });
+  const driftedCandidate = createKeywordResearchHandoff({ replay: drifted,
+    consumerCanonicalStageId: 'template-selection' });
+  assert.throws(() => authorizeCanonicalHandoff({ candidate: driftedCandidate, approvalConsumption: consumption }),
+    error => error.code === 'HANDOFF_APPROVAL_BINDING_MISMATCH');
 });
 
 test('attempt 10 replay rejects digest drift and non-canonical stage identities', async () => {
