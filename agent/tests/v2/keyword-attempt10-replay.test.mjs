@@ -107,6 +107,18 @@ test('partial handoff advances only with an exact trusted P4 approval', async t 
     siteRevision: sha('f'), domain: 'wallpaper-engine.example' });
   const candidate = createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'template-selection' });
   assert.throws(() => assertConsumableHandoff(candidate), error => error.code === 'HANDOFF_APPROVAL_REQUIRED');
+  for (const mixed of [
+    { ...replay, identitySnapshot: structuredClone(replay.identitySnapshot) },
+    { ...replay, validatedResult: { ...replay.validatedResult, runId: 'other-run' } },
+    { ...replay, validatedResult: { ...replay.validatedResult, attemptId: 11 } },
+    { ...replay, validatedResult: { ...replay.validatedResult, contextDigest: sha('9') } },
+    { ...replay, validatedResult: { ...replay.validatedResult, stageId: 'stage-1' } },
+  ]) {
+    assert.throws(() => createKeywordResearchHandoff({ replay: mixed,
+      consumerCanonicalStageId: 'template-selection' }),
+    error => ['CONTRACT_BINDING_MISMATCH', 'KEYWORD_REPLAY_UNTRUSTED',
+      'KEYWORD_LEGACY_SNAPSHOT_UNTRUSTED'].includes(error.code));
+  }
 
   const approvals = await createTestApprovalHarness({ rootDirectory: root, namespace: 'p5-c' });
   const binding = { runId: candidate.runId, stageId: candidate.stageId, attemptId: candidate.attemptId,

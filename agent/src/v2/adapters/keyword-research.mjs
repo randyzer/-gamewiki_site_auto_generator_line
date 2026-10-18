@@ -6,9 +6,14 @@ import { validateContract } from '../../contracts/registry.mjs';
 import { createCanonicalHandoff, createTestValidatedInputHarness } from '../../handoff-v2/canonical-handoff.mjs';
 import { validateStageAdapterInput, validateStageAdapterResult } from '../stage-adapter-contract.mjs';
 import { resolveStageIdentity } from '../stage-identity.mjs';
+import { assertTrustedKeywordLegacySnapshot,
+  createKeywordLegacySnapshot } from '../keyword-legacy-snapshot.mjs';
+
+export { createKeywordLegacyIdentityBinding } from '../keyword-legacy-snapshot.mjs';
 
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const digest = (domain, value) => sha256(`${domain}\n${canonicalJson(value)}`);
+const trustedReplays = new WeakSet();
 
 function bytesFor(materialBytes, path) {
   const bytes = materialBytes instanceof Map ? materialBytes.get(path) : materialBytes?.[path];
@@ -25,45 +30,6 @@ export function keywordReplayPayloadDigest({ fixtureManifest, expected, lineage,
   return digest('AGENT_KEYWORD_REPLAY_PAYLOAD_V1', {
     fixtureManifest, expected, lineage, legacyIdentity, materials,
   });
-}
-
-function legacySourceDigest({ fixtureManifest, expected, lineage }) {
-  return digest('AGENT_KEYWORD_LEGACY_SOURCE_V1', { fixtureManifest, expected, lineage });
-}
-
-export function createKeywordLegacyIdentityBinding({ fixtureManifest, expected, lineage,
-  originalNamespace, originalValue, sourceAttempt }) {
-  return deepFreeze({ originalNamespace, originalValue, sourceAttempt,
-    lineageDigest: digest('AGENT_KEYWORD_LINEAGE_V1', lineage),
-    sourceDigest: legacySourceDigest({ fixtureManifest, expected, lineage }) });
-}
-
-function createIdentitySnapshot({ adapterInput, sourceAttempt, schemaBundleDigest, recoveryDigest,
-  fixtureManifest, expected, lineage, legacyIdentity }) {
-  if (!legacyIdentity || legacyIdentity.sourceAttempt !== sourceAttempt ||
-      legacyIdentity.originalNamespace !== 'p3-shadow-alias' ||
-      legacyIdentity.lineageDigest !== digest('AGENT_KEYWORD_LINEAGE_V1', lineage) ||
-      legacyIdentity.sourceDigest !== legacySourceDigest({ fixtureManifest, expected, lineage })) {
-    throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Legacy identity is not bound to this replay source');
-  }
-  const identity = resolveStageIdentity({ namespace: legacyIdentity.originalNamespace,
-    value: legacyIdentity.originalValue,
-    mappingVersion: adapterInput.mappingVersion });
-  if (identity.canonicalStageId !== adapterInput.canonicalStageId) {
-    throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Legacy stage identity does not map to adapter stage');
-  }
-  const sourceDigest = legacyIdentity.sourceDigest;
-  const base = {
-    kind: 'KEYWORD_LEGACY_SNAPSHOT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
-    runId: adapterInput.runId, contextDigest: adapterInput.contextDigest, schemaBundleDigest, recoveryDigest,
-    mappingVersion: identity.mappingVersion, canonicalStageId: identity.canonicalStageId,
-    originalNamespace: legacyIdentity.originalNamespace, originalValue: legacyIdentity.originalValue,
-    legacySkillName: identity.legacySkillName, legacyArrayIndex: identity.legacyArrayIndex,
-    sourceAttempt, sourceDigest,
-  };
-  const snapshot = { ...base, snapshotDigest: digest('AGENT_KEYWORD_LEGACY_SNAPSHOT_V1', base) };
-  validateContract('KEYWORD_LEGACY_SNAPSHOT', 1, snapshot);
-  return deepFreeze(snapshot);
 }
 
 export function replayKeywordResearchAttempt(input) {
@@ -123,7 +89,7 @@ export function replayKeywordResearchAttempt(input) {
   if (canonicalJson(input.lineage.pendingIds) !== canonicalJson(input.expected.pendingIds)) {
     throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Pending rows do not match expected lineage');
   }
-  const identitySnapshot = createIdentitySnapshot(input);
+  const identitySnapshot = createKeywordLegacySnapshot(input);
   const validatedResult = createTestValidatedInputHarness().validate({
     runId: input.adapterInput.runId, stageId: identitySnapshot.originalValue, attemptId: input.sourceAttempt,
     contextDigest: input.adapterInput.contextDigest, schemaBundleDigest: input.schemaBundleDigest,
@@ -141,11 +107,19 @@ export function replayKeywordResearchAttempt(input) {
     errorCodes: ['CONTENT_UNPROVEN'],
   };
   validateStageAdapterResult(stageResult);
-  return deepFreeze({ identitySnapshot, validatedResult, stageResult, summary });
+  const replayBinding = {
+    identitySnapshotDigest: identitySnapshot.snapshotDigest,
+    validatedResultDigest: validatedResult.validationDigest,
+    stageResultDigest: digest('AGENT_STAGE_ADAPTER_RESULT_V1', stageResult),
+  };
+  const replay = deepFreeze({ identitySnapshot, validatedResult, stageResult, summary, replayBinding });
+  trustedReplays.add(replay);
+  return replay;
 }
 
 export function createKeywordResearchHandoff({ replay, consumerCanonicalStageId }) {
   validateStageAdapterResult(replay?.stageResult);
+  assertTrustedKeywordLegacySnapshot(replay?.identitySnapshot);
   if (replay.stageResult.canonicalStageId !== 'keyword-research') {
     throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Handoff producer is not keyword-research');
   }
@@ -154,6 +128,23 @@ export function createKeywordResearchHandoff({ replay, consumerCanonicalStageId 
   }
   const consumer = resolveStageIdentity({ namespace: 'canonical-stage-id', value: consumerCanonicalStageId,
     mappingVersion: replay.stageResult.mappingVersion });
+  const { identitySnapshot: snapshot, validatedResult: validated, stageResult, replayBinding } = replay;
+  const bindingMatches = stageResult.runId === snapshot.runId && validated.runId === snapshot.runId &&
+    stageResult.contextDigest === snapshot.contextDigest && validated.contextDigest === snapshot.contextDigest &&
+    validated.attemptId === snapshot.sourceAttempt && validated.schemaBundleDigest === snapshot.schemaBundleDigest &&
+    validated.recoveryDigest === snapshot.recoveryDigest && validated.stageId === snapshot.originalValue &&
+    stageResult.mappingVersion === snapshot.mappingVersion &&
+    replayBinding?.identitySnapshotDigest === snapshot.snapshotDigest &&
+    replayBinding?.validatedResultDigest === validated.validationDigest &&
+    replayBinding?.stageResultDigest === digest('AGENT_STAGE_ADAPTER_RESULT_V1', stageResult) &&
+    canonicalJson([...new Set(validated.materials.map(item => item.sourceDigest))].sort()) ===
+      canonicalJson(stageResult.artifactDigests);
+  if (!bindingMatches) {
+    throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Keyword replay objects do not share one binding');
+  }
+  if (!trustedReplays.has(replay)) {
+    throw new ContractError('KEYWORD_REPLAY_UNTRUSTED', 'Keyword handoff requires an intact adapter replay');
+  }
   return createCanonicalHandoff({ validatedInput: replay.validatedResult,
     consumerStage: consumer.shadowAlias });
 }

@@ -6,8 +6,25 @@ import { assessArchivedKeywordEvidence } from '../../src/v2/host/evidence-adapte
 import { classifyShadowDiff } from '../../src/v2/shadow-diff-classifier.mjs';
 import { createShadowDiff } from '../../src/v2/shadow-comparator.mjs';
 import { contractDefinition, validateContract } from '../../src/contracts/registry.mjs';
+import { createKeywordLegacyIdentityBinding,
+  createKeywordLegacySnapshot } from '../../src/v2/keyword-legacy-snapshot.mjs';
 
 const sha = value => value.repeat(64);
+
+function trustedIdentitySnapshot(overrides = {}) {
+  const fixtureManifest = { sourceAttempt: overrides.sourceAttempt ?? 10 };
+  const expected = { status: 'partial' };
+  const lineage = { pendingIds: [36, 84, 96, 100] };
+  const legacyIdentity = createKeywordLegacyIdentityBinding({ fixtureManifest, expected, lineage,
+    originalNamespace: 'p3-shadow-alias', originalValue: 'stage-2',
+    sourceAttempt: overrides.sourceAttempt ?? 10 });
+  const adapterInput = { runId: overrides.runId ?? 'wallpaper-engine-002',
+    canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: overrides.contextDigest ?? sha('a') };
+  return createKeywordLegacySnapshot({ adapterInput, sourceAttempt: overrides.sourceAttempt ?? 10,
+    schemaBundleDigest: sha('d'), recoveryDigest: sha('e'), fixtureManifest, expected, lineage,
+    legacyIdentity });
+}
 
 test('offline evidence replay preserves T0 claims and never invokes paused providers', async () => {
   const statement = 'Obtain a current first-party subtitle transcript.';
@@ -80,14 +97,30 @@ test('shadow diff contract is closed and all six classifications fail closed cor
         v2Value: 'keyword-research', formatRule: 'STAGE_IDENTITY_ALIAS', reasonCode: 'WRONG_FIELD',
         evidenceReferences: ['identity-snapshot'] },
     ] }), error => error.code === 'SHADOW_DIFF_CLASSIFICATION_INVALID');
+  const identitySnapshot = trustedIdentitySnapshot();
   const identityFormat = createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research',
     mappingVersion: 'stage-identity-v1', attemptId: 10, contextDigest: sha('a'),
-    legacySnapshotDigest: sha('b'), v2ResultDigest: sha('c'), comparisons: [
+    legacySnapshotDigest: identitySnapshot.snapshotDigest, identitySnapshot, v2ResultDigest: sha('c'), comparisons: [
       { fieldPath: '/identity/stage', diffClass: 'EXPECTED_FORMAT_DIFFERENCE', legacyValue: 'stage-2',
         v2Value: 'keyword-research', formatRule: 'STAGE_IDENTITY_ALIAS', reasonCode: 'EXPLICIT_ALIAS',
         evidenceReferences: ['identity-snapshot'] },
     ] });
   assert.equal(identityFormat.blocking, false);
+  for (const mutation of [
+    { identitySnapshot: structuredClone(identitySnapshot) },
+    { identitySnapshot, legacySnapshotDigest: sha('0') },
+    { identitySnapshot, runId: 'other-run' },
+    { identitySnapshot, attemptId: 11 },
+    { identitySnapshot, contextDigest: sha('9') },
+  ]) {
+    assert.throws(() => createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research',
+      mappingVersion: 'stage-identity-v1', attemptId: 10, contextDigest: sha('a'),
+      legacySnapshotDigest: identitySnapshot.snapshotDigest, v2ResultDigest: sha('c'), ...mutation,
+      comparisons: [{ fieldPath: '/identity/stage', diffClass: 'EXPECTED_FORMAT_DIFFERENCE',
+        legacyValue: 'stage-2', v2Value: 'keyword-research', formatRule: 'STAGE_IDENTITY_ALIAS',
+        reasonCode: 'EXPLICIT_ALIAS', evidenceReferences: ['identity-snapshot'] }] }),
+    error => ['KEYWORD_LEGACY_SNAPSHOT_UNTRUSTED', 'CONTRACT_BINDING_MISMATCH'].includes(error.code));
+  }
   assert.equal(classifyShadowDiff({ diffClass: 'LEGACY_DEFECT', fieldPath: '/publicationEligibility',
     safetyImpact: false }).blocking, true);
   assert.equal(contractDefinition('SHADOW_DIFF', 1).schema.additionalProperties, false);

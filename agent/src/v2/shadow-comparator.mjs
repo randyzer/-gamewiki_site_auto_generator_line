@@ -3,12 +3,13 @@ import { canonicalJson, deepFreeze } from '../contracts/canonical-json.mjs';
 import { ContractError } from '../contracts/errors.mjs';
 import { validateContract } from '../contracts/registry.mjs';
 import { assertCanonicalStageId, resolveStageIdentity } from './stage-identity.mjs';
+import { assertTrustedKeywordLegacySnapshot } from './keyword-legacy-snapshot.mjs';
 import { classifyShadowDiff } from './shadow-diff-classifier.mjs';
 
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const valueDigest = value => sha256(`AGENT_SHADOW_VALUE_V1\n${canonicalJson(value)}`);
 
-function assertClassification(item, mappingVersion) {
+function assertClassification(item, input) {
   const equal = canonicalJson(item.legacyValue) === canonicalJson(item.v2Value);
   if (item.diffClass === 'MATCH' && !equal) {
     throw new ContractError('SHADOW_DIFF_CLASSIFICATION_INVALID', 'MATCH requires equal canonical values');
@@ -18,9 +19,17 @@ function assertClassification(item, mappingVersion) {
         !item.evidenceReferences.includes('identity-snapshot')) {
       throw new ContractError('SHADOW_DIFF_CLASSIFICATION_INVALID', 'Unknown expected format rule');
     }
+    const snapshot = assertTrustedKeywordLegacySnapshot(input.identitySnapshot);
+    if (snapshot.snapshotDigest !== input.legacySnapshotDigest || snapshot.runId !== input.runId ||
+        snapshot.canonicalStageId !== input.canonicalStageId || snapshot.mappingVersion !== input.mappingVersion ||
+        snapshot.sourceAttempt !== input.attemptId || snapshot.contextDigest !== input.contextDigest ||
+        snapshot.originalNamespace !== 'p3-shadow-alias' || snapshot.originalValue !== item.legacyValue) {
+      throw new ContractError('CONTRACT_BINDING_MISMATCH', 'Identity snapshot does not bind this comparison');
+    }
     let identity;
     try {
-      identity = resolveStageIdentity({ namespace: 'p3-shadow-alias', value: item.legacyValue, mappingVersion });
+      identity = resolveStageIdentity({ namespace: snapshot.originalNamespace, value: snapshot.originalValue,
+        mappingVersion: input.mappingVersion });
     } catch {
       throw new ContractError('SHADOW_DIFF_CLASSIFICATION_INVALID', 'Legacy value does not satisfy the format rule');
     }
@@ -33,7 +42,7 @@ function assertClassification(item, mappingVersion) {
 export function createShadowDiff(input) {
   assertCanonicalStageId(input.canonicalStageId, { mappingVersion: input.mappingVersion });
   const diffs = input.comparisons.map(item => {
-    assertClassification(item, input.mappingVersion);
+    assertClassification(item, input);
     const classification = classifyShadowDiff(item);
     return {
       fieldPath: item.fieldPath,
