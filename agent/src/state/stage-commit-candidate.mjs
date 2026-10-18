@@ -6,6 +6,8 @@ import { validateContract } from '../contracts/registry.mjs';
 import { assertStageState } from './state-engine.mjs';
 import { computeCandidateDigest } from './state-records.mjs';
 import { assertRequestScopeAssessment } from './request-scope.mjs';
+import { STAGE_IDENTITY_MAPPING_VERSION } from '../v2/stage-identity.mjs';
+import { stageRegistry } from '../v2/stage-registry.mjs';
 
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const contains = (root, path) => {
@@ -26,12 +28,12 @@ async function verifyStagedObject(stagingRoot, object) {
     fail('CONTRACT_DIGEST_MISMATCH', `Staged object does not match ${object.role}`);
 }
 
-export async function createStageCommitCandidate(input) {
+async function buildCandidate(input, transaction = null) {
   if (!input.workerStop || input.workerStop.phase !== 'STOPPED')
     fail('STATE_CANDIDATE_INVALID', 'Stage Commit Candidate requires a Worker stop record');
-  if (input.state?.gate?.status === 'APPROVED')
+  if (!transaction && input.state?.gate?.status === 'APPROVED')
     fail('STATE_APPROVAL_ENGINE_UNAVAILABLE', 'P3 cannot persist APPROVED until P4 provides a trusted Approval Engine');
-  assertStageState(input.state, { approvalBindingVerified: input.state.gate.status !== 'APPROVED' });
+  assertStageState(input.state, { approvalBindingVerified: Boolean(transaction) || input.state.gate.status !== 'APPROVED' });
   assertRequestScopeAssessment(input.requestScope);
   if (input.state.execution.phase !== 'STOPPED' || input.state.execution.reason !== input.workerStop.reason)
     fail('STATE_CANDIDATE_INVALID', 'Worker stop and State Engine result disagree');
@@ -58,24 +60,46 @@ export async function createStageCommitCandidate(input) {
   for (const required of ['ATTEMPT_STARTED', 'WORKER_STOPPED', 'STAGE_CHECKPOINT_COMMITTED']) {
     if (!events.some(event => event.type === required)) fail('STATE_CANDIDATE_INVALID', `Missing event: ${required}`);
   }
-  const base = { kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 1, producer: 'STATE_ENGINE',
-    mode: input.mode, runId: input.runId, stageId: input.stageId, attemptId: input.attemptId,
+  const envelope = transaction ? {
+    kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 2, producer: 'V2_TRANSACTION_COORDINATOR',
+    mode: 'SHADOW', operationId: transaction.operationId,
+    mappingVersion: STAGE_IDENTITY_MAPPING_VERSION, policyVersion: transaction.policyVersion,
+    canonicalStageId: transaction.canonicalStageId,
+    purposeDigest: transaction.purposeDigest, approvalId: transaction.approvalId,
+    approvalDigest: transaction.approvalDigest,
+  } : { kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 1, producer: 'STATE_ENGINE', mode: input.mode };
+  const base = { ...envelope, runId: input.runId, stageId: input.stageId, attemptId: input.attemptId,
     contextDigest: input.contextDigest, schemaBundleDigest: input.schemaBundleDigest,
     expectedPrevious: { ...input.expectedPrevious }, workerStop: { ...input.workerStop },
     objects: input.objects.map(object => ({ ...object })), requestScope: structuredClone(input.requestScope),
-    state: structuredClone(input.state),
-    nextAction: input.nextAction, errors: (input.errors ?? []).map(item => ({ ...item })), events };
+    state: structuredClone(input.state), nextAction: input.nextAction,
+    errors: (input.errors ?? []).map(item => ({ ...item })), events };
   const candidate = { ...base, candidateDigest: computeCandidateDigest(base) };
-  validateContract('STAGE_COMMIT_CANDIDATE', 1, candidate);
-  if (candidate.state.gate.status === 'APPROVED')
-    fail('STATE_APPROVAL_ENGINE_UNAVAILABLE', 'P3 cannot validate APPROVED without P4');
+  validateContract('STAGE_COMMIT_CANDIDATE', envelope.schemaVersion, candidate);
   assertRequestScopeAssessment(candidate.requestScope);
   return Object.freeze(candidate);
 }
 
+export async function createStageCommitCandidate(input) {
+  return buildCandidate(input);
+}
+
+export async function createOfflineApprovedStageCommitCandidate(input, { capabilityRegistry, capability, rootDirectory }) {
+  capabilityRegistry.assert(capability, { capability: 'OFFLINE_APPROVED_CANDIDATE', mode: 'SIMULATED', rootDirectory });
+  stageRegistry.requireCore(input.canonicalStageId);
+  if (input.stageId !== input.canonicalStageId)
+    fail('CONTRACT_BINDING_MISMATCH', 'V2 candidate requires canonical stage identity in both fields');
+  if (input.state?.gate?.status !== 'APPROVED' || input.state.gate.approvalDigest !== input.approvalDigest)
+    fail('STATE_APPROVAL_INVALID', 'Offline candidate requires an exactly bound approved state');
+  return buildCandidate(input, input);
+}
+
 export function assertStageCommitCandidate(candidate) {
-  validateContract('STAGE_COMMIT_CANDIDATE', 1, candidate);
-  assertStageState(candidate.state, { approvalBindingVerified: candidate.state.gate.status !== 'APPROVED' });
+  validateContract('STAGE_COMMIT_CANDIDATE', candidate.schemaVersion, candidate);
+  const approvedV2 = candidate.schemaVersion === 2 && candidate.state.gate.status === 'APPROVED';
+  if (candidate.schemaVersion !== 1 && !approvedV2)
+    fail('STATE_CANDIDATE_INVALID', 'Only transaction-bound V2 APPROVED candidates are supported');
+  assertStageState(candidate.state, { approvalBindingVerified: approvedV2 || candidate.state.gate.status !== 'APPROVED' });
   if (computeCandidateDigest(candidate) !== candidate.candidateDigest)
     fail('CONTRACT_DIGEST_MISMATCH', 'Stage Commit Candidate digest does not match its payload');
   return candidate;

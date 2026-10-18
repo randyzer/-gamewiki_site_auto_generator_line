@@ -28,8 +28,12 @@ const definitions = new Map([
     producer: 'STATE_ENGINE', validator: 'CONTRACT_REGISTRY', schema: load('state-event.v1.json') }],
   ['STAGE_COMMIT_CANDIDATE:1', { kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 1,
     producer: 'STATE_ENGINE', validator: 'CONTRACT_REGISTRY', schema: load('stage-commit-candidate.v1.json') }],
+  ['STAGE_COMMIT_CANDIDATE:2', { kind: 'STAGE_COMMIT_CANDIDATE', schemaVersion: 2,
+    producer: 'V2_TRANSACTION_COORDINATOR', validator: 'CONTRACT_REGISTRY', schema: load('stage-commit-candidate.v2.json') }],
   ['STAGE_COMMIT_RECORD:1', { kind: 'STAGE_COMMIT_RECORD', schemaVersion: 1,
     producer: 'STAGE_COMMIT_STORE', validator: 'CONTRACT_REGISTRY', schema: load('stage-commit-record.v1.json') }],
+  ['STAGE_COMMIT_RECORD:2', { kind: 'STAGE_COMMIT_RECORD', schemaVersion: 2,
+    producer: 'V2_OFFLINE_STAGE_COMMIT_STORE', validator: 'CONTRACT_REGISTRY', schema: load('stage-commit-record.v2.json') }],
   ['STAGE_CHECKPOINT:1', { kind: 'STAGE_CHECKPOINT', schemaVersion: 1,
     producer: 'STATE_RECOVERY', validator: 'CONTRACT_REGISTRY', schema: load('stage-checkpoint.v1.json') }],
   ['APPROVAL_REQUEST:1', { kind: 'APPROVAL_REQUEST', schemaVersion: 1,
@@ -40,6 +44,8 @@ const definitions = new Map([
     producer: 'APPROVAL_STORE', validator: 'CONTRACT_REGISTRY', schema: load('approval-reference.v1.json') }],
   ['APPROVAL_CONSUMPTION:1', { kind: 'APPROVAL_CONSUMPTION', schemaVersion: 1,
     producer: 'APPROVAL_CONSUMPTION_STORE', validator: 'CONTRACT_REGISTRY', schema: load('approval-consumption.v1.json') }],
+  ['APPROVAL_CONSUMPTION:2', { kind: 'APPROVAL_CONSUMPTION', schemaVersion: 2,
+    producer: 'APPROVAL_CONSUMPTION_STORE', validator: 'CONTRACT_REGISTRY', schema: load('approval-consumption.v2.json') }],
   ['APPROVAL_REVOCATION:1', { kind: 'APPROVAL_REVOCATION', schemaVersion: 1,
     producer: 'SIMULATED_APPROVAL_AUTHORITY', validator: 'CONTRACT_REGISTRY', schema: load('approval-revocation.v1.json') }],
   ['VALIDATED_STAGE_RESULT:1', { kind: 'VALIDATED_STAGE_RESULT', schemaVersion: 1,
@@ -58,6 +64,10 @@ const definitions = new Map([
     producer: 'V2_STAGE_ADAPTER', validator: 'CONTRACT_REGISTRY', schema: load('stage-adapter-result.v1.json') }],
   ['STAGE_GATE_BINDING:1', { kind: 'STAGE_GATE_BINDING', schemaVersion: 1,
     producer: 'V2_OFFLINE_HOST', validator: 'CONTRACT_REGISTRY', schema: load('stage-gate-binding.v1.json') }],
+  ['TRANSACTION_INTENT:1', { kind: 'TRANSACTION_INTENT', schemaVersion: 1,
+    producer: 'V2_TRANSACTION_COORDINATOR', validator: 'CONTRACT_REGISTRY', schema: load('transaction-intent.v1.json') }],
+  ['TRANSACTION_OUTCOME:1', { kind: 'TRANSACTION_OUTCOME', schemaVersion: 1,
+    producer: 'V2_TRANSACTION_COORDINATOR', validator: 'CONTRACT_REGISTRY', schema: load('transaction-outcome.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

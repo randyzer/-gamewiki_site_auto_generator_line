@@ -1,0 +1,18 @@
+{
+  "$id": "STAGE_COMMIT_CANDIDATE_V2", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "operationId", "mappingVersion", "policyVersion", "canonicalStageId", "purposeDigest", "approvalId", "approvalDigest", "runId", "stageId", "attemptId", "contextDigest", "schemaBundleDigest", "expectedPrevious", "workerStop", "objects", "requestScope", "state", "nextAction", "errors", "events", "candidateDigest"],
+  "properties": {
+    "kind": { "const": "STAGE_COMMIT_CANDIDATE" }, "schemaVersion": { "const": 2 },
+    "producer": { "const": "V2_TRANSACTION_COORDINATOR" }, "mode": { "const": "SHADOW" },
+    "operationId": { "type": "string", "pattern": "^op-[a-f0-9]{32}$" }, "mappingVersion": { "const": "stage-identity-v1" },
+    "policyVersion": { "type": "string", "minLength": 1 },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan"] },
+    "purposeDigest": { "type": "string", "format": "sha256" }, "approvalId": { "type": "string", "pattern": "^approval-[0-9a-f-]+$" },
+    "approvalDigest": { "type": "string", "format": "sha256" }, "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 }, "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" }, "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "expectedPrevious": { "type": "object" }, "workerStop": { "type": "object" }, "objects": { "type": "array", "minItems": 1 },
+    "requestScope": { "type": "object" }, "state": { "type": "object" }, "nextAction": { "type": "string", "minLength": 1 },
+    "errors": { "type": "array" }, "events": { "type": "array", "minItems": 2 }, "candidateDigest": { "type": "string", "format": "sha256" }
+  }
+}
