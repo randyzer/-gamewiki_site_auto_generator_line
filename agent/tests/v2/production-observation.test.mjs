@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createPipeline } from '../../src/pipeline.mjs';
-import { createProductionObservation } from '../../src/v2/production-observation.mjs';
+import { assertTrustedObservationSnapshot,
+  createProductionObservation } from '../../src/v2/production-observation.mjs';
 import { fixture, goodResult } from '../helpers.mjs';
 
 const sha256 = 'a'.repeat(64);
@@ -54,6 +55,9 @@ test('shadow observer receives only a deeply frozen non-authoritative snapshot',
   assert.equal(Object.hasOwn(received, 'contextDigest'), false);
   assert.equal(received.canonicalStageId, 'homepage-research');
   assert.deepEqual(received.artifactDigests, ['b'.repeat(64)]);
+  assert.equal(assertTrustedObservationSnapshot(received), received);
+  assert.throws(() => assertTrustedObservationSnapshot(structuredClone(received)),
+    /trusted observation snapshot/i);
 });
 
 test('observation rejects capability injection and identity or digest mismatches', async () => {
