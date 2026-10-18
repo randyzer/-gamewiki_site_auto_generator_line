@@ -5,8 +5,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApprovalRequest, createTestApprovalHarness } from '../src/approval/approval-engine.mjs';
 import { authorizeCanonicalHandoff, createCanonicalHandoff, createTestValidatedInputHarness,
-  partialHandoffPurposePayload } from '../src/handoff-v2/canonical-handoff.mjs';
-import { createTestDependencyApprovalHarness, dependencySatisfied } from '../src/state/dependency-rules.mjs';
+  assertConsumableHandoff, partialHandoffPurposePayload } from '../src/handoff-v2/canonical-handoff.mjs';
+import { createAuthorizedDependencyPolicyAdapter, createTestDependencyApprovalHarness,
+  dependencySatisfied } from '../src/state/dependency-rules.mjs';
 import { digest } from './state-helpers.mjs';
 
 const base = { producerStageId: 'stage-2', consumerStageId: 'stage-3', purpose: 'PARTIAL_HANDOFF',
@@ -73,20 +74,30 @@ test('dependency gate reuses one exact canonical handoff consumption without a s
   const handoff = await canonicalPartialHandoff(t);
   const input = { projection: { stageSatisfied: false, status: 'PARTIAL' }, producerStageId: 'stage-2',
     consumerStageId: 'stage-4', purpose: 'PARTIAL_HANDOFF', contextDigest: handoff.contextDigest,
-    handoffDigest: handoff.handoffDigest, alreadyAuthorizedHandoff: handoff };
-  const result = dependencySatisfied(input);
+    handoffDigest: handoff.handoffDigest, handoff };
+  const policy = createAuthorizedDependencyPolicyAdapter({ verifyAuthorizedHandoff: assertConsumableHandoff });
+  const result = policy.evaluate(input);
   assert.equal(result.satisfied, true);
   assert.equal(result.ruleId, 'V2_STAGE2_PARTIAL_TO_STAGE4_DRAFT');
   assert.equal(result.approvalDigest, handoff.approvalConsumptionDigest);
-  assert.equal(dependencySatisfied({ ...input, consumerStageId: 'stage-3' }).reason,
+  assert.throws(() => policy.evaluate({ ...input, handoff: structuredClone(handoff) }),
+    error => error.code === 'HANDOFF_UNTRUSTED');
+  assert.equal(policy.evaluate({ ...input, consumerStageId: 'stage-3' }).reason,
     'HANDOFF_BINDING_MISMATCH');
-  assert.equal(dependencySatisfied({ ...input, projection: { stageSatisfied: true, status: 'BLOCKED' } }).reason,
+  assert.equal(policy.evaluate({ ...input, projection: { stageSatisfied: true, status: 'BLOCKED' } }).reason,
     'PROJECTION_INCONSISTENT');
+  const forged = { stageId: 'stage-2', consumerStage: 'stage-4', contextDigest: handoff.contextDigest,
+    handoffDigest: handoff.handoffDigest, authorizationStatus: 'CONSUMED',
+    approvalConsumptionDigest: digest('forged'), pendingRows: [84], materials: handoff.materials };
+  assert.equal(dependencySatisfied({ ...input, handoff: undefined, authorizationCapability: { binding: forged } }).reason,
+    'AUTHORIZATION_CAPABILITY_UNTRUSTED');
+  assert.equal(dependencySatisfied({ ...input, handoff: undefined, alreadyAuthorizedHandoff: forged }).reason,
+    'TRUSTED_APPROVAL_REQUIRED');
   const legacy = createTestDependencyApprovalHarness();
   const approvalReference = legacy.issue({ producerStageId: 'stage-2', consumerStageId: 'stage-4',
     purpose: 'PARTIAL_HANDOFF', contextDigest: handoff.contextDigest, handoffDigest: handoff.handoffDigest,
     expiresAt: '2026-10-18T00:00:00.000Z', consumed: false });
-  assert.equal(dependencySatisfied({ ...input, approvalReference, approvalVerifier: legacy.verifier }).reason,
+  assert.equal(policy.evaluate({ ...input, approvalReference, approvalVerifier: legacy.verifier }).reason,
     'AUTHORIZATION_PATH_AMBIGUOUS');
 });
 
@@ -101,10 +112,11 @@ test('complete canonical dependency still requires exact handoff bindings and a 
   const handoff = createCanonicalHandoff({ validatedInput: validated, consumerStage: 'stage-4' });
   const input = { projection: { stageSatisfied: true, status: 'COMPLETED' }, producerStageId: 'stage-2',
     consumerStageId: 'stage-4', purpose: 'PARTIAL_HANDOFF', contextDigest: handoff.contextDigest,
-    handoffDigest: handoff.handoffDigest, alreadyAuthorizedHandoff: handoff };
-  assert.equal(dependencySatisfied(input).satisfied, true);
-  assert.equal(dependencySatisfied({ ...input, contextDigest: digest('other') }).reason,
+    handoffDigest: handoff.handoffDigest, handoff };
+  const policy = createAuthorizedDependencyPolicyAdapter({ verifyAuthorizedHandoff: assertConsumableHandoff });
+  assert.equal(policy.evaluate(input).satisfied, true);
+  assert.equal(policy.evaluate({ ...input, contextDigest: digest('other') }).reason,
     'HANDOFF_BINDING_MISMATCH');
-  assert.equal(dependencySatisfied({ ...input, projection: { stageSatisfied: true, status: 'FAILED' } }).reason,
+  assert.equal(policy.evaluate({ ...input, projection: { stageSatisfied: true, status: 'FAILED' } }).reason,
     'PROJECTION_INCONSISTENT');
 });

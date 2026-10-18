@@ -3,6 +3,7 @@ import { canonicalJson } from '../contracts/canonical-json.mjs';
 
 const equal = (left, right, fields) => fields.every(field => left[field] === right[field]);
 const trustedVerifiers = new WeakSet();
+const trustedAuthorizationCapabilities = new WeakSet();
 const partialRules = new Map([
   ['stage-2:stage-3:PARTIAL_HANDOFF', 'V2_STAGE2_PARTIAL_TO_STAGE3'],
   ['stage-2:stage-4:PARTIAL_HANDOFF', 'V2_STAGE2_PARTIAL_TO_STAGE4_DRAFT'],
@@ -35,7 +36,7 @@ export function createTestDependencyApprovalHarness() {
 
 export function dependencySatisfied({ projection, producerStageId, consumerStageId, purpose,
   contextDigest, handoffDigest, approvalReference = null, approvalVerifier = null,
-  alreadyAuthorizedHandoff = null,
+  authorizationCapability = null,
   now = new Date().toISOString() }) {
   const denied = reason => Object.freeze({ satisfied: false, reason, ruleId: null, approvalDigest: null });
   const completeStatus = ['PASSED', 'COMPLETED'].includes(projection?.status);
@@ -43,12 +44,14 @@ export function dependencySatisfied({ projection, producerStageId, consumerStage
       (projection.stageSatisfied && !completeStatus) || (!projection.stageSatisfied && completeStatus)) {
     return denied('PROJECTION_INCONSISTENT');
   }
-  if (alreadyAuthorizedHandoff && (approvalReference || approvalVerifier)) {
+  if (authorizationCapability && (approvalReference || approvalVerifier)) {
     return denied('AUTHORIZATION_PATH_AMBIGUOUS');
   }
   let authorized = null;
-  if (alreadyAuthorizedHandoff) {
-    authorized = alreadyAuthorizedHandoff;
+  if (authorizationCapability) {
+    if (!trustedAuthorizationCapabilities.has(authorizationCapability))
+      return denied('AUTHORIZATION_CAPABILITY_UNTRUSTED');
+    authorized = authorizationCapability.binding;
     if (purpose !== 'PARTIAL_HANDOFF' || authorized.stageId !== producerStageId ||
         authorized.consumerStage !== consumerStageId || authorized.contextDigest !== contextDigest ||
         authorized.handoffDigest !== handoffDigest) return denied('HANDOFF_BINDING_MISMATCH');
@@ -80,4 +83,22 @@ export function dependencySatisfied({ projection, producerStageId, consumerStage
     return denied(approval.consumed ? 'APPROVAL_CONSUMED' : 'APPROVAL_EXPIRED');
   return Object.freeze({ satisfied: true, reason: 'PARTIAL_HANDOFF_APPROVED', ruleId,
     approvalDigest: approvalReference.approvalDigest });
+}
+
+export function createAuthorizedDependencyPolicyAdapter({ verifyAuthorizedHandoff }) {
+  if (typeof verifyAuthorizedHandoff !== 'function') throw new TypeError('Authorized handoff verifier is required');
+  return Object.freeze({ evaluate(input) {
+    const handoff = verifyAuthorizedHandoff(input.handoff);
+    const capability = Object.freeze({ binding: Object.freeze({
+      stageId: handoff.stageId, consumerStage: handoff.consumerStage,
+      contextDigest: handoff.contextDigest, handoffDigest: handoff.handoffDigest,
+      authorizationStatus: handoff.authorizationStatus,
+      approvalConsumptionDigest: handoff.approvalConsumptionDigest,
+      pendingRows: handoff.pendingRows,
+      materials: handoff.materials,
+    }) });
+    trustedAuthorizationCapabilities.add(capability);
+    const { handoff: ignored, ...policyInput } = input;
+    return dependencySatisfied({ ...policyInput, authorizationCapability: capability });
+  } });
 }
