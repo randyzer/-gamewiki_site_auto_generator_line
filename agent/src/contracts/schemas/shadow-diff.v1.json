@@ -1,0 +1,39 @@
+{
+  "$id": "SHADOW_DIFF_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "canonicalStageId", "mappingVersion", "attemptId", "contextDigest", "legacySnapshotDigest", "v2ResultDigest", "authoritative", "blocking", "diffs", "comparisonDigest"],
+  "properties": {
+    "kind": { "const": "SHADOW_DIFF" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "V2_SHADOW_COMPARATOR" },
+    "mode": { "const": "OFFLINE" },
+    "runId": { "type": "string", "minLength": 1 },
+    "canonicalStageId": { "const": "keyword-research" },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "legacySnapshotDigest": { "type": "string", "format": "sha256" },
+    "v2ResultDigest": { "type": "string", "format": "sha256" },
+    "authoritative": { "const": "LEGACY" },
+    "blocking": { "type": "boolean" },
+    "diffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fieldPath", "diffClass", "legacyValueDigest", "v2ValueDigest", "reasonCode", "evidenceReferences", "blocking"],
+        "properties": {
+          "fieldPath": { "type": "string", "minLength": 1 },
+          "diffClass": { "enum": ["MATCH", "EXPECTED_FORMAT_DIFFERENCE", "LEGACY_DEFECT", "V2_DEFECT", "V2_INCOMPATIBLE", "UNKNOWN"] },
+          "legacyValueDigest": { "type": "string", "format": "sha256" },
+          "v2ValueDigest": { "type": "string", "format": "sha256" },
+          "reasonCode": { "type": "string", "minLength": 1 },
+          "evidenceReferences": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "blocking": { "type": "boolean" }
+        }
+      }
+    },
+    "comparisonDigest": { "type": "string", "format": "sha256" }
+  }
+}

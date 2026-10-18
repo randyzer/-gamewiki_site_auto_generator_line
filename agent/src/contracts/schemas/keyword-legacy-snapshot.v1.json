@@ -1,0 +1,25 @@
+{
+  "$id": "KEYWORD_LEGACY_SNAPSHOT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "contextDigest", "schemaBundleDigest", "recoveryDigest", "mappingVersion", "canonicalStageId", "originalNamespace", "originalValue", "legacySkillName", "legacyArrayIndex", "sourceAttempt", "sourceDigest", "snapshotDigest"],
+  "properties": {
+    "kind": { "const": "KEYWORD_LEGACY_SNAPSHOT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "V2_OFFLINE_HOST" },
+    "mode": { "const": "OFFLINE" },
+    "runId": { "type": "string", "minLength": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "recoveryDigest": { "type": "string", "format": "sha256" },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "canonicalStageId": { "const": "keyword-research" },
+    "originalNamespace": { "const": "p3-shadow-alias" },
+    "originalValue": { "const": "stage-2" },
+    "legacySkillName": { "const": "game-innerpage-keyword-information-research" },
+    "legacyArrayIndex": { "const": 1 },
+    "sourceAttempt": { "type": "integer", "minimum": 1 },
+    "sourceDigest": { "type": "string", "format": "sha256" },
+    "snapshotDigest": { "type": "string", "format": "sha256" }
+  }
+}

@@ -1,0 +1,169 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createApprovalRequest, createTestApprovalHarness } from '../../src/approval/approval-engine.mjs';
+import { assertConsumableHandoff, authorizeCanonicalHandoff,
+  partialHandoffPurposePayload } from '../../src/handoff-v2/canonical-handoff.mjs';
+import {
+  createKeywordLegacyIdentityBinding,
+  createKeywordResearchHandoff,
+  keywordReplayPayloadDigest,
+  replayKeywordResearchAttempt,
+} from '../../src/v2/adapters/keyword-research.mjs';
+
+const fixtureRoot = fileURLToPath(new URL('../fixtures/regressions/attempt-10-material-gap-format/', import.meta.url));
+const sha = value => value.repeat(64);
+
+async function fixture() {
+  const fixtureManifest = JSON.parse(await readFile(join(fixtureRoot, 'fixture-manifest.json'), 'utf8'));
+  const expected = JSON.parse(await readFile(join(fixtureRoot, 'expected.json'), 'utf8'));
+  const lineage = JSON.parse(await readFile(join(fixtureRoot, 'lineage.json'), 'utf8'));
+  const materialBytes = new Map();
+  for (const item of fixtureManifest.materials) {
+    materialBytes.set(item.fixturePath, await readFile(join(fixtureRoot, item.fixturePath)));
+  }
+  const legacyIdentity = createKeywordLegacyIdentityBinding({ fixtureManifest, expected, lineage,
+    originalNamespace: 'p3-shadow-alias', originalValue: 'stage-2', sourceAttempt: 10 });
+  return { fixtureManifest, expected, lineage, materialBytes, legacyIdentity };
+}
+
+test('attempt 10 replay produces a trusted canonical result without upgrading content authority', async () => {
+  const payload = await fixture();
+  const payloadDigest = keywordReplayPayloadDigest(payload);
+  const adapterInput = { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: sha('a'), featureGate: 'shadow', gateBindingDigest: sha('b'), payloadDigest };
+  const replay = replayKeywordResearchAttempt({ adapterInput, sourceAttempt: 10, ...payload,
+    recoveryDigest: sha('c'), schemaBundleDigest: sha('d'), evidenceOutcomeDigest: sha('e'),
+    siteRevision: sha('f'), domain: 'wallpaper-engine.example' });
+
+  assert.deepEqual(replay.summary.statusCounts, { COMPLETED: 2, PARTIAL: 25, BLOCKED: 4 });
+  assert.deepEqual(replay.summary.contractValidityCounts, { VALID: 29, INVALID: 2 });
+  assert.deepEqual(replay.summary.contractIncompatibleFiles, [
+    'Wallpaper Engine Steam ID素材.md',
+    'Wallpaper Engine for mac素材.md',
+  ]);
+  assert.equal(replay.summary.unresolvedGapCount, 68);
+  assert.equal(replay.summary.unclassifiedItemCount, 2);
+  assert.deepEqual(replay.validatedResult.pendingRows, [36, 84, 96, 100]);
+  assert.equal(replay.validatedResult.materials.length, 31);
+  assert.equal(new Set(replay.validatedResult.materials.map(item => item.keyword)).size, 31);
+  assert.ok(replay.validatedResult.materials.every(item => item.contentAccepted === false));
+  assert.equal(replay.stageResult.canonicalStageId, 'keyword-research');
+  assert.equal(replay.stageResult.authoritative, false);
+  assert.equal(replay.stageResult.status, 'PARTIAL');
+  assert.deepEqual(replay.identitySnapshot, {
+    kind: 'KEYWORD_LEGACY_SNAPSHOT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', contextDigest: sha('a'), schemaBundleDigest: sha('d'), recoveryDigest: sha('c'), mappingVersion: 'stage-identity-v1',
+    canonicalStageId: 'keyword-research', originalNamespace: 'p3-shadow-alias', originalValue: 'stage-2',
+    legacySkillName: 'game-innerpage-keyword-information-research', legacyArrayIndex: 1, sourceAttempt: 10,
+    sourceDigest: replay.identitySnapshot.sourceDigest, snapshotDigest: replay.identitySnapshot.snapshotDigest,
+  });
+
+  const handoff = createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'template-selection' });
+  const dispositions = Object.groupBy(handoff.materials, item => item.publicationEligibility);
+  assert.equal(dispositions.UNPROVEN.length, 2);
+  assert.equal(dispositions.DRAFT_ONLY.length, 25);
+  assert.equal(dispositions.OMIT.length, 4);
+  assert.equal(handoff.authorizationStatus, 'REQUIRED');
+});
+
+test('attempt 10 identity is proven from the bound legacy source rather than a hard-coded alias', async () => {
+  const payload = await fixture();
+  const baseInput = { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: sha('a'), featureGate: 'shadow', gateBindingDigest: sha('b') };
+  const options = { sourceAttempt: 10, recoveryDigest: sha('c'), schemaBundleDigest: sha('d'),
+    evidenceOutcomeDigest: sha('e'), siteRevision: sha('f'), domain: 'wallpaper-engine.example' };
+  for (const mutation of [
+    { originalValue: 'stage-1' },
+    { originalValue: 'stage-3' },
+    { originalNamespace: 'legacy-skill-name' },
+    { originalNamespace: 'legacy-array-index', originalValue: 1 },
+    { sourceAttempt: 9 },
+    { lineageDigest: sha('0') },
+  ]) {
+    const bad = { ...payload, legacyIdentity: { ...payload.legacyIdentity, ...mutation } };
+    const adapterInput = { ...baseInput, payloadDigest: keywordReplayPayloadDigest(bad) };
+    assert.throws(() => replayKeywordResearchAttempt({ adapterInput, ...options, ...bad }),
+      error => ['CONTRACT_BINDING_MISMATCH', 'STAGE_ID_UNKNOWN'].includes(error.code), JSON.stringify(mutation));
+  }
+});
+
+test('partial handoff advances only with an exact trusted P4 approval', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'p5-c-handoff-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const payload = await fixture();
+  const adapterInput = { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: sha('a'), featureGate: 'shadow', gateBindingDigest: sha('b'),
+    payloadDigest: keywordReplayPayloadDigest(payload) };
+  const replay = replayKeywordResearchAttempt({ adapterInput, sourceAttempt: 10, ...payload,
+    recoveryDigest: sha('c'), schemaBundleDigest: sha('d'), evidenceOutcomeDigest: sha('e'),
+    siteRevision: sha('f'), domain: 'wallpaper-engine.example' });
+  const candidate = createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'template-selection' });
+  assert.throws(() => assertConsumableHandoff(candidate), error => error.code === 'HANDOFF_APPROVAL_REQUIRED');
+  for (const mixed of [
+    { ...replay, identitySnapshot: structuredClone(replay.identitySnapshot) },
+    { ...replay, validatedResult: { ...replay.validatedResult, runId: 'other-run' } },
+    { ...replay, validatedResult: { ...replay.validatedResult, attemptId: 11 } },
+    { ...replay, validatedResult: { ...replay.validatedResult, contextDigest: sha('9') } },
+    { ...replay, validatedResult: { ...replay.validatedResult, stageId: 'stage-1' } },
+  ]) {
+    assert.throws(() => createKeywordResearchHandoff({ replay: mixed,
+      consumerCanonicalStageId: 'template-selection' }),
+    error => ['CONTRACT_BINDING_MISMATCH', 'KEYWORD_REPLAY_UNTRUSTED',
+      'KEYWORD_LEGACY_SNAPSHOT_UNTRUSTED'].includes(error.code));
+  }
+
+  const approvals = await createTestApprovalHarness({ rootDirectory: root, namespace: 'p5-c' });
+  const binding = { runId: candidate.runId, stageId: candidate.stageId, attemptId: candidate.attemptId,
+    contextDigest: candidate.contextDigest, schemaBundleDigest: candidate.schemaBundleDigest,
+    purpose: 'PARTIAL_HANDOFF', purposePayload: partialHandoffPurposePayload(candidate) };
+  const reference = await approvals.authority.issue(createApprovalRequest(binding),
+    { decision: 'APPROVED', nowMs: 1000, expiresAtMs: 2000 });
+  const consumption = await approvals.consumer.consume(reference, { ...binding, nowMs: 1500 });
+  const authorized = authorizeCanonicalHandoff({ candidate, approvalConsumption: consumption });
+  assert.equal(assertConsumableHandoff(authorized), authorized);
+  assert.throws(() => authorizeCanonicalHandoff({ candidate, approvalConsumption: structuredClone(consumption) }),
+    error => error.code === 'APPROVAL_CONSUMPTION_UNTRUSTED');
+
+  assert.throws(() => createKeywordResearchHandoff({ replay, consumerCanonicalStageId: 'content-integration' }),
+    error => error.code === 'CONTRACT_BINDING_MISMATCH');
+  const wrongPurposeBinding = { ...binding, purpose: 'UI_MODIFICATION', purposePayload: { handoff: candidate.handoffDigest } };
+  const wrongPurposeRef = await approvals.authority.issue(createApprovalRequest(wrongPurposeBinding),
+    { decision: 'APPROVED', nowMs: 1000, expiresAtMs: 2000 });
+  const wrongPurpose = await approvals.consumer.consume(wrongPurposeRef, { ...wrongPurposeBinding, nowMs: 1500 });
+  assert.throws(() => authorizeCanonicalHandoff({ candidate, approvalConsumption: wrongPurpose }),
+    error => error.code === 'HANDOFF_APPROVAL_BINDING_MISMATCH');
+
+  const drifted = replayKeywordResearchAttempt({ adapterInput, sourceAttempt: 10, ...payload,
+    recoveryDigest: sha('9'), schemaBundleDigest: sha('d'), evidenceOutcomeDigest: sha('e'),
+    siteRevision: sha('f'), domain: 'wallpaper-engine.example' });
+  const driftedCandidate = createKeywordResearchHandoff({ replay: drifted,
+    consumerCanonicalStageId: 'template-selection' });
+  assert.throws(() => authorizeCanonicalHandoff({ candidate: driftedCandidate, approvalConsumption: consumption }),
+    error => error.code === 'HANDOFF_APPROVAL_BINDING_MISMATCH');
+});
+
+test('attempt 10 replay rejects digest drift and non-canonical stage identities', async () => {
+  const payload = await fixture();
+  const base = { kind: 'STAGE_ADAPTER_INPUT', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', mode: 'OFFLINE',
+    runId: 'wallpaper-engine-002', canonicalStageId: 'keyword-research', mappingVersion: 'stage-identity-v1',
+    contextDigest: sha('a'), featureGate: 'shadow', gateBindingDigest: sha('b'),
+    payloadDigest: keywordReplayPayloadDigest(payload) };
+  const options = { sourceAttempt: 10, ...payload, recoveryDigest: sha('c'), schemaBundleDigest: sha('d'),
+    evidenceOutcomeDigest: sha('e'), siteRevision: sha('f'), domain: 'wallpaper-engine.example' };
+  assert.throws(() => replayKeywordResearchAttempt({ adapterInput: { ...base, payloadDigest: sha('0') }, ...options }),
+    error => error.code === 'CONTRACT_DIGEST_MISMATCH');
+  assert.throws(() => replayKeywordResearchAttempt({ adapterInput: { ...base, canonicalStageId: 'stage-2' }, ...options }),
+    error => ['CONTRACT_SCHEMA_INVALID', 'STAGE_ID_NON_CANONICAL'].includes(error.code));
+  const first = payload.fixtureManifest.materials[0];
+  payload.materialBytes.set(first.fixturePath, Buffer.from('tampered'));
+  assert.throws(() => replayKeywordResearchAttempt({ adapterInput: base, ...options, materialBytes: payload.materialBytes }),
+    error => error.code === 'CONTRACT_DIGEST_MISMATCH');
+});
