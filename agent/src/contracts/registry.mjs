@@ -92,6 +92,8 @@ const definitions = new Map([
     producer: 'V2_TRANSACTION_COORDINATOR', validator: 'CONTRACT_REGISTRY', schema: load('transaction-intent.v1.json') }],
   ['TRANSACTION_OUTCOME:1', { kind: 'TRANSACTION_OUTCOME', schemaVersion: 1,
     producer: 'V2_TRANSACTION_COORDINATOR', validator: 'CONTRACT_REGISTRY', schema: load('transaction-outcome.v1.json') }],
+  ['MIGRATION_DECISION:1', { kind: 'MIGRATION_DECISION', schemaVersion: 1,
+    producer: 'V2_OFFLINE_STAGE_COORDINATOR', validator: 'CONTRACT_REGISTRY', schema: load('migration-decision.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 
