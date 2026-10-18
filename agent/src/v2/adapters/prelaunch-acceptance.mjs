@@ -78,6 +78,9 @@ function assertBindings(manifest, decision, build, ui, route) {
   if (manifest.build.recordDigest !== build.sourceRecordDigest ||
       manifest.route.recordDigest !== route.sourceRecordDigest)
     fail('PRELAUNCH_BINDING_MISMATCH', 'Prelaunch fixture does not bind the validated host records');
+  if (ui.routeAssessmentDigest !== route.assessmentDigest ||
+      ui.publicationProofDigest !== route.proofDigest)
+    fail('PRELAUNCH_BINDING_MISMATCH', 'Prelaunch UI audit belongs to another route proof');
   if (route.publicationDecision !== decision)
     fail('PUBLICATION_DECISION_UNTRUSTED', 'Prelaunch must reuse the exact P4 decision validated by route proof');
 }

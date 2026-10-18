@@ -3,6 +3,7 @@ import { canonicalJson, deepFreeze } from '../../contracts/canonical-json.mjs';
 import { ContractError } from '../../contracts/errors.mjs';
 import { validateStageAdapterInput, validateStageAdapterResult } from '../stage-adapter-contract.mjs';
 import { assertTrustedBuildEvidence } from '../host/build-evidence-adapter.mjs';
+import { assertTrustedRouteAssessment } from '../host/route-proof-adapter.mjs';
 
 const trustedUiAudits = new WeakSet();
 const digestPattern = /^[a-f0-9]{64}$/;
@@ -53,10 +54,11 @@ export function uiFixtureDigest(fixtureManifest) {
   return digest('AGENT_UI_FIXTURE_V1', payload);
 }
 
-export function uiReplayPayloadDigest({ fixtureManifest, buildEvidence }) {
+export function uiReplayPayloadDigest({ fixtureManifest, buildEvidence, routeAssessment }) {
   return digest('AGENT_UI_REPLAY_PAYLOAD_V1', {
     fixtureDigest: fixtureManifest.fixtureDigest,
     buildEvidenceDigest: buildEvidence.evidenceDigest,
+    routeAssessmentDigest: routeAssessment.assessmentDigest,
   });
 }
 
@@ -113,16 +115,19 @@ function validateFixture(manifest) {
     fail('CONTRACT_DIGEST_MISMATCH', 'UI fixture digest mismatch');
 }
 
-function assertBindings(manifest, decision, build) {
+function assertBindings(manifest, decision, build, route) {
+  if (route.publicationDecision !== decision)
+    fail('PUBLICATION_DECISION_UNTRUSTED', 'UI audit must reuse the exact P4 decision validated by route proof');
   const expected = {
     runId: decision.runId, contextDigest: decision.contextDigest, siteRevision: decision.siteRevision,
     buildDigest: decision.buildDigest, domain: decision.domain, decisionDigest: decision.publicationDigest,
   };
   for (const [key, value] of Object.entries(expected)) {
-    if (manifest[key] !== value || build[key] !== value)
+    if (manifest[key] !== value || build[key] !== value || route[key] !== value)
       fail('UI_EVIDENCE_BINDING_MISMATCH', `UI fixture does not bind ${key}`);
   }
-  if (manifest.sourceRevision !== build.sourceRevision)
+  if (manifest.sourceRevision !== build.sourceRevision || manifest.sourceRevision !== route.sourceRevision ||
+      route.buildEvidenceDigest !== build.evidenceDigest)
     fail('UI_EVIDENCE_BINDING_MISMATCH', 'UI fixture belongs to another source revision');
   for (const route of manifest.routes) {
     for (const capture of route.captures) {
@@ -168,15 +173,16 @@ function resultFor(manifest, decision, build) {
 }
 
 export function replayUiUxAudit({ fixtureManifest, adapterInput, publicationDecision, buildEvidence,
-  requestedCapabilities = [] }) {
+  routeAssessment, requestedCapabilities = [] }) {
   denyCapabilities(fixtureManifest?.requestedCapabilities, requestedCapabilities);
   validateFixture(fixtureManifest); validateStageAdapterInput(adapterInput);
   if (adapterInput.canonicalStageId !== 'ui-ux-audit' || adapterInput.runId !== fixtureManifest.runId ||
       adapterInput.contextDigest !== fixtureManifest.contextDigest ||
-      adapterInput.payloadDigest !== uiReplayPayloadDigest({ fixtureManifest, buildEvidence }))
+      adapterInput.payloadDigest !== uiReplayPayloadDigest({ fixtureManifest, buildEvidence, routeAssessment }))
     fail('CONTRACT_BINDING_MISMATCH', 'UI adapter input does not bind the replay payload');
   const build = assertTrustedBuildEvidence(buildEvidence);
-  assertBindings(fixtureManifest, publicationDecision, build);
+  const route = assertTrustedRouteAssessment(routeAssessment);
+  assertBindings(fixtureManifest, publicationDecision, build, route);
   const assessment = resultFor(fixtureManifest, publicationDecision, build);
   const base = {
     kind: 'OFFLINE_UI_AUDIT', schemaVersion: 1, producer: 'P5_F_UI_AUDIT_ADAPTER',
@@ -185,7 +191,8 @@ export function replayUiUxAudit({ fixtureManifest, adapterInput, publicationDeci
     sourceRevision: fixtureManifest.sourceRevision, siteRevision: fixtureManifest.siteRevision,
     buildDigest: fixtureManifest.buildDigest, domain: fixtureManifest.domain,
     decisionDigest: fixtureManifest.decisionDigest, fixtureDigest: fixtureManifest.fixtureDigest,
-    buildEvidenceDigest: build.evidenceDigest, result: assessment.result,
+    buildEvidenceDigest: build.evidenceDigest, routeAssessmentDigest: route.assessmentDigest,
+    publicationProofDigest: route.proofDigest, result: assessment.result,
     viewportWidths: requiredViewports.map(item => item.width), routeCount: fixtureManifest.routes.length,
     captureDigests: fixtureManifest.routes.flatMap(route => route.captures.map(item => item.captureDigest)).sort(),
     failures: assessment.failures, gaps: assessment.gaps,
@@ -199,7 +206,8 @@ export function replayUiUxAudit({ fixtureManifest, adapterInput, publicationDeci
     runId: adapterInput.runId, canonicalStageId: adapterInput.canonicalStageId,
     mappingVersion: adapterInput.mappingVersion, contextDigest: adapterInput.contextDigest,
     inputDigest: digest('AGENT_STAGE_ADAPTER_INPUT_V1', adapterInput), status, authoritative: false,
-    artifactDigests: [auditManifest.auditDigest, fixtureManifest.fixtureDigest, build.evidenceDigest].sort(),
+    artifactDigests: [auditManifest.auditDigest, fixtureManifest.fixtureDigest, build.evidenceDigest,
+      route.assessmentDigest].sort(),
     errorCodes: assessment.result === 'REJECTED' ? ['UI_AUDIT_REJECTED'] :
       assessment.result === 'UNPROVEN' ? ['UI_EVIDENCE_UNPROVEN'] : [],
   };

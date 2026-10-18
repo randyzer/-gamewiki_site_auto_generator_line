@@ -70,11 +70,12 @@ const resignPrelaunch = value => { value.fixtureDigest = prelaunchFixtureDigest(
 async function replayHappy(t) {
   const [uiFixture, prelaunchFixture, decision] = await Promise.all([json(uiPath), json(prelaunchPath), publication(t)]);
   const buildEvidence = captureSimulatedBuildEvidence({ buildRecord: prelaunchFixture.build });
-  const uiAudit = replayUiUxAudit({ fixtureManifest: uiFixture, publicationDecision: decision, buildEvidence,
-    adapterInput: stageInput('ui-ux-audit', uiFixture,
-      uiReplayPayloadDigest({ fixtureManifest: uiFixture, buildEvidence })) });
   const routeAssessment = replaySimulatedRouteProof({ routeRecord: prelaunchFixture.route,
     publicationDecision: decision, buildEvidence });
+  const uiAudit = replayUiUxAudit({ fixtureManifest: uiFixture, publicationDecision: decision, buildEvidence,
+    routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', uiFixture,
+      uiReplayPayloadDigest({ fixtureManifest: uiFixture, buildEvidence, routeAssessment })) });
   const prelaunch = replayPrelaunchAcceptance({ fixtureManifest: prelaunchFixture,
     publicationDecision: decision, buildEvidence, uiAudit: uiAudit.auditManifest, routeAssessment,
     adapterInput: stageInput('prelaunch-acceptance', prelaunchFixture,
@@ -108,8 +109,10 @@ test('missing viewport is UNPROVEN while an observed UI failure is REJECTED', as
   const missing = structuredClone(base.uiFixture);
   missing.routes[0].captures.pop(); resignUi(missing);
   const unknown = replayUiUxAudit({ fixtureManifest: missing, publicationDecision: base.decision,
-    buildEvidence: base.buildEvidence, adapterInput: stageInput('ui-ux-audit', missing,
-      uiReplayPayloadDigest({ fixtureManifest: missing, buildEvidence: base.buildEvidence })) });
+    buildEvidence: base.buildEvidence, routeAssessment: base.routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', missing,
+      uiReplayPayloadDigest({ fixtureManifest: missing, buildEvidence: base.buildEvidence,
+        routeAssessment: base.routeAssessment })) });
   assert.equal(unknown.auditManifest.result, 'UNPROVEN');
   assert.equal(unknown.stageResult.status, 'PARTIAL');
 
@@ -117,8 +120,10 @@ test('missing viewport is UNPROVEN while an observed UI failure is REJECTED', as
   failed.routes[0].captures[0].checks.overflow = 'FAIL';
   resignCapture(failed.routes[0].captures[0]); resignUi(failed);
   const rejected = replayUiUxAudit({ fixtureManifest: failed, publicationDecision: base.decision,
-    buildEvidence: base.buildEvidence, adapterInput: stageInput('ui-ux-audit', failed,
-      uiReplayPayloadDigest({ fixtureManifest: failed, buildEvidence: base.buildEvidence })) });
+    buildEvidence: base.buildEvidence, routeAssessment: base.routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', failed,
+      uiReplayPayloadDigest({ fixtureManifest: failed, buildEvidence: base.buildEvidence,
+        routeAssessment: base.routeAssessment })) });
   assert.equal(rejected.auditManifest.result, 'REJECTED');
   assert.equal(rejected.stageResult.status, 'FAILED');
 });
@@ -129,8 +134,10 @@ test('old screenshots, build drift and cloned host evidence cannot be reused', a
   stale.routes[0].captures[0].buildDigest = 'f'.repeat(64);
   resignCapture(stale.routes[0].captures[0]); resignUi(stale);
   assert.throws(() => replayUiUxAudit({ fixtureManifest: stale, publicationDecision: base.decision,
-    buildEvidence: base.buildEvidence, adapterInput: stageInput('ui-ux-audit', stale,
-      uiReplayPayloadDigest({ fixtureManifest: stale, buildEvidence: base.buildEvidence })) }),
+    buildEvidence: base.buildEvidence, routeAssessment: base.routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', stale,
+      uiReplayPayloadDigest({ fixtureManifest: stale, buildEvidence: base.buildEvidence,
+        routeAssessment: base.routeAssessment })) }),
   error => error.code === 'UI_EVIDENCE_BINDING_MISMATCH');
   assert.throws(() => assertTrustedBuildEvidence(structuredClone(base.buildEvidence)),
     error => error.code === 'BUILD_EVIDENCE_UNTRUSTED');
@@ -178,6 +185,26 @@ test('route proof must use the original P4 decision and trusted in-process evide
   error => error.code === 'CONTRACT_DIGEST_MISMATCH');
 });
 
+test('UI audit requires the exact P4 decision already validated by the fixed route host', async t => {
+  const base = await replayHappy(t);
+  const input = decision => stageInput('ui-ux-audit', base.uiFixture,
+    uiReplayPayloadDigest({ fixtureManifest: base.uiFixture, buildEvidence: base.buildEvidence,
+      routeAssessment: base.routeAssessment }));
+  for (const decision of [structuredClone(base.decision), JSON.parse(JSON.stringify(base.decision))]) {
+    assert.throws(() => replayUiUxAudit({ fixtureManifest: base.uiFixture,
+      publicationDecision: decision, buildEvidence: base.buildEvidence,
+      routeAssessment: base.routeAssessment, adapterInput: input(decision) }),
+    error => error.code === 'PUBLICATION_DECISION_UNTRUSTED');
+  }
+  const secondTrustedDecision = await publication(t);
+  assert.notEqual(secondTrustedDecision, base.decision);
+  assert.equal(secondTrustedDecision.publicationDigest, base.decision.publicationDigest);
+  assert.throws(() => replayUiUxAudit({ fixtureManifest: base.uiFixture,
+    publicationDecision: secondTrustedDecision, buildEvidence: base.buildEvidence,
+    routeAssessment: base.routeAssessment, adapterInput: input(secondTrustedDecision) }),
+  error => error.code === 'PUBLICATION_DECISION_UNTRUSTED');
+});
+
 test('prelaunch binds build, UI and route evidence and rejects cloned proof objects', async t => {
   const base = await replayHappy(t);
   const input = stageInput('prelaunch-acceptance', base.prelaunchFixture,
@@ -210,14 +237,20 @@ test('prelaunch never promotes UNPROVEN or REJECTED component evidence', async t
   resignRoute(incompleteRoute);
   const routeAssessment = replaySimulatedRouteProof({ routeRecord: incompleteRoute,
     publicationDecision: base.decision, buildEvidence: base.buildEvidence });
+  const diagnosticUi = replayUiUxAudit({ fixtureManifest: base.uiFixture,
+    publicationDecision: base.decision, buildEvidence: base.buildEvidence, routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', base.uiFixture,
+      uiReplayPayloadDigest({ fixtureManifest: base.uiFixture, buildEvidence: base.buildEvidence,
+        routeAssessment })) });
+  assert.equal(diagnosticUi.auditManifest.result, 'OFFLINE_SIMULATED_VERIFIED');
   const incompleteFixture = structuredClone(base.prelaunchFixture);
   incompleteFixture.route = incompleteRoute; resignPrelaunch(incompleteFixture);
   const unproven = replayPrelaunchAcceptance({ fixtureManifest: incompleteFixture,
     publicationDecision: base.decision, buildEvidence: base.buildEvidence,
-    uiAudit: base.uiAudit.auditManifest, routeAssessment,
+    uiAudit: diagnosticUi.auditManifest, routeAssessment,
     adapterInput: stageInput('prelaunch-acceptance', incompleteFixture,
       prelaunchReplayPayloadDigest({ fixtureManifest: incompleteFixture, buildEvidence: base.buildEvidence,
-        uiAudit: base.uiAudit.auditManifest, routeAssessment })) });
+        uiAudit: diagnosticUi.auditManifest, routeAssessment })) });
   assert.equal(unproven.acceptanceManifest.result, 'UNPROVEN');
   assert.equal(unproven.stageResult.status, 'PARTIAL');
 
@@ -226,8 +259,10 @@ test('prelaunch never promotes UNPROVEN or REJECTED component evidence', async t
   resignCapture(failedUiFixture.routes[0].captures[0]); resignUi(failedUiFixture);
   const failedUi = replayUiUxAudit({ fixtureManifest: failedUiFixture,
     publicationDecision: base.decision, buildEvidence: base.buildEvidence,
+    routeAssessment: base.routeAssessment,
     adapterInput: stageInput('ui-ux-audit', failedUiFixture,
-      uiReplayPayloadDigest({ fixtureManifest: failedUiFixture, buildEvidence: base.buildEvidence })) });
+      uiReplayPayloadDigest({ fixtureManifest: failedUiFixture, buildEvidence: base.buildEvidence,
+        routeAssessment: base.routeAssessment })) });
   const rejected = replayPrelaunchAcceptance({ fixtureManifest: base.prelaunchFixture,
     publicationDecision: base.decision, buildEvidence: base.buildEvidence,
     uiAudit: failedUi.auditManifest, routeAssessment: base.routeAssessment,
@@ -256,9 +291,11 @@ test('all P5-F entry points deny real capabilities before any simulated result i
     assert.throws(() => captureSimulatedBuildEvidence({ buildRecord: base.prelaunchFixture.build,
       requestedCapabilities: [capability] }), error => error.code === 'POLICY_DENIED');
     assert.throws(() => replayUiUxAudit({ fixtureManifest: base.uiFixture, publicationDecision: base.decision,
-      buildEvidence: base.buildEvidence, requestedCapabilities: [capability],
+      buildEvidence: base.buildEvidence, routeAssessment: base.routeAssessment,
+      requestedCapabilities: [capability],
       adapterInput: stageInput('ui-ux-audit', base.uiFixture,
-        uiReplayPayloadDigest({ fixtureManifest: base.uiFixture, buildEvidence: base.buildEvidence })) }),
+        uiReplayPayloadDigest({ fixtureManifest: base.uiFixture, buildEvidence: base.buildEvidence,
+          routeAssessment: base.routeAssessment })) }),
     error => error.code === 'POLICY_DENIED');
     assert.throws(() => replaySimulatedRouteProof({ routeRecord: base.prelaunchFixture.route,
       publicationDecision: base.decision, buildEvidence: base.buildEvidence,
@@ -277,14 +314,18 @@ test('closed fixture contracts reject unknown fields, duplicate routes and diges
   const base = await replayHappy(t);
   const unknown = structuredClone(base.uiFixture); unknown.extra = true; resignUi(unknown);
   assert.throws(() => replayUiUxAudit({ fixtureManifest: unknown, publicationDecision: base.decision,
-    buildEvidence: base.buildEvidence, adapterInput: stageInput('ui-ux-audit', unknown,
-      uiReplayPayloadDigest({ fixtureManifest: unknown, buildEvidence: base.buildEvidence })) }),
+    buildEvidence: base.buildEvidence, routeAssessment: base.routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', unknown,
+      uiReplayPayloadDigest({ fixtureManifest: unknown, buildEvidence: base.buildEvidence,
+        routeAssessment: base.routeAssessment })) }),
   error => error.code === 'CONTRACT_SCHEMA_INVALID');
   const duplicate = structuredClone(base.uiFixture); duplicate.routes[1].route = duplicate.routes[0].route;
   resignUi(duplicate);
   assert.throws(() => replayUiUxAudit({ fixtureManifest: duplicate, publicationDecision: base.decision,
-    buildEvidence: base.buildEvidence, adapterInput: stageInput('ui-ux-audit', duplicate,
-      uiReplayPayloadDigest({ fixtureManifest: duplicate, buildEvidence: base.buildEvidence })) }),
+    buildEvidence: base.buildEvidence, routeAssessment: base.routeAssessment,
+    adapterInput: stageInput('ui-ux-audit', duplicate,
+      uiReplayPayloadDigest({ fixtureManifest: duplicate, buildEvidence: base.buildEvidence,
+        routeAssessment: base.routeAssessment })) }),
   error => error.code === 'CONTRACT_SCHEMA_INVALID');
   const digestDrift = structuredClone(base.prelaunchFixture.build);
   digestDrift.artifacts[0].sha256 = 'f'.repeat(64);
