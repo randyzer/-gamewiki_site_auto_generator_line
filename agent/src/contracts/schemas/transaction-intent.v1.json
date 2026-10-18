@@ -1,0 +1,26 @@
+{
+  "$id": "TRANSACTION_INTENT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "operationId", "mode", "mappingVersion", "policyVersion", "runId", "canonicalStageId", "attemptId", "contextDigest", "schemaBundleDigest", "purposeDigest", "candidateDigest", "approvalId", "approvalDigest", "createdAtMs", "intentDigest"],
+  "properties": {
+    "kind": { "const": "TRANSACTION_INTENT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "V2_TRANSACTION_COORDINATOR" },
+    "operationId": { "type": "string", "pattern": "^op-[a-f0-9]{32}$" },
+    "mode": { "enum": ["SIMULATED", "SHADOW"] },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "policyVersion": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan"] },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "purposeDigest": { "type": "string", "format": "sha256" },
+    "candidateDigest": { "type": "string", "format": "sha256" },
+    "approvalId": { "type": "string", "pattern": "^approval-[0-9a-f-]+$" },
+    "approvalDigest": { "type": "string", "format": "sha256" },
+    "createdAtMs": { "type": "integer", "minimum": 0 },
+    "intentDigest": { "type": "string", "format": "sha256" }
+  }
+}

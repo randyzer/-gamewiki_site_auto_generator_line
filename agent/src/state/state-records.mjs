@@ -6,10 +6,10 @@ const digest = (domain, value) => createHash('sha256')
 
 export function computeCandidateDigest(candidate) {
   const { candidateDigest: ignored, ...payload } = candidate;
-  return digest('AGENT_STAGE_COMMIT_CANDIDATE_V1', payload);
+  return digest(`AGENT_STAGE_COMMIT_CANDIDATE_V${candidate.schemaVersion ?? 1}`, payload);
 }
 
 export function computeCommitDigest(record) {
   const { commitDigest: ignored, ...payload } = record;
-  return digest('AGENT_STAGE_COMMIT_RECORD_V1', payload);
+  return digest(`AGENT_STAGE_COMMIT_RECORD_V${record.schemaVersion ?? 1}`, payload);
 }

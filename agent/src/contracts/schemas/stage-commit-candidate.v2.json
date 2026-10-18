@@ -1,0 +1,54 @@
+{
+  "$id": "STAGE_COMMIT_CANDIDATE_V2",
+  "required": [
+    "operationId",
+    "mappingVersion",
+    "policyVersion",
+    "canonicalStageId",
+    "purposeDigest",
+    "approvalId",
+    "approvalDigest"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "producer": {
+      "const": "V2_TRANSACTION_COORDINATOR"
+    },
+    "operationId": {
+      "type": "string",
+      "pattern": "^op-[a-f0-9]{32}$"
+    },
+    "mappingVersion": {
+      "const": "stage-identity-v1"
+    },
+    "policyVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonicalStageId": {
+      "enum": [
+        "homepage-research",
+        "keyword-research",
+        "template-selection",
+        "content-integration",
+        "ui-ux-audit",
+        "prelaunch-acceptance",
+        "deployment-plan"
+      ]
+    },
+    "purposeDigest": {
+      "type": "string",
+      "format": "sha256"
+    },
+    "approvalId": {
+      "type": "string",
+      "pattern": "^approval-[0-9a-f-]+$"
+    },
+    "approvalDigest": {
+      "type": "string",
+      "format": "sha256"
+    }
+  }
+}

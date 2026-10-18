@@ -46,6 +46,8 @@ function factory({ rootDirectory, namespace, mode, faults, clock, bindingProvide
     const record = await store.read(reference);
     await revocations.assertNotRevoked(record);
     if (record.mode !== mode) throw new ContractError('APPROVAL_MODE_MISMATCH', 'Approval mode mismatch');
+    if (record.policyVersion !== policyVersionProvider())
+      throw new ContractError('APPROVAL_POLICY_MISMATCH', 'Approval policy version changed');
     return assertApprovalValid(record, expected);
   };
   return { store, consumptions, revocations, verifier: Object.freeze({ verify: (reference, expected) => verify(reference,
@@ -53,6 +55,17 @@ function factory({ rootDirectory, namespace, mode, faults, clock, bindingProvide
       const lockedExpected = deepFreeze(structuredClone(expected));
       await verify(reference, { ...lockedExpected, expectedMode: mode });
       const consumption = await consumptions.consume({ reference, expected: lockedExpected });
+      deepFreeze(consumption); trustedConsumptions.add(consumption); return consumption;
+    }, async consumeForOperation(reference, expected, operation) {
+      const lockedExpected = deepFreeze(structuredClone(expected));
+      const lockedOperation = deepFreeze(structuredClone(operation));
+      await verify(reference, { ...lockedExpected, expectedMode: mode });
+      const consumption = await consumptions.consumeForOperation({ reference, expected: lockedExpected,
+        operation: lockedOperation });
+      deepFreeze(consumption); trustedConsumptions.add(consumption); return consumption;
+    }, async recoverOperationConsumption(expected) {
+      const consumption = await consumptions.readOperation(expected);
+      if (!consumption) return null;
       deepFreeze(consumption); trustedConsumptions.add(consumption); return consumption;
     } }) };
 }
@@ -82,7 +95,7 @@ async function publishSimulatedApproval({ authorityToken, rootDirectory, namespa
 export function assertTrustedApprovalConsumption(consumption) {
   if (!trustedConsumptions.has(consumption))
     throw new ContractError('APPROVAL_CONSUMPTION_UNTRUSTED', 'Approval consumption was not produced by the verifier');
-  validateContract('APPROVAL_CONSUMPTION', 1, consumption);
+  validateContract('APPROVAL_CONSUMPTION', consumption.schemaVersion, consumption);
   return consumption;
 }
 

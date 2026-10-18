@@ -10,7 +10,7 @@ import { writeAtomicFile } from '../state/atomic-file.mjs';
 
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const digestOf = record => { const { consumptionDigest: ignored, ...payload } = record;
-  return sha256(`AGENT_APPROVAL_CONSUMPTION_V1\n${canonicalJson(payload)}`); };
+  return sha256(`AGENT_APPROVAL_CONSUMPTION_V${record.schemaVersion ?? 1}\n${canonicalJson(payload)}`); };
 
 export function createApprovalConsumptionStore({ rootDirectory, anchorRootDirectory, namespace, faults = {},
   validateUnderLock }) {
@@ -26,7 +26,7 @@ export function createApprovalConsumptionStore({ rootDirectory, anchorRootDirect
     for (const [index, name] of names.entries()) {
       await assertRegularFileNoSymlink(join(commits, name));
       const record = parseStrictJson(await readFile(join(commits, name)), name); const sequence = index + 1;
-      validateContract('APPROVAL_CONSUMPTION', 1, record);
+      validateContract('APPROVAL_CONSUMPTION', record.schemaVersion, record);
       if (record.namespace !== namespace || record.sequence !== sequence ||
           record.previousDigest !== (previous?.consumptionDigest ?? null) ||
           digestOf(record) !== record.consumptionDigest) throw new ContractError('APPROVAL_CONSUMPTION_CORRUPT', 'Consumption chain is corrupt');
@@ -59,6 +59,18 @@ export function createApprovalConsumptionStore({ rootDirectory, anchorRootDirect
   }
   return Object.freeze({
     readAll: chain,
+    async readOperation(expected) {
+      const records = await chain();
+      const record = records.find(item => item.schemaVersion === 2 && item.operationId === expected.operationId);
+      if (!record) return null;
+      for (const key of ['approvalId', 'operationId', 'intentDigest', 'contextDigest', 'purposeDigest']) {
+        if (expected[key] !== undefined && record[key] !== expected[key])
+          throw new ContractError('TRANSACTION_BINDING_MISMATCH', `Consumption does not match ${key}`);
+      }
+      if (expected.consumptionDigest && record.consumptionDigest !== expected.consumptionDigest)
+        throw new ContractError('TRANSACTION_BINDING_MISMATCH', 'Consumption digest does not match');
+      return Object.freeze(record);
+    },
     async consume({ reference, expected }) {
       await ensureDirectoryTree(rootDirectory, ['approval', namespace, 'locks']);
       const lock = await acquireStageLock({ lockDirectory: join(base, 'locks/consume.lock') });
@@ -79,6 +91,43 @@ export function createApprovalConsumptionStore({ rootDirectory, anchorRootDirect
         await faults.afterRecordCommit?.(record);
         await writeAtomicFile(anchorPath, Buffer.from(`${canonicalJson({ sequence, consumptionDigest: record.consumptionDigest })}\n`));
         await writeAtomicFile(join(base, 'CONSUMPTION_HEAD'), Buffer.from(`${canonicalJson({ sequence, consumptionDigest: record.consumptionDigest })}\n`));
+        await faults.afterHeadCommit?.(record);
+        return Object.freeze(record);
+      } finally { await lock.release(); }
+    },
+    async consumeForOperation({ reference, expected, operation }) {
+      await ensureDirectoryTree(rootDirectory, ['approval', namespace, 'locks']);
+      const lock = await acquireStageLock({ lockDirectory: join(base, 'locks/consume.lock') });
+      try {
+        const records = await chain();
+        const existingOperation = records.find(item => item.schemaVersion === 2 && item.operationId === operation.operationId);
+        if (existingOperation) {
+          const exact = existingOperation.approvalId === reference.approvalId &&
+            existingOperation.intentDigest === operation.intentDigest;
+          if (!exact) throw new ContractError('TRANSACTION_IDEMPOTENCY_CONFLICT',
+            'Operation is already bound to a different approval or intent');
+          return Object.freeze(existingOperation);
+        }
+        await faults.afterLockAcquired?.();
+        const { approval, nowMs } = await validateUnderLock({ reference, expected });
+        const { approvalId, nonce, contextDigest, purposeDigest } = approval;
+        if (records.some(item => item.approvalId === approvalId || item.nonce === nonce))
+          throw new ContractError('APPROVAL_ALREADY_CONSUMED', 'Approval or nonce was already consumed');
+        const sequence = records.length + 1;
+        const payload = { kind: 'APPROVAL_CONSUMPTION', schemaVersion: 2,
+          producer: 'APPROVAL_CONSUMPTION_STORE', namespace, sequence,
+          previousDigest: records.at(-1)?.consumptionDigest ?? null, approvalId, nonce,
+          contextDigest, purposeDigest, operationId: operation.operationId,
+          intentDigest: operation.intentDigest, consumedAtMs: nowMs };
+        const record = { ...payload, consumptionDigest: digestOf(payload) };
+        validateContract('APPROVAL_CONSUMPTION', 2, record);
+        await faults.beforeRecordCommit?.(record);
+        await writeAtomicFile(join(commits, `${String(sequence).padStart(12, '0')}.json`),
+          Buffer.from(`${canonicalJson(record)}\n`));
+        await faults.afterRecordCommit?.(record);
+        const projection = { sequence, consumptionDigest: record.consumptionDigest };
+        await writeAtomicFile(anchorPath, Buffer.from(`${canonicalJson(projection)}\n`));
+        await writeAtomicFile(join(base, 'CONSUMPTION_HEAD'), Buffer.from(`${canonicalJson(projection)}\n`));
         await faults.afterHeadCommit?.(record);
         return Object.freeze(record);
       } finally { await lock.release(); }
