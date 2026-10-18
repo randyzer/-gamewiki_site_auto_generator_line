@@ -6,7 +6,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { canonicalJson } from '../../src/contracts/canonical-json.mjs';
 import { executionContextDigest } from '../../src/contracts/context-digest.mjs';
-import { createOfflineContextBinder } from '../../src/v2/production-context-binding.mjs';
+import { assertTrustedOfflineContextBinding, createOfflineContextBinder,
+  revalidateOfflineContextBinding } from '../../src/v2/production-context-binding.mjs';
 import { createProductionObservation } from '../../src/v2/production-observation.mjs';
 import { createOfflineObservationStore } from '../../src/v2/production-observation-store.mjs';
 import { stageIdentityTable } from '../../src/v2/stage-identity.mjs';
@@ -213,4 +214,42 @@ test('binder rejects unsafe paths, symlinks and source hash drift', async t => {
     observationStore: f.store });
   await assert.rejects(nestedBinder.bind({ observationRecord: record, sources: await f.completeSources() }),
     /symlink/i);
+});
+
+test('binding trust is bound to the exact binder and rejects clones', async t => {
+  const f = await fixture(t);
+  const record = await f.store.persist(f.snapshot);
+  const sources = await f.completeSources();
+  const binder = createOfflineContextBinder({ sourceRoot: f.sourceRoot, observationStore: f.store });
+  const otherBinder = createOfflineContextBinder({ sourceRoot: f.sourceRoot, observationStore: f.store });
+  const binding = await binder.bind({ observationRecord: record, sources });
+
+  assert.equal(assertTrustedOfflineContextBinding(binder, binding), binding);
+  assert.throws(() => assertTrustedOfflineContextBinding(binder, structuredClone(binding)),
+    /trusted context binding/i);
+  assert.throws(() => assertTrustedOfflineContextBinding(otherBinder, binding),
+    /trusted context binding/i);
+});
+
+test('binding revalidation rereads the manifest and all referenced source bytes', async t => {
+  const f = await fixture(t);
+  const record = await f.store.persist(f.snapshot);
+  const sources = await f.completeSources();
+  const binder = createOfflineContextBinder({ sourceRoot: f.sourceRoot, observationStore: f.store });
+  const binding = await binder.bind({ observationRecord: record, sources });
+
+  assert.equal(await revalidateOfflineContextBinding(binder, binding), binding);
+  await writeFile(join(f.sourceRoot, sources.research.path), '{"tampered":true}\n');
+  await assert.rejects(revalidateOfflineContextBinding(binder, binding), /digest/i);
+
+  const clean = await fixture(t);
+  const cleanRecord = await clean.store.persist(clean.snapshot);
+  const cleanBinder = createOfflineContextBinder({ sourceRoot: clean.sourceRoot,
+    observationStore: clean.store });
+  const cleanBinding = await cleanBinder.bind({ observationRecord: cleanRecord,
+    sources: await clean.completeSources() });
+  clean.manifest.sequence++;
+  await writeFile(clean.manifestPath, JSON.stringify(clean.manifest, null, 2) + '\n');
+  await assert.rejects(revalidateOfflineContextBinding(cleanBinder, cleanBinding),
+    /historical manifest|manifest.*changed/i);
 });
