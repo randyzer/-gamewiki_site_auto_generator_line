@@ -70,4 +70,3 @@ P5 代码提交不得修改 `agent/runs/wallpaper-engine-002/`。
 - 所有 Shadow Diff 已归类，无 `UNKNOWN`、`V2_DEFECT` 或 `V2_INCOMPATIBLE`。
 
 本清单当前不满足任何 Stage 的生产 V2 权威切换条件。
-

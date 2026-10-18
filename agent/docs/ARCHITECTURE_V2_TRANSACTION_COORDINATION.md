@@ -135,4 +135,3 @@ P5 Offline Runtime 对这些调用一律返回 `POLICY_DENIED`。
 8. 删除、截短、回退或篡改 Intent/Consumption/Commit/Outcome 任一链。
 
 所有故障均需证明：既有权威事实不回退、审批不复活、Stage 不重复提交、投影可重建或明确 Fail Closed。
-

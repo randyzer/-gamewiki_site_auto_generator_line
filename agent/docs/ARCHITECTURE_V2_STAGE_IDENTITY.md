@@ -104,4 +104,3 @@ Stage 2 的受控 PARTIAL 例外固定为：
 - 重复 Skill、重复 alias、未知整数和错误 mapping version 全部拒绝。
 - 核心 E2E 只枚举七个 `coreStage=true` 项。
 - 广告阶段无法因七阶段 gate 变化获得执行、发布或部署权限。
-
