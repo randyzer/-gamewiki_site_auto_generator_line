@@ -1,0 +1,128 @@
+{
+  "kind": "DEPLOYMENT_PLAN_FIXTURE",
+  "schemaVersion": 1,
+  "producer": "P5_G_OFFLINE_FIXTURE",
+  "classification": "OFFLINE_STUB",
+  "mode": "SIMULATED",
+  "canonicalStageId": "deployment-plan",
+  "mappingVersion": "stage-identity-v1",
+  "runId": "p5-e-offline-content",
+  "contextDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+  "domain": "fixture.test",
+  "prelaunchFixtureDigest": "517e05e8ebff7418c12fbe2d513d96809a79805d6bc4b6656e3fc4e03c05b693",
+  "prelaunchAcceptanceDigest": "0f7763d645f78d26df19446ef5d31b8b3a5b7e601fb469c8c6120f37466e780e",
+  "publicationProofDigest": "a2fd56409334000017d50df5ae20d721820373960a914d0dff57eaa0d10791a8",
+  "requestedCapabilities": [],
+  "externalEffectState": "NONE",
+  "complete": true,
+  "gaps": [],
+  "target": {
+    "repository": "fixture/gamewiki",
+    "branch": "main",
+    "targetDomain": "fixture.test",
+    "hostingProvider": "Vercel",
+    "dnsProvider": "Cloudflare",
+    "costStatus": "UNKNOWN"
+  },
+  "resourceScope": [
+    {
+      "resourceId": "repository",
+      "kind": "GITHUB_REPOSITORY",
+      "locator": "fixture/gamewiki",
+      "access": "PLANNED_ONLY"
+    },
+    {
+      "resourceId": "hosting",
+      "kind": "HOSTING_PROJECT",
+      "locator": "vercel:fixture-gamewiki",
+      "access": "PLANNED_ONLY"
+    },
+    {
+      "resourceId": "dns",
+      "kind": "DNS_ZONE",
+      "locator": "cloudflare:fixture.test",
+      "access": "PLANNED_ONLY"
+    },
+    {
+      "resourceId": "measurement",
+      "kind": "MEASUREMENT_PROPERTY",
+      "locator": "ga4:unassigned",
+      "access": "PLANNED_ONLY"
+    }
+  ],
+  "steps": [
+    {
+      "stepId": "verify-git-state",
+      "action": "VERIFY_SOURCE_REVISION",
+      "resourceIds": [
+        "repository"
+      ],
+      "expectedEffect": "No write; confirm the approved source revision",
+      "stopCondition": "Source revision differs from the approved plan"
+    },
+    {
+      "stepId": "publish-hosting",
+      "action": "PLAN_HOSTING_DEPLOYMENT",
+      "resourceIds": [
+        "repository",
+        "hosting"
+      ],
+      "expectedEffect": "Future production deployment after separate approval",
+      "stopCondition": "Build, provider, cost, or authorization differs"
+    },
+    {
+      "stepId": "configure-domain",
+      "action": "PLAN_DNS_UPDATE",
+      "resourceIds": [
+        "hosting",
+        "dns"
+      ],
+      "expectedEffect": "Future DNS update after separate approval",
+      "stopCondition": "Existing records or ownership cannot be proven"
+    },
+    {
+      "stepId": "configure-measurement",
+      "action": "PLAN_MEASUREMENT_SETUP",
+      "resourceIds": [
+        "measurement"
+      ],
+      "expectedEffect": "Future measurement configuration after separate approval",
+      "stopCondition": "Account, property, consent, or data stream differs"
+    }
+  ],
+  "rollback": {
+    "strategy": "MANUAL_APPROVAL_REQUIRED",
+    "resourceIds": [
+      "hosting",
+      "dns",
+      "measurement"
+    ],
+    "steps": [
+      {
+        "resourceId": "hosting",
+        "action": "Restore the prior hosting production alias",
+        "manualConfirmationRequired": true
+      },
+      {
+        "resourceId": "dns",
+        "action": "Restore the reviewed DNS record set",
+        "manualConfirmationRequired": true
+      },
+      {
+        "resourceId": "measurement",
+        "action": "Disable only measurement resources created by the approved execution",
+        "manualConfirmationRequired": true
+      }
+    ],
+    "manualConfirmationRequired": true
+  },
+  "approval": {
+    "purpose": "DEPLOYMENT_EXECUTION",
+    "status": "AWAITING_CONFIRMATION"
+  },
+  "planDigest": "aa77ae7ed17417534857ead11a78e20cac551ec73e2e1469591d2e158b0195d3",
+  "fixtureDigest": "5633269a61015d357516d6cea0af4c336ac678c675a1d1970d42ff535e5ef1b8"
+}
