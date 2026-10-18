@@ -40,8 +40,36 @@ test('template stub validates repo, copy universe, residue, destination and an i
   assert.equal(replay.templateLock.repository, fixtureManifest.repository.url);
   assert.equal(replay.templateLock.commit, fixtureManifest.repository.commit);
   assert.equal(replay.templateLock.contextDigest, input.contextDigest);
+  assert.equal(replay.templateLock.runId, input.runId);
+  assert.equal(replay.templateLock.canonicalStageId, input.canonicalStageId);
+  assert.equal(replay.templateLock.mappingVersion, input.mappingVersion);
+  assert.deepEqual(replay.templateLock.destination, fixtureManifest.destination);
   assert.equal(replay.templateLock.authoritative, false);
   assert.equal(replay.templateLock.copyExecuted, false);
+  assert.equal(replay.templateLock.sourceVerified, false);
+  assert.equal(replay.templateLock.templateLockAuthoritative, false);
+});
+
+test('template lock digest binds run identity and the complete destination boundary', async () => {
+  const fixtureManifest = await fixture();
+  const payloadDigest = templateReplayPayloadDigest({ fixtureManifest });
+  const base = replayTemplateSelection({ fixtureManifest, adapterInput: adapterInput(payloadDigest) });
+  const anotherRun = replayTemplateSelection({ fixtureManifest,
+    adapterInput: adapterInput(payloadDigest, { runId: 'p5-d-offline-template-other' }) });
+  assert.notEqual(base.templateLock.lockDigest, anotherRun.templateLock.lockDigest);
+
+  const destinations = [
+    { rootRelativePath: 'agent/tests/fixtures/v2/template-other',
+      relativePath: 'agent/tests/fixtures/v2/template-other/stub-output', empty: true, symlink: false },
+    { ...fixtureManifest.destination,
+      relativePath: 'agent/tests/fixtures/v2/template/another-stub-output' },
+  ];
+  for (const destination of destinations) {
+    const changed = { ...fixtureManifest, destination };
+    const replay = replayTemplateSelection({ fixtureManifest: changed,
+      adapterInput: adapterInput(templateReplayPayloadDigest({ fixtureManifest: changed })) });
+    assert.notEqual(base.templateLock.lockDigest, replay.templateLock.lockDigest);
+  }
 });
 
 test('template stub fails closed on source, manifest, residue, boundary and lock drift', async () => {

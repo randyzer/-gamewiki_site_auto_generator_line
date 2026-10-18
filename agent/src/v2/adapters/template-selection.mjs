@@ -60,15 +60,34 @@ export function replayTemplateSelection(input) {
   const destination = posix.resolve('/', safeRelative(input.fixtureManifest.destination.relativePath));
   if (!destination.startsWith(`${root}/`))
     fail('TEMPLATE_DESTINATION_INVALID', 'Template destination escapes its declared root');
+  const destinationBinding = {
+    rootRelativePath: input.fixtureManifest.destination.rootRelativePath,
+    relativePath: input.fixtureManifest.destination.relativePath,
+    empty: input.fixtureManifest.destination.empty,
+    symlink: input.fixtureManifest.destination.symlink,
+  };
+  const lockPayload = {
+    runId: input.adapterInput.runId,
+    canonicalStageId: input.adapterInput.canonicalStageId,
+    mappingVersion: input.adapterInput.mappingVersion,
+    contextDigest: input.adapterInput.contextDigest,
+    repository: input.fixtureManifest.repository,
+    destination: destinationBinding,
+    templateTreeDigest: input.fixtureManifest.templateTreeDigest,
+    sourceVerified: input.fixtureManifest.sourceVerified,
+    copyExecuted: input.fixtureManifest.copyExecuted,
+    templateLockAuthoritative: input.fixtureManifest.templateLockAuthoritative,
+  };
   const templateLock = deepFreeze({
     kind: 'OFFLINE_TEMPLATE_LOCK', schemaVersion: 1, authoritative: false, copyExecuted: false,
+    sourceVerified: false, templateLockAuthoritative: false,
+    runId: input.adapterInput.runId, canonicalStageId: input.adapterInput.canonicalStageId,
+    mappingVersion: input.adapterInput.mappingVersion,
     repository: input.fixtureManifest.repository.url, ref: input.fixtureManifest.repository.ref,
     commit: input.fixtureManifest.repository.commit, subtree: input.fixtureManifest.repository.subtree,
+    destination: destinationBinding,
     templateTreeDigest: input.fixtureManifest.templateTreeDigest, contextDigest: input.adapterInput.contextDigest,
-    lockDigest: digest('AGENT_OFFLINE_TEMPLATE_LOCK_V1', {
-      repository: input.fixtureManifest.repository, templateTreeDigest: input.fixtureManifest.templateTreeDigest,
-      contextDigest: input.adapterInput.contextDigest,
-    }),
+    lockDigest: digest('AGENT_OFFLINE_TEMPLATE_LOCK_V1', lockPayload),
   });
   const stageResult = {
     kind: 'STAGE_ADAPTER_RESULT', schemaVersion: 1, producer: 'V2_STAGE_ADAPTER', mode: 'OFFLINE',

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
+import { deflateRawSync } from 'node:zlib';
 import {
   homepageReplayPayloadDigest,
   inspectFaviconArchive,
@@ -93,6 +94,17 @@ test('favicon parser rejects traversal and duplicate members before replay', () 
   assert.throws(() => inspectFaviconArchive(duplicate), error => error.code === 'ARCHIVE_MEMBER_DUPLICATE');
 });
 
+test('favicon parser bounds actual inflate output and rejects Zip64 version markers', () => {
+  const expanded = Buffer.alloc(2097153, 0x61);
+  const forgedSize = makeSingleZip({ name: 'favicon.ico', content: expanded,
+    compressed: deflateRawSync(expanded), method: 8, declaredUncompressedSize: 1 });
+  assert.throws(() => inspectFaviconArchive(forgedSize), error => error.code === 'ARCHIVE_SIZE_INVALID');
+
+  const zip64 = makeSingleZip({ name: 'favicon.ico', content: Buffer.from([0, 0, 1, 0, 1, 0]),
+    versionNeeded: 45 });
+  assert.throws(() => inspectFaviconArchive(zip64), error => error.code === 'ARCHIVE_FORMAT_INVALID');
+});
+
 test('homepage offline policy rejects every real capability before effects run', async () => {
   const payload = await fixture();
   let effects = 0;
@@ -134,4 +146,25 @@ function makeStoredZip(entries) {
   eocd.writeUInt32LE(0x06054b50, 0); eocd.writeUInt16LE(entries.length, 8); eocd.writeUInt16LE(entries.length, 10);
   eocd.writeUInt32LE(centralBytes.length, 12); eocd.writeUInt32LE(localBytes.length, 16);
   return Buffer.concat([localBytes, centralBytes, eocd]);
+}
+
+function makeSingleZip({ name, content, compressed = content, method = 0,
+  declaredUncompressedSize = content.length, versionNeeded = 20 }) {
+  const nameBytes = Buffer.from(name), checksum = crc32(content);
+  const local = Buffer.alloc(30 + nameBytes.length + compressed.length);
+  local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(versionNeeded, 4);
+  local.writeUInt16LE(method, 8); local.writeUInt32LE(checksum, 14);
+  local.writeUInt32LE(compressed.length, 18); local.writeUInt32LE(declaredUncompressedSize, 22);
+  local.writeUInt16LE(nameBytes.length, 26); nameBytes.copy(local, 30);
+  compressed.copy(local, 30 + nameBytes.length);
+  const central = Buffer.alloc(46 + nameBytes.length);
+  central.writeUInt32LE(0x02014b50, 0); central.writeUInt16LE(20, 4);
+  central.writeUInt16LE(versionNeeded, 6); central.writeUInt16LE(method, 10);
+  central.writeUInt32LE(checksum, 16); central.writeUInt32LE(compressed.length, 20);
+  central.writeUInt32LE(declaredUncompressedSize, 24); central.writeUInt16LE(nameBytes.length, 28);
+  nameBytes.copy(central, 46);
+  const eocd = Buffer.alloc(22);
+  eocd.writeUInt32LE(0x06054b50, 0); eocd.writeUInt16LE(1, 8); eocd.writeUInt16LE(1, 10);
+  eocd.writeUInt32LE(central.length, 12); eocd.writeUInt32LE(local.length, 16);
+  return Buffer.concat([local, central, eocd]);
 }

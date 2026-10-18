@@ -9,6 +9,8 @@ import { resolveStageIdentity } from '../stage-identity.mjs';
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const digest = (domain, value) => sha256(`${domain}\n${canonicalJson(value)}`);
 const fail = (code, message) => { throw new ContractError(code, message); };
+const maxArchiveBytes = 8388608;
+const maxMemberBytes = 2097152;
 const expectedMembers = Object.freeze([
   'android-chrome-192x192.png', 'android-chrome-512x512.png', 'apple-touch-icon.png',
   'favicon-16x16.png', 'favicon-32x32.png', 'favicon.ico', 'site.webmanifest',
@@ -67,7 +69,7 @@ function memberFormat(path, content) {
 
 export function inspectFaviconArchive(input) {
   const bytes = Buffer.isBuffer(input) ? input : Buffer.from(input);
-  if (bytes.length > 8388608) fail('ARCHIVE_SIZE_INVALID', 'Favicon archive exceeds the offline size limit');
+  if (bytes.length > maxArchiveBytes) fail('ARCHIVE_SIZE_INVALID', 'Favicon archive exceeds the offline size limit');
   const eocd = findEocd(bytes);
   const disk = bytes.readUInt16LE(eocd + 4), centralDisk = bytes.readUInt16LE(eocd + 6);
   const diskEntries = bytes.readUInt16LE(eocd + 8), totalEntries = bytes.readUInt16LE(eocd + 10);
@@ -81,35 +83,48 @@ export function inspectFaviconArchive(input) {
   for (let index = 0; index < totalEntries; index += 1) {
     if (cursor + 46 > eocd || bytes.readUInt32LE(cursor) !== 0x02014b50)
       fail('ARCHIVE_FORMAT_INVALID', 'Invalid ZIP central-directory entry');
+    const versionNeeded = bytes.readUInt16LE(cursor + 6);
     const flags = bytes.readUInt16LE(cursor + 8), method = bytes.readUInt16LE(cursor + 10);
     const expectedCrc = bytes.readUInt32LE(cursor + 16), compressedSize = bytes.readUInt32LE(cursor + 20);
     const uncompressedSize = bytes.readUInt32LE(cursor + 24), nameLength = bytes.readUInt16LE(cursor + 28);
     const extraLength = bytes.readUInt16LE(cursor + 30), memberComment = bytes.readUInt16LE(cursor + 32);
-    const localOffset = bytes.readUInt32LE(cursor + 42);
+    const diskStart = bytes.readUInt16LE(cursor + 34), localOffset = bytes.readUInt32LE(cursor + 42);
     const path = bytes.toString('utf8', cursor + 46, cursor + 46 + nameLength);
     assertSafeRelativePath(path, 'ARCHIVE_PATH_INVALID');
     if (names.has(path)) fail('ARCHIVE_MEMBER_DUPLICATE', `Duplicate ZIP member: ${path}`);
     names.add(path);
+    if (versionNeeded > 20 || diskStart !== 0 || extraLength !== 0 ||
+        [compressedSize, uncompressedSize, localOffset].includes(0xffffffff))
+      fail('ARCHIVE_FORMAT_INVALID', `Zip64 or unsupported ZIP extension: ${path}`);
     if ((flags & 1) !== 0 || (flags & 8) !== 0 || ![0, 8].includes(method))
       fail('ARCHIVE_FORMAT_INVALID', `Unsupported ZIP flags or compression: ${path}`);
-    if (compressedSize > 2097152 || uncompressedSize > 2097152 || (totalUncompressed += uncompressedSize) > 8388608)
+    if (compressedSize > maxMemberBytes || uncompressedSize > maxMemberBytes ||
+        (totalUncompressed += uncompressedSize) > maxArchiveBytes)
       fail('ARCHIVE_SIZE_INVALID', `ZIP member exceeds the offline size limit: ${path}`);
     if (localOffset + 30 > centralOffset || bytes.readUInt32LE(localOffset) !== 0x04034b50)
       fail('ARCHIVE_FORMAT_INVALID', `Invalid ZIP local header: ${path}`);
+    const localVersionNeeded = bytes.readUInt16LE(localOffset + 4);
     const localFlags = bytes.readUInt16LE(localOffset + 6), localMethod = bytes.readUInt16LE(localOffset + 8);
     const localCrc = bytes.readUInt32LE(localOffset + 14), localCompressed = bytes.readUInt32LE(localOffset + 18);
     const localUncompressed = bytes.readUInt32LE(localOffset + 22), localNameLength = bytes.readUInt16LE(localOffset + 26);
     const localExtraLength = bytes.readUInt16LE(localOffset + 28);
     const localName = bytes.toString('utf8', localOffset + 30, localOffset + 30 + localNameLength);
-    if (localFlags !== flags || localMethod !== method || localCrc !== expectedCrc ||
+    if (localVersionNeeded !== versionNeeded || localExtraLength !== 0 || localFlags !== flags ||
+        localMethod !== method || localCrc !== expectedCrc ||
         localCompressed !== compressedSize || localUncompressed !== uncompressedSize || localName !== path)
       fail('ARCHIVE_HEADER_MISMATCH', `ZIP headers disagree: ${path}`);
     const start = localOffset + 30 + localNameLength + localExtraLength, end = start + compressedSize;
     if (end > centralOffset) fail('ARCHIVE_FORMAT_INVALID', `ZIP member exceeds data bounds: ${path}`);
     const compressed = bytes.subarray(start, end);
     let content;
-    try { content = method === 0 ? compressed : inflateRawSync(compressed); }
-    catch { fail('ARCHIVE_FORMAT_INVALID', `ZIP member cannot be decompressed: ${path}`); }
+    try {
+      content = method === 0 ? compressed : inflateRawSync(compressed,
+        { maxOutputLength: Math.max(1, Math.min(uncompressedSize, maxMemberBytes)) });
+    } catch (error) {
+      if (error?.code === 'ERR_BUFFER_TOO_LARGE')
+        fail('ARCHIVE_SIZE_INVALID', `ZIP member expands beyond its declared limit: ${path}`);
+      fail('ARCHIVE_FORMAT_INVALID', `ZIP member cannot be decompressed: ${path}`);
+    }
     if (content.length !== uncompressedSize || crc32(content) !== expectedCrc)
       fail('ARCHIVE_CRC_MISMATCH', `ZIP CRC or size mismatch: ${path}`);
     members.push({ path, crc32: expectedCrc.toString(16).padStart(8, '0'), compressedSize,
