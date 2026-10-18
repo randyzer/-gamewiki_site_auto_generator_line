@@ -78,6 +78,27 @@
 
 门禁：七阶段 Offline E2E、安全回归、迁移回放和回滚演练通过；当前 V1 路径可按阶段关闭。
 
+P5 编码前必须先通过以下三份实施级规范的独立审核：
+
+- `ARCHITECTURE_V2_STAGE_IDENTITY.md`：冻结 canonical ID、Legacy Skill、零基序号和一基 Shadow alias 的双向映射。
+- `ARCHITECTURE_V2_TRANSACTION_COORDINATION.md`：冻结 Approval Consumption 与 Stage Commit 的 Intent、operationId、幂等和恢复语义。
+- `ARCHITECTURE_V2_FIXTURE_INVENTORY.md`：列出七阶段真实格式样本、SHA256、脱敏来源和缺口。
+
+P5 分成八个顺序工作包；每个工作包从前一个已审核合并的 `main` 开始：
+
+| 工作包 | 内容 | 允许结果 |
+| --- | --- | --- |
+| P5-A | Stage Identity、Registry、Adapter Contract、Feature Gate | 默认 Legacy；只建立离线接口 |
+| P5-B | Artifact Authority、Host Capability、Transaction Coordinator | 只允许模拟/Shadow 协调 |
+| P5-C | 关键词研究 Adapter | Attempt 10 全量保真；不启用真实研究 |
+| P5-D | 首页与模板 Adapter | 首页真实 fixture + 模板 stub；不切换权威 |
+| P5-E | 内容整合 Adapter | Provenance、草稿与 Handoff 安全门禁 |
+| P5-F | UI 与上线前 Adapter | 六视口、构建绑定、闭世界 Route Proof |
+| P5-G | 部署计划 Adapter | 只生成计划并等待审批，执行永远禁用 |
+| P5-H | 七阶段 Offline E2E、Shadow Diff、回滚演练 | 只授予离线架构结论 |
+
+广告扩展阶段不属于 P5 核心七阶段，保持 Legacy/禁用状态并在未来独立迁移。
+
 ## 3. PR 与审核
 
 每个工作包使用独立 PR：
@@ -178,3 +199,5 @@ V2 进入权威模式的条件包括：原本合法的用途限定 PARTIAL 交�
 3. `PRODUCTION_DEPLOYMENT_AUTHORIZED`：用户批准准确的部署计划摘要，只授权该次部署执行。
 
 P5 不能替代 L6，L6 不能替代生产部署审批。只有前两项通过才能宣称架构重构完成；未取得第三项时 `deploymentExecuted` 必须保持 false。
+
+如果 P5-H 完成时仍缺任一阶段真实格式 fixture，只能标记 `P5_OFFLINE_FRAMEWORK_COMPLETE`，不能标记 `P5_OFFLINE_ARCHITECTURE_ACCEPTED`。Fixture 缺口不得用消费者手写的理想对象或 Offline Stub 抹平。
