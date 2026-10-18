@@ -10,6 +10,7 @@ import { assertTrustedOfflineObservationRecord } from './production-observation-
 import { STAGE_IDENTITY_MAPPING_VERSION, assertCanonicalStageId } from './stage-identity.mjs';
 
 const SECTIONS = Object.freeze(['identity', 'code', 'inputs', 'execution', 'research', 'site']);
+const bindingStateByBinder = new WeakMap();
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const digest = (domain, value) => sha256(`${domain}\n${canonicalJson(value)}`);
 const fail = (code, message) => { throw new ContractError(code, message); };
@@ -89,69 +90,106 @@ function bindingDigestPayload(binding) {
   return payload;
 }
 
+function normalizeSources(sources) {
+  if (!sources || typeof sources !== 'object' || Array.isArray(sources) ||
+      Object.keys(sources).some(key => !SECTIONS.includes(key))) {
+    fail('CONTRACT_INVALID', 'Context source map is invalid');
+  }
+  return deepFreeze(Object.fromEntries(Object.entries(sources).map(([section, reference]) => {
+    exactObject(reference, ['path', 'sha256'], `${section} source reference`);
+    if (!safeRelativePath(reference.path)) fail('STATE_STORAGE_PATH_INVALID', `${section} source path is unsafe`);
+    if (!isDigest(reference.sha256)) fail('CONTRACT_DIGEST_MISMATCH', `${section} source digest is invalid`);
+    return [section, { path: reference.path, sha256: reference.sha256 }];
+  })));
+}
+
+async function buildBinding({ root, observationStore, observationRecord, sources }) {
+  assertTrustedOfflineObservationRecord(observationStore, observationRecord);
+  const currentRecord = await observationStore.read(observationRecord.identity);
+  if (currentRecord.recordDigest !== observationRecord.recordDigest)
+    fail('CONTRACT_DIGEST_MISMATCH', 'Observation record changed during context binding');
+  const loaded = {};
+  const evidence = [];
+  for (const section of SECTIONS) {
+    const item = await readSource(root, section, sources[section]);
+    if (item) { loaded[section] = item.value; evidence.push(item.evidence); }
+  }
+  const missingSourceFields = SECTIONS.filter(section => !(section in loaded)).sort();
+  const sourceEvidenceDigest = digest('AGENT_P6_B_SOURCE_EVIDENCE_V1', {
+    sources: evidence.sort((a, b) => a.section.localeCompare(b.section)), missingSourceFields,
+  });
+  let executionContext = null;
+  let contextDigest = null;
+  let schemaBundleDigest = null;
+  let policyVersion = null;
+  let bindingStatus = 'INCOMPLETE';
+  if (missingSourceFields.length === 0) {
+    validateIdentity(loaded.identity, currentRecord);
+    if (loaded.code?.featureGate !== 'legacy')
+      fail('POLICY_DENIED', 'Offline production context binding requires the legacy feature gate');
+    if (loaded.site?.siteRevision !== currentRecord.snapshot.sourceRevision)
+      fail('IDENTITY_MISMATCH', 'Site revision does not match the observation record');
+    executionContext = { kind: 'EXECUTION_CONTEXT', schemaVersion: 1,
+      runId: loaded.identity.runId, stageId: loaded.identity.stageId,
+      attemptId: loaded.identity.attemptId, requestedOperation: loaded.identity.requestedOperation,
+      code: loaded.code, inputs: loaded.inputs, execution: loaded.execution,
+      research: loaded.research, site: loaded.site };
+    validateContract('EXECUTION_CONTEXT', 1, executionContext);
+    contextDigest = executionContextDigest(executionContext);
+    schemaBundleDigest = loaded.code.schemaBundleDigest;
+    policyVersion = loaded.code.policyVersion;
+    bindingStatus = 'VERIFIED';
+  }
+  const base = { kind: 'LEGACY_V2_CONTEXT_BINDING', schemaVersion: 1,
+    producer: 'P6_B_OFFLINE_CONTEXT_BINDER', authoritative: false,
+    verificationScope: 'OFFLINE_SIMULATED', bindingStatus, missingSourceFields,
+    runId: currentRecord.identity.runId,
+    canonicalStageId: currentRecord.identity.canonicalStageId,
+    attemptId: currentRecord.identity.attemptId,
+    mappingVersion: STAGE_IDENTITY_MAPPING_VERSION,
+    legacyInputDigest: currentRecord.snapshot.legacyInputDigest,
+    legacyCheckpointDigest: currentRecord.snapshot.checkpointDigest,
+    observationRecordDigest: currentRecord.recordDigest,
+    executionContextDigest: contextDigest, sourceEvidenceDigest, schemaBundleDigest, policyVersion,
+    executionContext };
+  const bindingDigest = digest('AGENT_P6_B_CONTEXT_BINDING_V1', bindingDigestPayload(base));
+  return deepFreeze({ ...base, bindingDigest });
+}
+
+export function assertTrustedOfflineContextBinding(binder, binding) {
+  if (!bindingStateByBinder.get(binder)?.bindings.has(binding)) {
+    fail('TRUST_LEVEL_INSUFFICIENT', 'A trusted context binding from the current binder is required');
+  }
+  return binding;
+}
+
+export async function revalidateOfflineContextBinding(binder, binding) {
+  assertTrustedOfflineContextBinding(binder, binding);
+  const state = bindingStateByBinder.get(binder);
+  const metadata = state.bindings.get(binding);
+  const rebuilt = await buildBinding({ root: state.root, observationStore: state.observationStore,
+    observationRecord: metadata.observationRecord, sources: metadata.sources });
+  if (rebuilt.bindingDigest !== binding.bindingDigest)
+    fail('CONTEXT_SOURCE_STALE', 'Context binding evidence changed after it was created');
+  return binding;
+}
+
 export function createOfflineContextBinder({ sourceRoot, observationStore } = {}) {
   if (typeof sourceRoot !== 'string' || !isAbsolute(sourceRoot))
     fail('STATE_STORAGE_PATH_INVALID', 'sourceRoot must be absolute');
   if (!observationStore || typeof observationStore !== 'object')
     fail('TRUST_LEVEL_INSUFFICIENT', 'A trusted observation store is required');
   const root = resolve(sourceRoot);
-  return Object.freeze({
+  const bindings = new WeakMap();
+  const binder = Object.freeze({
     async bind({ observationRecord, sources } = {}) {
-      assertTrustedOfflineObservationRecord(observationStore, observationRecord);
-      const currentRecord = await observationStore.read(observationRecord.identity);
-      if (currentRecord.recordDigest !== observationRecord.recordDigest)
-        fail('CONTRACT_DIGEST_MISMATCH', 'Observation record changed during context binding');
-      observationRecord = currentRecord;
-      if (!sources || typeof sources !== 'object' || Array.isArray(sources) ||
-          Object.keys(sources).some(key => !SECTIONS.includes(key))) {
-        fail('CONTRACT_INVALID', 'Context source map is invalid');
-      }
-      const loaded = {};
-      const evidence = [];
-      for (const section of SECTIONS) {
-        const item = await readSource(root, section, sources[section]);
-        if (item) { loaded[section] = item.value; evidence.push(item.evidence); }
-      }
-      const missingSourceFields = SECTIONS.filter(section => !(section in loaded)).sort();
-      const sourceEvidenceDigest = digest('AGENT_P6_B_SOURCE_EVIDENCE_V1', {
-        sources: evidence.sort((a, b) => a.section.localeCompare(b.section)), missingSourceFields,
-      });
-      let executionContext = null;
-      let contextDigest = null;
-      let schemaBundleDigest = null;
-      let policyVersion = null;
-      let bindingStatus = 'INCOMPLETE';
-      if (missingSourceFields.length === 0) {
-        validateIdentity(loaded.identity, observationRecord);
-        if (loaded.code?.featureGate !== 'legacy')
-          fail('POLICY_DENIED', 'Offline production context binding requires the legacy feature gate');
-        if (loaded.site?.siteRevision !== observationRecord.snapshot.sourceRevision)
-          fail('IDENTITY_MISMATCH', 'Site revision does not match the observation record');
-        executionContext = { kind: 'EXECUTION_CONTEXT', schemaVersion: 1,
-          runId: loaded.identity.runId, stageId: loaded.identity.stageId,
-          attemptId: loaded.identity.attemptId, requestedOperation: loaded.identity.requestedOperation,
-          code: loaded.code, inputs: loaded.inputs, execution: loaded.execution,
-          research: loaded.research, site: loaded.site };
-        validateContract('EXECUTION_CONTEXT', 1, executionContext);
-        contextDigest = executionContextDigest(executionContext);
-        schemaBundleDigest = loaded.code.schemaBundleDigest;
-        policyVersion = loaded.code.policyVersion;
-        bindingStatus = 'VERIFIED';
-      }
-      const base = { kind: 'LEGACY_V2_CONTEXT_BINDING', schemaVersion: 1,
-        producer: 'P6_B_OFFLINE_CONTEXT_BINDER', authoritative: false,
-        verificationScope: 'OFFLINE_SIMULATED', bindingStatus, missingSourceFields,
-        runId: observationRecord.identity.runId,
-        canonicalStageId: observationRecord.identity.canonicalStageId,
-        attemptId: observationRecord.identity.attemptId,
-        mappingVersion: STAGE_IDENTITY_MAPPING_VERSION,
-        legacyInputDigest: observationRecord.snapshot.legacyInputDigest,
-        legacyCheckpointDigest: observationRecord.snapshot.checkpointDigest,
-        observationRecordDigest: observationRecord.recordDigest,
-        executionContextDigest: contextDigest, sourceEvidenceDigest, schemaBundleDigest, policyVersion,
-        executionContext };
-      const bindingDigest = digest('AGENT_P6_B_CONTEXT_BINDING_V1', bindingDigestPayload(base));
-      return deepFreeze({ ...base, bindingDigest });
+      const normalizedSources = normalizeSources(sources);
+      const binding = await buildBinding({ root, observationStore, observationRecord,
+        sources: normalizedSources });
+      bindings.set(binding, { observationRecord, sources: normalizedSources });
+      return binding;
     },
   });
+  bindingStateByBinder.set(binder, { root, observationStore, bindings });
+  return binder;
 }

@@ -86,3 +86,23 @@ P5-H 使用固定的模块内调用表串联七个现有 Adapter，并复用 P5-
 - 离线回放 operation ID 由 run、context、schema、mapping 和 policy 确定性生成。`PREPARED` 与 `RECONCILIATION_REQUIRED` 必须在任一 Stage Adapter 执行前停止；`NOT_STARTED`、`ABORTED_BEFORE_CONSUMPTION` 和 `COMMITTED` 才表示没有待协调窗口。
 
 当前离线链使用两处明确受限的 fixture 处理：主页真实格式 fixture 仅在内存中重绑到离线演练 run，关键词输出与内容 stub 之间保留 `KEYWORD_TO_CONTENT_FIXTURE_CONTINUITY_UNPROVEN`。Trace 因此固定记录 `adapterReplayComplete=true`、`endToEndDependencySatisfied=false`；`WAITING_FOR_USER` 只表示 Deployment Adapter 的局部模拟状态。事务状态为 `RECONCILIATION_REQUIRED` 时，协调器必须在任何 Stage 回放前停止。这些限制会写入 trace 和 Migration Decision 的缺失证据，禁止把本结果提升为 `P5_OFFLINE_ARCHITECTURE_ACCEPTED`、`P5_PRODUCTION_READY`、`MIGRATION_APPROVED`、`AUTHORITY_SWITCH_APPROVED` 或 `DEPLOYMENT_READY`。
+
+## 8. P6-C 离线 Shadow 准备度
+
+P6-C 只生成 `OFFLINE_SHADOW_READINESS:1` 准备度记录，不生成或复用正式的
+`SHADOW_DIFF:1`。比较器只接受当前 Observation Store 和 Context Binder 直接产生的原始可信对象，
+并在每次判断前重新读取历史 Manifest 与绑定的六类来源文件。
+
+当前仓库没有可由该比较器验证身份的 V2 Stage Result，也没有贯穿 Legacy Observation、
+Execution Context 与 V2 Stage Result 的可信真实格式 fixture。因此当前输入最多得到
+`INCOMPLETE + HOLD`。普通 JSON 的 `v2Projection` 或 `fixtureEvidence` 只能被记录为不可信缺口，
+不能把准备度提升为 `READY_FOR_OFFLINE_COMPARISON`，更不能解释为生产 Shadow、迁移批准或权威切换。
+
+以下条件仍需后续独立工作包完成：
+
+- Stage Adapter 提供与准确 Context Binder 绑定的进程内可信结果身份。
+- 真实格式 fixture 提供可重验的来源、连续性和摘要绑定。
+- 由正式比较器生成 `SHADOW_DIFF:1`，并完成差异分类审查。
+
+P6-C 不调用 Worker、浏览器、构建或网络，不写入历史 Run，不消费 Approval，不修改 Feature Gate，
+不创建 V2 Commit，也不执行部署。
