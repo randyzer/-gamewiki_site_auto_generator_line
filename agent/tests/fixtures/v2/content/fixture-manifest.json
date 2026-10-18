@@ -1,0 +1,340 @@
+{
+  "kind": "CONTENT_FIXTURE",
+  "schemaVersion": 1,
+  "producer": "P5_E_OFFLINE_FIXTURE",
+  "classification": "OFFLINE_STUB",
+  "runId": "p5-e-offline-content",
+  "sourceAttempt": 10,
+  "contextDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "schemaBundleDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "recoveryDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+  "evidenceOutcomeDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "handoffDigest": "40c034bbbdfa55225a385ccbb7ed141a43385dbacd0f46d043a45d78db73d49a",
+  "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "domain": "fixture.test",
+  "pendingRows": [
+    84
+  ],
+  "requestedCapabilities": [],
+  "sources": [
+    {
+      "sourceId": "guide-source",
+      "pageId": "guide",
+      "kind": "OFFICIAL_FIXTURE",
+      "sourceDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "verifiable": true
+    },
+    {
+      "sourceId": "build-source",
+      "pageId": "build",
+      "kind": "OFFICIAL_FIXTURE",
+      "sourceDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "verifiable": true
+    },
+    {
+      "sourceId": "calculator-source",
+      "pageId": "calculator",
+      "kind": "OFFICIAL_FIXTURE",
+      "sourceDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "verifiable": true
+    },
+    {
+      "sourceId": "tier-source",
+      "pageId": "tier",
+      "kind": "OFFICIAL_FIXTURE",
+      "sourceDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+      "verifiable": true
+    },
+    {
+      "sourceId": "blocked-source",
+      "pageId": "blocked",
+      "kind": "OFFLINE_GAP",
+      "sourceDigest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "verifiable": true
+    }
+  ],
+  "pages": [
+    {
+      "pageId": "guide",
+      "keyword": "Fixture guide",
+      "pageType": "GUIDE",
+      "route": "/guide",
+      "materialStatus": "COMPLETED",
+      "upstreamEligibility": "ELIGIBLE",
+      "upstreamSourceDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "gapIds": [],
+      "sourceRefs": [
+        "guide-source"
+      ],
+      "claims": [
+        {
+          "claimId": "guide-mechanic",
+          "kind": "MECHANIC",
+          "statement": "The fixture has two ordered actions.",
+          "sourceRefs": [
+            "guide-source"
+          ]
+        }
+      ],
+      "content": {
+        "steps": [
+          {
+            "order": 1,
+            "action": "Open the fixture settings.",
+            "expectedOutcome": "The settings panel appears.",
+            "sourceRefs": [
+              "guide-source"
+            ]
+          },
+          {
+            "order": 2,
+            "action": "Apply the fixture preset.",
+            "expectedOutcome": "The preset becomes active.",
+            "sourceRefs": [
+              "guide-source"
+            ]
+          }
+        ]
+      },
+      "contentDigest": "dc1280155bfac1795dbffb5444224e7422a32e7ba8f27dbb3b3393d4091f10b7"
+    },
+    {
+      "pageId": "build",
+      "keyword": "Fixture build",
+      "pageType": "BUILD",
+      "route": "/build",
+      "materialStatus": "PARTIAL",
+      "upstreamEligibility": "DRAFT_ONLY",
+      "upstreamSourceDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "gapIds": [
+        "build-gap"
+      ],
+      "sourceRefs": [
+        "build-source"
+      ],
+      "claims": [
+        {
+          "claimId": "build-number",
+          "kind": "NUMERIC",
+          "statement": "The fixture value is 60.",
+          "sourceRefs": [
+            "build-source"
+          ]
+        }
+      ],
+      "content": {
+        "executionOrder": [
+          "frame-limit",
+          "quality"
+        ],
+        "configuration": [
+          {
+            "settingId": "frame-limit",
+            "setting": "Frame limit",
+            "value": "60",
+            "reason": "Use the documented fixture limit.",
+            "sourceRefs": [
+              "build-source"
+            ]
+          },
+          {
+            "settingId": "quality",
+            "setting": "Quality",
+            "value": "Medium",
+            "reason": "Keep the fixture load bounded.",
+            "sourceRefs": [
+              "build-source"
+            ]
+          }
+        ],
+        "constraints": [
+          {
+            "rule": "Apply frame limit before quality.",
+            "sourceRefs": [
+              "build-source"
+            ]
+          }
+        ]
+      },
+      "contentDigest": "59f51eec848ae3f822c9e33a2e1fac2972d3814b693941b1ca5471366d145911"
+    },
+    {
+      "pageId": "calculator",
+      "keyword": "Fixture calculator",
+      "pageType": "CALCULATOR",
+      "route": "/calculator",
+      "materialStatus": "COMPLETED",
+      "upstreamEligibility": "ELIGIBLE",
+      "upstreamSourceDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "gapIds": [],
+      "sourceRefs": [
+        "calculator-source"
+      ],
+      "claims": [
+        {
+          "claimId": "calculator-rule",
+          "kind": "NUMERIC",
+          "statement": "The fixture output doubles the input and adds one.",
+          "sourceRefs": [
+            "calculator-source"
+          ]
+        }
+      ],
+      "content": {
+        "inputs": [
+          {
+            "name": "base",
+            "type": "NUMBER",
+            "min": 0,
+            "max": 100,
+            "sourceRefs": [
+              "calculator-source"
+            ]
+          }
+        ],
+        "expression": {
+          "type": "ADD",
+          "sourceRefs": [
+            "calculator-source"
+          ],
+          "args": [
+            {
+              "type": "MULTIPLY",
+              "sourceRefs": [
+                "calculator-source"
+              ],
+              "args": [
+                {
+                  "type": "VARIABLE",
+                  "name": "base"
+                },
+                {
+                  "type": "CONSTANT",
+                  "value": 2,
+                  "sourceRefs": [
+                    "calculator-source"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "CONSTANT",
+              "value": 1,
+              "sourceRefs": [
+                "calculator-source"
+              ]
+            }
+          ]
+        },
+        "output": {
+          "name": "score",
+          "type": "NUMBER",
+          "unit": "points"
+        },
+        "testVectors": [
+          {
+            "inputs": {
+              "base": 2
+            },
+            "expected": 5
+          },
+          {
+            "inputs": {
+              "base": 10
+            },
+            "expected": 21
+          }
+        ]
+      },
+      "contentDigest": "af67e433c00bc1400c6bf1fea36a891c483876f01d7128f1de7a748aa06686ec"
+    },
+    {
+      "pageId": "tier",
+      "keyword": "Fixture tier list",
+      "pageType": "TIER_LIST",
+      "route": "/tier-list",
+      "materialStatus": "COMPLETED",
+      "upstreamEligibility": "ELIGIBLE",
+      "upstreamSourceDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+      "gapIds": [],
+      "sourceRefs": [
+        "tier-source"
+      ],
+      "claims": [
+        {
+          "claimId": "tier-ranking",
+          "kind": "FACT",
+          "statement": "The fixture ranks two items by impact.",
+          "sourceRefs": [
+            "tier-source"
+          ]
+        }
+      ],
+      "content": {
+        "criteria": [
+          {
+            "criterionId": "impact",
+            "name": "Fixture impact",
+            "sourceRefs": [
+              "tier-source"
+            ]
+          }
+        ],
+        "tiers": [
+          {
+            "tier": "S",
+            "order": 1,
+            "items": [
+              {
+                "itemId": "alpha",
+                "rank": 1,
+                "rationale": "Highest documented fixture impact.",
+                "criterionIds": [
+                  "impact"
+                ],
+                "sourceRefs": [
+                  "tier-source"
+                ]
+              }
+            ]
+          },
+          {
+            "tier": "A",
+            "order": 2,
+            "items": [
+              {
+                "itemId": "beta",
+                "rank": 2,
+                "rationale": "Second documented fixture impact.",
+                "criterionIds": [
+                  "impact"
+                ],
+                "sourceRefs": [
+                  "tier-source"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "contentDigest": "80a469db5bd699dab24168118b5771c94344221de673eec7743abe88906cc1e0"
+    },
+    {
+      "pageId": "blocked",
+      "keyword": "Fixture blocked",
+      "pageType": "OMIT",
+      "route": "/blocked",
+      "materialStatus": "BLOCKED",
+      "upstreamEligibility": "OMIT",
+      "upstreamSourceDigest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "gapIds": [
+        "blocked-gap"
+      ],
+      "sourceRefs": [],
+      "claims": [],
+      "content": null,
+      "contentDigest": "de2a7d432331cb338f4fef5132e1ff01bdfddba1baaba37ec9427c895d4f16b8"
+    }
+  ],
+  "fixtureDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1"
+}
