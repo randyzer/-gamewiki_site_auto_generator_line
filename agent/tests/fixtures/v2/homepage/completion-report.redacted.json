@@ -1,0 +1,36 @@
+{
+  "status": "PASSED",
+  "sourceFilesReverified": 23,
+  "screenshotsInspected": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "conversion": "favicon.io package supplied by trusted host; no worker browser conversion",
+  "zipSha256": "7111d2d70efc4c1bd9fff1acfbc2fce9354039077ba8a0861eccee977373dfe9",
+  "byteIdentical": true,
+  "zipMembers": [
+    "apple-touch-icon.png",
+    "favicon-32x32.png",
+    "favicon-16x16.png",
+    "favicon.ico",
+    "site.webmanifest",
+    "android-chrome-192x192.png",
+    "android-chrome-512x512.png"
+  ],
+  "crc": "PASSED",
+  "pngDimensions": "PASSED",
+  "skillValidatorExitCode": 0,
+  "researchSha256": "14a8ad95d884a115a1559e4b7d6363ad7dbee5e1577c6f63a88f0080f1ef9a84",
+  "lineage": "Supersedes pending conversion status in preserved checkpoint reports and research section 7.",
+  "localPaths": "REDACTED",
+  "generationPrompt": "OMITTED"
+}

@@ -1,0 +1,18 @@
+{
+  "runId": "wallpaper-engine-002",
+  "stage": "game-homepage-icon-research",
+  "status": "PASSED",
+  "attempt": 1,
+  "inputDigest": "49add1acc4df52d3423ea5548a958a5837fbf6dc718e2b2409d2bcccf0d4c6f4",
+  "skillSha256": "a033fff1b9ec1d810e75e0f2d12b22e1c271d794884f904b817c38e3484e3277",
+  "artifactKinds": [
+    "HOMEPAGE_RESEARCH.md",
+    "ICON.zip",
+    "VALIDATION_REPORT"
+  ],
+  "artifactSha256": [
+    "14a8ad95d884a115a1559e4b7d6363ad7dbee5e1577c6f63a88f0080f1ef9a84",
+    "7111d2d70efc4c1bd9fff1acfbc2fce9354039077ba8a0861eccee977373dfe9",
+    "ac2daf6fe64eaec44188b606f048754adcd25d184399f0f12c25d9dc883e51c0"
+  ]
+}
