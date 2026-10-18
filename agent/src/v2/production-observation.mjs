@@ -4,6 +4,7 @@ import { ContractError } from '../contracts/errors.mjs';
 import { assertCanonicalStageId } from './stage-identity.mjs';
 
 const trustedObservations = new WeakSet();
+const trustedSnapshots = new WeakSet();
 const MODES = new Set(['DISABLED', 'SHADOW_READ_ONLY']);
 const COMMIT_KEYS = Object.freeze(['runId', 'canonicalStageId', 'attemptId', 'legacyInputDigest',
   'sourceRevision', 'checkpoint', 'artifacts', 'legacyStatus', 'deploymentExecuted', 'committedSequence']);
@@ -42,7 +43,7 @@ function snapshotFromLegacyCommit(commit) {
     if (!isDigest(artifact.sha256)) fail('CONTRACT_INVALID', 'Observed artifact digest is invalid');
     return artifact.sha256;
   }).sort();
-  return deepFreeze({
+  const snapshot = deepFreeze({
     kind: 'PRODUCTION_OBSERVATION_SNAPSHOT', schemaVersion: 1,
     mode: 'SHADOW_READ_ONLY', authority: 'LEGACY', authoritative: false,
     runId: commit.runId, canonicalStageId: commit.canonicalStageId,
@@ -53,6 +54,8 @@ function snapshotFromLegacyCommit(commit) {
     legacyStatus: commit.legacyStatus, deploymentExecuted: commit.deploymentExecuted,
     committedSequence: commit.committedSequence,
   });
+  trustedSnapshots.add(snapshot);
+  return snapshot;
 }
 
 function failureOutcome(error) {
@@ -90,5 +93,12 @@ export function createProductionObservation({ mode = 'DISABLED', observer = null
 
 export function assertProductionObservation(value) {
   if (!trustedObservations.has(value)) fail('POLICY_DENIED', 'A trusted production observation is required');
+  return value;
+}
+
+export function assertTrustedObservationSnapshot(value) {
+  if (!trustedSnapshots.has(value)) {
+    fail('TRUST_LEVEL_INSUFFICIENT', 'A trusted observation snapshot is required');
+  }
   return value;
 }
