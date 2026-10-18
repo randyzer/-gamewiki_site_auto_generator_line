@@ -1,0 +1,150 @@
+{
+  "kind": "PRELAUNCH_FIXTURE",
+  "schemaVersion": 1,
+  "producer": "P5_F_OFFLINE_FIXTURE",
+  "classification": "OFFLINE_STUB",
+  "mode": "SIMULATED",
+  "runId": "p5-e-offline-content",
+  "contextDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+  "domain": "fixture.test",
+  "decisionDigest": "becce7b3d393c969c81064b5459865cd62731c7457fb4d92b04b895e15483721",
+  "requestedCapabilities": [],
+  "complete": true,
+  "gaps": [],
+  "build": {
+    "kind": "SIMULATED_BUILD_RECORD",
+    "schemaVersion": 1,
+    "producer": "P5_F_OFFLINE_FIXTURE",
+    "classification": "OFFLINE_STUB",
+    "mode": "SIMULATED",
+    "runId": "p5-e-offline-content",
+    "contextDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+    "domain": "fixture.test",
+    "decisionDigest": "becce7b3d393c969c81064b5459865cd62731c7457fb4d92b04b895e15483721",
+    "toolchain": {
+      "nodeVersion": "v22.16.0",
+      "packageManager": "npm@10.9.2",
+      "platform": "offline-fixture"
+    },
+    "commands": [
+      {
+        "script": "typecheck",
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "exitCode": 0,
+        "outputDigest": "3d339231bec8c30899f8fdefad6f40488da95e9be78588f0d6cb8761adf7ac5e"
+      },
+      {
+        "script": "build",
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "exitCode": 0,
+        "outputDigest": "c70ffde6c4269f6436eee0705b70ececf548f8a3603eab2de875c6b08b8e192c"
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "dist/index.html",
+        "sha256": "a40520c7233c20af0381c1d1c208348b2b8a323ed31849b3650350611f9e61df",
+        "byteLength": 2048
+      }
+    ],
+    "complete": true,
+    "gaps": [],
+    "recordDigest": "e01096750a54acbb47ff244e892f82128888ca83f4916eb55d5ba9be56863d34"
+  },
+  "route": {
+    "kind": "SIMULATED_ROUTE_RECORD",
+    "schemaVersion": 1,
+    "producer": "P5_F_OFFLINE_FIXTURE",
+    "classification": "OFFLINE_STUB",
+    "mode": "SIMULATED",
+    "runId": "p5-e-offline-content",
+    "contextDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+    "domain": "fixture.test",
+    "decisionDigest": "becce7b3d393c969c81064b5459865cd62731c7457fb4d92b04b895e15483721",
+    "discoveryToolId": "p5-f-offline-route-fixture",
+    "discoveryVersion": "fixture-v1",
+    "observedAtMs": 1000,
+    "complete": true,
+    "gaps": [],
+    "dynamicRouteCoverage": "COMPLETE",
+    "unprovenRoutes": [],
+    "staticRoutes": [
+      "/build",
+      "/calculator",
+      "/guide",
+      "/tier-list"
+    ],
+    "dynamicRoutes": [],
+    "sitemapRoutes": [
+      "/calculator",
+      "/guide",
+      "/tier-list"
+    ],
+    "navigationRoutes": [
+      "/calculator",
+      "/guide",
+      "/tier-list"
+    ],
+    "responses": [
+      {
+        "route": "/guide",
+        "status": 200,
+        "redirect": null,
+        "robots": "index",
+        "responseSha256": "e33c1de715ecc3dba98c816847d25bcfbb1c5b74f517db1e92cd1211e89578d4",
+        "byteLength": 4096
+      },
+      {
+        "route": "/build",
+        "status": 200,
+        "redirect": null,
+        "robots": "noindex",
+        "responseSha256": "679fe3be7e4ced0087134adbf128d22b09833aaef924f22ca176bd8abc81ef3a",
+        "byteLength": 3072
+      },
+      {
+        "route": "/calculator",
+        "status": 200,
+        "redirect": null,
+        "robots": "index",
+        "responseSha256": "0edcb0b7941fe7947d18f72e59583b5d6cc4d8a11cb5bd2547dd12c3970ffc8c",
+        "byteLength": 3584
+      },
+      {
+        "route": "/tier-list",
+        "status": 200,
+        "redirect": null,
+        "robots": "index",
+        "responseSha256": "ed20cb49ccf9e6945bb856236819838efa0929707d0564d94fd7c818bcd79e06",
+        "byteLength": 3328
+      },
+      {
+        "route": "/blocked",
+        "status": 404,
+        "redirect": null,
+        "robots": null,
+        "responseSha256": "654f541d6253f7308a63c698d7a5f7419bcb9041b8ab6d800090e54d0280119a",
+        "byteLength": 128
+      }
+    ],
+    "recordDigest": "40da0e5c218711be1de9edd0539317913d7c84832833d908a41bcfdbd2a7e66e"
+  },
+  "fixtureDigest": "517e05e8ebff7418c12fbe2d513d96809a79805d6bc4b6656e3fc4e03c05b693"
+}
