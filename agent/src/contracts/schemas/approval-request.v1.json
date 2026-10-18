@@ -1,0 +1,13 @@
+{
+  "$id": "APPROVAL_REQUEST_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "runId", "stageId", "attemptId", "contextDigest", "schemaBundleDigest", "purpose", "purposePayload", "purposeDigest"],
+  "properties": {
+    "kind": { "const": "APPROVAL_REQUEST" }, "schemaVersion": { "const": 1 },
+    "producer": { "const": "APPROVAL_REQUEST_BUILDER" }, "mode": { "enum": ["SIMULATED", "PRODUCTION"] },
+    "runId": { "type": "string", "minLength": 1 }, "stageId": { "type": "string", "minLength": 1 },
+    "attemptId": { "type": "integer", "minimum": 1 }, "contextDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "purpose": { "enum": ["RUN_EXECUTION", "SERVICE_RESUME", "PARTIAL_HANDOFF", "UI_MODIFICATION", "DEPLOYMENT_PLAN", "DEPLOYMENT_EXECUTION"] },
+    "purposePayload": { "type": "object" }, "purposeDigest": { "type": "string", "format": "sha256" }
+  }
+}

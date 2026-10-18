@@ -1,0 +1,13 @@
+{
+  "$id": "APPROVAL_REVOCATION_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "namespace", "approvalId", "approvalRecordDigest", "revokedAtMs", "reasonCode", "revocationDigest"],
+  "properties": {
+    "kind": { "const": "APPROVAL_REVOCATION" }, "schemaVersion": { "const": 1 },
+    "producer": { "const": "SIMULATED_APPROVAL_AUTHORITY" }, "mode": { "const": "SIMULATED" },
+    "namespace": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+    "approvalId": { "type": "string", "pattern": "^approval-[0-9a-f-]+$" },
+    "approvalRecordDigest": { "type": "string", "format": "sha256" },
+    "revokedAtMs": { "type": "integer", "minimum": 0 }, "reasonCode": { "type": "string", "minLength": 1 },
+    "revocationDigest": { "type": "string", "format": "sha256" }
+  }
+}

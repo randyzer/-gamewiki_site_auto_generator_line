@@ -57,6 +57,14 @@ export function canonicalJson(value) {
   return JSON.stringify(normalize(value));
 }
 
+export function deepFreeze(value) {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value)) deepFreeze(child);
+  }
+  return value;
+}
+
 export function parseStrictJson(input, source = '<json>') {
   const text = Buffer.isBuffer(input) ? input.toString('utf8') : String(input);
   let index = 0;

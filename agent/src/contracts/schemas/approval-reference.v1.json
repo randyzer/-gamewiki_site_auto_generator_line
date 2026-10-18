@@ -1,0 +1,10 @@
+{
+  "$id": "APPROVAL_REFERENCE_V1", "type": "object", "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "mode", "namespace", "approvalId", "recordDigest"],
+  "properties": {
+    "kind": { "const": "APPROVAL_REFERENCE" }, "schemaVersion": { "const": 1 },
+    "producer": { "const": "APPROVAL_STORE" }, "mode": { "enum": ["SIMULATED", "PRODUCTION"] },
+    "namespace": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" }, "approvalId": { "type": "string", "pattern": "^approval-[0-9a-f-]+$" },
+    "recordDigest": { "type": "string", "format": "sha256" }
+  }
+}
