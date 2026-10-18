@@ -5,9 +5,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApprovalRequest, createTestApprovalHarness } from '../src/approval/approval-engine.mjs';
 import { authorizeCanonicalHandoff, createCanonicalHandoff, createTestValidatedInputHarness,
-  assertConsumableHandoff, partialHandoffPurposePayload } from '../src/handoff-v2/canonical-handoff.mjs';
-import { createAuthorizedDependencyPolicyAdapter, createTestDependencyApprovalHarness,
-  dependencySatisfied } from '../src/state/dependency-rules.mjs';
+  partialHandoffPurposePayload } from '../src/handoff-v2/canonical-handoff.mjs';
+import * as dependencyRules from '../src/state/dependency-rules.mjs';
+import { createTestDependencyApprovalHarness, dependencySatisfied,
+  matchDependencyPolicy } from '../src/state/dependency-rules.mjs';
+import { assertTrustedStageDependency, requireStageDependency } from '../src/v2/stage-dependency-gate.mjs';
 import { digest } from './state-helpers.mjs';
 
 const base = { producerStageId: 'stage-2', consumerStageId: 'stage-3', purpose: 'PARTIAL_HANDOFF',
@@ -72,32 +74,41 @@ async function canonicalPartialHandoff(t) {
 
 test('dependency gate reuses one exact canonical handoff consumption without a second approval', async t => {
   const handoff = await canonicalPartialHandoff(t);
-  const input = { projection: { stageSatisfied: false, status: 'PARTIAL' }, producerStageId: 'stage-2',
-    consumerStageId: 'stage-4', purpose: 'PARTIAL_HANDOFF', contextDigest: handoff.contextDigest,
-    handoffDigest: handoff.handoffDigest, handoff };
-  const policy = createAuthorizedDependencyPolicyAdapter({ verifyAuthorizedHandoff: assertConsumableHandoff });
-  const result = policy.evaluate(input);
+  const input = { handoff, projection: { stageSatisfied: false, status: 'PARTIAL' }, runId: handoff.runId,
+    contextDigest: handoff.contextDigest, producerCanonicalStageId: 'keyword-research',
+    consumerCanonicalStageId: 'content-integration', purpose: 'PARTIAL_HANDOFF' };
+  const result = requireStageDependency(input);
   assert.equal(result.satisfied, true);
   assert.equal(result.ruleId, 'V2_STAGE2_PARTIAL_TO_STAGE4_DRAFT');
   assert.equal(result.approvalDigest, handoff.approvalConsumptionDigest);
-  assert.throws(() => policy.evaluate({ ...input, handoff: structuredClone(handoff) }),
+  assert.equal(assertTrustedStageDependency(result), result);
+  assert.throws(() => assertTrustedStageDependency(structuredClone(result)),
+    error => error.code === 'DEPENDENCY_RESULT_UNTRUSTED');
+  assert.throws(() => requireStageDependency({ ...input, handoff: structuredClone(handoff) }),
     error => error.code === 'HANDOFF_UNTRUSTED');
-  assert.equal(policy.evaluate({ ...input, consumerStageId: 'stage-3' }).reason,
-    'HANDOFF_BINDING_MISMATCH');
-  assert.equal(policy.evaluate({ ...input, projection: { stageSatisfied: true, status: 'BLOCKED' } }).reason,
-    'PROJECTION_INCONSISTENT');
+  assert.throws(() => requireStageDependency({ ...input,
+    consumerCanonicalStageId: 'template-selection' }), error => error.code === 'DEPENDENCY_BINDING_MISMATCH');
+  assert.throws(() => requireStageDependency({ ...input,
+    projection: { stageSatisfied: true, status: 'BLOCKED' } }), error => error.code === 'DEPENDENCY_UNSATISFIED');
   const forged = { stageId: 'stage-2', consumerStage: 'stage-4', contextDigest: handoff.contextDigest,
     handoffDigest: handoff.handoffDigest, authorizationStatus: 'CONSUMED',
     approvalConsumptionDigest: digest('forged'), pendingRows: [84], materials: handoff.materials };
-  assert.equal(dependencySatisfied({ ...input, handoff: undefined, authorizationCapability: { binding: forged } }).reason,
-    'AUTHORIZATION_CAPABILITY_UNTRUSTED');
-  assert.equal(dependencySatisfied({ ...input, handoff: undefined, alreadyAuthorizedHandoff: forged }).reason,
+  const direct = { projection: input.projection, producerStageId: 'stage-2', consumerStageId: 'stage-4',
+    purpose: input.purpose, contextDigest: input.contextDigest, handoffDigest: handoff.handoffDigest };
+  assert.equal(dependencySatisfied({ ...direct, authorizationCapability: { binding: forged } }).reason,
     'TRUSTED_APPROVAL_REQUIRED');
+  assert.equal(dependencySatisfied({ ...direct, alreadyAuthorizedHandoff: forged }).reason,
+    'TRUSTED_APPROVAL_REQUIRED');
+  assert.equal('createAuthorizedDependencyPolicyAdapter' in dependencyRules, false);
+  const nonAuthoritative = matchDependencyPolicy(direct);
+  assert.equal(nonAuthoritative.authoritative, false);
+  assert.equal(nonAuthoritative.matched, true);
   const legacy = createTestDependencyApprovalHarness();
   const approvalReference = legacy.issue({ producerStageId: 'stage-2', consumerStageId: 'stage-4',
     purpose: 'PARTIAL_HANDOFF', contextDigest: handoff.contextDigest, handoffDigest: handoff.handoffDigest,
     expiresAt: '2026-10-18T00:00:00.000Z', consumed: false });
-  assert.equal(policy.evaluate({ ...input, approvalReference, approvalVerifier: legacy.verifier }).reason,
+  assert.equal(dependencySatisfied({ ...direct, alreadyAuthorizedHandoff: forged,
+    approvalReference, approvalVerifier: legacy.verifier }).reason,
     'AUTHORIZATION_PATH_AMBIGUOUS');
 });
 
@@ -110,13 +121,12 @@ test('complete canonical dependency still requires exact handoff bindings and a 
       gapIds: [], sourceDigest: digest('complete-source'), contentAccepted: true }],
   });
   const handoff = createCanonicalHandoff({ validatedInput: validated, consumerStage: 'stage-4' });
-  const input = { projection: { stageSatisfied: true, status: 'COMPLETED' }, producerStageId: 'stage-2',
-    consumerStageId: 'stage-4', purpose: 'PARTIAL_HANDOFF', contextDigest: handoff.contextDigest,
-    handoffDigest: handoff.handoffDigest, handoff };
-  const policy = createAuthorizedDependencyPolicyAdapter({ verifyAuthorizedHandoff: assertConsumableHandoff });
-  assert.equal(policy.evaluate(input).satisfied, true);
-  assert.equal(policy.evaluate({ ...input, contextDigest: digest('other') }).reason,
-    'HANDOFF_BINDING_MISMATCH');
-  assert.equal(policy.evaluate({ ...input, projection: { stageSatisfied: true, status: 'FAILED' } }).reason,
-    'PROJECTION_INCONSISTENT');
+  const input = { handoff, projection: { stageSatisfied: true, status: 'COMPLETED' }, runId: handoff.runId,
+    contextDigest: handoff.contextDigest, producerCanonicalStageId: 'keyword-research',
+    consumerCanonicalStageId: 'content-integration', purpose: 'PARTIAL_HANDOFF' };
+  assert.equal(requireStageDependency(input).satisfied, true);
+  assert.throws(() => requireStageDependency({ ...input, contextDigest: digest('other') }),
+    error => error.code === 'DEPENDENCY_BINDING_MISMATCH');
+  assert.throws(() => requireStageDependency({ ...input,
+    projection: { stageSatisfied: true, status: 'FAILED' } }), error => error.code === 'DEPENDENCY_UNSATISFIED');
 });

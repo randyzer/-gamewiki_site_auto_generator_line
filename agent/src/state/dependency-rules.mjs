@@ -3,7 +3,6 @@ import { canonicalJson } from '../contracts/canonical-json.mjs';
 
 const equal = (left, right, fields) => fields.every(field => left[field] === right[field]);
 const trustedVerifiers = new WeakSet();
-const trustedAuthorizationCapabilities = new WeakSet();
 const partialRules = new Map([
   ['stage-2:stage-3:PARTIAL_HANDOFF', 'V2_STAGE2_PARTIAL_TO_STAGE3'],
   ['stage-2:stage-4:PARTIAL_HANDOFF', 'V2_STAGE2_PARTIAL_TO_STAGE4_DRAFT'],
@@ -36,41 +35,18 @@ export function createTestDependencyApprovalHarness() {
 
 export function dependencySatisfied({ projection, producerStageId, consumerStageId, purpose,
   contextDigest, handoffDigest, approvalReference = null, approvalVerifier = null,
-  authorizationCapability = null,
+  authorizationCapability = null, alreadyAuthorizedHandoff = null,
   now = new Date().toISOString() }) {
   const denied = reason => Object.freeze({ satisfied: false, reason, ruleId: null, approvalDigest: null });
-  const completeStatus = ['PASSED', 'COMPLETED'].includes(projection?.status);
-  if (typeof projection?.stageSatisfied !== 'boolean' ||
-      (projection.stageSatisfied && !completeStatus) || (!projection.stageSatisfied && completeStatus)) {
-    return denied('PROJECTION_INCONSISTENT');
-  }
-  if (authorizationCapability && (approvalReference || approvalVerifier)) {
+  if ((authorizationCapability || alreadyAuthorizedHandoff) && (approvalReference || approvalVerifier)) {
     return denied('AUTHORIZATION_PATH_AMBIGUOUS');
   }
-  let authorized = null;
-  if (authorizationCapability) {
-    if (!trustedAuthorizationCapabilities.has(authorizationCapability))
-      return denied('AUTHORIZATION_CAPABILITY_UNTRUSTED');
-    authorized = authorizationCapability.binding;
-    if (purpose !== 'PARTIAL_HANDOFF' || authorized.stageId !== producerStageId ||
-        authorized.consumerStage !== consumerStageId || authorized.contextDigest !== contextDigest ||
-        authorized.handoffDigest !== handoffDigest) return denied('HANDOFF_BINDING_MISMATCH');
-  }
-  if (projection.stageSatisfied) {
-    if (authorized && (authorized.authorizationStatus !== 'NOT_REQUIRED' || authorized.pendingRows.length ||
-        authorized.materials.some(item => item.canonicalStatus !== 'COMPLETED' ||
-          item.publicationEligibility !== 'ELIGIBLE'))) return denied('HANDOFF_PROJECTION_MISMATCH');
+  if (authorizationCapability || alreadyAuthorizedHandoff) return denied('TRUSTED_APPROVAL_REQUIRED');
+  const policy = matchDependencyPolicy({ projection, producerStageId, consumerStageId, purpose });
+  if (!policy.matched) return denied(policy.reason);
+  if (!policy.approvalRequired) {
     return Object.freeze({ satisfied: true,
       reason: 'STAGE_SATISFIED', ruleId: 'V2_COMPLETE_STAGE', approvalDigest: null });
-  }
-  if (projection?.status !== 'PARTIAL') return denied('PRODUCER_NOT_SATISFIED');
-  const ruleId = partialRules.get(`${producerStageId}:${consumerStageId}:${purpose}`);
-  if (!ruleId) return denied('PARTIAL_RULE_DENIED');
-  if (authorized) {
-    if (authorized.authorizationStatus !== 'CONSUMED' || !authorized.approvalConsumptionDigest)
-      return denied('HANDOFF_APPROVAL_REQUIRED');
-    return Object.freeze({ satisfied: true, reason: 'PARTIAL_HANDOFF_APPROVED', ruleId,
-      approvalDigest: authorized.approvalConsumptionDigest });
   }
   if (!approvalReference || !trustedVerifiers.has(approvalVerifier)) return denied('TRUSTED_APPROVAL_REQUIRED');
   const approval = approvalVerifier.verify(approvalReference);
@@ -81,24 +57,23 @@ export function dependencySatisfied({ projection, producerStageId, consumerStage
   if (!Number.isFinite(expiry) || !Number.isFinite(current)) return denied('APPROVAL_TIME_INVALID');
   if (approval.consumed || expiry <= current)
     return denied(approval.consumed ? 'APPROVAL_CONSUMED' : 'APPROVAL_EXPIRED');
-  return Object.freeze({ satisfied: true, reason: 'PARTIAL_HANDOFF_APPROVED', ruleId,
+  return Object.freeze({ satisfied: true, reason: 'PARTIAL_HANDOFF_APPROVED', ruleId: policy.ruleId,
     approvalDigest: approvalReference.approvalDigest });
 }
 
-export function createAuthorizedDependencyPolicyAdapter({ verifyAuthorizedHandoff }) {
-  if (typeof verifyAuthorizedHandoff !== 'function') throw new TypeError('Authorized handoff verifier is required');
-  return Object.freeze({ evaluate(input) {
-    const handoff = verifyAuthorizedHandoff(input.handoff);
-    const capability = Object.freeze({ binding: Object.freeze({
-      stageId: handoff.stageId, consumerStage: handoff.consumerStage,
-      contextDigest: handoff.contextDigest, handoffDigest: handoff.handoffDigest,
-      authorizationStatus: handoff.authorizationStatus,
-      approvalConsumptionDigest: handoff.approvalConsumptionDigest,
-      pendingRows: handoff.pendingRows,
-      materials: handoff.materials,
-    }) });
-    trustedAuthorizationCapabilities.add(capability);
-    const { handoff: ignored, ...policyInput } = input;
-    return dependencySatisfied({ ...policyInput, authorizationCapability: capability });
-  } });
+export function matchDependencyPolicy({ projection, producerStageId, consumerStageId, purpose }) {
+  const unmatched = reason => Object.freeze({ matched: false, reason, ruleId: null,
+    approvalRequired: false, authoritative: false });
+  const completeStatus = ['PASSED', 'COMPLETED'].includes(projection?.status);
+  if (typeof projection?.stageSatisfied !== 'boolean' ||
+      (projection.stageSatisfied && !completeStatus) || (!projection.stageSatisfied && completeStatus)) {
+    return unmatched('PROJECTION_INCONSISTENT');
+  }
+  if (projection.stageSatisfied) return Object.freeze({ matched: true, reason: 'STAGE_SATISFIED',
+    ruleId: 'V2_COMPLETE_STAGE', approvalRequired: false, authoritative: false });
+  if (projection.status !== 'PARTIAL') return unmatched('PRODUCER_NOT_SATISFIED');
+  const ruleId = partialRules.get(`${producerStageId}:${consumerStageId}:${purpose}`);
+  if (!ruleId) return unmatched('PARTIAL_RULE_DENIED');
+  return Object.freeze({ matched: true, reason: 'PARTIAL_RULE_MATCHED', ruleId,
+    approvalRequired: true, authoritative: false });
 }
