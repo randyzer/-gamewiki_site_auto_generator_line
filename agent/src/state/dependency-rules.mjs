@@ -35,13 +35,40 @@ export function createTestDependencyApprovalHarness() {
 
 export function dependencySatisfied({ projection, producerStageId, consumerStageId, purpose,
   contextDigest, handoffDigest, approvalReference = null, approvalVerifier = null,
+  alreadyAuthorizedHandoff = null,
   now = new Date().toISOString() }) {
   const denied = reason => Object.freeze({ satisfied: false, reason, ruleId: null, approvalDigest: null });
-  if (projection?.stageSatisfied === true) return Object.freeze({ satisfied: true,
-    reason: 'STAGE_SATISFIED', ruleId: 'V2_COMPLETE_STAGE', approvalDigest: null });
+  const completeStatus = ['PASSED', 'COMPLETED'].includes(projection?.status);
+  if (typeof projection?.stageSatisfied !== 'boolean' ||
+      (projection.stageSatisfied && !completeStatus) || (!projection.stageSatisfied && completeStatus)) {
+    return denied('PROJECTION_INCONSISTENT');
+  }
+  if (alreadyAuthorizedHandoff && (approvalReference || approvalVerifier)) {
+    return denied('AUTHORIZATION_PATH_AMBIGUOUS');
+  }
+  let authorized = null;
+  if (alreadyAuthorizedHandoff) {
+    authorized = alreadyAuthorizedHandoff;
+    if (purpose !== 'PARTIAL_HANDOFF' || authorized.stageId !== producerStageId ||
+        authorized.consumerStage !== consumerStageId || authorized.contextDigest !== contextDigest ||
+        authorized.handoffDigest !== handoffDigest) return denied('HANDOFF_BINDING_MISMATCH');
+  }
+  if (projection.stageSatisfied) {
+    if (authorized && (authorized.authorizationStatus !== 'NOT_REQUIRED' || authorized.pendingRows.length ||
+        authorized.materials.some(item => item.canonicalStatus !== 'COMPLETED' ||
+          item.publicationEligibility !== 'ELIGIBLE'))) return denied('HANDOFF_PROJECTION_MISMATCH');
+    return Object.freeze({ satisfied: true,
+      reason: 'STAGE_SATISFIED', ruleId: 'V2_COMPLETE_STAGE', approvalDigest: null });
+  }
   if (projection?.status !== 'PARTIAL') return denied('PRODUCER_NOT_SATISFIED');
   const ruleId = partialRules.get(`${producerStageId}:${consumerStageId}:${purpose}`);
   if (!ruleId) return denied('PARTIAL_RULE_DENIED');
+  if (authorized) {
+    if (authorized.authorizationStatus !== 'CONSUMED' || !authorized.approvalConsumptionDigest)
+      return denied('HANDOFF_APPROVAL_REQUIRED');
+    return Object.freeze({ satisfied: true, reason: 'PARTIAL_HANDOFF_APPROVED', ruleId,
+      approvalDigest: authorized.approvalConsumptionDigest });
+  }
   if (!approvalReference || !trustedVerifiers.has(approvalVerifier)) return denied('TRUSTED_APPROVAL_REQUIRED');
   const approval = approvalVerifier.verify(approvalReference);
   if (!approval) return denied('APPROVAL_REFERENCE_INVALID');
