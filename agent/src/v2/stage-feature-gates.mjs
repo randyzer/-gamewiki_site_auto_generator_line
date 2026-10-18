@@ -7,10 +7,14 @@ const bindingFields = Object.freeze([
   'runId', 'canonicalStageId', 'mappingVersion', 'contextDigest', 'featureGate',
 ]);
 
+function requireCoreBindingIdentity(binding) {
+  const identity = assertCanonicalStageId(binding.canonicalStageId, { mappingVersion: binding.mappingVersion });
+  return stageRegistry.requireCore(identity.canonicalStageId);
+}
+
 export function createStageGateBinding({ runId, canonicalStageId,
   mappingVersion = STAGE_IDENTITY_MAPPING_VERSION, contextDigest, featureGate = 'legacy' } = {}) {
-  assertCanonicalStageId(canonicalStageId, { mappingVersion });
-  stageRegistry.requireCore(canonicalStageId);
+  requireCoreBindingIdentity({ canonicalStageId, mappingVersion });
   const binding = {
     kind: 'STAGE_GATE_BINDING', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', runtimeScope: 'OFFLINE',
     runId, canonicalStageId, mappingVersion, contextDigest, featureGate, authoritative: false,
@@ -20,7 +24,11 @@ export function createStageGateBinding({ runId, canonicalStageId,
 }
 
 export function assertStageGateBinding(binding, expected = {}) {
+  if (binding?.kind === 'STAGE_GATE_BINDING' && binding?.schemaVersion === 1) {
+    requireCoreBindingIdentity(binding);
+  }
   validateContract('STAGE_GATE_BINDING', 1, binding);
+  requireCoreBindingIdentity(binding);
   for (const field of ['runId', 'canonicalStageId', 'mappingVersion', 'contextDigest']) {
     if (Object.hasOwn(expected, field) && !Object.is(binding[field], expected[field])) {
       throw new ContractError('STAGE_GATE_BINDING_MISMATCH', `Stage gate binding mismatch: ${field}`,
@@ -31,14 +39,18 @@ export function assertStageGateBinding(binding, expected = {}) {
 }
 
 export function createStageFeatureGateStore() {
-  const bindings = new Map();
+  const bindingsByRun = new Map();
   return Object.freeze({
     bind(request) {
       const candidate = createStageGateBinding(request);
-      const key = `${candidate.runId}\0${candidate.canonicalStageId}`;
-      const existing = bindings.get(key);
+      let bindingsByStage = bindingsByRun.get(candidate.runId);
+      if (!bindingsByStage) {
+        bindingsByStage = new Map();
+        bindingsByRun.set(candidate.runId, bindingsByStage);
+      }
+      const existing = bindingsByStage.get(candidate.canonicalStageId);
       if (!existing) {
-        bindings.set(key, candidate);
+        bindingsByStage.set(candidate.canonicalStageId, candidate);
         return candidate;
       }
       if (bindingFields.every(field => Object.is(existing[field], candidate[field]))) return existing;
@@ -47,7 +59,7 @@ export function createStageFeatureGateStore() {
         { runId: candidate.runId, canonicalStageId: candidate.canonicalStageId });
     },
     get(runId, canonicalStageId) {
-      return bindings.get(`${runId}\0${canonicalStageId}`) ?? null;
+      return bindingsByRun.get(runId)?.get(canonicalStageId) ?? null;
     },
   });
 }

@@ -27,10 +27,15 @@ const adapterResult = {
 };
 
 test('P5-A contracts are registered with closed versioned schemas', () => {
+  const coreStageIds = [
+    'homepage-research', 'keyword-research', 'template-selection', 'content-integration',
+    'ui-ux-audit', 'prelaunch-acceptance', 'deployment-plan',
+  ];
   for (const kind of ['STAGE_ADAPTER_INPUT', 'STAGE_ADAPTER_RESULT', 'STAGE_GATE_BINDING']) {
     const definition = contractDefinition(kind, 1);
     assert.equal(definition.kind, kind);
     assert.equal(definition.schema.additionalProperties, false);
+    assert.deepEqual(definition.schema.properties.canonicalStageId.enum, coreStageIds);
   }
   assert.deepEqual(validateStageAdapterInput(adapterInput), adapterInput);
   assert.deepEqual(validateStageAdapterResult(adapterResult), adapterResult);
@@ -50,6 +55,10 @@ test('adapter contracts accept canonical identities only and never create author
     error.code === 'CONTRACT_SCHEMA_INVALID');
   assert.throws(() => validateStageAdapterResult({ ...adapterResult, mappingVersion: 'stage-identity-v2' }), error =>
     error.code === 'STAGE_ID_MAPPING_VERSION_MISMATCH');
+  assert.throws(() => validateStageAdapterInput({ ...adapterInput, canonicalStageId: 'advertising-plan' }), error =>
+    error.code === 'STAGE_NOT_CORE');
+  assert.throws(() => validateStageAdapterResult({ ...adapterResult, canonicalStageId: 'advertising-plan' }), error =>
+    error.code === 'STAGE_NOT_CORE');
 });
 
 test('feature gate defaults to legacy and its offline binding is immutable', () => {
@@ -84,8 +93,27 @@ test('gate bindings cannot cross runs, stages, contexts or enter the core pipeli
   }
   assert.throws(() => createStageGateBinding({ ...baseBinding, canonicalStageId: 'advertising-plan' }), error =>
     error.code === 'STAGE_NOT_CORE');
+  assert.throws(() => assertStageGateBinding({
+    kind: 'STAGE_GATE_BINDING', schemaVersion: 1, producer: 'V2_OFFLINE_HOST', runtimeScope: 'OFFLINE',
+    ...baseBinding, canonicalStageId: 'advertising-plan', featureGate: 'legacy', authoritative: false,
+  }), error => error.code === 'STAGE_NOT_CORE');
   assert.throws(() => createStageGateBinding({ ...baseBinding, mappingVersion: 'stage-identity-v2' }), error =>
     error.code === 'STAGE_ID_MAPPING_VERSION_MISMATCH');
+});
+
+test('feature gate store keeps special run IDs and stage identities structurally separate', () => {
+  const store = createStageFeatureGateStore();
+  const requests = [
+    { ...baseBinding, runId: 'run\\0keyword-research' },
+    { ...baseBinding, runId: 'run\u0000keyword-research' },
+    { ...baseBinding, canonicalStageId: 'homepage-research' },
+  ];
+  for (const request of requests) assert.equal(store.bind(request).featureGate, 'legacy');
+  for (const request of requests) {
+    assert.equal(store.get(request.runId, request.canonicalStageId).contextDigest, request.contextDigest);
+  }
+  assert.throws(() => store.bind({ ...requests[0], featureGate: 'v2' }), error =>
+    error.code === 'STAGE_GATE_BINDING_IMMUTABLE');
 });
 
 test('offline shadow and v2 labels remain non-authoritative configuration values', () => {

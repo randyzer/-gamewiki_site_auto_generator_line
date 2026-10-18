@@ -1,12 +1,15 @@
 import { validateContract } from '../contracts/registry.mjs';
-import { STAGE_IDENTITY_MAPPING_VERSION, assertCanonicalStageId } from './stage-identity.mjs';
+import { assertCanonicalStageId } from './stage-identity.mjs';
+import { stageRegistry } from './stage-registry.mjs';
 
 function validateCanonicalEnvelope(kind, value) {
-  if (value && typeof value === 'object' && value.mappingVersion !== STAGE_IDENTITY_MAPPING_VERSION) {
-    assertCanonicalStageId(value.canonicalStageId, { mappingVersion: value.mappingVersion });
+  if (value?.kind === kind && value?.schemaVersion === 1) {
+    const identity = assertCanonicalStageId(value.canonicalStageId, { mappingVersion: value.mappingVersion });
+    stageRegistry.requireCore(identity.canonicalStageId);
   }
   validateContract(kind, 1, value);
-  assertCanonicalStageId(value.canonicalStageId, { mappingVersion: value.mappingVersion });
+  const identity = assertCanonicalStageId(value.canonicalStageId, { mappingVersion: value.mappingVersion });
+  stageRegistry.requireCore(identity.canonicalStageId);
   return value;
 }
 
