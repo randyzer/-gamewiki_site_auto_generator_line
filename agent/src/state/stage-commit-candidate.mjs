@@ -28,7 +28,7 @@ async function verifyStagedObject(stagingRoot, object) {
     fail('CONTRACT_DIGEST_MISMATCH', `Staged object does not match ${object.role}`);
 }
 
-async function buildCandidate(input, transaction = null) {
+async function buildCandidate(input, transaction = null, { verifyObjects = true } = {}) {
   if (!input.workerStop || input.workerStop.phase !== 'STOPPED')
     fail('STATE_CANDIDATE_INVALID', 'Stage Commit Candidate requires a Worker stop record');
   if (!transaction && input.state?.gate?.status === 'APPROVED')
@@ -41,7 +41,7 @@ async function buildCandidate(input, transaction = null) {
     fail('STATE_CANDIDATE_INVALID', 'Stage Commit Candidate requires at least one immutable object');
   if (new Set(input.objects.map(object => object.role)).size !== input.objects.length)
     fail('STATE_CANDIDATE_INVALID', 'Immutable object roles must be unique');
-  await Promise.all(input.objects.map(object => verifyStagedObject(input.stagingRoot, object)));
+  if (verifyObjects) await Promise.all(input.objects.map(object => verifyStagedObject(input.stagingRoot, object)));
   const events = input.events.map(item => ({ ...item }));
   const eventIds = new Set();
   for (let index = 0; index < events.length; index += 1) {
@@ -84,14 +84,15 @@ export async function createStageCommitCandidate(input) {
   return buildCandidate(input);
 }
 
-export async function createOfflineApprovedStageCommitCandidate(input, { capabilityRegistry, capability, rootDirectory }) {
+export async function createOfflineApprovedStageCommitCandidate(input, { capabilityRegistry, capability, rootDirectory,
+  verifyStagedObjects = true }) {
   capabilityRegistry.assert(capability, { capability: 'OFFLINE_APPROVED_CANDIDATE', mode: 'SIMULATED', rootDirectory });
   stageRegistry.requireCore(input.canonicalStageId);
   if (input.stageId !== input.canonicalStageId)
     fail('CONTRACT_BINDING_MISMATCH', 'V2 candidate requires canonical stage identity in both fields');
   if (input.state?.gate?.status !== 'APPROVED' || input.state.gate.approvalDigest !== input.approvalDigest)
     fail('STATE_APPROVAL_INVALID', 'Offline candidate requires an exactly bound approved state');
-  return buildCandidate(input, input);
+  return buildCandidate(input, input, { verifyObjects: verifyStagedObjects });
 }
 
 export function assertStageCommitCandidate(candidate) {

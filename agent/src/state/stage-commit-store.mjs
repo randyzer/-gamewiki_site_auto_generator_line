@@ -12,6 +12,7 @@ import { readCommitChain } from './stage-recovery.mjs';
 import { projectLegacyManifest, projectionMetadataFromRecord } from './manifest-projector.mjs';
 import { syncDirectory, writeAtomicFile, writeImmutableFile } from './atomic-file.mjs';
 import { assertRegularFileNoSymlink, ensureDirectoryTree } from './storage-boundary.mjs';
+import { assertTrustedApprovalConsumption } from '../approval/approval-engine.mjs';
 
 const conflict = message => new ContractError('STATE_SEQUENCE_CONFLICT', message);
 const contextMismatch = message => new ContractError('STATE_CONTEXT_MISMATCH', message);
@@ -127,6 +128,7 @@ export function createOfflineTransactionStageCommitStore({ rootDirectory, capabi
   const objectStore = createStateObjectStore({ rootDirectory, faultInjector: inject });
   return Object.freeze({
     async commit(candidate, { stagingRoot, intent, consumption }) {
+      assertTrustedApprovalConsumption(consumption);
       assertStageCommitCandidate(candidate);
       if (candidate.schemaVersion !== 2 || candidate.mode !== 'SHADOW' || candidate.state.gate.status !== 'APPROVED')
         throw new ContractError('POLICY_DENIED', 'Offline transaction store requires a V2 Shadow APPROVED candidate');

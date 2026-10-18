@@ -13,7 +13,7 @@ async function modules(root) {
   return output;
 }
 
-test('P4 modules are not imported by existing production source paths', async () => {
+test('P4 modules are imported only by the explicit offline Stage Commit boundary', async () => {
   const sourceRoot = new URL('../src/', import.meta.url).pathname;
   const p4Roots = ['/approval/', '/handoff-v2/', '/publication-v2/', '/v2/'];
   const candidates = (await modules(sourceRoot)).filter(path => !p4Roots.some(segment => path.includes(segment)));
@@ -22,5 +22,7 @@ test('P4 modules are not imported by existing production source paths', async ()
     const text = await readFile(path, 'utf8');
     if (/from\s+['"][^'"]*\/(?:approval|handoff-v2|publication-v2)\//u.test(text)) violations.push(path);
   }
-  assert.deepEqual(violations, []);
+  assert.deepEqual(violations, [join(sourceRoot, 'state/stage-commit-store.mjs')]);
+  const boundary = await readFile(violations[0], 'utf8');
+  assert.match(boundary, /createOfflineTransactionStageCommitStore[\s\S]*assertTrustedApprovalConsumption\(consumption\)/u);
 });

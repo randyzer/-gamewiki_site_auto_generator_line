@@ -37,6 +37,8 @@ export function assertTransactionOutcome(outcome) {
     throw new ContractError('TRANSACTION_AUTHORITY_CORRUPT', 'Transaction Outcome digest mismatch');
   if (outcome.status === 'COMMITTED' && (!outcome.consumptionDigest || !outcome.commitDigest))
     throw new ContractError('TRANSACTION_AUTHORITY_CORRUPT', 'Committed Outcome lacks authority digests');
+  if (outcome.status === 'RECONCILIATION_REQUIRED' && (!outcome.consumptionDigest || outcome.commitDigest))
+    throw new ContractError('TRANSACTION_AUTHORITY_CORRUPT', 'Reconciliation Outcome has invalid authority digests');
   if (outcome.status === 'ABORTED_BEFORE_CONSUMPTION' && (outcome.consumptionDigest || outcome.commitDigest))
     throw new ContractError('TRANSACTION_AUTHORITY_CORRUPT', 'Aborted Outcome contains committed authority');
   return outcome;
@@ -90,7 +92,8 @@ async function publishIntent({ rootDirectory, intent }) {
 }
 
 export async function publishTransactionOutcome({ rootDirectory, operationId, status, intentDigest,
-  consumptionDigest = null, commitDigest = null, recordedAtMs }) {
+  consumptionDigest = null, commitDigest = null, recordedAtMs, capabilityRegistry, capability }) {
+  capabilityRegistry.assert(capability, { capability: 'OFFLINE_RECOVERY', mode: 'SIMULATED', rootDirectory });
   const names = { COMMITTED: 'committed.json', RECONCILIATION_REQUIRED: 'reconciliation-required.json',
     ABORTED_BEFORE_CONSUMPTION: 'aborted-before-consumption.json' };
   const root = transactionRoot(rootDirectory, operationId);
@@ -131,18 +134,39 @@ export function createOfflineTransactionCoordinator({ rootDirectory, namespace, 
         throw new ContractError('TRANSACTION_OPERATION_INVALID', 'Invalid operationId');
       await ensureDirectoryTree(rootDirectory, ['transactions', request.operationId]);
       {
-        const approval = await approvalHarness.verifier.verify(request.approvalReference,
-          { ...request.approvalExpected, nowMs: clock() });
         const approvalDigest = request.approvalReference.recordDigest;
         const purposeDigest = purposeContextDigest(request.approvalExpected.contextDigest,
           request.approvalExpected.purpose, request.approvalExpected.purposePayload);
         const approvedState = structuredClone(request.candidateInput.state);
         approvedState.gate = { status: 'APPROVED', approvalDigest };
-        const candidate = await createOfflineApprovedStageCommitCandidate({ ...request.candidateInput,
-          state: approvedState, operationId: request.operationId,
-          canonicalStageId: request.canonicalStageId, purposeDigest, policyVersion: approval.policyVersion,
+        const buildCandidate = (policyVersion, verifyStagedObjects = true) => createOfflineApprovedStageCommitCandidate({
+          ...request.candidateInput, state: approvedState, operationId: request.operationId,
+          canonicalStageId: request.canonicalStageId, purposeDigest, policyVersion,
           approvalId: request.approvalReference.approvalId, approvalDigest },
-        { capabilityRegistry, capability, rootDirectory });
+        { capabilityRegistry, capability, rootDirectory, verifyStagedObjects });
+        const existingIntent = await readTransactionIntent({ rootDirectory, operationId: request.operationId });
+        if (existingIntent) {
+          const replayCandidate = await buildCandidate(existingIntent.policyVersion, false);
+          for (const [key, value] of Object.entries({ runId: replayCandidate.runId,
+            canonicalStageId: replayCandidate.canonicalStageId, attemptId: replayCandidate.attemptId,
+            contextDigest: replayCandidate.contextDigest, schemaBundleDigest: replayCandidate.schemaBundleDigest,
+            purposeDigest: replayCandidate.purposeDigest, candidateDigest: replayCandidate.candidateDigest,
+            approvalId: replayCandidate.approvalId, approvalDigest: replayCandidate.approvalDigest })) {
+            if (existingIntent[key] !== value)
+              throw new ContractError('TRANSACTION_IDEMPOTENCY_CONFLICT', `Operation changed ${key}`);
+          }
+          const { recoverOfflineTransaction } = await import('./migration-recovery.mjs');
+          const recovered = await recoverOfflineTransaction({ rootDirectory, namespace,
+            operationId: request.operationId, approvalHarness, capabilityRegistry, capability, repair: true,
+            clock });
+          if (recovered.status === 'COMMITTED') {
+            const outcomes = await readTransactionOutcomes({ rootDirectory, operationId: request.operationId });
+            return outcomes.find(item => item.status === 'COMMITTED');
+          }
+        }
+        const approval = await approvalHarness.verifier.verify(request.approvalReference,
+          { ...request.approvalExpected, nowMs: clock() });
+        const candidate = await buildCandidate(approval.policyVersion);
         const intentBase = { kind: 'TRANSACTION_INTENT', schemaVersion: 1,
           producer: 'V2_TRANSACTION_COORDINATOR', operationId: request.operationId,
           mode: 'SIMULATED', mappingVersion: STAGE_IDENTITY_MAPPING_VERSION,
@@ -172,7 +196,7 @@ export function createOfflineTransactionCoordinator({ rootDirectory, namespace, 
         const outcome = await publishTransactionOutcome({ rootDirectory, operationId: request.operationId,
           status: 'COMMITTED', intentDigest: intent.intentDigest,
           consumptionDigest: consumption.consumptionDigest, commitDigest: record.commitDigest,
-          recordedAtMs: clock() });
+          recordedAtMs: clock(), capabilityRegistry, capability });
         await faults.afterOutcomeCommitted?.();
         await writeAtomicFile(join(transactionRoot(rootDirectory, request.operationId), 'projection.json'),
           Buffer.from(`${canonicalJson({ operationId: request.operationId, status: 'COMMITTED',

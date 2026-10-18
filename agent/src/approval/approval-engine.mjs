@@ -46,6 +46,8 @@ function factory({ rootDirectory, namespace, mode, faults, clock, bindingProvide
     const record = await store.read(reference);
     await revocations.assertNotRevoked(record);
     if (record.mode !== mode) throw new ContractError('APPROVAL_MODE_MISMATCH', 'Approval mode mismatch');
+    if (record.policyVersion !== policyVersionProvider())
+      throw new ContractError('APPROVAL_POLICY_MISMATCH', 'Approval policy version changed');
     return assertApprovalValid(record, expected);
   };
   return { store, consumptions, revocations, verifier: Object.freeze({ verify: (reference, expected) => verify(reference,

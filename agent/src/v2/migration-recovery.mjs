@@ -27,6 +27,14 @@ async function readCommit({ rootDirectory, operationId }) {
 }
 
 function assertBindings(intent, consumption, commit, outcomes) {
+  const aborted = outcomes.find(item => item.status === 'ABORTED_BEFORE_CONSUMPTION');
+  const reconciliation = outcomes.find(item => item.status === 'RECONCILIATION_REQUIRED');
+  const committed = outcomes.find(item => item.status === 'COMMITTED');
+  if (aborted && (consumption || commit || reconciliation || committed))
+    fail('ABORTED_BEFORE_CONSUMPTION contradicts later transaction authority');
+  if (reconciliation && (!consumption || reconciliation.commitDigest !== null))
+    fail('RECONCILIATION_REQUIRED lacks its authoritative Consumption');
+  if (committed && !commit) fail('COMMITTED Outcome exists without Stage Commit');
   if (consumption) {
     for (const [key, value] of Object.entries({ operationId: intent.operationId, approvalId: intent.approvalId,
       contextDigest: intent.contextDigest, purposeDigest: intent.purposeDigest, intentDigest: intent.intentDigest })) {
@@ -90,7 +98,8 @@ export async function recoverOfflineTransaction({ rootDirectory, operationId, ap
   if (!commit) {
     const outcome = repair ? await publishTransactionOutcome({ rootDirectory, operationId,
       status: 'RECONCILIATION_REQUIRED', intentDigest: intent.intentDigest,
-      consumptionDigest: consumption.consumptionDigest, commitDigest: null, recordedAtMs: clock() }) :
+      consumptionDigest: consumption.consumptionDigest, commitDigest: null, recordedAtMs: clock(),
+      capabilityRegistry, capability }) :
       outcomes.find(item => item.status === 'RECONCILIATION_REQUIRED');
     return Object.freeze({ operationId, status: 'RECONCILIATION_REQUIRED',
       intentDigest: intent.intentDigest, consumptionDigest: consumption.consumptionDigest,
@@ -99,7 +108,7 @@ export async function recoverOfflineTransaction({ rootDirectory, operationId, ap
   const outcome = outcomes.find(item => item.status === 'COMMITTED') ?? (repair ?
     await publishTransactionOutcome({ rootDirectory, operationId, status: 'COMMITTED',
       intentDigest: intent.intentDigest, consumptionDigest: consumption.consumptionDigest,
-      commitDigest: commit.commitDigest, recordedAtMs: clock() }) : null);
+      commitDigest: commit.commitDigest, recordedAtMs: clock(), capabilityRegistry, capability }) : null);
   if (repair && outcome) {
     await writeAtomicFile(join(rootDirectory, 'transactions', operationId, 'projection.json'),
       Buffer.from(`${canonicalJson({ operationId, status: 'COMMITTED', outcomeDigest: outcome.outcomeDigest })}\n`));

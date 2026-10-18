@@ -15,20 +15,22 @@ const operationId = `op-${'c'.repeat(32)}`;
 const purposePayload = { producerStage: 'keyword-research', consumerStage: 'template-selection',
   handoffDigest: digest('handoff'), recoveryDigest: digest('recovery') };
 
-async function fixture(t, { faults = {} } = {}) {
+async function fixture(t, { faults = {}, clock = () => 1500,
+  policyVersionProvider = () => 'p4-shadow-v1' } = {}) {
   const root = await mkdtemp(join(tmpdir(), 'p5b-transaction-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const input = await candidateInput(root, { runId: 'run-v2', stageId: 'keyword-research', attemptId: 1 });
   const approvalExpected = { runId: input.runId, stageId: input.stageId, attemptId: input.attemptId,
     contextDigest: input.contextDigest, schemaBundleDigest: input.schemaBundleDigest,
     purpose: 'PARTIAL_HANDOFF', purposePayload };
-  const harness = await createTestApprovalHarness({ rootDirectory: root, namespace: 'p5b' });
+  const harness = await createTestApprovalHarness({ rootDirectory: root, namespace: 'p5b',
+    clock, policyVersionProvider });
   const reference = await harness.authority.issue(createApprovalRequest(approvalExpected),
     { decision: 'APPROVED', nowMs: 1000, expiresAtMs: 3000 });
   const registry = createTestHostCapabilityRegistry();
   const capability = registry.issue({ capability: 'OFFLINE_TRANSACTION', mode: 'SIMULATED', rootDirectory: root });
   const coordinator = createOfflineTransactionCoordinator({ rootDirectory: root, namespace: 'p5b',
-    approvalHarness: harness, capabilityRegistry: registry, capability, clock: () => 1500, faults });
+    approvalHarness: harness, capabilityRegistry: registry, capability, clock, faults });
   return { root, input, approvalExpected, reference, registry, capability, coordinator };
 }
 
@@ -204,4 +206,70 @@ test('authority deletion is either rebuilt from a stronger fact or rejected', as
     if (expected === 'CORRUPT') await assert.rejects(recovery);
     else assert.equal((await recovery).status, expected);
   }
+});
+
+test('committed replay ignores later expiry while incomplete work still requires current approval', async t => {
+  let now = 1500;
+  const committed = await fixture(t, { clock: () => now });
+  const request = { operationId, canonicalStageId: 'keyword-research', candidateInput: committed.input,
+    approvalReference: committed.reference, approvalExpected: committed.approvalExpected };
+  const first = await committed.coordinator.execute(request); now = 4000;
+  const replay = await committed.coordinator.execute(request);
+  assert.equal(replay.commitDigest, first.commitDigest);
+
+  now = 1500; let armed = true;
+  const incomplete = await fixture(t, { clock: () => now, faults: { afterIntentCommit() {
+    if (armed) { armed = false; throw Object.assign(new Error('stop'), { code: 'TEST_FAULT' }); }
+  } } });
+  const pending = { operationId: `op-${'f'.repeat(32)}`, canonicalStageId: 'keyword-research',
+    candidateInput: incomplete.input, approvalReference: incomplete.reference,
+    approvalExpected: incomplete.approvalExpected };
+  await assert.rejects(incomplete.coordinator.execute(pending), error => error.code === 'TEST_FAULT');
+  now = 4000;
+  await assert.rejects(incomplete.coordinator.execute(pending), error => error.code === 'APPROVAL_EXPIRED');
+});
+
+test('committed replay needs authoritative stored objects, not the deleted staging directory', async t => {
+  const f = await fixture(t);
+  const request = { operationId, canonicalStageId: 'keyword-research', candidateInput: f.input,
+    approvalReference: f.reference, approvalExpected: f.approvalExpected };
+  const first = await f.coordinator.execute(request);
+  await rm(f.input.stagingRoot, { recursive: true, force: true });
+  const replay = await f.coordinator.execute(request);
+  assert.equal(replay.commitDigest, first.commitDigest);
+});
+
+test('committed replay ignores current policy drift while incomplete work fails closed', async t => {
+  let policy = 'p4-shadow-v1';
+  const committed = await fixture(t, { policyVersionProvider: () => policy });
+  const request = { operationId, canonicalStageId: 'keyword-research', candidateInput: committed.input,
+    approvalReference: committed.reference, approvalExpected: committed.approvalExpected };
+  const first = await committed.coordinator.execute(request); policy = 'p4-shadow-v2';
+  assert.equal((await committed.coordinator.execute(request)).commitDigest, first.commitDigest);
+
+  policy = 'p4-shadow-v1'; let armed = true;
+  const incomplete = await fixture(t, { policyVersionProvider: () => policy, faults: { afterIntentCommit() {
+    if (armed) { armed = false; throw Object.assign(new Error('stop'), { code: 'TEST_FAULT' }); }
+  } } });
+  const pending = { operationId: `op-${'1'.repeat(32)}`, canonicalStageId: 'keyword-research',
+    candidateInput: incomplete.input, approvalReference: incomplete.reference,
+    approvalExpected: incomplete.approvalExpected };
+  await assert.rejects(incomplete.coordinator.execute(pending), error => error.code === 'TEST_FAULT');
+  policy = 'p4-shadow-v2';
+  await assert.rejects(incomplete.coordinator.execute(pending), error => error.code === 'APPROVAL_POLICY_MISMATCH');
+});
+
+test('contradictory Outcome combinations fail closed', async t => {
+  const f = await fixture(t);
+  const request = { operationId, canonicalStageId: 'keyword-research', candidateInput: f.input,
+    approvalReference: f.reference, approvalExpected: f.approvalExpected };
+  await f.coordinator.execute(request);
+  const intent = JSON.parse(await readFile(join(f.root, 'transactions', operationId, 'intent.json')));
+  const { publishTransactionOutcome } = await import('../../src/v2/transaction-coordinator.mjs');
+  await publishTransactionOutcome({ rootDirectory: f.root, operationId,
+    status: 'ABORTED_BEFORE_CONSUMPTION', intentDigest: intent.intentDigest, recordedAtMs: 1600,
+    capabilityRegistry: f.registry, capability: f.capability });
+  await assert.rejects(recoverOfflineTransaction({ rootDirectory: f.root, namespace: 'p5b', operationId,
+    approvalHarness: f.coordinator.approvalHarness, capabilityRegistry: f.registry,
+    capability: f.capability, repair: true }), error => error.code === 'TRANSACTION_AUTHORITY_CORRUPT');
 });
