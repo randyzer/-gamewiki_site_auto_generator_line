@@ -1,0 +1,79 @@
+{
+  "$id": "HOMEPAGE_FIXTURE_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "classification", "derivationVersion", "sourceRunId", "sourceAttempt", "sourceStatus", "sourceIdentity", "canonicalStageId", "mappingVersion", "licenseStatus", "sources", "iconArchive"],
+  "properties": {
+    "kind": { "const": "HOMEPAGE_FIXTURE" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "P5_D_FIXTURE_DERIVER" },
+    "classification": { "const": "REAL_FORMAT_REDACTED" },
+    "derivationVersion": { "const": "homepage-redaction-v1" },
+    "sourceRunId": { "type": "string", "minLength": 1 },
+    "sourceAttempt": { "type": "integer", "minimum": 1 },
+    "sourceStatus": { "const": "PASSED" },
+    "sourceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespace", "value", "legacySkillName"],
+      "properties": {
+        "namespace": { "const": "p3-shadow-alias" },
+        "value": { "const": "stage-1" },
+        "legacySkillName": { "const": "game-homepage-icon-research" }
+      }
+    },
+    "canonicalStageId": { "const": "homepage-research" },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "licenseStatus": { "const": "UNKNOWN" },
+    "sources": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "sourceRelativePath", "sourceSha256", "redaction"],
+        "properties": {
+          "role": { "enum": ["RUN_MANIFEST", "HOMEPAGE_REPORT", "ICON_ARCHIVE", "COMPLETION_REPORT"] },
+          "sourceRelativePath": { "type": "string", "minLength": 1 },
+          "sourceSha256": { "type": "string", "format": "sha256" },
+          "derivedPath": { "type": "string", "minLength": 1 },
+          "derivedSha256": { "type": "string", "format": "sha256" },
+          "redaction": { "enum": ["STRUCTURED_REDACTION", "METADATA_ONLY"] }
+        }
+      }
+    },
+    "iconArchive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRelativePath", "sourceSha256", "distribution", "archiveBytes", "members"],
+      "properties": {
+        "sourceRelativePath": { "type": "string", "minLength": 1 },
+        "sourceSha256": { "type": "string", "format": "sha256" },
+        "distribution": { "const": "METADATA_ONLY" },
+        "archiveBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
+        "members": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "crc32", "compressedSize", "uncompressedSize", "compressionMethod", "contentSha256", "format"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "crc32": { "type": "string", "pattern": "^[0-9a-f]{8}$" },
+              "compressedSize": { "type": "integer", "minimum": 0, "maximum": 2097152 },
+              "uncompressedSize": { "type": "integer", "minimum": 0, "maximum": 2097152 },
+              "compressionMethod": { "enum": [0, 8] },
+              "contentSha256": { "type": "string", "format": "sha256" },
+              "format": { "enum": ["PNG", "ICO", "WEBMANIFEST"] },
+              "width": { "type": "integer", "minimum": 1, "maximum": 4096 },
+              "height": { "type": "integer", "minimum": 1, "maximum": 4096 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "kind": "TEMPLATE_FIXTURE",
+  "schemaVersion": 1,
+  "producer": "P5_D_OFFLINE_FIXTURE",
+  "classification": "OFFLINE_STUB",
+  "canonicalStageId": "template-selection",
+  "mappingVersion": "stage-identity-v1",
+  "sourceVerified": false,
+  "copyExecuted": false,
+  "templateLockAuthoritative": false,
+  "repository": {
+    "url": "https://github.com/randyzer/-gamewiki_site_auto_generator_line.git",
+    "ref": "main",
+    "commit": "924f4b834a777c460abfa12e488134b07c7bbe84",
+    "subtree": "template/temp7_based_wallpaper-engine.wiki"
+  },
+  "copyManifest": {
+    "universeComplete": true,
+    "files": [
+      {
+        "path": ".env.example",
+        "sha256": "1842cd6be2d9795141696ea966e41b32006223dfeacc6d1c7247c743c630c4e1"
+      },
+      {
+        "path": ".gitignore",
+        "sha256": "23922f510c48f6093c053d1a9f0f77b117bb688b75a08975e7f2d874c33211aa"
+      },
+      {
+        "path": "README.md",
+        "sha256": "7cd409591008b1d9ac08b2c4138ff2ca13115e0a197b15a67b0f9e44c657b66c"
+      },
+      {
+        "path": "app/[[...segments]]/layout.tsx",
+        "sha256": "885eec82fe58f08d91ad0782b0f1c09d62a8a1ac37163180438a881f71f4a4d6"
+      },
+      {
+        "path": "app/[[...segments]]/page.tsx",
+        "sha256": "8295dd9d06921cf5febcbb2f2e861b0dd2b690e2f8c7d96991b482dab6775357"
+      },
+      {
+        "path": "app/global-not-found.tsx",
+        "sha256": "e92f923ccde9b718c1efef000b3e18800474d83bfe2331386f9bf0506bdccc72"
+      },
+      {
+        "path": "app/globals.css",
+        "sha256": "da438ee0c4aa9bed655655e495349d9e52d2c8cbafcb815eaf983485137c82da"
+      },
+      {
+        "path": "app/robots.ts",
+        "sha256": "10976883096f185911e0251c80b4abf2eadb53a7700755da590659f280df73ae"
+      },
+      {
+        "path": "app/sitemap.ts",
+        "sha256": "b3e70880d58812af318f870bcf0f4be4f55fd8f20f65fa500586efd2df662f85"
+      },
+      {
+        "path": "components/article-page.tsx",
+        "sha256": "dc0fde73e59ebd5418b00681a691f037dc0181a1551db112bd5ab45ee75d844c"
+      },
+      {
+        "path": "components/header.tsx",
+        "sha256": "fe61ae79fccc139fe5f70632e37ac94dfba77bca9cd6fa810d758589eeb00609"
+      },
+      {
+        "path": "components/home-page.tsx",
+        "sha256": "1768fab40b069d7dc0f30206f9a557ad16dba73b1070dc94a23808f5db4c8713"
+      },
+      {
+        "path": "components/icon.tsx",
+        "sha256": "2de2b36e2e9a44c8fbcbb876df1d716df92093e912a3aba6c562577339b5cecd"
+      },
+      {
+        "path": "components/interactive.tsx",
+        "sha256": "e1b6c9fcc1996f4142b94bea045e0de6079095e0ea980fcdd8b435a348d7f1ab"
+      },
+      {
+        "path": "components/shared.tsx",
+        "sha256": "923934ed3be8f85ba05dd246cb09195f6673dd551ef12851f892b32dcd4d6fee"
+      },
+      {
+        "path": "content/en/guide/install-and-setup.mdx",
+        "sha256": "b1d3614ce9dc966c5d3e70a308734e6669945e3065d72f87ad3adf12d8982f49"
+      },
+      {
+        "path": "content/zh-CN/guide/install-and-setup.mdx",
+        "sha256": "4317fbcbd00a65275dd614b0c8f5a952f83561c36316efc856922e83cf8deb58"
+      },
+      {
+        "path": "docs/delivery.md",
+        "sha256": "7dae26a38b20168d23c4ba744d7ac8e16bfedf3d07bb8b73864d22c85b98f59a"
+      },
+      {
+        "path": "docs/implementation-plan.md",
+        "sha256": "7edf9a6561b147e42188e6abffc4756254f97f463b24bade874950d84cef691d"
+      },
+      {
+        "path": "lib/content.ts",
+        "sha256": "e2fa5f681bc3428f691c0b4a73abc3662c4cf2786bd281cbbc1695b404eafc91"
+      },
+      {
+        "path": "lib/headings.ts",
+        "sha256": "753a937983d0cc08cd91e2c2c5c8c7a638675621df2a7b1e2641afe9fc2814ec"
+      },
+      {
+        "path": "lib/i18n.ts",
+        "sha256": "6496e0eba87b3f18e77bfef9971e7d5a0820e0bff3dac5532c604e0fb3e09139"
+      },
+      {
+        "path": "lib/previews.ts",
+        "sha256": "6ae990954696de89580bcf0c8ed1ed6874224b6406490fce8de0f0729b568a3e"
+      },
+      {
+        "path": "lib/seo.ts",
+        "sha256": "8223cc91e272321b7103c87cddcef59131678257c45631be2bf67b092005da8f"
+      },
+      {
+        "path": "next-env.d.ts",
+        "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+      },
+      {
+        "path": "next.config.ts",
+        "sha256": "1572da13c6e2a2cb177b87b850288342fb77e63333fdfd453aa961ae4e78e4cd"
+      },
+      {
+        "path": "package.json",
+        "sha256": "3f1f0880541a5e719efece1bde4e5209e3d55bff1d73af9380bce9382bf26e6b"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "sha256": "d90a7b29ba6e8649c252fb2620f1344c8ff5e16afed41cc10fe7e2ad492d50ee"
+      },
+      {
+        "path": "postcss.config.mjs",
+        "sha256": "f50058e0d309cdb3e7c25a1123337338641fb71e988572607d57f47209db1fd1"
+      },
+      {
+        "path": "public/images/background.svg",
+        "sha256": "859aa11452ca15a9a9d56f9812017e4c4ba935185c658963e1daee51116bc3fe"
+      },
+      {
+        "path": "public/images/editor.svg",
+        "sha256": "650f2148fbd5b2690459b83e7785766c965b7e91ecd8ca8ab55c95c0769d10b4"
+      },
+      {
+        "path": "public/images/galaxy.svg",
+        "sha256": "c257ca4e8893575d642191e4adb894b3ed328afb5c53cf01ca0adb99b27c3571"
+      },
+      {
+        "path": "public/images/helix.svg",
+        "sha256": "0ea5f1b7a1319b9e726b7a8de72f774256351fa856116be55399aca2aeb650c4"
+      },
+      {
+        "path": "public/images/install.svg",
+        "sha256": "3148e7956c8660b9a1a25825bc98a1874173299fa3c7c3fad5d4936ef2f057a3"
+      },
+      {
+        "path": "public/images/neon.svg",
+        "sha256": "22e5eeff91c13cbd101550bbb5ff3997ef83a3bd6f6fc8eb4f527e31ed2cda01"
+      },
+      {
+        "path": "public/images/particles.svg",
+        "sha256": "5030bdadcb5a4483ea7d78e727b7b13d7e79cc16c21dfd8aee419f705b4131b3"
+      },
+      {
+        "path": "public/images/performance.svg",
+        "sha256": "65b3c166bd782ca5c612115f2032d189f2519595bb5c6c1afa658f4167a89544"
+      },
+      {
+        "path": "public/images/phone.svg",
+        "sha256": "136110c960606d31c84938e3382e1723c2e983fd99e720802df40bb09f3f490b"
+      },
+      {
+        "path": "public/images/space.svg",
+        "sha256": "9c1ddb94234445298cf7857c632abe66cd13765140fce16f081b502022b243c1"
+      },
+      {
+        "path": "public/images/video.svg",
+        "sha256": "4c8426efd200ed672810daa6c5a118756a0ac88f36ca82a1841fe9dea422e5ca"
+      },
+      {
+        "path": "public/images/windows.svg",
+        "sha256": "9b05c138676c9dd1091fc836dc499304d33687fcf425789ce4fc4e39636c639a"
+      },
+      {
+        "path": "public/images/workshop.svg",
+        "sha256": "2512d689ae6d2156d8112267f5db09b50956d32dc7d39c99ea84f174fe338a63"
+      },
+      {
+        "path": "public/logo.svg",
+        "sha256": "a1c34001e8cfc6dfc15d64f4f4947ab713bdc3465164f38577e65ccd3c00d162"
+      },
+      {
+        "path": "scripts/browser-session.ts",
+        "sha256": "558b5d14ec2045892493a0af616755998f3141b578d068b27174b26686953fdb"
+      },
+      {
+        "path": "scripts/generate-assets.py",
+        "sha256": "beffa8b94c202e04f84456c03410dfa480c19e38c3d0deb70c8b64ac45a17b93"
+      },
+      {
+        "path": "scripts/verify-browser.ts",
+        "sha256": "122192f5fb83ca6e9044d067ce21be4b241fa59eaa79c8fbffd9548ad562d71b"
+      },
+      {
+        "path": "scripts/verify-routes.ts",
+        "sha256": "c061f617662ca24aa5a8ad0307c7fc527eb40cb45b11b57948176e258310a0d8"
+      },
+      {
+        "path": "tests/content.test.ts",
+        "sha256": "42426a0a2e0ca635752d2154633523b1823b81ce330e9db574d4e6c5cf29143c"
+      },
+      {
+        "path": "tests/routes.test.ts",
+        "sha256": "d6d03bebed99a9d756c711dca345cf1d86a8d9d2911f528a95f286b51a04e737"
+      },
+      {
+        "path": "tests/seo.test.ts",
+        "sha256": "fc82fff91c731b6183dc356c9c994892f9c5c18d4cded2c1c121d4b9d475fc53"
+      },
+      {
+        "path": "tsconfig.json",
+        "sha256": "81831bc7d6feac0964da5f41a0ababaadb370f5f466cedeebad8c7b7a34a947b"
+      }
+    ]
+  },
+  "residueScan": {
+    "checkedTokens": [
+      "bombfarm",
+      "bombfarm.wiki",
+      "farevergame",
+      "vvultimatum"
+    ],
+    "matches": []
+  },
+  "destination": {
+    "rootRelativePath": "agent/tests/fixtures/v2/template",
+    "relativePath": "agent/tests/fixtures/v2/template/stub-output",
+    "empty": true,
+    "symlink": false
+  },
+  "templateTreeDigest": "6cdb865118cf72168b5c1c2f9a4b39b03e66af9c9884f4b16826fd728e65c4f8"
+}

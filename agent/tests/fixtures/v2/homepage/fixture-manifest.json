@@ -1,0 +1,131 @@
+{
+  "kind": "HOMEPAGE_FIXTURE",
+  "schemaVersion": 1,
+  "producer": "P5_D_FIXTURE_DERIVER",
+  "classification": "REAL_FORMAT_REDACTED",
+  "derivationVersion": "homepage-redaction-v1",
+  "sourceRunId": "wallpaper-engine-002",
+  "sourceAttempt": 1,
+  "sourceStatus": "PASSED",
+  "sourceIdentity": {
+    "namespace": "p3-shadow-alias",
+    "value": "stage-1",
+    "legacySkillName": "game-homepage-icon-research"
+  },
+  "canonicalStageId": "homepage-research",
+  "mappingVersion": "stage-identity-v1",
+  "licenseStatus": "UNKNOWN",
+  "sources": [
+    {
+      "role": "RUN_MANIFEST",
+      "derivedPath": "run-lineage.redacted.json",
+      "redaction": "STRUCTURED_REDACTION",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/manifest.json",
+      "sourceSha256": "44aad1d5ed4746e8a71521e0943d48c97ba0060bc95ff767396a759c17dd3864",
+      "derivedSha256": "63390b69795d2403e1cdb527beb5daaa08c133c33ed2a4cd5efe1df51de82135"
+    },
+    {
+      "role": "HOMEPAGE_REPORT",
+      "derivedPath": "homepage-research.redacted.md",
+      "redaction": "STRUCTURED_REDACTION",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/0/1/0-Wallpaper Engine攻略站首页调研信息.md",
+      "sourceSha256": "14a8ad95d884a115a1559e4b7d6363ad7dbee5e1577c6f63a88f0080f1ef9a84",
+      "derivedSha256": "a680a989c74a4f4e4ba629c602c61b31a485d00cd924b701701a43bf73c159dd"
+    },
+    {
+      "role": "ICON_ARCHIVE",
+      "redaction": "METADATA_ONLY",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/0/1/1-Wallpaper Engine图标.zip",
+      "sourceSha256": "7111d2d70efc4c1bd9fff1acfbc2fce9354039077ba8a0861eccee977373dfe9"
+    },
+    {
+      "role": "COMPLETION_REPORT",
+      "derivedPath": "completion-report.redacted.json",
+      "redaction": "STRUCTURED_REDACTION",
+      "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/0/1/2-COMPLETION_REPORT.md",
+      "sourceSha256": "ac2daf6fe64eaec44188b606f048754adcd25d184399f0f12c25d9dc883e51c0",
+      "derivedSha256": "30ee0b92d4c05f88ae0bbffc84fb46b2072d2ec7c5132df76e03c3025f052756"
+    }
+  ],
+  "iconArchive": {
+    "sourceRelativePath": "agent/runs/wallpaper-engine-002/artifacts/0/1/1-Wallpaper Engine图标.zip",
+    "sourceSha256": "7111d2d70efc4c1bd9fff1acfbc2fce9354039077ba8a0861eccee977373dfe9",
+    "distribution": "METADATA_ONLY",
+    "archiveBytes": 261921,
+    "members": [
+      {
+        "path": "android-chrome-192x192.png",
+        "crc32": "526a1077",
+        "compressedSize": 28722,
+        "uncompressedSize": 28722,
+        "compressionMethod": 0,
+        "contentSha256": "a3f9e006eea1787d8d936bd89c58f3d40eb347758375f6c1893b784d519a8065",
+        "format": "PNG",
+        "width": 192,
+        "height": 192
+      },
+      {
+        "path": "android-chrome-512x512.png",
+        "crc32": "06aed2e1",
+        "compressedSize": 188315,
+        "uncompressedSize": 188315,
+        "compressionMethod": 0,
+        "contentSha256": "ad971969ed703a3128dd369cce6bc9a3f5125ca2ce27119a46ba71b1e78eb87b",
+        "format": "PNG",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "path": "apple-touch-icon.png",
+        "crc32": "60ab319e",
+        "compressedSize": 25988,
+        "uncompressedSize": 25988,
+        "compressionMethod": 0,
+        "contentSha256": "2df4061529e82cbbae5a31b5cff926561df1cc3103cb63d0f82f144d29a96ea1",
+        "format": "PNG",
+        "width": 180,
+        "height": 180
+      },
+      {
+        "path": "favicon-16x16.png",
+        "crc32": "6923f864",
+        "compressedSize": 670,
+        "uncompressedSize": 670,
+        "compressionMethod": 0,
+        "contentSha256": "f9cf45df3a4d0904373d7caff3497353999f6f7587498550296827545fe3fd77",
+        "format": "PNG",
+        "width": 16,
+        "height": 16
+      },
+      {
+        "path": "favicon-32x32.png",
+        "crc32": "1e83003d",
+        "compressedSize": 1737,
+        "uncompressedSize": 1737,
+        "compressionMethod": 0,
+        "contentSha256": "a020538ecacfef74fcab26119b86dd0bf319d3a287514cc1dce09b88268cdeb2",
+        "format": "PNG",
+        "width": 32,
+        "height": 32
+      },
+      {
+        "path": "favicon.ico",
+        "crc32": "ae6aa599",
+        "compressedSize": 15406,
+        "uncompressedSize": 15406,
+        "compressionMethod": 0,
+        "contentSha256": "d782ca7638e53dd35648ebeba866d9584fe82ba4a67518f313e77c94fd55f4b6",
+        "format": "ICO"
+      },
+      {
+        "path": "site.webmanifest",
+        "crc32": "d1a221dc",
+        "compressedSize": 263,
+        "uncompressedSize": 263,
+        "compressionMethod": 0,
+        "contentSha256": "7a9e07ce1f7386689917602ddc5a75750ad842e605ff764f67173529c181bf04",
+        "format": "WEBMANIFEST"
+      }
+    ]
+  }
+}
