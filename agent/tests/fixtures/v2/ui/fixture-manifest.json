@@ -1,0 +1,521 @@
+{
+  "kind": "UI_FIXTURE",
+  "schemaVersion": 1,
+  "producer": "P5_F_OFFLINE_FIXTURE",
+  "classification": "OFFLINE_STUB",
+  "mode": "SIMULATED",
+  "runId": "p5-e-offline-content",
+  "contextDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+  "domain": "fixture.test",
+  "decisionDigest": "becce7b3d393c969c81064b5459865cd62731c7457fb4d92b04b895e15483721",
+  "requestedCapabilities": [],
+  "complete": true,
+  "gaps": [],
+  "routes": [
+    {
+      "route": "/guide",
+      "captures": [
+        {
+          "route": "/guide",
+          "width": 360,
+          "height": 800,
+          "dpr": 2,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "530f7555fc33f8b43262895b89301962e9c74429cfa4486adb1505e9fc226aa9",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "8f2915271ccb9b9c1b616614f19d3d272350134df59590c35f1f18d3fd142f57"
+            }
+          ],
+          "interactionDigest": "9a3df62d59cc51f049f4489106663f7c1a290a0f5b2b3e548fee1745a0c272eb",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "9109340743395fbd54a2eec6d70096cadae2a03e1e076c233ece6971c79241c7"
+        },
+        {
+          "route": "/guide",
+          "width": 390,
+          "height": 844,
+          "dpr": 3,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "7f66644d7c4b8e01ce94452b75d9f6934220c1be31ea8f6bdf908aa0c47cca55",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "8abe03e6734df7211c98663a6fd9358e62ab13f4087fc5ee0c44b91269ccfda1"
+            }
+          ],
+          "interactionDigest": "66e6a467229677b2d426da07b86812ead685ae9606199f1421acc402b7bfe850",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "725fadd3b9215295d5a60af995b131175708c22ed91f3b49f4ab498a2373b338"
+        },
+        {
+          "route": "/guide",
+          "width": 768,
+          "height": 1024,
+          "dpr": 2,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "07a4970671fdc669b3e292235ad1c1e4cad658cf12d169ef955131e092a1ab04",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "017aa0743097ec07b86e43bcf8ec8bf530542eed28a03f80bfc3f26df0700890"
+            }
+          ],
+          "interactionDigest": "0e3eff4688d8d66bebf4ff7f3c84ff1aca6dce6a579186fd29a3f9fdee94ef44",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "1107b55296361cefd6c35c0dac2f6610fb36568204c31017fe90a6ff143687a3"
+        },
+        {
+          "route": "/guide",
+          "width": 1024,
+          "height": 768,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "08c92b0a7dee7c8615270bfc692843323afb32bf968aaf016cb77519af186c8c",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "b4a9b1da183ab592a9b0414a108d445c43be1c103297fbcf1ea62d508ec4d363"
+            }
+          ],
+          "interactionDigest": "9ecc3e0e8ad54bd124ab1abd2f379cb0815b0dc2993bbaef78f8f4793281db8f",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "a88ef515159fb2b829bdb0427e4c131b0a24eb09afc53c23d1788d2d091a94eb"
+        },
+        {
+          "route": "/guide",
+          "width": 1440,
+          "height": 900,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "efdeb11ba9252c971fca61ca3216259f7b340d03db89062b586e5d025b0f7ffa",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "bde1a2a4c90c1a6b2de785be86bb7818531f6b1de2be97838d18760aa241b89c"
+            }
+          ],
+          "interactionDigest": "843b9decfd08acfc7dfb9ce28a7ba3e435184f982535526105aec6aff8b8f47d",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "b915860fff1ff48c481c80f7ba72d5093ba635655c6ce88e979bace56cc3bb1b"
+        },
+        {
+          "route": "/guide",
+          "width": 1920,
+          "height": 1080,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "82248d91fccd3468a76aa4bb74d7d8237dd3a31047b6e7cfd8157f513128fa62",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "6fff4f4a0585124ff243a72971b2b2f8347e0525fd89a0a4ffa3e3089e97e7fa"
+            }
+          ],
+          "interactionDigest": "39b8802686b31cb5427b10b6020a6b4f0a1e3bc217e23e77684ae4c81a8c6c3d",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "09c1ddf4f477ba677927f6ebb3f04213889a391454914dc99a59c4ccca0b88bf"
+        }
+      ]
+    },
+    {
+      "route": "/calculator",
+      "captures": [
+        {
+          "route": "/calculator",
+          "width": 360,
+          "height": 800,
+          "dpr": 2,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "929c91b74d80a5e98e33edc82d9c6b158843d771c6864796092e30115bd786ba",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "e2fd3da9b195a2da14e9cb9393507f874e0a76e65bd0a6192b9bdf3ec5ffdce6"
+            }
+          ],
+          "interactionDigest": "53fb5d13ae1fb7d6b2f877aaf58052588f7fa6bb72bc3a1f61cd045e6343e8f4",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "6b1ab51eb5ed213954a3d8b3bb47ba5c1ce5cf69599b13c25d8568c8fe78978c"
+        },
+        {
+          "route": "/calculator",
+          "width": 390,
+          "height": 844,
+          "dpr": 3,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "d20155f1218ec540617e9b28e6440acd61ccfac95f40accfec34a8364353090d",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "33f25faf82ad262dea091e0f047e06088964be1830c9e3456f0c607fa23b3092"
+            }
+          ],
+          "interactionDigest": "f64bec74e87536eb66e27d58055b07005c64444e527c281b1148cb8d968abd71",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "4090350981ced2494b000c4f6c5d73c75deead7abd4f4f16066e739c7b5da733"
+        },
+        {
+          "route": "/calculator",
+          "width": 768,
+          "height": 1024,
+          "dpr": 2,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "190b0433ca8dcc232de0ece8fe7962d973cf324643e01dc1d2db82cf88575bff",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "7c684f796d511926232e32efdb489b069cf4d52c98b4cf66822a2082acddacfe"
+            }
+          ],
+          "interactionDigest": "4ae54712f30323b6984984290fd8eabab0e52a8bd505fb9c6d9cbe1974755ef3",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "8881d7216717d98175db30a00168afab617f68762f921194bd247264fe90adbf"
+        },
+        {
+          "route": "/calculator",
+          "width": 1024,
+          "height": 768,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "f54842f67a2e04f446feebfce696b7f4cf51edbb51b9a637409a52b294d20848",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "cd161c2bd08dc31df3e3f4642c0af4bb3f02421456d0ddeed5213fdc3244867b"
+            }
+          ],
+          "interactionDigest": "59823ccc0213877d88a89e9fd9a1435d90afd5add8777107f8ba27cf20c54101",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "86dc582bfe354dbfdf7361d5022d3921900ae24173f49b225dd3bbd40c803f40"
+        },
+        {
+          "route": "/calculator",
+          "width": 1440,
+          "height": 900,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "516883fb592703f80399f1961d4e3528e9f257a7dbb89688900476c0a7797456",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "14c5a9a6b685bf7df20856b4f5cc780e3e92bff7b2ef7f8ee16237a04207fe8e"
+            }
+          ],
+          "interactionDigest": "0bc7f1b60e4b09fce7964a9163483e53ca9db4a4427ed4ebfdbd24b1e4020e7a",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "a077c562516dec1efd089330548b61a7eb71b1a2443d23873b6310e471e50907"
+        },
+        {
+          "route": "/calculator",
+          "width": 1920,
+          "height": 1080,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "4819496df3c5152562aae5fad9396fa02d2996c22bf7edbe0532194cec53d947",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "20521fae6d6485ea294284b21191fc39c126080821efb5c79a45a23ab48f06fa"
+            }
+          ],
+          "interactionDigest": "4b3e77f8de3c5f5480bdc57cc8ce6c1b51b7efb49a2ab37698223ee6356995e7",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "6024b6007ac23e645bd9d08f028bfb3a6620cfff772687e026320943cf270eac"
+        }
+      ]
+    },
+    {
+      "route": "/tier-list",
+      "captures": [
+        {
+          "route": "/tier-list",
+          "width": 360,
+          "height": 800,
+          "dpr": 2,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "10f509bd06dd981468530883bf641b5f949d007e5961da3a707bff5a340ea96c",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "12cb0ac884a29ebc1ec1e47a814e8d97ef24814f68bbb5e001180640617d536f"
+            }
+          ],
+          "interactionDigest": "be0cb2e0fdfdb5a77c45e49b6f0b1bf66fd23ae7df63cc6bbdfd0d17dc603b46",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "f6ac83f691579f66373f1533a08ca47ddcebb306b95bc004db6f30397f5644d2"
+        },
+        {
+          "route": "/tier-list",
+          "width": 390,
+          "height": 844,
+          "dpr": 3,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "60fc702ffa04ebda270ab3fcb0275a63653ed7aaf10e213e0518b21259abc23c",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "a74d5d64dff752763e26b6437c2c55385fa47b9366d5552793a64c6b69f69f97"
+            }
+          ],
+          "interactionDigest": "a691d3ef445e21fbc0addd6db4fbefbdd11f50da3a6c6fbd34791849a5b7973e",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "e43d3d131e90e358b5a4b8515c889a2735eb928d4c8ca39c1d0240b2c01edc0e"
+        },
+        {
+          "route": "/tier-list",
+          "width": 768,
+          "height": 1024,
+          "dpr": 2,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "ae352ae75f0db6c49a6a03beaf9cd282c154f65ce809af42fc85c0eb0ac4a952",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "2e99f29ed413db18276a68322aedc8b3ba07683b58cab055a200c562c9430b78"
+            }
+          ],
+          "interactionDigest": "17fce0055518cc3bb65f2f00cba13713b444232cb41a004b1b952ce6a9c793d5",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "83c90e8e2fb8a7522d6e6b7240ba57be3428d8061e7e99634e34f8c7c7a89b18"
+        },
+        {
+          "route": "/tier-list",
+          "width": 1024,
+          "height": 768,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "e08a265c2e05f91604b6aac17a570fb4210497df5c3f0c41993df9f4628ce460",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "2842854ab9644f9ba2ef2ad3ec35a8c36c2fa3254c885994cef67592fc398544"
+            }
+          ],
+          "interactionDigest": "adb7c5d40f0349d9b790b44fe3b5002ab9e510909081fc0d92ca4a407d787314",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "2491c1b3cc10190dfd1a480266ca59ea35dd5b8d9591ffa76a9d289c47f567b0"
+        },
+        {
+          "route": "/tier-list",
+          "width": 1440,
+          "height": 900,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "dc6aae3294bf7524bed98ac66091deffddc4167add2b300fb472c82f51250dd8",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "a8b29988ca9571736e419ffb6c54537ef2d53b414e432ee3d2ec162edc0cd971"
+            }
+          ],
+          "interactionDigest": "ee498fecc8c72a4cff37b8c663dca958a81602fc07c10810e5a41f14ea864a5b",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "d9900451aa9ada903b10a1c7e4120c3d5fc54487c12a4128f18e9ac3242ad95a"
+        },
+        {
+          "route": "/tier-list",
+          "width": 1920,
+          "height": 1080,
+          "dpr": 1,
+          "sourceRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "siteRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "buildDigest": "b75a8532c36cf8d7a94d1894254e7b3f8038d18ff4a2d648baf6189137e662b1",
+          "screenshotDigest": "af37e25fcff0501345d6b33ce40027acc3256b290c38f3edfea73e71d5e39830",
+          "interactions": [
+            {
+              "interactionId": "primary-navigation",
+              "action": "ACTIVATE",
+              "outcome": "PASS",
+              "evidenceDigest": "92ae2903c5a7b213d44699bbb00fe132658c979a2624047cd2f53c18e0ffcd07"
+            }
+          ],
+          "interactionDigest": "8d8bda4096f047b4d42a4c272e545d4c16f6758f0477556a01e052d39209de25",
+          "checks": {
+            "navigation": "PASS",
+            "overflow": "PASS",
+            "accessibility": "PASS",
+            "coreContent": "PASS",
+            "interaction": "PASS"
+          },
+          "captureDigest": "6b15f6fffcb5f539c0536ec615c4e9b7a60d6368c8740f15d89d1889d46a191a"
+        }
+      ]
+    }
+  ],
+  "fixtureDigest": "bc40086d0ad07e9511b7ba8e10c521a91118f469a36f79efb2501a71c5b8c06e"
+}
