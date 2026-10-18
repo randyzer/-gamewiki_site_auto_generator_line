@@ -17,6 +17,8 @@ import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-rec
 import { keywordEvidencePlanReference, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { createResearchHandoffCandidate, RESEARCH_HANDOFF_KIND,
   verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from './research-handoff.mjs';
+import { assertProductionObservation } from './v2/production-observation.mjs';
+import { resolveStageIdentity } from './v2/stage-identity.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
@@ -188,9 +190,11 @@ export async function recoverDeadRunLock(lockPath) {
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
   expectedManifestSha256, keywordExecutionReceipt, keywordExecutionInputs, deploymentExecution = false,
-  installSiteDependencies = executor?.installDependencies } = {}) {
+  installSiteDependencies = executor?.installDependencies, productionObservation } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
+  if (productionObservation !== undefined)
+    productionObservation = assertProductionObservation(productionObservation);
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
   assert(/^[a-zA-Z0-9_-]{1,100}$/.test(runId), 'Unsafe runId');
   assert(Array.isArray(templateRoots) && templateRoots.every(p => typeof p === 'string' && isAbsolute(p)), 'Absolute templateRoots required');
@@ -756,7 +760,18 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       } catch (error) {
         await recordFailure(stage, error, operation);
       }
-      await save(); return clone(state);
+      await save();
+      if (productionObservation?.mode === 'SHADOW_READ_ONLY') {
+        await productionObservation.observeLegacyCommit({
+          runId, canonicalStageId: resolveStageIdentity({ namespace: 'legacy-skill-name', value: stage.skill }).canonicalStageId,
+          attemptId: stage.checkpoint.attempt, legacyInputDigest: stage.checkpoint.inputDigest,
+          sourceRevision: state.inputs.siteRevision ?? null, checkpoint: clone(stage.checkpoint),
+          artifacts: stage.artifacts.map(artifact => ({ sha256: artifact.sha256 })),
+          legacyStatus: stage.status, deploymentExecuted: state.deploymentExecuted,
+          committedSequence: state.sequence,
+        });
+      }
+      return clone(state);
     });
   }
 
