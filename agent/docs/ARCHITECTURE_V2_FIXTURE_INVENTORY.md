@@ -70,3 +70,19 @@ P5 代码提交不得修改 `agent/runs/wallpaper-engine-002/`。
 - 所有 Shadow Diff 已归类，无 `UNKNOWN`、`V2_DEFECT` 或 `V2_INCOMPATIBLE`。
 
 本清单当前不满足任何 Stage 的生产 V2 权威切换条件。
+
+## 7. P5-H 离线七阶段验证结果
+
+P5-H 使用固定的模块内调用表串联七个现有 Adapter，并复用 P5-B 的事务恢复器完成崩溃窗口演练。验证结论为 `P5_OFFLINE_FRAMEWORK_COMPLETE`，含义仅限于：
+
+- 七个 Stage Result 共享同一 `runId`、`contextDigest` 和 `stage-identity-v1` 映射。
+- 真实格式关键词回放继续保持 `2 COMPLETED / 25 PARTIAL / 4 BLOCKED`；没有把 `PARTIAL` 升级为完成。
+- 内容层继续把 `PARTIAL` 限制为 `DRAFT_ONLY + noindex`，把 `BLOCKED` 限制为 `OMIT`。
+- 部署规划终态为 `WAITING_FOR_USER`，`deploymentExecuted=false`，外部副作用计数为 0。
+- 每阶段生成严格、非权威的 `MIGRATION_DECISION:1`；`actualGateAfter` 必须等于 `actualGateBefore`。
+- Migration Decision 的 Gate 观测范围固定为 `OFFLINE_SIMULATED`；`actualGateBefore/After` 只描述本次离线 fixture 绑定，不代表生产 Gate。
+- 事务恢复覆盖 `NOT_STARTED`、`PREPARED`、`RECONCILIATION_REQUIRED` 和 `COMMITTED`；已有 V2 Commit 时不能重新绑定 legacy writer。
+- 七阶段协调器不接受调用方声明的状态字符串。它只接受由 P5-B `recoverOfflineTransaction` 直接生成并在进程内标记的恢复权限对象；对象克隆、手工构造、跨 run/context/schema/policy 使用都必须拒绝。
+- 离线回放 operation ID 由 run、context、schema、mapping 和 policy 确定性生成。`PREPARED` 与 `RECONCILIATION_REQUIRED` 必须在任一 Stage Adapter 执行前停止；`NOT_STARTED`、`ABORTED_BEFORE_CONSUMPTION` 和 `COMMITTED` 才表示没有待协调窗口。
+
+当前离线链使用两处明确受限的 fixture 处理：主页真实格式 fixture 仅在内存中重绑到离线演练 run，关键词输出与内容 stub 之间保留 `KEYWORD_TO_CONTENT_FIXTURE_CONTINUITY_UNPROVEN`。Trace 因此固定记录 `adapterReplayComplete=true`、`endToEndDependencySatisfied=false`；`WAITING_FOR_USER` 只表示 Deployment Adapter 的局部模拟状态。事务状态为 `RECONCILIATION_REQUIRED` 时，协调器必须在任何 Stage 回放前停止。这些限制会写入 trace 和 Migration Decision 的缺失证据，禁止把本结果提升为 `P5_OFFLINE_ARCHITECTURE_ACCEPTED`、`P5_PRODUCTION_READY`、`MIGRATION_APPROVED`、`AUTHORITY_SWITCH_APPROVED` 或 `DEPLOYMENT_READY`。
