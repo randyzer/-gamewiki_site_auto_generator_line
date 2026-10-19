@@ -153,3 +153,23 @@ P6-E-A 把首页真实格式 fixture 的派生算法提取为无 I/O 的确定�
 Shadow Comparator，也没有生成 `SHADOW_DIFF:1`，因此不改变 P6-D 的 `INCOMPLETE + HOLD`
 结论。比较器消费该可信证据并完成正式离线比较属于 P6-E-B；生产 Shadow、迁移批准和 Feature
 Gate 切换仍然不在本工作包范围内。
+
+## 11. P6-E-B 首页正式离线 Shadow Diff
+
+P6-E-B 允许 `SHADOW_DIFF:1` 使用七个已注册 canonical stage，并把 P6-E-A 的可信连续性证据接入
+P6-C 比较器。比较器只有在 Observation Record、Context Binding、Stage Result Provenance 和
+Fixture Continuity 全部来自同一组进程内 authority，并且各摘要精确配对时，才生成首页正式离线
+Shadow Diff。
+
+当前首页比较覆盖 run、stage、attempt、规范化状态和 Legacy authority 五项。五项均为 `MATCH`，
+`blocking=false`；来源与完整 Adapter 输入已由连续性证据单独逐字节绑定。比较结果固定为：
+
+- `readinessStatus=OFFLINE_COMPARISON_COMPLETE`
+- `fixtureContinuityVerified=true`
+- `stageResultCompared=true`
+- `shadowDiff.authoritative=LEGACY`
+- `decision=HOLD`
+
+`HOLD` 表示离线比较完成后仍没有生产迁移授权。对象克隆、普通 JSON、跨连续性实例、跨 authority、
+证据与 Stage Result 摘要不一致，或任一历史/Context/fixture 文件漂移，都不能进入比较。P6-E-B
+不修改 Feature Gate，不创建 V2 Commit，不调用 Worker、浏览器或网络，也不执行部署。

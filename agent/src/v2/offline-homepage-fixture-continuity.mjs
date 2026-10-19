@@ -275,3 +275,13 @@ export function createOfflineHomepageFixtureContinuity({ repositoryRoot, observa
     stageResultProvenance, evidenceByIdentity });
   return continuity;
 }
+
+export function assertOfflineHomepageFixtureContinuityAuthority(continuity, observationStore,
+  contextBinder, stageResultProvenance) {
+  const state = continuityStateByInstance.get(continuity);
+  if (!state || state.observationStore !== observationStore || state.contextBinder !== contextBinder ||
+      state.stageResultProvenance !== stageResultProvenance) {
+    fail('TRUST_LEVEL_INSUFFICIENT', 'Fixture continuity must share the comparator authority');
+  }
+  return continuity;
+}

@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { canonicalJson } from '../../src/contracts/canonical-json.mjs';
 import { deriveHomepageFixtureSnapshot } from '../../src/v2/homepage-fixture-derivation.mjs';
 import { createOfflineHomepageFixtureContinuity } from '../../src/v2/offline-homepage-fixture-continuity.mjs';
+import { createOfflineShadowEvidenceComparator } from '../../src/v2/offline-shadow-comparator.mjs';
 import { createOfflineContextBinder } from '../../src/v2/production-context-binding.mjs';
 import { createProductionObservation } from '../../src/v2/production-observation.mjs';
 import { createOfflineObservationStore } from '../../src/v2/production-observation-store.mjs';
@@ -197,4 +198,73 @@ test('source, derived and symlink drift fail closed during revalidation', async 
   await symlink(moved, reportPath);
   await assert.rejects(linked.continuity.prove({ observationRecord: linked.record,
     contextBinding: linked.binding, stageResult: linked.stageResult }), /symlink/i);
+});
+
+test('trusted continuity and stage result produce a non-authoritative homepage shadow diff', async t => {
+  const f = await setup(t);
+  const fixtureEvidence = await f.continuity.prove({ observationRecord: f.record,
+    contextBinding: f.binding, stageResult: f.stageResult });
+  const comparator = createOfflineShadowEvidenceComparator({ observationStore: f.store,
+    contextBinder: f.binder, stageResultProvenance: f.provenance,
+    fixtureContinuity: f.continuity });
+  const report = await comparator.compare({ observationRecord: f.record,
+    contextBinding: f.binding, v2Projection: f.stageResult, fixtureEvidence });
+  const repeated = await comparator.compare({ observationRecord: f.record,
+    contextBinding: f.binding, v2Projection: f.stageResult, fixtureEvidence });
+  assert.equal(report.trustedStageResult, true);
+  assert.equal(report.fixtureContinuityVerified, true);
+  assert.equal(report.readinessStatus, 'OFFLINE_COMPARISON_COMPLETE');
+  assert.equal(report.stageResultCompared, true);
+  assert.equal(report.decision, 'HOLD');
+  assert.deepEqual(report.reasons, []);
+  assert.deepEqual(report.missingEvidence, []);
+  assert.equal(report.shadowDiff.kind, 'SHADOW_DIFF');
+  assert.equal(report.shadowDiff.canonicalStageId, 'homepage-research');
+  assert.equal(report.shadowDiff.authoritative, 'LEGACY');
+  assert.equal(report.shadowDiff.blocking, false);
+  assert.equal(report.shadowDiff.diffs.length, 5);
+  assert.ok(report.shadowDiff.diffs.every(diff => diff.diffClass === 'MATCH'));
+  assert.equal(report.readinessDigest, repeated.readinessDigest);
+  assert.equal(report.shadowDiff.comparisonDigest, repeated.shadowDiff.comparisonDigest);
+});
+
+test('cloned, cross-instance and stale continuity never enters comparison', async t => {
+  const cloned = await setup(t);
+  const clonedEvidence = await cloned.continuity.prove({ observationRecord: cloned.record,
+    contextBinding: cloned.binding, stageResult: cloned.stageResult });
+  const clonedComparator = createOfflineShadowEvidenceComparator({ observationStore: cloned.store,
+    contextBinder: cloned.binder, stageResultProvenance: cloned.provenance,
+    fixtureContinuity: cloned.continuity });
+  const cloneReport = await clonedComparator.compare({ observationRecord: cloned.record,
+    contextBinding: cloned.binding, v2Projection: cloned.stageResult,
+    fixtureEvidence: structuredClone(clonedEvidence) });
+  assert.equal(cloneReport.fixtureContinuityVerified, false);
+  assert.equal(cloneReport.stageResultCompared, false);
+  assert.ok(cloneReport.reasons.includes('UNTRUSTED_FIXTURE_EVIDENCE'));
+
+  const crossInstance = await setup(t);
+  const crossEvidence = await crossInstance.continuity.prove({ observationRecord: crossInstance.record,
+    contextBinding: crossInstance.binding, stageResult: crossInstance.stageResult });
+  const otherContinuity = createOfflineHomepageFixtureContinuity({ repositoryRoot: crossInstance.repositoryRoot,
+    observationStore: crossInstance.store, contextBinder: crossInstance.binder,
+    stageResultProvenance: crossInstance.provenance });
+  const crossComparator = createOfflineShadowEvidenceComparator({ observationStore: crossInstance.store,
+    contextBinder: crossInstance.binder, stageResultProvenance: crossInstance.provenance,
+    fixtureContinuity: otherContinuity });
+  const crossReport = await crossComparator.compare({ observationRecord: crossInstance.record,
+    contextBinding: crossInstance.binding, v2Projection: crossInstance.stageResult,
+    fixtureEvidence: crossEvidence });
+  assert.equal(crossReport.fixtureContinuityVerified, false);
+  assert.equal(crossReport.stageResultCompared, false);
+
+  const stale = await setup(t);
+  const staleEvidence = await stale.continuity.prove({ observationRecord: stale.record,
+    contextBinding: stale.binding, stageResult: stale.stageResult });
+  const staleComparator = createOfflineShadowEvidenceComparator({ observationStore: stale.store,
+    contextBinder: stale.binder, stageResultProvenance: stale.provenance,
+    fixtureContinuity: stale.continuity });
+  await writeFile(join(stale.repositoryRoot, stale.source.report.path), 'tampered');
+  await assert.rejects(staleComparator.compare({ observationRecord: stale.record,
+    contextBinding: stale.binding, v2Projection: stale.stageResult, fixtureEvidence: staleEvidence }),
+  /digest|drift/i);
 });

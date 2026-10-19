@@ -9,7 +9,7 @@
     "producer": { "const": "V2_SHADOW_COMPARATOR" },
     "mode": { "const": "OFFLINE" },
     "runId": { "type": "string", "minLength": 1 },
-    "canonicalStageId": { "const": "keyword-research" },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan"] },
     "mappingVersion": { "const": "stage-identity-v1" },
     "attemptId": { "type": "integer", "minimum": 1 },
     "contextDigest": { "type": "string", "format": "sha256" },
