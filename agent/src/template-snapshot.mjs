@@ -96,8 +96,13 @@ export async function materializeTemplateSnapshot(source, { cacheRoot, commit } 
       await verifyTemplateSnapshot(snapshot);
       return snapshot;
     }
-    await rename(staging, checkout);
-    return describe(resolved, checkout);
+    const snapshot = describe(resolved, checkout);
+    try { await rename(staging, checkout); }
+    catch (error) {
+      if (!['EEXIST', 'ENOTEMPTY'].includes(error.code) || !(await exists(checkout))) throw error;
+    }
+    await verifyTemplateSnapshot(snapshot);
+    return snapshot;
   } finally {
     await rm(staging, { recursive: true, force: true });
   }
