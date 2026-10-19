@@ -19,6 +19,10 @@ const schemaRoot = join(agentRoot, 'src/contracts/schemas');
 const historicalManifestPath = join(agentRoot, 'runs/wallpaper-engine-002/manifest.json');
 const attempt10RecoveryPath = join(agentRoot,
   'runs/wallpaper-engine-002/keyword-recovery/10/f71097b7-f3b6-4cfc-b512-de91fb1f5d90/manifest.json');
+const protectedAttempt10Digests = Object.freeze({
+  manifest: '44aad1d5ed4746e8a71521e0943d48c97ba0060bc95ff767396a759c17dd3864',
+  recovery: 'bc9b35a86851af43103846cb5c35b9a793e29faf0f159001d57dfa5009b60fa7',
+});
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const sha = value => value.repeat(64);
 
@@ -149,30 +153,34 @@ test('current binder proves only offline legacy bytes, not execution-time produc
   } }), error => error.code === 'POLICY_DENIED');
 });
 
-test('published contracts keep diagnostics separate from explicit accepted-artifact authority', async t => {
+test('published commit objects do not imply accepted-artifact authority', async () => {
   const candidateSchema = await readJson(join(schemaRoot, 'stage-commit-candidate.v1.json'));
   const objectProperties = candidateSchema.properties.objects.items.properties;
   assert.equal(Object.hasOwn(objectProperties, 'accepted'), false);
   assert.equal(Object.hasOwn(objectProperties, 'artifactClass'), false);
+});
 
-  const recovery = await readJson(attempt10RecoveryPath).catch(error => {
+test('available attempt-10 history remains protected diagnostic evidence with no accepted artifacts', async t => {
+  const recoveryBytes = await readFile(attempt10RecoveryPath).catch(error => {
     if (error.code === 'ENOENT') return null;
     throw error;
   });
-  if (recovery === null) t.skip('attempt-10 recovery is external historical evidence and is absent');
-  else {
-    assert.equal(recovery.countsAsStageArtifact, false);
-    assert.equal(recovery.contentValidated, false);
-  }
-
   const manifestBytes = await readFile(historicalManifestPath).catch(error => {
     if (error.code === 'ENOENT') return null;
     throw error;
   });
-  if (manifestBytes === null) return;
+  if (recoveryBytes === null || manifestBytes === null) {
+    t.skip('attempt-10 run and recovery manifests are external historical evidence and are unavailable');
+    return;
+  }
+  assert.equal(sha256(recoveryBytes), protectedAttempt10Digests.recovery);
+  assert.equal(sha256(manifestBytes), protectedAttempt10Digests.manifest);
+  const recovery = JSON.parse(recoveryBytes);
+  assert.equal(recovery.countsAsStageArtifact, false);
+  assert.equal(recovery.contentValidated, false);
   const manifest = JSON.parse(manifestBytes);
   const keyword = manifest.stages[1];
-  if (keyword.checkpoint.attempt !== 10) return;
+  assert.equal(keyword.checkpoint.attempt, 10);
   assert.equal(keyword.status, 'FAILED');
   assert.deepEqual(keyword.artifacts, []);
 });
