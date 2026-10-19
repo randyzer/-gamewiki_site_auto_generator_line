@@ -35,6 +35,50 @@ test('new snapshot resolves the ref to a full commit and exposes only the templa
   assert.equal(snapshot.repository, r.source.repository);
 });
 
+test('concurrent first publication reuses one verified pinned snapshot without staging leaks', async t => {
+  const failures = [];
+  for (let round = 0; round < 10; round++) {
+    const r = await remote(t);
+    const results = await Promise.allSettled(Array.from({ length: 8 }, () =>
+      materializeTemplateSnapshot(r.source, { cacheRoot: r.cacheRoot, commit: r.first })));
+    failures.push(...results.filter(result => result.status === 'rejected').map(result => result.reason));
+    for (const result of results.filter(result => result.status === 'fulfilled')) {
+      assert.equal(result.value.commit, r.first);
+      assert.equal(result.value.checkout, join(r.cacheRoot, r.first));
+      await verifyTemplateSnapshot(result.value);
+    }
+    assert.deepEqual((await readdir(r.cacheRoot)).filter(name => name.startsWith('.staging-')), []);
+  }
+  assert.deepEqual(failures, []);
+});
+
+test('concurrent unpinned publication resolves one ref and reuses the verified snapshot', async t => {
+  const r = await remote(t);
+  const snapshots = await Promise.all(Array.from({ length: 8 }, () =>
+    materializeTemplateSnapshot(r.source, { cacheRoot: r.cacheRoot })));
+  for (const snapshot of snapshots) {
+    assert.equal(snapshot.commit, r.first);
+    assert.equal(snapshot.checkout, join(r.cacheRoot, r.first));
+    await verifyTemplateSnapshot(snapshot);
+  }
+  assert.deepEqual((await readdir(r.cacheRoot)).filter(name => name.startsWith('.staging-')), []);
+});
+
+test('concurrent publications for different commits remain isolated', async t => {
+  const r = await remote(t);
+  await writeFile(join(r.origin, 'template', 'temp1_based_demo', 'package.json'), '{"name":"moved"}');
+  const second = commitAll(r.origin, 'v2');
+  const snapshots = await Promise.all([
+    ...Array.from({ length: 4 }, () =>
+      materializeTemplateSnapshot(r.source, { cacheRoot: r.cacheRoot, commit: r.first })),
+    ...Array.from({ length: 4 }, () =>
+      materializeTemplateSnapshot(r.source, { cacheRoot: r.cacheRoot, commit: second })),
+  ]);
+  assert.deepEqual(new Set(snapshots.map(snapshot => snapshot.commit)), new Set([r.first, second]));
+  for (const snapshot of snapshots) await verifyTemplateSnapshot(snapshot);
+  assert.deepEqual((await readdir(r.cacheRoot)).filter(name => name.startsWith('.staging-')), []);
+});
+
 test('a pinned commit is reused even after the ref moves', async t => {
   const r = await remote(t);
   await materializeTemplateSnapshot(r.source, { cacheRoot: r.cacheRoot });
