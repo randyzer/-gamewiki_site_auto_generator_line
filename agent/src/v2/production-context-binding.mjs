@@ -163,6 +163,13 @@ export function assertTrustedOfflineContextBinding(binder, binding) {
   return binding;
 }
 
+export function assertOfflineContextBinderObservationStore(binder, observationStore) {
+  if (bindingStateByBinder.get(binder)?.observationStore !== observationStore) {
+    fail('TRUST_LEVEL_INSUFFICIENT', 'The context binder and observation store must share one authority');
+  }
+  return binder;
+}
+
 export async function revalidateOfflineContextBinding(binder, binding) {
   assertTrustedOfflineContextBinding(binder, binding);
   const state = bindingStateByBinder.get(binder);

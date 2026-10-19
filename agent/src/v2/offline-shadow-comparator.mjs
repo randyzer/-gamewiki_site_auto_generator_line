@@ -4,6 +4,7 @@ import { ContractError } from '../contracts/errors.mjs';
 import { assertTrustedOfflineContextBinding,
   revalidateOfflineContextBinding } from './production-context-binding.mjs';
 import { assertTrustedOfflineObservationRecord } from './production-observation-store.mjs';
+import { assertOfflineStageResultProvenanceAuthority } from './offline-stage-result-provenance.mjs';
 
 const INPUT_KEYS = Object.freeze(['observationRecord', 'contextBinding', 'v2Projection', 'fixtureEvidence']);
 const sha256 = value => createHash('sha256').update(value).digest('hex');
@@ -26,11 +27,14 @@ function sameIdentity(record, binding) {
     record.recordDigest === binding.observationRecordDigest;
 }
 
-export function createOfflineShadowEvidenceComparator({ observationStore, contextBinder } = {}) {
+export function createOfflineShadowEvidenceComparator({ observationStore, contextBinder,
+  stageResultProvenance } = {}) {
   if (!observationStore || typeof observationStore !== 'object')
     fail('TRUST_LEVEL_INSUFFICIENT', 'A trusted observation store is required');
   if (!contextBinder || typeof contextBinder !== 'object')
     fail('TRUST_LEVEL_INSUFFICIENT', 'A trusted context binder is required');
+  if (stageResultProvenance !== undefined)
+    assertOfflineStageResultProvenanceAuthority(stageResultProvenance, observationStore, contextBinder);
   return Object.freeze({
     async compare(rawInput) {
       const input = exactInput(rawInput);
@@ -47,6 +51,27 @@ export function createOfflineShadowEvidenceComparator({ observationStore, contex
           contextBinding.executionContext.code.featureGate !== 'legacy')
         fail('POLICY_DENIED', 'Offline readiness requires the legacy feature gate');
 
+      let trustedStageResult = false;
+      let trustedProjection = null;
+      if (input.v2Projection !== undefined && input.v2Projection !== null && stageResultProvenance) {
+        try {
+          stageResultProvenance.assertTrustedResult(input.v2Projection);
+          trustedProjection = await stageResultProvenance.revalidateResult(input.v2Projection);
+          if (trustedProjection.runId !== currentRecord.identity.runId ||
+              trustedProjection.canonicalStageId !== currentRecord.identity.canonicalStageId ||
+              trustedProjection.attemptId !== currentRecord.identity.attemptId ||
+              trustedProjection.mappingVersion !== contextBinding.mappingVersion ||
+              trustedProjection.observationRecordDigest !== currentRecord.recordDigest ||
+              trustedProjection.contextBindingDigest !== contextBinding.bindingDigest ||
+              trustedProjection.executionContextDigest !== contextBinding.executionContextDigest) {
+            fail('IDENTITY_MISMATCH', 'Trusted stage result does not match the readiness context');
+          }
+          trustedStageResult = true;
+        } catch (error) {
+          if (error?.code !== 'TRUST_LEVEL_INSUFFICIENT') throw error;
+        }
+      }
+
       const reasons = [];
       const missingEvidence = [];
       if (contextBinding.bindingStatus !== 'VERIFIED') {
@@ -58,7 +83,7 @@ export function createOfflineShadowEvidenceComparator({ observationStore, contex
       if (input.v2Projection === undefined || input.v2Projection === null) {
         reasons.push('V2_STAGE_RESULT_MISSING');
         missingEvidence.push('TRUSTED_V2_STAGE_RESULT');
-      } else {
+      } else if (!trustedStageResult) {
         reasons.push('UNTRUSTED_PROJECTION');
         missingEvidence.push('TRUSTED_V2_STAGE_RESULT');
       }
@@ -79,11 +104,14 @@ export function createOfflineShadowEvidenceComparator({ observationStore, contex
         mappingVersion: contextBinding.mappingVersion,
         observationRecordDigest: currentRecord.recordDigest,
         executionContextDigest: contextBinding.executionContextDigest,
+        trustedStageResult, fixtureContinuityVerified: false,
         readinessStatus: 'INCOMPLETE', reasons, missingEvidence,
         stageResultCompared: false, decision: 'HOLD' };
       const digestPayload = { ...base, contextBindingDigest: contextBinding.bindingDigest,
         sourceEvidenceDigest: contextBinding.sourceEvidenceDigest,
-        fixtureEvidenceDigest: null };
+        fixtureEvidenceDigest: null,
+        stageResultProvenanceDigest: trustedProjection?.provenanceDigest ?? null,
+        stageResultDigest: trustedProjection?.stageResultDigest ?? null };
       return deepFreeze({ ...base,
         readinessDigest: digest('AGENT_P6_C_OFFLINE_SHADOW_READINESS_V1', digestPayload) });
     },

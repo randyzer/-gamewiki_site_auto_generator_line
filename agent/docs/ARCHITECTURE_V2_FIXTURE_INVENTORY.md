@@ -106,3 +106,29 @@ Execution Context 与 V2 Stage Result 的可信真实格式 fixture。因此当�
 
 P6-C 不调用 Worker、浏览器、构建或网络，不写入历史 Run，不消费 Approval，不修改 Feature Gate，
 不创建 V2 Commit，也不执行部署。
+
+## 9. P6-D 可信离线 Stage Result 来源
+
+P6-D 为 `homepage-research` 增加了进程内可信结果来源。调用方只能提交现有 Homepage Adapter
+所需的四项 fixture 输入；Provenance 模块复制输入字节，基于已验证的 Observation Record 与
+Context Binding 内部创建 `legacy` Gate Binding 和 `STAGE_ADAPTER_INPUT:1`，再直接执行现有
+离线 Adapter。它不接受调用方生成的 Stage Result、执行器回调或能力请求。
+
+可信身份绑定到准确的 Observation Store、Context Binder 和 Provenance 实例。普通 JSON、对象
+克隆、跨实例结果及跨 Store/Binding 输入都不能获取信任。每次使用结果前会重新读取历史 Manifest、
+重新验证六类 Context 来源，并用私有 fixture 副本重放 Adapter；任何来源或摘要漂移都会关闭失败。
+
+该能力只证明 `STAGE_ADAPTER_RESULT:1` 来自受控的 Stage 1 离线执行。它不证明 fixture 与本次
+Legacy Observation 的端到端来源连续性，也不代表 Legacy 与 V2 业务结果已经比较。因此比较器在
+接受可信结果后仍固定输出：
+
+- `trustedStageResult=true`
+- `fixtureContinuityVerified=false`
+- `readinessStatus=INCOMPLETE`
+- `stageResultCompared=false`
+- `missingEvidence=[TRUSTED_REAL_FORMAT_FIXTURE]`
+- `decision=HOLD`
+
+真实格式 fixture 的来源连续性、正式 `SHADOW_DIFF:1` 和生产 Gate 切换继续由后续独立工作包处理。
+P6-D 仍不调用 Worker、浏览器、构建或网络，不改历史 Run，不消费 Approval，不创建 V2 Commit，
+不修改 Feature Gate，也不执行部署。
