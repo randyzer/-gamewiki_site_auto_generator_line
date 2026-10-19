@@ -161,8 +161,10 @@ P6-C 比较器。比较器只有在 Observation Record、Context Binding、Stage
 Fixture Continuity 全部来自同一组进程内 authority，并且各摘要精确配对时，才生成首页正式离线
 Shadow Diff。
 
-当前首页比较覆盖 run、stage、attempt、规范化状态和 Legacy authority 五项。五项均为 `MATCH`，
-`blocking=false`；来源与完整 Adapter 输入已由连续性证据单独逐字节绑定。比较结果固定为：
+当前首页比较覆盖 run、stage、attempt、规范化状态、Legacy authority、三份 Legacy 业务产物摘要集合、
+V2 Adapter 产物摘要集合和 Adapter 输入摘要八项。八项均为 `MATCH` 时 `blocking=false`；任一精确值
+不一致会结构化为阻断性的 `V2_INCOMPATIBLE`，不会抛开差异报告或误报 `MATCH`。来源与完整 Adapter
+输入仍由连续性证据逐字节重验。比较结果固定为：
 
 - `readinessStatus=OFFLINE_COMPARISON_COMPLETE`
 - `fixtureContinuityVerified=true`

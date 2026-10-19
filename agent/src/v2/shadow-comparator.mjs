@@ -9,6 +9,14 @@ import { classifyShadowDiff } from './shadow-diff-classifier.mjs';
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const valueDigest = value => sha256(`AGENT_SHADOW_VALUE_V1\n${canonicalJson(value)}`);
 
+export function createExactShadowComparison({ fieldPath, legacyValue, v2Value, matchReasonCode,
+  mismatchReasonCode, evidenceReferences }) {
+  const equal = canonicalJson(legacyValue) === canonicalJson(v2Value);
+  return Object.freeze({ fieldPath, diffClass: equal ? 'MATCH' : 'V2_INCOMPATIBLE',
+    legacyValue, v2Value, reasonCode: equal ? matchReasonCode : mismatchReasonCode,
+    evidenceReferences: [...new Set(evidenceReferences)].sort() });
+}
+
 function assertClassification(item, input) {
   const equal = canonicalJson(item.legacyValue) === canonicalJson(item.v2Value);
   if (item.diffClass === 'MATCH' && !equal) {

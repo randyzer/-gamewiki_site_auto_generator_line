@@ -143,7 +143,16 @@ function verifyManifestBinding({ root, manifest, record, descriptors }) {
 }
 
 function fixtureEvidence({ fixtureManifest, sourceFiles, derivedFiles }) {
+  const legacyArtifactDigests = fixtureManifest.sources
+    .filter(item => item.role !== 'RUN_MANIFEST')
+    .map(item => item.sourceSha256).sort();
+  const adapterArtifactDigests = [...new Set([
+    ...fixtureManifest.sources.map(item => item.sourceSha256),
+    ...fixtureManifest.sources.map(item => item.derivedSha256).filter(Boolean),
+  ])].sort();
   return {
+    legacyArtifactDigests,
+    adapterArtifactDigests,
     fixtureManifestDigest: digest('AGENT_HOMEPAGE_FIXTURE_MANIFEST_V1', fixtureManifest),
     sourceEvidenceDigest: digest('AGENT_P6_E_HOMEPAGE_SOURCE_EVIDENCE_V1',
       fixtureManifest.sources.map(item => ({ role: item.role, path: item.sourceRelativePath,

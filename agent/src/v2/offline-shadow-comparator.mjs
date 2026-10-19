@@ -6,7 +6,7 @@ import { assertTrustedOfflineContextBinding,
 import { assertTrustedOfflineObservationRecord } from './production-observation-store.mjs';
 import { assertOfflineHomepageFixtureContinuityAuthority } from './offline-homepage-fixture-continuity.mjs';
 import { assertOfflineStageResultProvenanceAuthority } from './offline-stage-result-provenance.mjs';
-import { createShadowDiff } from './shadow-comparator.mjs';
+import { createExactShadowComparison, createShadowDiff } from './shadow-comparator.mjs';
 
 const INPUT_KEYS = Object.freeze(['observationRecord', 'contextBinding', 'v2Projection', 'fixtureEvidence']);
 const sha256 = value => createHash('sha256').update(value).digest('hex');
@@ -40,15 +40,26 @@ function homepageComparisons(record, projection, fixtureEvidence) {
   const references = [record.recordDigest, projection.provenanceDigest,
     fixtureEvidence.continuityDigest].sort();
   return [
-    ['/identity/runId', record.identity.runId, projection.runId, 'RUN_ID_EQUAL'],
-    ['/identity/stage', record.identity.canonicalStageId, projection.canonicalStageId, 'STAGE_ID_EQUAL'],
-    ['/identity/attempt', record.identity.attemptId, projection.attemptId, 'ATTEMPT_ID_EQUAL'],
+    ['/identity/runId', record.identity.runId, projection.runId, 'RUN_ID_EQUAL', 'RUN_ID_INCOMPATIBLE'],
+    ['/identity/stage', record.identity.canonicalStageId, projection.canonicalStageId, 'STAGE_ID_EQUAL',
+      'STAGE_ID_INCOMPATIBLE'],
+    ['/identity/attempt', record.identity.attemptId, projection.attemptId, 'ATTEMPT_ID_EQUAL',
+      'ATTEMPT_ID_INCOMPATIBLE'],
     ['/status', normalizedLegacyStatus(record.snapshot.legacyStatus), projection.stageResult.status,
-      'NORMALIZED_STATUS_EQUAL'],
+      'NORMALIZED_STATUS_EQUAL', 'NORMALIZED_STATUS_INCOMPATIBLE'],
     ['/authority', 'LEGACY', projection.stageResult.authoritative === false ? 'LEGACY' : 'V2',
-      'LEGACY_AUTHORITY_PRESERVED'],
-  ].map(([fieldPath, legacyValue, v2Value, reasonCode]) => ({ fieldPath, diffClass: 'MATCH',
-    legacyValue, v2Value, reasonCode, evidenceReferences: references }));
+      'LEGACY_AUTHORITY_PRESERVED', 'AUTHORITY_INCOMPATIBLE'],
+    ['/artifacts/legacyBusiness', record.snapshot.artifactDigests,
+      fixtureEvidence.legacyArtifactDigests, 'BUSINESS_ARTIFACTS_EQUAL',
+      'BUSINESS_ARTIFACTS_INCOMPATIBLE'],
+    ['/artifacts/v2AdapterResult', fixtureEvidence.adapterArtifactDigests,
+      projection.stageResult.artifactDigests, 'ADAPTER_ARTIFACTS_EQUAL',
+      'ADAPTER_ARTIFACTS_INCOMPATIBLE'],
+    ['/adapter/inputDigest', fixtureEvidence.adapterInputDigest,
+      projection.stageResult.inputDigest, 'ADAPTER_INPUT_EQUAL', 'ADAPTER_INPUT_INCOMPATIBLE'],
+  ].map(([fieldPath, legacyValue, v2Value, matchReasonCode, mismatchReasonCode]) =>
+    createExactShadowComparison({ fieldPath, legacyValue, v2Value, matchReasonCode,
+      mismatchReasonCode, evidenceReferences: references }));
 }
 
 export function createOfflineShadowEvidenceComparator({ observationStore, contextBinder,

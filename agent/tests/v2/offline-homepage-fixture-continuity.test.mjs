@@ -9,6 +9,7 @@ import { canonicalJson } from '../../src/contracts/canonical-json.mjs';
 import { deriveHomepageFixtureSnapshot } from '../../src/v2/homepage-fixture-derivation.mjs';
 import { createOfflineHomepageFixtureContinuity } from '../../src/v2/offline-homepage-fixture-continuity.mjs';
 import { createOfflineShadowEvidenceComparator } from '../../src/v2/offline-shadow-comparator.mjs';
+import { createExactShadowComparison, createShadowDiff } from '../../src/v2/shadow-comparator.mjs';
 import { createOfflineContextBinder } from '../../src/v2/production-context-binding.mjs';
 import { createProductionObservation } from '../../src/v2/production-observation.mjs';
 import { createOfflineObservationStore } from '../../src/v2/production-observation-store.mjs';
@@ -222,10 +223,35 @@ test('trusted continuity and stage result produce a non-authoritative homepage s
   assert.equal(report.shadowDiff.canonicalStageId, 'homepage-research');
   assert.equal(report.shadowDiff.authoritative, 'LEGACY');
   assert.equal(report.shadowDiff.blocking, false);
-  assert.equal(report.shadowDiff.diffs.length, 5);
+  assert.equal(report.shadowDiff.diffs.length, 8);
   assert.ok(report.shadowDiff.diffs.every(diff => diff.diffClass === 'MATCH'));
+  assert.deepEqual(report.shadowDiff.diffs.map(diff => diff.fieldPath), [
+    '/identity/runId',
+    '/identity/stage',
+    '/identity/attempt',
+    '/status',
+    '/authority',
+    '/artifacts/legacyBusiness',
+    '/artifacts/v2AdapterResult',
+    '/adapter/inputDigest',
+  ]);
   assert.equal(report.readinessDigest, repeated.readinessDigest);
   assert.equal(report.shadowDiff.comparisonDigest, repeated.shadowDiff.comparisonDigest);
+});
+
+test('exact business comparisons classify unequal values as blocking instead of false MATCH', () => {
+  const comparison = createExactShadowComparison({ fieldPath: '/artifacts/legacyBusiness',
+    legacyValue: ['a'.repeat(64)], v2Value: ['b'.repeat(64)],
+    matchReasonCode: 'BUSINESS_ARTIFACTS_EQUAL',
+    mismatchReasonCode: 'BUSINESS_ARTIFACTS_INCOMPATIBLE', evidenceReferences: ['fixture-continuity'] });
+  assert.equal(comparison.diffClass, 'V2_INCOMPATIBLE');
+  assert.equal(comparison.reasonCode, 'BUSINESS_ARTIFACTS_INCOMPATIBLE');
+  const report = createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'homepage-research',
+    mappingVersion: 'stage-identity-v1', attemptId: 1, contextDigest: 'c'.repeat(64),
+    legacySnapshotDigest: 'd'.repeat(64), v2ResultDigest: 'e'.repeat(64),
+    comparisons: [comparison] });
+  assert.equal(report.blocking, true);
+  assert.equal(report.diffs[0].blocking, true);
 });
 
 test('cloned, cross-instance and stale continuity never enters comparison', async t => {
