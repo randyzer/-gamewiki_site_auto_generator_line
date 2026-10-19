@@ -48,6 +48,7 @@ function assertClassification(item, input) {
 }
 
 export function createShadowDiff(input) {
+  const schemaVersion = input.schemaVersion ?? 1;
   assertCanonicalStageId(input.canonicalStageId, { mappingVersion: input.mappingVersion });
   const diffs = input.comparisons.map(item => {
     assertClassification(item, input);
@@ -63,14 +64,14 @@ export function createShadowDiff(input) {
     };
   });
   const base = {
-    kind: 'SHADOW_DIFF', schemaVersion: 1, producer: 'V2_SHADOW_COMPARATOR', mode: 'OFFLINE',
+    kind: 'SHADOW_DIFF', schemaVersion, producer: 'V2_SHADOW_COMPARATOR', mode: 'OFFLINE',
     runId: input.runId, canonicalStageId: input.canonicalStageId, mappingVersion: input.mappingVersion,
     attemptId: input.attemptId, contextDigest: input.contextDigest,
     legacySnapshotDigest: input.legacySnapshotDigest, v2ResultDigest: input.v2ResultDigest,
     authoritative: 'LEGACY', blocking: diffs.some(item => item.blocking), diffs,
   };
   const report = { ...base,
-    comparisonDigest: sha256(`AGENT_SHADOW_DIFF_V1\n${canonicalJson(base)}`) };
-  validateContract('SHADOW_DIFF', 1, report);
+    comparisonDigest: sha256(`AGENT_SHADOW_DIFF_V${schemaVersion}\n${canonicalJson(base)}`) };
+  validateContract('SHADOW_DIFF', schemaVersion, report);
   return deepFreeze(report);
 }

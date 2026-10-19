@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { canonicalJson } from '../../src/contracts/canonical-json.mjs';
+import { contractDefinition, validateContract } from '../../src/contracts/registry.mjs';
 import { deriveHomepageFixtureSnapshot } from '../../src/v2/homepage-fixture-derivation.mjs';
 import { createOfflineHomepageFixtureContinuity } from '../../src/v2/offline-homepage-fixture-continuity.mjs';
 import { createOfflineShadowEvidenceComparator } from '../../src/v2/offline-shadow-comparator.mjs';
@@ -220,6 +221,7 @@ test('trusted continuity and stage result produce a non-authoritative homepage s
   assert.deepEqual(report.reasons, []);
   assert.deepEqual(report.missingEvidence, []);
   assert.equal(report.shadowDiff.kind, 'SHADOW_DIFF');
+  assert.equal(report.shadowDiff.schemaVersion, 2);
   assert.equal(report.shadowDiff.canonicalStageId, 'homepage-research');
   assert.equal(report.shadowDiff.authoritative, 'LEGACY');
   assert.equal(report.shadowDiff.blocking, false);
@@ -247,11 +249,28 @@ test('exact business comparisons classify unequal values as blocking instead of 
   assert.equal(comparison.diffClass, 'V2_INCOMPATIBLE');
   assert.equal(comparison.reasonCode, 'BUSINESS_ARTIFACTS_INCOMPATIBLE');
   const report = createShadowDiff({ runId: 'wallpaper-engine-002', canonicalStageId: 'homepage-research',
-    mappingVersion: 'stage-identity-v1', attemptId: 1, contextDigest: 'c'.repeat(64),
+    schemaVersion: 2, mappingVersion: 'stage-identity-v1', attemptId: 1, contextDigest: 'c'.repeat(64),
     legacySnapshotDigest: 'd'.repeat(64), v2ResultDigest: 'e'.repeat(64),
     comparisons: [comparison] });
   assert.equal(report.blocking, true);
   assert.equal(report.diffs[0].blocking, true);
+});
+
+test('published shadow-diff v1 stays keyword-only while homepage uses v2', async t => {
+  const f = await setup(t);
+  const fixtureEvidence = await f.continuity.prove({ observationRecord: f.record,
+    contextBinding: f.binding, stageResult: f.stageResult });
+  const comparator = createOfflineShadowEvidenceComparator({ observationStore: f.store,
+    contextBinder: f.binder, stageResultProvenance: f.provenance,
+    fixtureContinuity: f.continuity });
+  const report = await comparator.compare({ observationRecord: f.record,
+    contextBinding: f.binding, v2Projection: f.stageResult, fixtureEvidence });
+  assert.equal(contractDefinition('SHADOW_DIFF', 1).schema.properties.canonicalStageId.const,
+    'keyword-research');
+  assert.equal(contractDefinition('SHADOW_DIFF', 2).schema.properties.canonicalStageId.enum.length, 7);
+  assert.throws(() => validateContract('SHADOW_DIFF', 1, { ...report.shadowDiff, schemaVersion: 1 }),
+    error => error.code === 'CONTRACT_SCHEMA_INVALID');
+  assert.equal(validateContract('SHADOW_DIFF', 2, report.shadowDiff), report.shadowDiff);
 });
 
 test('cloned, cross-instance and stale continuity never enters comparison', async t => {

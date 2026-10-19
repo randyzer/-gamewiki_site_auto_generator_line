@@ -166,7 +166,8 @@ export function createOfflineShadowEvidenceComparator({ observationStore, contex
       missingEvidence.sort();
       const stageResultCompared = contextBinding.bindingStatus === 'VERIFIED' && trustedStageResult &&
         fixtureContinuityVerified;
-      const shadowDiff = stageResultCompared ? createShadowDiff({ runId: currentRecord.identity.runId,
+      const shadowDiff = stageResultCompared ? createShadowDiff({ schemaVersion: 2,
+        runId: currentRecord.identity.runId,
         canonicalStageId: currentRecord.identity.canonicalStageId, mappingVersion: contextBinding.mappingVersion,
         attemptId: currentRecord.identity.attemptId, contextDigest: contextBinding.executionContextDigest,
         legacySnapshotDigest: currentRecord.recordDigest,

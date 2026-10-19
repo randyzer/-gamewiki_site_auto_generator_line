@@ -156,7 +156,8 @@ Gate 切换仍然不在本工作包范围内。
 
 ## 11. P6-E-B 首页正式离线 Shadow Diff
 
-P6-E-B 允许 `SHADOW_DIFF:1` 使用七个已注册 canonical stage，并把 P6-E-A 的可信连续性证据接入
+P6-E-B 新增 `SHADOW_DIFF:2` 支持七个已注册 canonical stage，并保持已发布的 keyword-only
+`SHADOW_DIFF:1` 语义不变；它把 P6-E-A 的可信连续性证据接入
 P6-C 比较器。比较器只有在 Observation Record、Context Binding、Stage Result Provenance 和
 Fixture Continuity 全部来自同一组进程内 authority，并且各摘要精确配对时，才生成首页正式离线
 Shadow Diff。

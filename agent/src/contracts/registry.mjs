@@ -82,6 +82,8 @@ const definitions = new Map([
     producer: 'V2_OFFLINE_HOST', validator: 'CONTRACT_REGISTRY', schema: load('keyword-legacy-snapshot.v1.json') }],
   ['SHADOW_DIFF:1', { kind: 'SHADOW_DIFF', schemaVersion: 1,
     producer: 'V2_SHADOW_COMPARATOR', validator: 'CONTRACT_REGISTRY', schema: load('shadow-diff.v1.json') }],
+  ['SHADOW_DIFF:2', { kind: 'SHADOW_DIFF', schemaVersion: 2,
+    producer: 'V2_SHADOW_COMPARATOR', validator: 'CONTRACT_REGISTRY', schema: load('shadow-diff.v2.json') }],
   ['HOMEPAGE_FIXTURE:1', { kind: 'HOMEPAGE_FIXTURE', schemaVersion: 1,
     producer: 'P5_D_FIXTURE_DERIVER', validator: 'CONTRACT_REGISTRY', schema: load('homepage-fixture.v1.json') }],
   ['TEMPLATE_FIXTURE:1', { kind: 'TEMPLATE_FIXTURE', schemaVersion: 1,
