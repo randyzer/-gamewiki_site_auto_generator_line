@@ -132,3 +132,47 @@ Legacy Observation 的端到端来源连续性，也不代表 Legacy 与 V2 业�
 真实格式 fixture 的来源连续性、正式 `SHADOW_DIFF:1` 和生产 Gate 切换继续由后续独立工作包处理。
 P6-D 仍不调用 Worker、浏览器、构建或网络，不改历史 Run，不消费 Approval，不创建 V2 Commit，
 不修改 Feature Gate，也不执行部署。
+
+## 10. P6-E-A 首页 Fixture 来源连续性
+
+P6-E-A 把首页真实格式 fixture 的派生算法提取为无 I/O 的确定性函数，并增加独立的离线连续性
+权威。该权威只接受同一 Observation Store、Context Binder 和 Stage Result Provenance 实例直接
+产生的可信对象；普通 JSON、对象克隆、跨实例结果和跨 authority 组合都不能取得信任。
+
+每次证明及重验都会执行以下检查：
+
+- 从仓库根目录安全读取历史 Manifest 与三项 Stage 1 产物，拒绝越界路径、符号链接和读取中漂移。
+- 把 Manifest 中的 `HOMEPAGE_RESEARCH.md`、`ICON.zip`、`VALIDATION_REPORT` 与 Observation
+  Record 的 run、attempt、sequence、checkpoint、site revision 和 artifact digests 逐项绑定。
+- 重新执行 `homepage-redaction-v1` 派生，并将提交的 fixture manifest 与三个脱敏文件逐字节比较。
+- 重算 Homepage Adapter payload、Gate Binding 和 `STAGE_ADAPTER_INPUT:1` 摘要，要求与 P6-D
+  可信 Stage Result 的输入摘要完全一致。
+- 在复用证据前重新读取全部来源、重验 Context 和重放 Stage Result；任一漂移都关闭失败。
+
+连续性证据固定为 `authoritative=false`、`verificationScope=OFFLINE_SIMULATED`。P6-E-A 没有接入
+Shadow Comparator，也没有生成 `SHADOW_DIFF:1`，因此不改变 P6-D 的 `INCOMPLETE + HOLD`
+结论。比较器消费该可信证据并完成正式离线比较属于 P6-E-B；生产 Shadow、迁移批准和 Feature
+Gate 切换仍然不在本工作包范围内。
+
+## 11. P6-E-B 首页正式离线 Shadow Diff
+
+P6-E-B 新增 `SHADOW_DIFF:2` 支持七个已注册 canonical stage，并保持已发布的 keyword-only
+`SHADOW_DIFF:1` 语义不变；它把 P6-E-A 的可信连续性证据接入
+P6-C 比较器。比较器只有在 Observation Record、Context Binding、Stage Result Provenance 和
+Fixture Continuity 全部来自同一组进程内 authority，并且各摘要精确配对时，才生成首页正式离线
+Shadow Diff。
+
+当前首页比较覆盖 run、stage、attempt、规范化状态、Legacy authority、三份 Legacy 业务产物摘要集合、
+V2 Adapter 产物摘要集合和 Adapter 输入摘要八项。八项均为 `MATCH` 时 `blocking=false`；任一精确值
+不一致会结构化为阻断性的 `V2_INCOMPATIBLE`，不会抛开差异报告或误报 `MATCH`。来源与完整 Adapter
+输入仍由连续性证据逐字节重验。比较结果固定为：
+
+- `readinessStatus=OFFLINE_COMPARISON_COMPLETE`
+- `fixtureContinuityVerified=true`
+- `stageResultCompared=true`
+- `shadowDiff.authoritative=LEGACY`
+- `decision=HOLD`
+
+`HOLD` 表示离线比较完成后仍没有生产迁移授权。对象克隆、普通 JSON、跨连续性实例、跨 authority、
+证据与 Stage Result 摘要不一致，或任一历史/Context/fixture 文件漂移，都不能进入比较。P6-E-B
+不修改 Feature Gate，不创建 V2 Commit，不调用 Worker、浏览器或网络，也不执行部署。
