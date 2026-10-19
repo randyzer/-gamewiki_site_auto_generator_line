@@ -4,17 +4,21 @@ import { createHash } from 'node:crypto';
 import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { canonicalJson } from '../../src/contracts/canonical-json.mjs';
 import { createOfflineContextBinder } from '../../src/v2/production-context-binding.mjs';
 import { createOfflineShadowEvidenceComparator } from '../../src/v2/offline-shadow-comparator.mjs';
+import { createOfflineStageResultProvenance } from '../../src/v2/offline-stage-result-provenance.mjs';
 import { createProductionObservation } from '../../src/v2/production-observation.mjs';
 import { createOfflineObservationStore } from '../../src/v2/production-observation-store.mjs';
 import { stageIdentityTable } from '../../src/v2/stage-identity.mjs';
 
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const sha = value => value.repeat(64);
+const repoRoot = fileURLToPath(new URL('../../..', import.meta.url));
+const homepageFixtureRoot = join(repoRoot, 'agent/tests/fixtures/v2/homepage');
 
-async function fixture(t, { complete = true, targetPlatforms = [] } = {}) {
+async function fixture(t, { complete = true, targetPlatforms = [], runId = 'run-1' } = {}) {
   const root = await realpath(await mkdtemp(join(tmpdir(), 'p6c-readiness-')));
   t.after(() => rm(root, { recursive: true, force: true }));
   const legacyRoot = join(root, 'legacy');
@@ -22,7 +26,7 @@ async function fixture(t, { complete = true, targetPlatforms = [] } = {}) {
   const sourceRoot = join(root, 'sources');
   await Promise.all([legacyRoot, offlineRoot, sourceRoot].map(path => mkdir(path, { recursive: true })));
   const checkpoint = { attempt: 1, inputDigest: sha('a'), updatedAt: 'fixture', next: 'Advance next stage' };
-  const commit = { runId: 'run-1', canonicalStageId: 'homepage-research', attemptId: 1,
+  const commit = { runId, canonicalStageId: 'homepage-research', attemptId: 1,
     legacyInputDigest: sha('a'), sourceRevision: 'source-1', checkpoint,
     artifacts: [{ sha256: sha('b') }], legacyStatus: 'PASSED',
     deploymentExecuted: false, committedSequence: 4 };
@@ -68,6 +72,19 @@ async function fixture(t, { complete = true, targetPlatforms = [] } = {}) {
     contextBinder: binder });
   return { root, legacyRoot, sourceRoot, manifest, manifestPath, record, store, binder, binding,
     comparator, sources };
+}
+
+async function homepageFixture() {
+  const fixtureManifest = JSON.parse(await readFile(join(homepageFixtureRoot, 'fixture-manifest.json'), 'utf8'));
+  const sourceFiles = new Map();
+  const derivedFiles = new Map();
+  for (const item of fixtureManifest.sources) {
+    sourceFiles.set(item.sourceRelativePath, await readFile(join(repoRoot, item.sourceRelativePath)));
+    if (item.derivedPath) derivedFiles.set(item.derivedPath,
+      await readFile(join(homepageFixtureRoot, item.derivedPath)));
+  }
+  return { fixtureManifest, sourceFiles, derivedFiles,
+    zipBytes: sourceFiles.get(fixtureManifest.iconArchive.sourceRelativePath) };
 }
 
 async function persistOtherRunRecord(f) {
@@ -183,4 +200,60 @@ test('readiness digest changes when independently verified source evidence chang
   assert.notEqual(first.binding.sourceEvidenceDigest, second.binding.sourceEvidenceDigest);
   assert.notEqual(firstReport.executionContextDigest, secondReport.executionContextDigest);
   assert.notEqual(firstReport.readinessDigest, secondReport.readinessDigest);
+});
+
+test('trusted stage result closes only the provenance gap and remains incomplete without fixture continuity', async t => {
+  const f = await fixture(t, { runId: 'wallpaper-engine-002' });
+  const provenance = createOfflineStageResultProvenance({ observationStore: f.store,
+    contextBinder: f.binder });
+  const result = await provenance.run({ observationRecord: f.record, contextBinding: f.binding,
+    canonicalStageId: 'homepage-research', fixturePayload: await homepageFixture() });
+  const comparator = createOfflineShadowEvidenceComparator({ observationStore: f.store,
+    contextBinder: f.binder, stageResultProvenance: provenance });
+  const report = await comparator.compare({ observationRecord: f.record,
+    contextBinding: f.binding, v2Projection: result });
+
+  assert.equal(report.trustedStageResult, true);
+  assert.equal(report.fixtureContinuityVerified, false);
+  assert.deepEqual(report.reasons, ['FIXTURE_CONTINUITY_UNPROVEN']);
+  assert.deepEqual(report.missingEvidence, ['TRUSTED_REAL_FORMAT_FIXTURE']);
+  assert.equal(report.readinessStatus, 'INCOMPLETE');
+  assert.equal(report.stageResultCompared, false);
+  assert.equal(report.decision, 'HOLD');
+});
+
+test('ordinary or cross-provenance result remains untrusted', async t => {
+  const f = await fixture(t, { runId: 'wallpaper-engine-002' });
+  const sourceProvenance = createOfflineStageResultProvenance({ observationStore: f.store,
+    contextBinder: f.binder });
+  const result = await sourceProvenance.run({ observationRecord: f.record, contextBinding: f.binding,
+    canonicalStageId: 'homepage-research', fixturePayload: await homepageFixture() });
+  const otherProvenance = createOfflineStageResultProvenance({ observationStore: f.store,
+    contextBinder: f.binder });
+  const comparator = createOfflineShadowEvidenceComparator({ observationStore: f.store,
+    contextBinder: f.binder, stageResultProvenance: otherProvenance });
+  const report = await comparator.compare({ observationRecord: f.record,
+    contextBinding: f.binding, v2Projection: result });
+  assert.equal(report.trustedStageResult, false);
+  assert.ok(report.reasons.includes('UNTRUSTED_PROJECTION'));
+  assert.ok(report.missingEvidence.includes('TRUSTED_V2_STAGE_RESULT'));
+});
+
+test('comparator rejects provenance from another store and binder authority', async t => {
+  const first = await fixture(t, { runId: 'wallpaper-engine-002' });
+  const second = await fixture(t, { runId: 'wallpaper-engine-002' });
+  const foreignProvenance = createOfflineStageResultProvenance({ observationStore: first.store,
+    contextBinder: first.binder });
+  assert.throws(() => createOfflineShadowEvidenceComparator({ observationStore: second.store,
+    contextBinder: second.binder, stageResultProvenance: foreignProvenance }),
+  error => error.code === 'TRUST_LEVEL_INSUFFICIENT');
+});
+
+test('comparator rejects a caller-shaped provenance object', async t => {
+  const f = await fixture(t);
+  assert.throws(() => createOfflineShadowEvidenceComparator({ observationStore: f.store,
+    contextBinder: f.binder, stageResultProvenance: {
+      assertTrustedResult: value => value,
+      revalidateResult: async value => value,
+    } }), error => error.code === 'TRUST_LEVEL_INSUFFICIENT');
 });
