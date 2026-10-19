@@ -1,6 +1,10 @@
-# 总控执行路线图：当前设计
+# 总控执行路线图：Legacy V1 设计（下一步顺序已撤销）
 
-本文件记录当前新站主线的代码状态与后续验收顺序。使用入口见 [README](../README.md)，逐阶段权限/产物见[阶段矩阵](SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。历史局部实测不替代当前主线验收。
+状态：本文件只保留 Legacy V1 实现说明。2026-10-20 起，后续开发和验证必须遵循
+[Agent V2 当前执行路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)。下方旧顺序已撤销，
+不得据此启动 Wallpaper Engine 002、真实 Worker、部署或生产权限。
+
+本文件记录旧版新站主线的代码状态。使用入口见 [README](../README.md)，逐阶段权限/产物见[阶段矩阵](SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)。历史局部实测不替代当前主线验收。
 
 ## 当前实现
 
@@ -26,7 +30,10 @@
 | 部署计划/批准 digest/执行轮、篡改/失败 | [部署执行测试](../tests/deployment-execution.test.mjs)使用合成产物和替身 executor | push、部署、DNS、Google 服务：**未经真实运行验证** |
 | 权限配置、可用功能与环境过滤 | [worker 权限测试](../tests/worker-permissions.test.mjs)检查配置/参数和注入调用 | 真实 worker 在目标机器上的边界及业务端到端：**未经真实运行验证** |
 
-## 下一步（依次进行）
+## 历史下一步（已撤销，禁止执行）
+
+以下内容保留用于解释 Legacy V1 原计划及其风险，不再是当前操作指引。真实端到端必须等待
+[当前路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)第 1～7 步完成，并在第 8 步取得单独授权。
 
 ### 1. 真实 Codex worker 首次端到端，停在部署计划
 

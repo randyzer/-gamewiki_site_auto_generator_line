@@ -218,7 +218,7 @@ worker 使用文件权限沙箱，命令网络只在第 2 阶段和第 7 阶段�
 
 - 自动化可复验：[终端确认](tests/terminal-run.test.mjs)、[Skill 锁](tests/skill-lock.test.mjs)、[模板固定](tests/template-snapshot.test.mjs)、[部署双轮](tests/deployment-execution.test.mjs)、[权限](tests/worker-permissions.test.mjs)、[UI 宿主](tests/site-audit-host.test.mjs)、[巡检宿主](tests/prelaunch-host.test.mjs)。终端流、worker、浏览器、安装及部署多处使用替身；这些集成部分均为**未经真实运行验证**。
 - 未验证：当前主线的真实 Codex worker 七阶段端到端、真实公开来源/图像/favicon 交接、真实依赖安装与站点 UI/全站巡检，以及真实 push、部署、DNS、GSC/GA4。历史局部实测不能替代当前主线验收。
-- 验证与后续工作见[路线图](docs/MASTER_AGENT_EXECUTION_ROADMAP_V1.md)；历史记录见[文档索引](docs/README.md)。
+- 验证与后续工作见 [Agent V2 当前执行路线图](docs/AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)；Legacy V1 说明和历史记录见[文档索引](docs/README.md)。
 
 ## 已冻结范围
 

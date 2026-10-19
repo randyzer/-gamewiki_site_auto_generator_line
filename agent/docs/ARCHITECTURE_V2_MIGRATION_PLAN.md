@@ -1,6 +1,6 @@
 # Agent V2 迁移实施计划
 
-状态：设计阶段。任何生产代码实施必须在本组架构文档通过独立审核后开始。
+状态：架构设计已批准，当前实现只达到 `P5_OFFLINE_FRAMEWORK_COMPLETE`；生产生命周期、真实格式 fixture 和 L6 尚未完成。后续工作必须遵循 [Agent V2 当前执行路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)，任何生产权威切换仍需本文件规定的独立审核和门禁。
 
 ## 1. 策略
 

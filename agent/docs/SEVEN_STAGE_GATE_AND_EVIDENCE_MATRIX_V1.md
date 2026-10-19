@@ -1,6 +1,6 @@
 # 七阶段验收与证据矩阵
 
-阶段名、顺序、输入白名单和必需产物以 [stages.mjs](../src/stages.mjs) 为准，条件必填与状态门以 [pipeline.mjs](../src/pipeline.mjs) 为准。使用方法见 [README](../README.md)，真实验收安排见[路线图](MASTER_AGENT_EXECUTION_ROADMAP_V1.md)。文中 run、site 下的路径均为运行时产物，不是仓库预置文件。
+阶段名、顺序、输入白名单和必需产物以 [stages.mjs](../src/stages.mjs) 为准，条件必填与状态门以 [pipeline.mjs](../src/pipeline.mjs) 为准。使用方法见 [README](../README.md)，后续开发和真实验收安排见 [Agent V2 当前执行路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)。文中 run、site 下的路径均为运行时产物，不是仓库预置文件。
 
 ## 共同规则
 
