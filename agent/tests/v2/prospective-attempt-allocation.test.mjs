@@ -18,6 +18,7 @@ import {
   computeAttemptOperationDigest,
 } from '../../src/v2/production-allocation-digest.mjs';
 import {
+  assertActiveVerifiedAllocationLease,
   assertTrustedAttemptAllocation,
   createProductionAttemptAllocationStore,
   createTestLegacyAttemptBoundary,
@@ -421,6 +422,173 @@ test('cross-run, cross-stage and cross-operation allocation replay is rejected',
       canonicalStageId: 'homepage-research', requestedOperation,
     })), error => error.code === 'ATTEMPT_OPERATION_INVALID');
   }
+});
+
+test('verified allocation lease is exact, active only inside its awaited callback and cannot be cloned', async t => {
+  const fixture = await allocationFixture(t);
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  let retained;
+  const result = await fixture.store.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async lease => {
+    retained = lease;
+    assert.equal(assertActiveVerifiedAllocationLease(lease), lease);
+    assert.throws(() => assertActiveVerifiedAllocationLease(structuredClone(lease)),
+      error => error.code === 'ATTEMPT_LEASE_INVALID');
+    assert.deepEqual(lease, {
+      runId: allocation.runId,
+      canonicalStageId: allocation.canonicalStageId,
+      attemptId: allocation.attemptId,
+      requestedOperation: allocation.requestedOperation,
+      mappingVersion: allocation.mappingVersion,
+      allocationDigest: allocation.allocationDigest,
+      allocationSequence: allocation.allocationSequence,
+    });
+    return 'verified';
+  });
+  assert.equal(result, 'verified');
+  assert.throws(() => assertActiveVerifiedAllocationLease(retained),
+    error => error.code === 'ATTEMPT_LEASE_INVALID');
+});
+
+test('verified allocation lease expires on callback failure and releases both locks', async t => {
+  const fixture = await allocationFixture(t);
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  let retained;
+  const callbackError = Object.assign(new Error('lease callback failed'), { code: 'TEST_CALLBACK_FAILED' });
+  await assert.rejects(fixture.store.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async lease => {
+    retained = lease;
+    throw callbackError;
+  }), error => error === callbackError);
+  assert.throws(() => assertActiveVerifiedAllocationLease(retained),
+    error => error.code === 'ATTEMPT_LEASE_INVALID');
+
+  const next = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage }), {
+      operationInputsDigest: digest('after-lease-error'),
+    }));
+  assert.equal(next.attemptId, 2);
+});
+
+test('verified allocation lease rejects malformed, unknown and stale identities before callback', async t => {
+  const fixture = await allocationFixture(t);
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  const request = {
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  };
+  let invoked = false;
+  const callback = async () => { invoked = true; };
+  await assert.rejects(fixture.store.withVerifiedAllocationLease({ ...request, extra: true }, callback),
+    error => error.code === 'ATTEMPT_IDENTITY_INVALID');
+  await assert.rejects(fixture.store.withVerifiedAllocationLease({ ...request, attemptId: 99 }, callback),
+    error => error.code === 'ATTEMPT_IDENTITY_INVALID');
+  await assert.rejects(fixture.store.withVerifiedAllocationLease({
+    ...request, allocationDigest: digest('stale-allocation'),
+  }, callback), error => error.code === 'ATTEMPT_DIGEST_MISMATCH');
+  await assert.rejects(fixture.store.withVerifiedAllocationLease(request, null),
+    error => error.code === 'ATTEMPT_IDENTITY_INVALID');
+  assert.equal(invoked, false);
+});
+
+test('verified allocation lease validates the complete chain before invoking the callback', async t => {
+  const fixture = await allocationFixture(t);
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  const path = allocationPath(fixture.root);
+  const tampered = { ...JSON.parse(await readFile(path)), allocationSequence: 2 };
+  tampered.allocationDigest = computeAttemptAllocationDigest(tampered);
+  await writeFile(path, `${canonicalJson(tampered)}\n`);
+  let invoked = false;
+  await assert.rejects(fixture.store.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async () => { invoked = true; }), error => error.code === 'ATTEMPT_CHAIN_CORRUPT');
+  assert.equal(invoked, false);
+});
+
+test('verified allocation lease serializes concurrent allocation until the callback completes', async t => {
+  const fixture = await allocationFixture(t);
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  const nextRequest = operation({
+    attemptId: allocation.attemptId,
+    allocationSequence: allocation.allocationSequence,
+    allocationDigest: allocation.allocationDigest,
+  }, { operationInputsDigest: digest('concurrent-after-lease') });
+  let enterLease;
+  const entered = new Promise(resolve => { enterLease = resolve; });
+  let releaseLease;
+  const held = new Promise(resolve => { releaseLease = resolve; });
+  const leaseOperation = fixture.store.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async lease => {
+    assert.equal(assertActiveVerifiedAllocationLease(lease), lease);
+    enterLease();
+    await held;
+  });
+  await entered;
+  let allocationSettled = false;
+  const concurrent = fixture.store.allocate(nextRequest).finally(() => { allocationSettled = true; });
+  await new Promise(resolve => setTimeout(resolve, 30));
+  assert.equal(allocationSettled, false);
+  await assert.rejects(access(allocationPath(fixture.root, 2)), error => error.code === 'ENOENT');
+  releaseLease();
+  await leaseOperation;
+  assert.equal((await concurrent).attemptId, 2);
+});
+
+test('restart mints a fresh lease while every prior lease remains invalid and capability-free', async t => {
+  const fixture = await allocationFixture(t);
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  let previous;
+  await fixture.store.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async lease => { previous = lease; });
+  const restarted = createProductionAttemptAllocationStore({
+    runDirectory: fixture.root,
+    runId: fixture.runId,
+  });
+  await restarted.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async lease => {
+    assert.equal(assertActiveVerifiedAllocationLease(lease), lease);
+    assert.throws(() => assertActiveVerifiedAllocationLease(previous),
+      error => error.code === 'ATTEMPT_LEASE_INVALID');
+    for (const field of ['sourceSet', 'context', 'capabilities', 'worker', 'approval', 'deployment']) {
+      assert.equal(Object.hasOwn(lease, field), false);
+    }
+  });
+});
+
+test('test allocation factory cannot mint a lease accepted as production authority', async t => {
+  const fixture = await allocationFixture(t, { testOnly: true });
+  const allocation = await fixture.store.allocate(operation(
+    await fixture.store.inspect({ canonicalStageId: stage })));
+  await assert.rejects(fixture.store.withVerifiedAllocationLease({
+    canonicalStageId: stage,
+    attemptId: allocation.attemptId,
+    allocationDigest: allocation.allocationDigest,
+  }, async lease => assertActiveVerifiedAllocationLease(lease)),
+  error => error.code === 'ATTEMPT_LEASE_INVALID');
 });
 
 test('allocation grants no Source Set, Context, launch or approval authority', async t => {

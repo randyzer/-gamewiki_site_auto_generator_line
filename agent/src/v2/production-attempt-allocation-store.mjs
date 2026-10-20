@@ -18,6 +18,7 @@ import {
 } from './production-allocation-digest.mjs';
 
 const allocationTrust = new WeakSet();
+const allocationLeaseState = new WeakMap();
 const legacyBoundaryTrust = new WeakSet();
 const allocationDirectoryName = attemptId => String(attemptId).padStart(12, '0');
 const attemptDirectoryPattern = /^\d{12}$/;
@@ -40,6 +41,14 @@ function freezeTrustedAllocation(record) {
 export function assertTrustedAttemptAllocation(value) {
   if (!allocationTrust.has(value)) {
     throw attemptError('ATTEMPT_IDENTITY_INVALID', 'Attempt Allocation is not a trusted store result');
+  }
+  return value;
+}
+
+export function assertActiveVerifiedAllocationLease(value) {
+  if (allocationLeaseState.get(value)?.active !== true) {
+    throw attemptError('ATTEMPT_LEASE_INVALID',
+      'A verified Allocation lease is required during its active callback');
   }
   return value;
 }
@@ -101,6 +110,7 @@ function createAttemptAllocationStore({
   runId,
   legacyBoundary = null,
   faultInjector = null,
+  productionLeaseAuthority = false,
 } = {}) {
   if (typeof runDirectory !== 'string' || !isAbsolute(runDirectory)) {
     throw attemptError('ATTEMPT_STORAGE_FAILURE', 'Attempt Allocation runDirectory must be absolute');
@@ -306,6 +316,48 @@ function createAttemptAllocationStore({
         () => recoverLocked(canonicalStageId, repairHead));
     },
 
+    async withVerifiedAllocationLease(request, effect) {
+      if (!productionLeaseAuthority) {
+        throw attemptError('ATTEMPT_LEASE_INVALID',
+          'Test Allocation stores cannot mint production verification leases');
+      }
+      exactKeys(request, ['canonicalStageId', 'attemptId', 'allocationDigest'],
+        'Verified Allocation lease request');
+      assertStage(request.canonicalStageId);
+      if (!Number.isSafeInteger(request.attemptId) || request.attemptId < 1 ||
+          !/^[a-f0-9]{64}$/.test(request.allocationDigest ?? '') || typeof effect !== 'function') {
+        throw attemptError('ATTEMPT_IDENTITY_INVALID',
+          'Verified Allocation lease request or callback is invalid');
+      }
+      return withAllocationLocks(request.canonicalStageId, async () => {
+        const records = await readAllocationChain(request.canonicalStageId);
+        const allocation = records.find(record => record.attemptId === request.attemptId);
+        if (!allocation) {
+          throw attemptError('ATTEMPT_IDENTITY_INVALID',
+            'Verified Allocation lease attempt does not exist');
+        }
+        if (allocation.allocationDigest !== request.allocationDigest) {
+          throw attemptError('ATTEMPT_DIGEST_MISMATCH',
+            'Verified Allocation lease digest does not match the immutable record');
+        }
+        const lease = Object.freeze({
+          runId: allocation.runId,
+          canonicalStageId: allocation.canonicalStageId,
+          attemptId: allocation.attemptId,
+          requestedOperation: allocation.requestedOperation,
+          mappingVersion: allocation.mappingVersion,
+          allocationDigest: allocation.allocationDigest,
+          allocationSequence: allocation.allocationSequence,
+        });
+        allocationLeaseState.set(lease, { active: true });
+        try {
+          return await effect(lease);
+        } finally {
+          allocationLeaseState.set(lease, { active: false });
+        }
+      });
+    },
+
     async allocate(request) {
       exactKeys(request, ['canonicalStageId', 'mappingVersion', 'requestedOperation',
         'operationInputsDigest', 'recoveryDecisionDigest', 'expectedPrevious'], 'Attempt allocation request');
@@ -390,9 +442,14 @@ export function createProductionAttemptAllocationStore(options = {}) {
     throw attemptError('ATTEMPT_STORAGE_FAILURE',
       'Production Attempt Allocation does not accept fault injection');
   }
-  return createAttemptAllocationStore({ ...options, legacyBoundary: null, faultInjector: null });
+  return createAttemptAllocationStore({
+    ...options,
+    legacyBoundary: null,
+    faultInjector: null,
+    productionLeaseAuthority: true,
+  });
 }
 
 export function createTestProductionAttemptAllocationStore(options = {}) {
-  return createAttemptAllocationStore(options);
+  return createAttemptAllocationStore({ ...options, productionLeaseAuthority: false });
 }
