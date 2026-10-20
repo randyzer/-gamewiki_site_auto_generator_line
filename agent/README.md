@@ -2,6 +2,8 @@
 
 总控把用户提供的游戏身份和关键词依次交给七个 Skill，核验产物后再推进；第 7 阶段先生成部署计划，用户确认准确 digest 后才执行发布。主流程入口为 `run` / `retry`，实现见 [cli.mjs](src/cli.mjs)、[terminal-run.mjs](src/terminal-run.mjs) 和 [pipeline.mjs](src/pipeline.mjs)。
 
+当前开发主线是[个人使用版架构与执行计划](docs/AGENT_PERSONAL_USE_ARCHITECTURE_AND_PLAN.md)：直接复用现有七阶段 Pipeline、真实 Skill 执行、产物验收和恢复能力，以真实游戏站到达可审查部署计划作为验收。企业级 Code Authority、签名和抗回滚体系不再是实际建站的前置条件；当前顺序见[执行路线图](docs/AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)。
+
 Codex 整理输入，先用 `--preview` 展示完整摘要、Preview ID 与确认码，并保存不可变审批快照；用户在自己的消息中写出该码后，Codex 才能用 `run-confirm` / `retry-confirm` 读取快照、复验受保护状态并后台启动。CLI 也保留操作者在交互终端亲自输入单独小写 `y` 的流程；非交互 stdin（包括管道 `y`）仍会被拒绝。Codex 不得代输 `y`、模拟操作者终端或绕过确认。
 
 ## 首次准备

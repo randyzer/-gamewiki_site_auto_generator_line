@@ -67,7 +67,7 @@ async function advance(pipeline, count) {
   return pipeline.snapshot();
 }
 
-async function writeFixtureRecoveryLineage(nativeDirectory) {
+async function writeFixtureRecoveryLineage(nativeDirectory, { skillSyntax = false } = {}) {
   await writeFile(join(nativeDirectory, 'RAW_LINEAGE.json'), JSON.stringify({ pendingIds: [], rows: [
     { id: '1', raw: 'example walkthrough', final: 'Example walkthrough' },
   ] }));
@@ -75,7 +75,9 @@ async function writeFixtureRecoveryLineage(nativeDirectory) {
     { category: 'Guide', keywords: ['Example walkthrough'] },
   ] }));
   await writeFile(join(nativeDirectory, 'Example walkthrough素材.md'),
-    '- 状态: PARTIAL\n- 缺口: Missing official fact\n');
+    skillSyntax
+      ? '- 关键词: Example walkthrough\n- 状态: PARTIAL\n### 待确认\n- Missing official fact\n'
+      : '- 关键词: Example walkthrough\n- 状态: PARTIAL\n- 缺口: Missing official fact\n');
 }
 
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
@@ -441,7 +443,7 @@ test('Stage 2 PARTIAL advances only after exact immutable handoff approval', asy
     }
     const native = join(context.outputDirectory, 'native');
     await mkdir(native, { recursive: true });
-    await writeFixtureRecoveryLineage(native);
+    await writeFixtureRecoveryLineage(native, { skillSyntax: true });
     const runDirectory = join(f.workspace, 'runs', context.runId);
     const recovery = await (await import('../src/keyword-recovery.mjs')).captureKeywordRecovery({
       ...context, runDirectory, nativeDirectory: native,
@@ -459,6 +461,8 @@ test('Stage 2 PARTIAL advances only after exact immutable handoff approval', asy
   assert.equal(stage.artifacts.length, 0);
   const candidate = JSON.parse(await readFile(stage.checkpoint.researchHandoff.path));
   assert.equal(candidate.materials[0].publicationDisposition, 'DRAFT_ONLY');
+  assert.equal(candidate.materials[0].sourceContract.declaredStatus, 'PARTIAL');
+  assert.equal(candidate.materials[0].sourceContract.contractStatus, 'VALID');
   assert.equal(candidate.approval, null);
 
   const resumed = await f.create({ runId: state.runId, resume: true, inputs: {}, executor });
