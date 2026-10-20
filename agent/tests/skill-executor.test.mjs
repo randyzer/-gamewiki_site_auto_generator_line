@@ -42,10 +42,20 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.ok(path.indexOf(dirname(gitTool.invocationPath)) < path.indexOf('/usr/bin'));
   assert.ok(path.includes(`GIT_EXEC_PATH=${JSON.stringify(gitTool.execPath)}`));
   assert.ok(path.includes(`DYLD_LIBRARY_PATH=${JSON.stringify(gitTool.librarySearchPaths.join(':'))}`));
+  const gitZdotDirectory = join(f.configuration.workspace,
+    'runs/worker-fixture/host-tools/git/zdotdir');
+  const gitZshEnvironment = join(gitZdotDirectory, '.zshenv');
+  assert.ok(path.includes(`ZDOTDIR=${JSON.stringify(gitZdotDirectory)}`));
   assert.ok(path.includes('GIT_CONFIG_NOSYSTEM="1"'));
   assert.ok(path.includes('GIT_CONFIG_GLOBAL="/dev/null"'));
   assert.ok(path.includes('GIT_CONFIG_SYSTEM="/dev/null"'));
   assert.equal(path.includes('/synthetic/untrusted-dyld'), false);
+  assert.equal(invoked.options.env.ZDOTDIR, gitZdotDirectory);
+  assert.equal(await readFile(gitZshEnvironment, 'utf8'),
+    `export DYLD_LIBRARY_PATH='${gitTool.librarySearchPaths.join(':')}'\n`);
+  assert.equal((await stat(gitZshEnvironment)).mode & 0o777, 0o400);
+  assert.equal(inside(context.inputs.projectPath, gitZdotDirectory), false);
+  assert.equal(inside(join(context.outputDirectory, 'native'), gitZdotDirectory), false);
   assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
   const profile = invoked.args.find(value => value.startsWith('permissions.agent-worker='));
   assert.ok(profile.includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
@@ -53,6 +63,8 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.equal(profile.includes(JSON.stringify(dirname(gitTool.path)) + '="read"'), false);
   for (const gitPath of gitTool.readPaths)
     assert.ok(profile.includes(JSON.stringify(gitPath) + '="read"'));
+  assert.ok(profile.includes(JSON.stringify(gitZdotDirectory) + '="read"'));
+  assert.equal(profile.includes(JSON.stringify(gitZdotDirectory) + '="write"'), false);
   assert.match(profile, /network=\{enabled=false\}/);
   assert.equal(profile.includes('.git"="write"'), false);
   assert.ok(invoked.options.input.includes(`Verified Worker invocation path: ${JSON.stringify(gitTool.invocationPath)}`));
@@ -62,6 +74,38 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.match(invoked.options.input, /Do not invoke browser commands/);
   assert.match(invoked.options.input, /actual callable image-generation tool/);
   assert.match(invoked.options.input, /No commit, push/);
+});
+
+test('Git shell environment is replaced atomically for retries without accepting linked targets', async t => {
+  const f = await fixture(t);
+  const context = { runId: 'git-zdot-retry',
+    inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+    outputDirectory: join(f.configuration.workspace, 'runs/git-zdot-retry/artifacts/2/1'),
+    requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') },
+    upstream: [], mode: 'audit-only', templateRoots: f.configuration.templateRoots,
+    permissions: { siteWrites: false, productionDeployment: false } };
+  let calls = 0;
+  const executor = createSkillExecutor({ researchPython: process.execPath, run: async (_command, args) => {
+    calls++;
+    await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+      status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC'] }));
+  } });
+  await executor(STAGES[2], context);
+  const directory = join(f.configuration.workspace, 'runs/git-zdot-retry/host-tools/git/zdotdir');
+  const file = join(directory, '.zshenv');
+  const expected = await readFile(file, 'utf8');
+  await executor(STAGES[2], context);
+  assert.equal(calls, 2);
+  assert.equal(await readFile(file, 'utf8'), expected);
+  assert.equal((await stat(file)).mode & 0o777, 0o400);
+
+  const outside = join(f.root, 'outside-zshenv');
+  await writeFile(outside, 'unchanged');
+  await unlink(file);
+  await link(outside, file);
+  await assert.rejects(executor(STAGES[2], context), /Linked path is not allowed|unlinked regular executable target/);
+  assert.equal(await readFile(outside, 'utf8'), 'unchanged');
+  assert.equal(calls, 2);
 });
 
 test('template selection blocks before worker launch when fixed Git is unavailable', async t => {
@@ -672,11 +716,13 @@ test('keyword shell inherits only credential names without exposing values in la
       const other = f.calls.at(-1);
       const launchArguments = other.args.join(' ');
       assert.ok(other.args.includes('shell_environment_policy.inherit="none"'));
-      assert.ok(!/SERPER_API_KEY|YTDLP_COOKIES_FILE|SSL_CERT_FILE|ZDOTDIR/.test(launchArguments));
+      assert.ok(!/SERPER_API_KEY|YTDLP_COOKIES_FILE|SSL_CERT_FILE/.test(launchArguments));
+      assert.equal(launchArguments.includes('ZDOTDIR'), GIT_STAGES.includes(ALL_STAGES[index]));
       assert.equal(launchArguments.includes('DYLD_LIBRARY_PATH'), GIT_STAGES.includes(ALL_STAGES[index]));
       assert.equal(launchArguments.includes('GIT_CONFIG_NOSYSTEM="1"'), GIT_STAGES.includes(ALL_STAGES[index]));
-      for (const name of ['SERPER_API_KEY', 'YTDLP_COOKIES_FILE', 'DYLD_LIBRARY_PATH', 'SSL_CERT_FILE', 'ZDOTDIR'])
+      for (const name of ['SERPER_API_KEY', 'YTDLP_COOKIES_FILE', 'DYLD_LIBRARY_PATH', 'SSL_CERT_FILE'])
         assert.equal(other.options.env[name], undefined);
+      assert.equal(Boolean(other.options.env.ZDOTDIR), GIT_STAGES.includes(ALL_STAGES[index]));
       await assert.rejects(access(join(otherRunDirectory, 'host-tools/keyword-research/zdotdir/.zshenv')),
         error => error.code === 'ENOENT');
     }
@@ -854,6 +900,8 @@ test('approved deployment worker gets network, the operator CLI logins and an ex
   assert.equal(path.includes('GIT_CONFIG_NOSYSTEM'), false);
   assert.equal(path.includes('GIT_CONFIG_GLOBAL'), false);
   assert.equal(path.includes('GIT_CONFIG_SYSTEM'), false);
+  assert.equal(path.includes('ZDOTDIR'), false);
+  assert.equal(invoked.options.env.ZDOTDIR, undefined);
   assert.match(invoked.options.input, /Execute the APPROVED deployment plan/);
   assert.match(invoked.options.input, /a{64}/);
   assert.match(invoked.options.input, /DEPLOYMENT_REPORT\.md/);
