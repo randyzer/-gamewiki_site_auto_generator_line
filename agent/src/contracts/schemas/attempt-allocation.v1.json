@@ -1,0 +1,67 @@
+{
+  "$id": "ATTEMPT_ALLOCATION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "producer",
+    "authorityScope",
+    "runId",
+    "canonicalStageId",
+    "mappingVersion",
+    "attemptId",
+    "requestedOperation",
+    "operationInputsDigest",
+    "recoveryDecisionDigest",
+    "operationDigest",
+    "allocationSequence",
+    "previousAttemptId",
+    "previousAllocationDigest",
+    "legacyBoundaryDigest",
+    "allocationDigest"
+  ],
+  "properties": {
+    "kind": { "const": "ATTEMPT_ALLOCATION" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "PRODUCTION_ATTEMPT_COORDINATOR_V1" },
+    "authorityScope": { "const": "PREPARATION_IDENTITY_ONLY" },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "canonicalStageId": {
+      "enum": [
+        "homepage-research",
+        "keyword-research",
+        "template-selection",
+        "content-integration",
+        "ui-ux-audit",
+        "prelaunch-acceptance",
+        "deployment-plan"
+      ]
+    },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "requestedOperation": {
+      "enum": [
+        "homepage-research",
+        "keyword-research",
+        "template-selection",
+        "content-integration",
+        "ui-ux-audit",
+        "prelaunch-acceptance",
+        "deployment-plan"
+      ]
+    },
+    "operationInputsDigest": { "type": ["string", "null"], "format": "sha256" },
+    "recoveryDecisionDigest": { "type": ["string", "null"], "format": "sha256" },
+    "operationDigest": { "type": "string", "format": "sha256" },
+    "allocationSequence": { "type": "integer", "minimum": 1 },
+    "previousAttemptId": { "type": "integer", "minimum": 0 },
+    "previousAllocationDigest": { "type": ["string", "null"], "format": "sha256" },
+    "legacyBoundaryDigest": { "type": ["string", "null"], "format": "sha256" },
+    "allocationDigest": { "type": "string", "format": "sha256" }
+  }
+}
