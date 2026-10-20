@@ -21,6 +21,7 @@ import {
   assertTrustedAttemptAllocation,
   createProductionAttemptAllocationStore,
   createTestLegacyAttemptBoundary,
+  createTestProductionAttemptAllocationStore,
 } from '../../src/v2/production-attempt-allocation-store.mjs';
 import { digest, event, stageState } from '../state-helpers.mjs';
 
@@ -177,7 +178,10 @@ const operation = (expectedPrevious, overrides = {}) => ({
 async function allocationFixture(t, options = {}) {
   const root = await temporaryRoot(t, 'production-attempt-allocation-');
   const runId = options.runId ?? 'allocation-run';
-  const store = createProductionAttemptAllocationStore({
+  const createStore = options.testOnly
+    ? createTestProductionAttemptAllocationStore
+    : createProductionAttemptAllocationStore;
+  const store = createStore({
     runDirectory: root,
     runId,
     legacyBoundary: options.legacyBoundary ?? null,
@@ -314,7 +318,7 @@ test('crash recovery cannot fabricate phantom or duplicate allocations', async t
     if (point === 'beforeAllocationPublish' && beforeArmed) {
       beforeArmed = false; throw Object.assign(new Error(point), { code: 'TEST_FAULT' });
     }
-  } });
+  }, testOnly: true });
   const beforeRequest = operation(await before.store.inspect({ canonicalStageId: stage }));
   await assert.rejects(before.store.allocate(beforeRequest), error => error.code === 'TEST_FAULT');
   assert.equal((await before.store.recover({ canonicalStageId: stage })).records.length, 0);
@@ -324,7 +328,7 @@ test('crash recovery cannot fabricate phantom or duplicate allocations', async t
     if (point === 'afterAllocationPublished' && afterArmed) {
       afterArmed = false; throw Object.assign(new Error(point), { code: 'TEST_FAULT' });
     }
-  } });
+  }, testOnly: true });
   const afterRequest = operation(await after.store.inspect({ canonicalStageId: stage }));
   await assert.rejects(after.store.allocate(afterRequest), error => error.code === 'TEST_FAULT');
   const recovered = await after.store.recover({ canonicalStageId: stage });
@@ -335,13 +339,44 @@ test('crash recovery cannot fabricate phantom or duplicate allocations', async t
     ['000000000001']);
 });
 
+test('production factory rejects synthetic and caller-shaped legacy authority', async t => {
+  const root = await temporaryRoot(t, 'production-attempt-authority-');
+  const boundaryInput = {
+    runId: 'legacy-run', canonicalStageId: stage, mappingVersion: 'stage-identity-v1',
+    verifiedHighWaterMark: 10, sourceManifestDigest: digest('legacy-manifest'),
+    sourceLineageDigest: digest('legacy-lineage'),
+  };
+  const synthetic = createTestLegacyAttemptBoundary(boundaryInput);
+  assert.throws(() => createProductionAttemptAllocationStore({
+    runDirectory: root, runId: boundaryInput.runId, legacyBoundary: synthetic,
+  }), error => error.code === 'ATTEMPT_LEGACY_BOUNDARY_UNVERIFIED');
+  assert.throws(() => createProductionAttemptAllocationStore({
+    runDirectory: root, runId: boundaryInput.runId,
+    legacyBoundary: { ...boundaryInput, legacyBoundaryDigest: synthetic.legacyBoundaryDigest },
+  }), error => error.code === 'ATTEMPT_LEGACY_BOUNDARY_UNVERIFIED');
+});
+
+test('production factory rejects fault injection while new-run genesis remains available', async t => {
+  const root = await temporaryRoot(t, 'production-attempt-fault-boundary-');
+  assert.throws(() => createProductionAttemptAllocationStore({
+    runDirectory: root, runId: 'production-run', faultInjector() {},
+  }), error => error.code === 'ATTEMPT_STORAGE_FAILURE');
+
+  const store = createProductionAttemptAllocationStore({ runDirectory: root, runId: 'production-run' });
+  const allocation = await store.allocate(operation(await store.inspect({ canonicalStageId: stage })));
+  assert.equal(allocation.attemptId, 1);
+  assert.equal(allocation.legacyBoundaryDigest, null);
+});
+
 test('genesis migration respects verified legacy attempts without rewriting history', async t => {
   const boundary = createTestLegacyAttemptBoundary({
     runId: 'legacy-run', canonicalStageId: stage, mappingVersion: 'stage-identity-v1',
     verifiedHighWaterMark: 10, sourceManifestDigest: digest('legacy-manifest'),
     sourceLineageDigest: digest('legacy-lineage'),
   });
-  const fixture = await allocationFixture(t, { runId: 'legacy-run', legacyBoundary: boundary });
+  const fixture = await allocationFixture(t, {
+    runId: 'legacy-run', legacyBoundary: boundary, testOnly: true,
+  });
   const historical = join(fixture.root, 'legacy-history.json');
   await writeFile(historical, '{"attempt":10}\n');
   const original = await readFile(historical);

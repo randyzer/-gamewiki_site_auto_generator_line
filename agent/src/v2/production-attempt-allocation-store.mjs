@@ -96,7 +96,7 @@ function samePrevious(left, right) {
     left.allocationDigest === right.allocationDigest;
 }
 
-export function createProductionAttemptAllocationStore({
+function createAttemptAllocationStore({
   runDirectory,
   runId,
   legacyBoundary = null,
@@ -379,4 +379,20 @@ export function createProductionAttemptAllocationStore({
       });
     },
   });
+}
+
+export function createProductionAttemptAllocationStore(options = {}) {
+  if (options?.legacyBoundary !== undefined && options.legacyBoundary !== null) {
+    throw attemptError('ATTEMPT_LEGACY_BOUNDARY_UNVERIFIED',
+      'Production Attempt Allocation does not accept synthetic legacy authority');
+  }
+  if (options?.faultInjector !== undefined && options.faultInjector !== null) {
+    throw attemptError('ATTEMPT_STORAGE_FAILURE',
+      'Production Attempt Allocation does not accept fault injection');
+  }
+  return createAttemptAllocationStore({ ...options, legacyBoundary: null, faultInjector: null });
+}
+
+export function createTestProductionAttemptAllocationStore(options = {}) {
+  return createAttemptAllocationStore(options);
 }
