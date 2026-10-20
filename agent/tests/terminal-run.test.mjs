@@ -446,6 +446,64 @@ test('exact PARTIAL handoff approval previews and continues without rerunning ke
   assert.equal(approved.deploymentExecuted, false);
 });
 
+test('approved Stage 2 handoff lets Stage 3 retry preview ignore inherited keyword recovery', async t => {
+  const s = await setup(t), runId = 'approved-handoff-stage3-preview';
+  await prepareHandoffCheckpointFailure(s, runId);
+  const recoveryPreview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) });
+  await runFromTerminal({ command: 'retry', previewId: recoveryPreview.preview_id,
+    confirm: recoveryPreview.confirmation_code, runId, configuration: s.f.configuration,
+    executor: async () => assert.fail('checkpoint recovery must not invoke a worker'),
+    ...terminal(null, { isTTY: false }) });
+
+  const recovered = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  const handoff = recovered.stages[1].checkpoint.researchHandoff;
+  const candidate = JSON.parse(await readFile(handoff.path));
+  await writeFile(s.inputsFile, JSON.stringify({
+    researchHandoffApproval: researchHandoffApprovalTemplate(handoff, candidate),
+  }));
+  const approvalPreview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) });
+  const blockTemplate = async (skill, context) => {
+    s.calls.push(skill);
+    if (skill === STAGE.TEMPLATE_SELECTION) return { status: 'BLOCKED', artifacts: [],
+      missing_inputs: [], evidence: ['SYNTHETIC Stage 3 blocker'] };
+    return goodResult(skill, context);
+  };
+  await runFromTerminal({ command: 'retry', previewId: approvalPreview.preview_id,
+    confirm: approvalPreview.confirmation_code, runId, configuration: s.f.configuration,
+    executor: blockTemplate, ...terminal(null, { isTTY: false }) });
+
+  const manifestFile = manifestPath(s.f, runId);
+  const manifest = JSON.parse(await readFile(manifestFile));
+  assert.equal(manifest.stages[1].status, 'PARTIAL');
+  assert.equal(manifest.stages[1].checkpoint.researchHandoff.approved, true);
+  assert.equal(manifest.stages[2].status, 'BLOCKED');
+  assert.equal(manifest.stages[2].checkpoint.attempt, 1);
+  manifest.inputs.keywordRecovery = { manifestPath: join(s.f.root, 'must-not-read-recovery.json'),
+    sha256: 'a'.repeat(64) };
+  manifest.inputs.keywordRecoveryDecision = { mode: 'recover' };
+  manifest.inputs.keywordEvidencePlan = { path: join(s.f.root, 'must-not-read-plan.json'),
+    sha256: 'b'.repeat(64) };
+  await writeFile(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
+  await writeFile(s.inputsFile, JSON.stringify(s.f.inputs));
+  const before = await readFile(manifestFile);
+  const callsBefore = s.calls.length;
+  const io = terminal(null, { isTTY: false });
+  const preview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: async () => assert.fail('preview must not invoke a worker'),
+    preview: true, ...io });
+  assert.equal(preview.status, 'PREVIEW');
+  assert.match(io.text(), /Current stage: game-site-template-selector \(BLOCKED, attempt 1\)/);
+  assert.match(io.text(), /Keyword recovery decision: \(not required\)/);
+  assert.match(io.text(), /Keyword evidence plan: \(not required\)/);
+  assert.equal(s.calls.length, callsBefore);
+  assert.deepEqual(await readFile(manifestFile), before);
+  assert.equal(JSON.parse(before).deploymentExecuted, false);
+});
+
 test('checkpoint-recovery confirmation fails closed when preview evidence changes', async t => {
   const scenarios = [
     ['recovery reference changes', async ({ outputDirectory }) => {

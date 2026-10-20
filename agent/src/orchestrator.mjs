@@ -2,7 +2,7 @@ import { readFile, writeFile, access, lstat } from 'node:fs/promises';
 import { safePath } from './files.mjs';
 import { join, resolve, dirname } from 'node:path';
 import { createPipeline } from './pipeline.mjs';
-import { STAGE, stageDefinition, findStage } from './stages.mjs';
+import { STAGE, stageDefinition, findStage, stageSatisfied } from './stages.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
 import { AGENT_ROOT } from './skill-lock.mjs';
 import { validateIntakeCard, intakeSummary } from './intake-card.mjs';
@@ -29,12 +29,6 @@ export async function loadConfiguration(file = join(AGENT_ROOT, 'config/workflow
     templateSource: data.templateSource, templateCacheRoot: resolve(base, data.templateCache), existingProjectAllowlist };
 }
 
-function stageSatisfiedForOrchestration(stage) {
-  return ['PASSED', 'SKIPPED'].includes(stage.status) ||
-    (stage.skill === STAGE.KEYWORD_RESEARCH && stage.status === 'PARTIAL' &&
-      stage.checkpoint?.researchHandoff?.approved === true);
-}
-
 // New runs pin the current ref once; resumed runs reuse the commit recorded in their manifest.
 async function runTemplateSnapshot(config, manifest, runId, resume) {
   if (!config.templateSource) return undefined;
@@ -48,7 +42,7 @@ async function runTemplateSnapshot(config, manifest, runId, resume) {
 }
 
 export function summarize(state, paused = false) {
-  const index = state.stages.findIndex(stage => !stageSatisfiedForOrchestration(stage));
+  const index = state.stages.findIndex(stage => !stageSatisfied(stage));
   const current = state.stages[index];
   return { status: paused ? 'PAUSED' : current?.status ?? 'PASSED', run_id: state.runId,
     summary: paused ? 'Paused after current stage' : current ? stageDefinition(current.skill).label + ': ' + current.status + (current.evidence.length ? '\n' + current.evidence.map(item => sanitizeDiagnosticText(item)).join('\n') : '') : state.deploymentExecuted ? 'All stages passed; approved deployment executed' : 'Deployment plan acknowledged; no production actions executed',
@@ -137,7 +131,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
         });
       }
       while (!shouldPause(pipeline.snapshot())) {
-        const current = pipeline.snapshot().stages.find(stage => !stageSatisfiedForOrchestration(stage));
+        const current = pipeline.snapshot().stages.find(stage => !stageSatisfied(stage));
         if (!current || ['WAITING_FOR_USER', 'BLOCKED', 'FAILED', 'PARTIAL'].includes(current.status)) break;
         await pipeline.advance();
       }
