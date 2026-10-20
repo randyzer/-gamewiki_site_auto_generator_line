@@ -10,7 +10,7 @@ export const DISABLED_WORKER_FEATURES = Object.freeze(['apps', 'browser_use', 'b
   'skill_mcp_dependency_install', 'skill_search', 'request_permissions_tool', 'shell_snapshot',
   'workspace_dependencies', 'auth_elicitation', 'tool_suggest', 'goals', 'view_image']);
 export const ENABLED_WORKER_FEATURES = Object.freeze(['code_mode_host']);
-export const GIT_STAGES = Object.freeze([STAGE.CONTENT_INTEGRATION, STAGE.UI_UX_AUDIT,
+export const GIT_STAGES = Object.freeze([STAGE.TEMPLATE_SELECTION, STAGE.CONTENT_INTEGRATION, STAGE.UI_UX_AUDIT,
   STAGE.PRELAUNCH_ACCEPTANCE, STAGE.DEPLOYMENT_PLAN]);
 // Only homepage research generates images; audit workers can inspect host screenshots.
 

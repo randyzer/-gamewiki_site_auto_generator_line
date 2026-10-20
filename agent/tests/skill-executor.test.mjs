@@ -12,6 +12,7 @@ import { inside, sha256 } from '../src/files.mjs';
 import { ALL_STAGES } from '../src/stages.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { runProcess } from '../src/process.mjs';
+import { locateGitTool } from '../src/deployment-tools.mjs';
 
 test('non-browser executor preserves its sandbox and BLOCKED output without fabricating artifacts', async t => {
   const f = await fixture(t); let invoked;
@@ -34,13 +35,38 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.equal(invoked.options.env.FEISHU_APP_SECRET, undefined);
   assert.equal(invoked.options.env.BSK_AUTO_START, '0');
   const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
+  const gitTool = await locateGitTool('/opt/homebrew/bin/git');
+  assert.ok(path.indexOf(dirname(gitTool.realPath)) < path.indexOf('/usr/bin'));
+  assert.ok(path.includes(`GIT_EXEC_PATH=${JSON.stringify(gitTool.execPath)}`));
   assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
-  assert.ok(invoked.args.find(value => value.startsWith('permissions.agent-worker='))
-    .includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+  const profile = invoked.args.find(value => value.startsWith('permissions.agent-worker='));
+  assert.ok(profile.includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+  for (const gitPath of gitTool.readPaths)
+    assert.ok(profile.includes(JSON.stringify(gitPath) + '="read"'));
+  assert.match(profile, /network=\{enabled=false\}/);
+  assert.equal(profile.includes('.git"="write"'), false);
   assert.ok(invoked.options.input.includes(`Use ${process.execPath} for every Python Skill script`));
   assert.match(invoked.options.input, /Do not invoke browser commands/);
   assert.match(invoked.options.input, /actual callable image-generation tool/);
   assert.match(invoked.options.input, /No commit, push/);
+});
+
+test('template selection blocks before worker launch when fixed Git is unavailable', async t => {
+  const f = await fixture(t), missingGit = join(f.root, 'missing-git');
+  const context = { runId: 'template-git-unavailable',
+    inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+    outputDirectory: join(f.configuration.workspace, 'runs/template-git-unavailable/artifacts/2/1'),
+    requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') },
+    upstream: [], mode: 'audit-only', templateRoots: f.configuration.templateRoots,
+    permissions: { siteWrites: false, productionDeployment: false } };
+  let workerCalls = 0;
+  const executor = createSkillExecutor({ workerGit: missingGit, researchPython: process.execPath,
+    run: async () => { workerCalls++; } });
+  const result = await executor(STAGES[2], context);
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /WORKER_GIT_UNAVAILABLE/);
+  assert.ok(result.evidence.join('\n').includes(missingGit));
+  assert.equal(workerCalls, 0);
 });
 
 test('research handoff preserves native filenames, verifies bytes and never overwrites conflicts', async t => {

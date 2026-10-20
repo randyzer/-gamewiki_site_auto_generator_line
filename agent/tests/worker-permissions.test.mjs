@@ -19,7 +19,7 @@ test('only Git stages receive fixed Git read access, without network or Git writ
     const result = await stageWorkerPermissions(skill, { runDirectory: root, nativeDirectory,
       inputs: {}, mode: 'plan', skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') } },
     { gitToolPaths: [gitRoot] });
-    assert.equal(result.config.includes(JSON.stringify(gitRoot) + '="read"'), index >= 3);
+    assert.equal(result.config.includes(JSON.stringify(gitRoot) + '="read"'), index >= 2);
     assert.equal(result.commandNetworkAllowed, index === 1);
     assert.equal(result.config.includes(JSON.stringify(join(root, '.git')) + '="write"'), false);
   }
