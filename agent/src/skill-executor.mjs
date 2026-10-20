@@ -266,10 +266,22 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       ...(tools?.paths ?? []),
       dirname(process.execPath), '/usr/bin', '/bin', '/usr/sbin', '/sbin',
     ].filter((value, index, all) => all.indexOf(value) === index).join(':');
+    let gitShellEnvironment = {}, gitShellReadOnlyPaths = [];
+    if (gitTool?.librarySearchPaths.length && !deploying) {
+      const gitToolDirectory = join(context.runDirectory, 'host-tools', 'git');
+      const zshEnvironmentDirectory = join(gitToolDirectory, 'zdotdir');
+      await safePath(gitToolDirectory, [context.runDirectory]);
+      await mkdir(gitToolDirectory, { recursive: true, mode: 0o700 });
+      await replaceFileInWorkerReadOnlyDirectory(zshEnvironmentDirectory, '.zshenv',
+        `export DYLD_LIBRARY_PATH=${shellQuote(gitTool.librarySearchPaths.join(':'))}\n`, gitToolDirectory);
+      gitShellEnvironment = { ZDOTDIR: zshEnvironmentDirectory };
+      gitShellReadOnlyPaths = [zshEnvironmentDirectory];
+    }
     const shellEnvironment = { PATH: commandPath, TMPDIR: context.nativeDirectory,
       ...(gitTool ? { GIT_EXEC_PATH: gitTool.execPath,
         ...(gitTool.librarySearchPaths.length ? { DYLD_LIBRARY_PATH: gitTool.librarySearchPaths.join(':') } : {}),
-        ...(!deploying ? { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' } : {}) } : {}) };
+        ...(!deploying ? { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' } : {}) } : {}),
+      ...gitShellEnvironment };
     const shellEnvironmentConfig = Object.entries(shellEnvironment)
       .map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(',');
     const args = ['exec', '--ignore-user-config', '--ignore-rules', '--strict-config', '--skip-git-repo-check', '--ephemeral',
@@ -323,7 +335,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     const env = keywordResearch
       ? { ...keywordResearchEnvironment(environment), ...researchTlsEnvironment, ...researchShellEnvironment }
-      : workerEnvironment(environment);
+      : { ...workerEnvironment(environment), ...gitShellEnvironment };
     const prompt = () => [
       ...(gitTool ? [
         `Fixed Git host configuration entry: ${JSON.stringify(gitTool.path)}. Verified Worker invocation path: ${JSON.stringify(gitTool.invocationPath)} (${gitTool.version}). Invoke only this absolute invocation path for every Git command. Do not execute ${JSON.stringify(gitTool.path)}, /opt/homebrew/bin/git, /usr/bin/git, or any PATH-discovered alternative; do not replace a failed tool. Use the configured GIT_EXEC_PATH helpers.`,
@@ -406,7 +418,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         await verifyWorkerCodeModeHostIdentity(commandIdentity, codeModeHostIdentity);
       }
       const permissions = await stageWorkerPermissions(skill, context, {
-        writePaths, pythonToolPaths, gitToolPaths: gitTool?.readPaths ?? [], researchToolPaths, researchReadOnlyPaths, deploymentTools: tools,
+        writePaths, pythonToolPaths, gitToolPaths: [...(gitTool?.readPaths ?? []), ...gitShellReadOnlyPaths],
+        researchToolPaths, researchReadOnlyPaths, deploymentTools: tools,
       });
       await rm(output, { force: true });
       let workerFailure;
