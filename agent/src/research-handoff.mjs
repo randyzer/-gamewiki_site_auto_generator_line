@@ -2,29 +2,57 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { parseArtifactJson, readArtifact, safePath, sha256 } from './files.mjs';
+import { inspectKeywordMaterial } from './contracts/adapters/keyword-skill-v1.mjs';
 import { STAGE } from './stages.mjs';
 
 export const RESEARCH_HANDOFF_KIND = 'RESEARCH_HANDOFF_MANIFEST_V1';
 export const RESEARCH_HANDOFF_APPROVAL_KIND = 'RESEARCH_HANDOFF_APPROVAL_V1';
 const RECOVERY_KIND = 'HOST_KEYWORD_RECOVERY_V1';
-const STATUS = new Set(['COMPLETED', 'PARTIAL', 'BLOCKED']);
 const digest = value => /^[a-f0-9]{64}$/.test(value ?? '');
 const assert = (condition, detail) => { if (!condition) throw Error('RESEARCH_HANDOFF_INVALID: ' + detail); };
 const jsonDigest = value => sha256(Buffer.from(JSON.stringify(value)));
 
-function material(bytes, path) {
-  const body = bytes.toString('utf8');
-  const status = body.match(/^- 状态:\s*(COMPLETED|PARTIAL|BLOCKED)\s*$/m)?.[1] ?? null;
-  const gaps = [...body.matchAll(/^- 缺口(?:\s*\d*)?:\s*(.+?)\s*$/gm)].map(match => match[1]);
-  assert(STATUS.has(status), `material status: ${path}`);
-  assert(status === 'COMPLETED' ? gaps.length === 0 : gaps.length > 0, `material gaps: ${path}`);
-  return { status, gaps };
+function material(bytes, path, expectedKeyword, skillContractSha256) {
+  let inspected;
+  try { inspected = inspectKeywordMaterial(bytes, { sourcePath: path, skillContractSha256 }); }
+  catch (error) { throw Error(`RESEARCH_HANDOFF_INVALID: material contract: ${path}: ${error.code ?? error.message}`); }
+  assert(inspected.keyword === expectedKeyword, `material keyword mismatch: ${path}`);
+  const details = new Map();
+  for (const [classification, items] of [['UNRESOLVED', inspected.unresolvedGaps],
+    ['UNCLASSIFIED', inspected.unclassifiedItems]]) {
+    for (const item of items) {
+      const detail = details.get(item.description) ?? { description: item.description, sources: [] };
+      const source = { id: item.id, sourceSyntax: item.sourceSyntax, classification };
+      if (!detail.sources.some(value => isDeepStrictEqual(value, source))) detail.sources.push(source);
+      details.set(item.description, detail);
+    }
+  }
+  const gapDetails = [...details.values()];
+  const supportedInvalid = inspected.status === 'COMPLETED' && gapDetails.length > 0 &&
+    inspected.diagnostics.length > 0 && inspected.diagnostics.every(value =>
+      ['COMPLETED_HAS_UNRESOLVED_GAPS', 'PENDING_SEMANTICS_UNCLASSIFIED'].includes(value));
+  assert(inspected.contractStatus === 'VALID' || supportedInvalid, `material incompatibility: ${path}`);
+  assert(inspected.status === 'COMPLETED' || gapDetails.length > 0, `material gaps: ${path}`);
+  const status = inspected.status === 'COMPLETED' && gapDetails.length > 0 ? 'PARTIAL' : inspected.status;
+  const requiresSourceContract = inspected.contractStatus !== 'VALID' || status !== inspected.status ||
+    gapDetails.some(detail => detail.sources.some(source => source.sourceSyntax !== 'legacy-v1'));
+  return { status, gaps: gapDetails.map(detail => detail.description),
+    ...(requiresSourceContract ? { sourceContract: { declaredStatus: inspected.status,
+      contractStatus: inspected.contractStatus, diagnostics: inspected.diagnostics, gapDetails } } : {}) };
 }
 
 function disposition(status) {
   if (status === 'COMPLETED') return 'PUBLISH';
   if (status === 'PARTIAL') return 'DRAFT_ONLY';
   return 'OMIT';
+}
+
+function candidateMaterial(path, descriptor, skillContractSha256) {
+  const keyword = basename(path).slice(0, -'素材.md'.length);
+  const parsed = material(descriptor.content, path, keyword, skillContractSha256);
+  return { keyword, path, sha256: descriptor.sha256, status: parsed.status, gaps: parsed.gaps,
+    publicationDisposition: disposition(parsed.status),
+    ...(parsed.sourceContract ? { sourceContract: parsed.sourceContract } : {}) };
 }
 
 async function recoveryData(recoveryRef, runDirectory) {
@@ -80,12 +108,10 @@ export async function createResearchHandoffCandidate({ runId, runDirectory, atte
     finalKeywords.every(keyword => typeof keyword === 'string' && keyword.length > 0), 'keyword set');
   const materialFiles = [...files.entries()].filter(([path]) => path.endsWith('素材.md') &&
     path !== '关键词素材汇总.md');
-  const materials = materialFiles.map(([path, descriptor]) => {
-    const keyword = basename(path).slice(0, -'素材.md'.length);
-    const parsed = material(descriptor.content, path);
-    return { keyword, path, sha256: descriptor.sha256, status: parsed.status, gaps: parsed.gaps,
-      publicationDisposition: disposition(parsed.status) };
-  }).sort((a, b) => a.keyword.localeCompare(b.keyword));
+  assert(digest(recovery.binding?.skillSha256), 'recovery Skill digest');
+  const materials = materialFiles.map(([path, descriptor]) =>
+    candidateMaterial(path, descriptor, recovery.binding.skillSha256))
+    .sort((a, b) => a.keyword.localeCompare(b.keyword));
   assert(materials.length === finalKeywords.length &&
     JSON.stringify(materials.map(item => item.keyword).sort()) === JSON.stringify([...finalKeywords].sort()),
   'every final keyword must have exactly one material');
@@ -153,9 +179,7 @@ export async function verifyResearchHandoffCandidate(reference, { runId, runDire
   const currentMaterials = candidate.materials.map(item => {
     const descriptor = files.get(item.path);
     assert(descriptor?.sha256 === item.sha256, `recovery material changed: ${item.path}`);
-    const parsed = material(descriptor.content, item.path);
-    return { ...item, status: parsed.status, gaps: parsed.gaps,
-      publicationDisposition: disposition(parsed.status) };
+    return candidateMaterial(item.path, descriptor, recovery.binding.skillSha256);
   });
   assert(isDeepStrictEqual(currentMaterials, candidate.materials), 'recovery material state changed');
   return candidate;
