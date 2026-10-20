@@ -29,6 +29,12 @@ export async function loadConfiguration(file = join(AGENT_ROOT, 'config/workflow
     templateSource: data.templateSource, templateCacheRoot: resolve(base, data.templateCache), existingProjectAllowlist };
 }
 
+function stageSatisfiedForOrchestration(stage) {
+  return ['PASSED', 'SKIPPED'].includes(stage.status) ||
+    (stage.skill === STAGE.KEYWORD_RESEARCH && stage.status === 'PARTIAL' &&
+      stage.checkpoint?.researchHandoff?.approved === true);
+}
+
 // New runs pin the current ref once; resumed runs reuse the commit recorded in their manifest.
 async function runTemplateSnapshot(config, manifest, runId, resume) {
   if (!config.templateSource) return undefined;
@@ -42,7 +48,7 @@ async function runTemplateSnapshot(config, manifest, runId, resume) {
 }
 
 export function summarize(state, paused = false) {
-  const index = state.stages.findIndex(s => !['PASSED', 'SKIPPED'].includes(s.status));
+  const index = state.stages.findIndex(stage => !stageSatisfiedForOrchestration(stage));
   const current = state.stages[index];
   return { status: paused ? 'PAUSED' : current?.status ?? 'PASSED', run_id: state.runId,
     summary: paused ? 'Paused after current stage' : current ? stageDefinition(current.skill).label + ': ' + current.status + (current.evidence.length ? '\n' + current.evidence.map(item => sanitizeDiagnosticText(item)).join('\n') : '') : state.deploymentExecuted ? 'All stages passed; approved deployment executed' : 'Deployment plan acknowledged; no production actions executed',
@@ -97,6 +103,8 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     const previous = manifestBytes ? JSON.parse(manifestBytes).inputs : null;
     const keywordExecutionReceipt = task.keywordExecutionReceipt
       ? verifyKeywordExecutionReceipt(task.keywordExecutionReceipt, { runId, inputs: supplied, manifestBytes }) : null;
+    const handoffApprovalOnly = Object.keys(supplied).length === 1 &&
+      Object.hasOwn(supplied, 'researchHandoffApproval');
     const inputs = resolveInputPaths(previous?.paths && !supplied.paths ? { ...supplied, paths: previous.paths } : supplied,
       { required: (!resume && !freshApproval) || Boolean(previous?.paths), legacyPaths: previous?.paths });
     if (!inputs.paths && previous) inputs.projectPath = previous.projectPath;
@@ -122,13 +130,14 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
           : Object.fromEntries(Object.entries(inputs).filter(([key, value]) => JSON.stringify(old[key]) !== JSON.stringify(value)));
         if (permit?.canonicalRequired) patch.canonicalRequired = true;
         // Explicit same-path input refresh must still compare keyword bytes.
-        if (inputs.rawKeywordsFile && !permit?.action && !Object.hasOwn(patch, 'deploymentPlanApproval')) patch.rawKeywordsFile = inputs.rawKeywordsFile;
+        if (inputs.rawKeywordsFile && !permit?.action && !handoffApprovalOnly &&
+          !Object.hasOwn(patch, 'deploymentPlanApproval')) patch.rawKeywordsFile = inputs.rawKeywordsFile;
         if (Object.keys(patch).length || task.retry) await pipeline.updateUserInputs(patch, {
           retry: Boolean(task.retry), checkpointRecoveryIntent: task.checkpointRecoveryIntent,
         });
       }
       while (!shouldPause(pipeline.snapshot())) {
-        const current = pipeline.snapshot().stages.find(s => !['PASSED', 'SKIPPED'].includes(s.status));
+        const current = pipeline.snapshot().stages.find(stage => !stageSatisfiedForOrchestration(stage));
         if (!current || ['WAITING_FOR_USER', 'BLOCKED', 'FAILED', 'PARTIAL'].includes(current.status)) break;
         await pipeline.advance();
       }
