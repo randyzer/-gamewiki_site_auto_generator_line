@@ -28,6 +28,12 @@ const stageCommitRecordV2 = extendSchema(stageCommitRecordV1, load('stage-commit
   events: stageCommitCandidateV1.properties.events,
 });
 const definitions = new Map([
+  ['CODE_AUTHORITY_APPROVAL:1', { kind: 'CODE_AUTHORITY_APPROVAL', schemaVersion: 1,
+    producer: 'TRUSTED_HOST_CODE_AUTHORITY_V1', validator: 'CONTRACT_REGISTRY',
+    schema: load('code-authority-approval.v1.json') }],
+  ['CODE_AUTHORITY_REVOCATION:1', { kind: 'CODE_AUTHORITY_REVOCATION', schemaVersion: 1,
+    producer: 'TRUSTED_HOST_CODE_AUTHORITY_V1', validator: 'CONTRACT_REGISTRY',
+    schema: load('code-authority-revocation.v1.json') }],
   ['HOST_SOURCE_ANCHOR:1', { kind: 'HOST_SOURCE_ANCHOR', schemaVersion: 1,
     producer: 'PRODUCTION_HOST_SOURCE_ANCHOR_V1', validator: 'CONTRACT_REGISTRY',
     schema: load('host-source-anchor.v1.json') }],

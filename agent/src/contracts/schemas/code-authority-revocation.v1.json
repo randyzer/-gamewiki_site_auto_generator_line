@@ -1,0 +1,35 @@
+{
+  "$id": "CODE_AUTHORITY_REVOCATION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "authorityId",
+    "authoritySequence",
+    "previousEventDigest",
+    "issuedAt",
+    "targetApprovalId",
+    "targetApprovalDigest",
+    "eventDigest",
+    "signature"
+  ],
+  "properties": {
+    "kind": { "const": "CODE_AUTHORITY_REVOCATION" },
+    "schemaVersion": { "const": 1 },
+    "authorityId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "authoritySequence": { "type": "integer", "minimum": 1 },
+    "previousEventDigest": { "type": ["string", "null"], "format": "sha256" },
+    "issuedAt": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "targetApprovalId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "targetApprovalDigest": { "type": "string", "format": "sha256" },
+    "eventDigest": { "type": "string", "format": "sha256" },
+    "signature": { "type": "string", "pattern": "^[a-f0-9]{128}$" }
+  }
+}
