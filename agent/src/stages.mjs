@@ -71,3 +71,9 @@ export function findStage(stages, name) {
   if (matches.length !== 1) throw Error('Missing or duplicate stage: ' + name);
   return matches[0];
 }
+
+export function stageSatisfied(stage) {
+  return ['PASSED', 'SKIPPED'].includes(stage?.status) ||
+    (stage?.skill === STAGE.KEYWORD_RESEARCH && stage.status === 'PARTIAL' &&
+      stage.checkpoint?.researchHandoff?.approved === true);
+}

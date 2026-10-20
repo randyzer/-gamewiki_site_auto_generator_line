@@ -3,7 +3,7 @@ import { join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { createOrchestrator, loadConfiguration } from './orchestrator.mjs';
 import { createSkillExecutor } from './skill-executor.mjs';
-import { STAGES, STAGE } from './stages.mjs';
+import { STAGES, STAGE, stageSatisfied } from './stages.mjs';
 import { sha256 } from './files.mjs';
 import { resolveInputPaths } from './paths.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
@@ -44,14 +44,16 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   const suppliedHandoffApproval = Object.hasOwn(suppliedInputs, 'researchHandoffApproval');
   if (suppliedHandoffApproval && (command !== 'retry' || suppliedKeys.length !== 1))
     throw Error('RESEARCH_HANDOFF_APPROVAL_INVALID: approval must be the only supplied retry input');
-  const checkpointRecovery = command === 'retry' && Object.keys(suppliedInputs).length === 0
+  const keywordStage = manifest?.stages?.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
+  const currentStage = manifest?.stages?.find(stage => !stageSatisfied(stage));
+  const keywordRetry = command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH;
+  const checkpointRecovery = keywordRetry && Object.keys(suppliedInputs).length === 0
     ? await inspectResearchHandoffCheckpointRecovery({ manifest, runDirectory, runId }) : null;
   if (previous) inputs = { ...previous, ...inputs };
   inputs = resolveInputPaths(previous?.paths && !inputs.paths ? { ...inputs, paths: previous.paths } : inputs,
     { required: command === 'run' || Boolean(previous?.paths), legacyPaths: previous?.paths });
-  const decision = keywordRecoveryDecision(inputs.keywordRecoveryDecision, { recovery: inputs.keywordRecovery });
-  const keywordStage = manifest?.stages?.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
-  const currentStage = manifest?.stages?.find(stage => !['PASSED', 'SKIPPED'].includes(stage.status));
+  const decision = keywordRetry
+    ? keywordRecoveryDecision(inputs.keywordRecoveryDecision, { recovery: inputs.keywordRecovery }) : null;
   let handoffApproval;
   if (suppliedHandoffApproval) {
     const handoff = keywordStage?.checkpoint?.researchHandoff;
@@ -66,9 +68,9 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     for (const material of candidate.materials) dispositions[material.publicationDisposition]++;
     handoffApproval = { handoff, candidate, dispositions };
   }
-  const recoverySnapshot = keywordStage?.checkpoint?.attempt > 0 && await exists(join(runDirectory, 'artifacts',
+  const recoverySnapshot = keywordRetry && keywordStage?.checkpoint?.attempt > 0 && await exists(join(runDirectory, 'artifacts',
     String(STAGES.indexOf(STAGE.KEYWORD_RESEARCH)), String(keywordStage.checkpoint.attempt), 'keyword-recovery.json'));
-  if (!checkpointRecovery && !handoffApproval && command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH &&
+  if (!checkpointRecovery && !handoffApproval && keywordRetry &&
     (inputs.keywordRecovery || recoverySnapshot) && (!decision || !Object.hasOwn(suppliedInputs, 'keywordRecoveryDecision')))
     throw Error('KEYWORD_RECOVERY_DECISION_REQUIRED: choose {"mode":"recover"} with keywordRecovery or {"mode":"fresh"} without it');
   let keywords = `${inputs.rawKeywordsFile ?? '(not provided)'}`;
@@ -86,7 +88,7 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
   const serviceResumes = keywordServiceResumes(inputs.keywordServiceResumes);
   let recovery;
-  if (!checkpointRecovery && !handoffApproval && inputs.keywordRecovery) {
+  if (keywordRetry && !checkpointRecovery && !handoffApproval && inputs.keywordRecovery) {
     if (!manifest) throw Error('KEYWORD_RECOVERY_INVALID: recovery requires an existing run');
     const stage = manifest.stages.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
     recovery = await verifyKeywordRecovery({ runId, runDirectory, inputs,
@@ -100,17 +102,18 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     suppliedInputs,
   });
   let evidencePlan;
-  if (!checkpointRecovery && !handoffApproval && decision?.mode === 'recover') {
+  if (keywordRetry && !checkpointRecovery && !handoffApproval && decision?.mode === 'recover') {
     if (!Object.hasOwn(suppliedInputs, 'keywordEvidencePlan') || !inputs.keywordEvidencePlan)
       throw Error('KEYWORD_EVIDENCE_PLAN_REQUIRED: recover retries need a current, reviewed incremental evidence plan');
     evidencePlan = await verifyKeywordEvidencePlan({ runId, recoverySha256: recovery.sha256,
       serviceStops, serviceResumes, recovery }, inputs.keywordEvidencePlan);
-  } else if (!checkpointRecovery && !handoffApproval && inputs.keywordEvidencePlan) {
+  } else if (keywordRetry && !checkpointRecovery && !handoffApproval && inputs.keywordEvidencePlan) {
     throw Error('KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with {"mode":"recover"}');
   }
   return { checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery), summary: [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
     ...(manifestBytes ? [`Resume manifest SHA256: ${sha256(manifestBytes)}`] : []),
+    ...(manifestBytes ? [`Current stage: ${currentStage?.skill ?? '(all satisfied)'}${currentStage ? ` (${currentStage.status}, attempt ${currentStage.checkpoint?.attempt ?? 0})` : ''}`] : []),
     ...(checkpointRecovery ? [
       `Recover Stage 2 research handoff checkpoint from attempt ${checkpointRecovery.attempt}.`,
       'No keyword research worker will run; the recovered handoff remains PARTIAL and requires exact approval.',

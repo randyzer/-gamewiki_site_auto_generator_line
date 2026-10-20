@@ -22,7 +22,8 @@ import { inspectResearchHandoffCheckpointRecovery,
 import { assertProductionObservation } from './v2/production-observation.mjs';
 import { resolveStageIdentity } from './v2/stage-identity.mjs';
 
-import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage } from './stages.mjs';
+import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
+  stageSatisfied } from './stages.mjs';
 export { STAGES, AD_STAGE, ARTIFACTS } from './stages.mjs';
 export const STATES = Object.freeze(['NOT_STARTED', 'READY', 'IN_PROGRESS', 'WAITING_FOR_USER',
   'BLOCKED', 'PASSED', 'PARTIAL', 'FAILED', 'SKIPPED']);
@@ -50,7 +51,6 @@ const assert = (ok, message) => { if (!ok) throw new Error(message); };
 const INPUT_COPY_PREFIX = Object.freeze({ rawKeywordsFile: 'raw', keywordSourceLineageFile: 'lineage' });
 const controlledResearchPartial = stage => stage?.skill === STAGE.KEYWORD_RESEARCH &&
   stage.status === 'PARTIAL' && stage.checkpoint?.researchHandoff?.approved === true;
-const stageSatisfied = stage => ['PASSED', 'SKIPPED'].includes(stage.status) || controlledResearchPartial(stage);
 
 async function exists(path) {
   try { await lstat(path); return true; }
