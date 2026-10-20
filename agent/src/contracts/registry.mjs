@@ -28,6 +28,9 @@ const stageCommitRecordV2 = extendSchema(stageCommitRecordV1, load('stage-commit
   events: stageCommitCandidateV1.properties.events,
 });
 const definitions = new Map([
+  ['ATTEMPT_ALLOCATION:1', { kind: 'ATTEMPT_ALLOCATION', schemaVersion: 1,
+    producer: 'PRODUCTION_ATTEMPT_COORDINATOR_V1', validator: 'CONTRACT_REGISTRY',
+    schema: load('attempt-allocation.v1.json') }],
   ['EXECUTION_CONTEXT:1', { kind: 'EXECUTION_CONTEXT', schemaVersion: 1,
     producer: 'HOST', validator: 'CONTRACT_REGISTRY', schema: load('execution-context.v1.json') }],
   ['KEYWORD_MATERIAL:1', { kind: 'KEYWORD_MATERIAL', schemaVersion: 1,
