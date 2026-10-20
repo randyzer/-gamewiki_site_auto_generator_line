@@ -1,6 +1,6 @@
 import { realpath, readFile, access } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { delimiter, dirname, join, isAbsolute } from 'node:path';
+import { basename, delimiter, dirname, join, isAbsolute } from 'node:path';
 import { runProcess } from './process.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
 
@@ -25,6 +25,7 @@ export async function locateGitTool(path = '/opt/homebrew/bin/git', { run = runP
     const packageRoot = dirname(realPath).endsWith('/bin') && !['/usr/bin', '/bin'].includes(dirname(realPath))
       ? dirname(dirname(realPath)) : realPath;
     const readPaths = new Set([packageRoot, execPath]);
+    const libraries = new Map();
     if (platform === 'darwin') {
       const pending = [realPath], visited = new Set();
       const remoteHelper = join(execPath, 'git-remote-https');
@@ -41,12 +42,17 @@ export async function locateGitTool(path = '/opt/homebrew/bin/git', { run = runP
           if (!dependency || dependency.startsWith('/usr/lib/') || dependency.startsWith('/System/Library/')) continue;
           if (!isAbsolute(dependency)) throw Error(`unresolved Git library: ${dependency}`);
           const library = await realpath(dependency);
+          const name = basename(library), existing = libraries.get(name);
+          if (existing && existing !== library) throw Error(`conflicting Git library basename: ${name}`);
+          libraries.set(name, library);
           readPaths.add(library);
           pending.push(library);
         }
       }
     }
-    return { path, realPath, version, execPath, readPaths: [...readPaths] };
+    const librarySearchPaths = [...new Set([...libraries.values()].map(dirname))].sort();
+    return { path, realPath, invocationPath: realPath, version, execPath,
+      readPaths: [...readPaths], librarySearchPaths };
   } catch (error) {
     throw Error(`WORKER_GIT_UNAVAILABLE: fixed Git ${path}: ${sanitizeDiagnosticText(error.message)}`);
   }

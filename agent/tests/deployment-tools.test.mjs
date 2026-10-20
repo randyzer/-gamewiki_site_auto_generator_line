@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, chmod, rm, realpath, symlink } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { locateDeploymentTools, locateGitTool } from '../src/deployment-tools.mjs';
 
@@ -49,7 +49,10 @@ test('fixed Git resolves its executable, helpers and transitive native libraries
   const library = join(m.root, 'Cellar/pcre2/1/lib/pcre.dylib');
   await mkdir(helpers, { recursive: true });
   await mkdir(join(m.root, 'Cellar/pcre2/1/lib'), { recursive: true });
+  await mkdir(join(m.root, 'opt'), { recursive: true });
   await writeFile(library, 'library');
+  await symlink(join(m.root, 'Cellar/pcre2/1'), join(m.root, 'opt/pcre2'));
+  const libraryAlias = join(m.root, 'opt/pcre2/lib/pcre.dylib');
   const entry = join(m.bin, 'fixed-git');
   await symlink(join(root, 'bin/git'), entry);
   const calls = [];
@@ -58,16 +61,37 @@ test('fixed Git resolves its executable, helpers and transitive native libraries
     if (args[0] === '--version') return { stdout: 'git version 2.50.1\n' };
     if (args[0] === '--exec-path') return { stdout: helpers + '\n' };
     return { stdout: command === '/usr/bin/otool'
-      ? `${args[1]}:\n\t${library} (compatibility version 1.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0)\n` : '' };
+      ? `${args[1]}:\n\t${libraryAlias} (compatibility version 1.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0)\n` : '' };
   } });
   assert.equal(tool.path, entry);
   assert.equal(tool.realPath, join(root, 'bin/git'));
+  assert.equal(tool.invocationPath, tool.realPath);
   assert.equal(tool.execPath, helpers);
   assert.equal(tool.version, 'git version 2.50.1');
+  assert.equal(tool.readPaths.includes(entry), false);
   assert.ok(tool.readPaths.includes(root));
   assert.ok(tool.readPaths.includes(library));
+  assert.deepEqual(tool.librarySearchPaths, [dirname(library)]);
+  assert.equal(tool.librarySearchPaths.some(path => path.includes('/opt/')), false);
+  assert.equal(tool.readPaths.includes(m.bin), false);
   assert.equal(tool.readPaths.includes(m.root), false);
   assert.ok(calls.some(call => call.command === '/usr/bin/otool' && call.args[1] === library));
+});
+
+test('fixed Git rejects ambiguous native libraries with the same basename', async t => {
+  const m = await machine(t), root = join(m.root, 'Cellar/git/1.0');
+  const helpers = join(root, 'libexec/git-core');
+  const first = join(m.root, 'Cellar/first/1/lib/libshared.dylib');
+  const second = join(m.root, 'Cellar/second/1/lib/libshared.dylib');
+  await mkdir(helpers, { recursive: true });
+  await mkdir(dirname(first), { recursive: true });
+  await mkdir(dirname(second), { recursive: true });
+  await writeFile(first, 'first'); await writeFile(second, 'second');
+  await assert.rejects(locateGitTool(join(root, 'bin/git'), { platform: 'darwin', run: async (_command, args) => {
+    if (args[0] === '--version') return { stdout: 'git version 2.50.1\n' };
+    if (args[0] === '--exec-path') return { stdout: helpers + '\n' };
+    return { stdout: `${args[1]}:\n\t${first} (compatibility version 1.0.0)\n\t${second} (compatibility version 1.0.0)\n` };
+  } }), /conflicting Git library basename: libshared\.dylib/);
 });
 
 test('fixed Git failure names the configured entry and does not try another Git', async t => {

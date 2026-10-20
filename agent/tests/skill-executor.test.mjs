@@ -13,6 +13,7 @@ import { ALL_STAGES } from '../src/stages.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { runProcess } from '../src/process.mjs';
 import { locateGitTool } from '../src/deployment-tools.mjs';
+import { GIT_STAGES } from '../src/worker-permissions.mjs';
 
 test('non-browser executor preserves its sandbox and BLOCKED output without fabricating artifacts', async t => {
   const f = await fixture(t); let invoked;
@@ -21,6 +22,7 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
     skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [], mode: 'audit-only', templateRoots: f.configuration.templateRoots,
     permissions: { siteWrites: false, productionDeployment: false } };
   const executor = createSkillExecutor({ command: 'offline-codex-fixture', researchPython: process.execPath,
+    environment: { ...process.env, DYLD_LIBRARY_PATH: '/synthetic/untrusted-dyld' },
     run: async (command, args, options) => {
     invoked = { command, args, options };
     await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'BLOCKED', summary: 'Offline fixture unavailable browser',
@@ -36,15 +38,26 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.equal(invoked.options.env.BSK_AUTO_START, '0');
   const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
   const gitTool = await locateGitTool('/opt/homebrew/bin/git');
-  assert.ok(path.indexOf(dirname(gitTool.realPath)) < path.indexOf('/usr/bin'));
+  assert.equal(gitTool.invocationPath, gitTool.realPath);
+  assert.ok(path.indexOf(dirname(gitTool.invocationPath)) < path.indexOf('/usr/bin'));
   assert.ok(path.includes(`GIT_EXEC_PATH=${JSON.stringify(gitTool.execPath)}`));
+  assert.ok(path.includes(`DYLD_LIBRARY_PATH=${JSON.stringify(gitTool.librarySearchPaths.join(':'))}`));
+  assert.ok(path.includes('GIT_CONFIG_NOSYSTEM="1"'));
+  assert.ok(path.includes('GIT_CONFIG_GLOBAL="/dev/null"'));
+  assert.ok(path.includes('GIT_CONFIG_SYSTEM="/dev/null"'));
+  assert.equal(path.includes('/synthetic/untrusted-dyld'), false);
   assert.ok(path.indexOf(dirname(process.execPath)) < path.indexOf('/usr/bin'));
   const profile = invoked.args.find(value => value.startsWith('permissions.agent-worker='));
   assert.ok(profile.includes(JSON.stringify(dirname(dirname(process.execPath))) + '="read"'));
+  assert.equal(profile.includes(JSON.stringify(gitTool.path) + '="read"'), false);
+  assert.equal(profile.includes(JSON.stringify(dirname(gitTool.path)) + '="read"'), false);
   for (const gitPath of gitTool.readPaths)
     assert.ok(profile.includes(JSON.stringify(gitPath) + '="read"'));
   assert.match(profile, /network=\{enabled=false\}/);
   assert.equal(profile.includes('.git"="write"'), false);
+  assert.ok(invoked.options.input.includes(`Verified Worker invocation path: ${JSON.stringify(gitTool.invocationPath)}`));
+  assert.ok(invoked.options.input.includes(`Invoke only this absolute invocation path for every Git command`));
+  assert.ok(invoked.options.input.includes(`Do not execute ${JSON.stringify(gitTool.path)}, /opt/homebrew/bin/git, /usr/bin/git`));
   assert.ok(invoked.options.input.includes(`Use ${process.execPath} for every Python Skill script`));
   assert.match(invoked.options.input, /Do not invoke browser commands/);
   assert.match(invoked.options.input, /actual callable image-generation tool/);
@@ -657,8 +670,11 @@ test('keyword shell inherits only credential names without exposing values in la
       await f.executor(ALL_STAGES[index], stageContext);
       assert.equal(f.calls.length, count + 1);
       const other = f.calls.at(-1);
+      const launchArguments = other.args.join(' ');
       assert.ok(other.args.includes('shell_environment_policy.inherit="none"'));
-      assert.ok(!/SERPER_API_KEY|YTDLP_COOKIES_FILE|DYLD_LIBRARY_PATH|SSL_CERT_FILE|ZDOTDIR/.test(other.args.join(' ')));
+      assert.ok(!/SERPER_API_KEY|YTDLP_COOKIES_FILE|SSL_CERT_FILE|ZDOTDIR/.test(launchArguments));
+      assert.equal(launchArguments.includes('DYLD_LIBRARY_PATH'), GIT_STAGES.includes(ALL_STAGES[index]));
+      assert.equal(launchArguments.includes('GIT_CONFIG_NOSYSTEM="1"'), GIT_STAGES.includes(ALL_STAGES[index]));
       for (const name of ['SERPER_API_KEY', 'YTDLP_COOKIES_FILE', 'DYLD_LIBRARY_PATH', 'SSL_CERT_FILE', 'ZDOTDIR'])
         assert.equal(other.options.env[name], undefined);
       await assert.rejects(access(join(otherRunDirectory, 'host-tools/keyword-research/zdotdir/.zshenv')),
@@ -835,6 +851,9 @@ test('approved deployment worker gets network, the operator CLI logins and an ex
   const path = invoked.args.find(value => value.startsWith('shell_environment_policy.set='));
   assert.ok(path.indexOf('/opt/homebrew/bin') < path.indexOf('/usr/bin'), 'deployment tools precede system launchers');
   assert.match(path, /\/opt\/homebrew\/bin/);
+  assert.equal(path.includes('GIT_CONFIG_NOSYSTEM'), false);
+  assert.equal(path.includes('GIT_CONFIG_GLOBAL'), false);
+  assert.equal(path.includes('GIT_CONFIG_SYSTEM'), false);
   assert.match(invoked.options.input, /Execute the APPROVED deployment plan/);
   assert.match(invoked.options.input, /a{64}/);
   assert.match(invoked.options.input, /DEPLOYMENT_REPORT\.md/);
