@@ -15,6 +15,7 @@ import { consumeRunPreviewSnapshot, createRunPreviewSnapshot,
   loadRunPreviewSnapshot } from './run-preview-snapshot.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
+import { verifyResearchHandoffCandidate, verifyResearchHandoffApproval } from './research-handoff.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -39,6 +40,10 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   const manifestBytes = command === 'retry' ? await readFile(join(runDirectory, 'manifest.json')) : null;
   const manifest = manifestBytes ? JSON.parse(manifestBytes) : null;
   const previous = manifest?.inputs;
+  const suppliedKeys = Object.keys(suppliedInputs);
+  const suppliedHandoffApproval = Object.hasOwn(suppliedInputs, 'researchHandoffApproval');
+  if (suppliedHandoffApproval && (command !== 'retry' || suppliedKeys.length !== 1))
+    throw Error('RESEARCH_HANDOFF_APPROVAL_INVALID: approval must be the only supplied retry input');
   const checkpointRecovery = command === 'retry' && Object.keys(suppliedInputs).length === 0
     ? await inspectResearchHandoffCheckpointRecovery({ manifest, runDirectory, runId }) : null;
   if (previous) inputs = { ...previous, ...inputs };
@@ -47,9 +52,23 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   const decision = keywordRecoveryDecision(inputs.keywordRecoveryDecision, { recovery: inputs.keywordRecovery });
   const keywordStage = manifest?.stages?.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
   const currentStage = manifest?.stages?.find(stage => !['PASSED', 'SKIPPED'].includes(stage.status));
+  let handoffApproval;
+  if (suppliedHandoffApproval) {
+    const handoff = keywordStage?.checkpoint?.researchHandoff;
+    const templateStage = manifest.stages.find(stage => stage.skill === STAGE.TEMPLATE_SELECTION);
+    if (currentStage !== keywordStage || keywordStage?.status !== 'PARTIAL' ||
+      !handoff || handoff.approved !== false || templateStage?.status !== 'NOT_STARTED')
+      throw Error('RESEARCH_HANDOFF_APPROVAL_INVALID: current run is not awaiting an unapproved Stage 2 handoff');
+    const candidate = await verifyResearchHandoffCandidate(handoff, { runId, runDirectory,
+      attempt: keywordStage.checkpoint.attempt, siteRevision: previous.siteRevision, domain: previous.domain });
+    verifyResearchHandoffApproval(suppliedInputs.researchHandoffApproval, handoff, candidate);
+    const dispositions = { DRAFT_ONLY: 0, OMIT: 0, PUBLISH: 0 };
+    for (const material of candidate.materials) dispositions[material.publicationDisposition]++;
+    handoffApproval = { handoff, candidate, dispositions };
+  }
   const recoverySnapshot = keywordStage?.checkpoint?.attempt > 0 && await exists(join(runDirectory, 'artifacts',
     String(STAGES.indexOf(STAGE.KEYWORD_RESEARCH)), String(keywordStage.checkpoint.attempt), 'keyword-recovery.json'));
-  if (!checkpointRecovery && command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH &&
+  if (!checkpointRecovery && !handoffApproval && command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH &&
     (inputs.keywordRecovery || recoverySnapshot) && (!decision || !Object.hasOwn(suppliedInputs, 'keywordRecoveryDecision')))
     throw Error('KEYWORD_RECOVERY_DECISION_REQUIRED: choose {"mode":"recover"} with keywordRecovery or {"mode":"fresh"} without it');
   let keywords = `${inputs.rawKeywordsFile ?? '(not provided)'}`;
@@ -67,7 +86,7 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
   const serviceResumes = keywordServiceResumes(inputs.keywordServiceResumes);
   let recovery;
-  if (!checkpointRecovery && inputs.keywordRecovery) {
+  if (!checkpointRecovery && !handoffApproval && inputs.keywordRecovery) {
     if (!manifest) throw Error('KEYWORD_RECOVERY_INVALID: recovery requires an existing run');
     const stage = manifest.stages.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
     recovery = await verifyKeywordRecovery({ runId, runDirectory, inputs,
@@ -81,12 +100,12 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     suppliedInputs,
   });
   let evidencePlan;
-  if (!checkpointRecovery && decision?.mode === 'recover') {
+  if (!checkpointRecovery && !handoffApproval && decision?.mode === 'recover') {
     if (!Object.hasOwn(suppliedInputs, 'keywordEvidencePlan') || !inputs.keywordEvidencePlan)
       throw Error('KEYWORD_EVIDENCE_PLAN_REQUIRED: recover retries need a current, reviewed incremental evidence plan');
     evidencePlan = await verifyKeywordEvidencePlan({ runId, recoverySha256: recovery.sha256,
       serviceStops, serviceResumes, recovery }, inputs.keywordEvidencePlan);
-  } else if (!checkpointRecovery && inputs.keywordEvidencePlan) {
+  } else if (!checkpointRecovery && !handoffApproval && inputs.keywordEvidencePlan) {
     throw Error('KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with {"mode":"recover"}');
   }
   return { checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery), summary: [
@@ -98,6 +117,16 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
       `Checkpoint worker result SHA256: ${checkpointRecovery.workerResultSha256}`,
       `Checkpoint recovery reference SHA256: ${checkpointRecovery.recoveryReferenceSha256}`,
       `Checkpoint recovery manifest: ${checkpointRecovery.recoveryRef.manifestPath} SHA256 ${checkpointRecovery.recoveryRef.sha256}`,
+    ] : []),
+    ...(handoffApproval ? [
+      `Approve Stage 2 PARTIAL research handoff from attempt ${handoffApproval.handoff.attempt}.`,
+      `Handoff candidate SHA256: ${handoffApproval.handoff.sha256}`,
+      `Recovery manifest SHA256: ${handoffApproval.handoff.recoverySha256}`,
+      `Publication scope — DRAFT_ONLY: ${handoffApproval.dispositions.DRAFT_ONLY}; OMIT: ${handoffApproval.dispositions.OMIT}; PUBLISH: ${handoffApproval.dispositions.PUBLISH}.`,
+      `Pending raw rows: ${handoffApproval.candidate.pendingRows.map(item => `${item.row} ${item.rawKeyword}`).join('; ') || '(none)'}.`,
+      `Confirming may run real downstream workers starting with ${STAGE.TEMPLATE_SELECTION}.`,
+      'This approval accepts incomplete research only under the listed publication restrictions; it does not validate missing facts.',
+      'This approval does not authorize deployment; deployment requires a separate exact plan approval.',
     ] : []),
     `Game: ${inputs.gameIdentity ?? '(not provided)'}`,
     `siteDirectory: ${inputs.paths?.siteDirectory ?? previous?.projectPath}`,

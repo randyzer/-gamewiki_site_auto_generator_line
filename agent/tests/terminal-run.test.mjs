@@ -10,6 +10,7 @@ import { STAGE } from '../src/stages.mjs';
 import { sha256 } from '../src/files.mjs';
 import { fixture, goodResult } from './helpers.mjs';
 import { captureKeywordRecovery, captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
+import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
 
 function terminal(answer, { isTTY = true } = {}) {
   const stdin = Readable.from(answer === null ? [] : [answer + '\n']);
@@ -396,6 +397,53 @@ test('retry preview recovers only a failed Stage 2 handoff checkpoint and does n
   assert.equal(recovered.checkpoint.attempt, 1);
   assert.equal(recovered.checkpoint.researchHandoff.approved, false);
   assert.equal(JSON.parse(await readFile(path)).deploymentExecuted, false);
+});
+
+test('exact PARTIAL handoff approval previews and continues without rerunning keyword research', async t => {
+  const s = await setup(t), runId = 'handoff-approval-preview';
+  await prepareHandoffCheckpointFailure(s, runId);
+  const recoveryPreview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) });
+  await runFromTerminal({ command: 'retry', previewId: recoveryPreview.preview_id,
+    confirm: recoveryPreview.confirmation_code, runId, configuration: s.f.configuration,
+    executor: async () => assert.fail('checkpoint recovery must not invoke a worker'),
+    ...terminal(null, { isTTY: false }) });
+
+  const recovered = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  const handoff = recovered.stages[1].checkpoint.researchHandoff;
+  const candidate = JSON.parse(await readFile(handoff.path));
+  const approval = researchHandoffApprovalTemplate(handoff, candidate);
+  await writeFile(s.inputsFile, JSON.stringify({ researchHandoffApproval: approval,
+    siteRevision: recovered.inputs.siteRevision }));
+  await assert.rejects(runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) }), /RESEARCH_HANDOFF_APPROVAL_INVALID/);
+  await writeFile(s.inputsFile, JSON.stringify({ researchHandoffApproval: {
+    ...approval, handoffSha256: 'a'.repeat(64),
+  } }));
+  await assert.rejects(runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) }), /exactly match/);
+
+  await writeFile(s.inputsFile, JSON.stringify({ researchHandoffApproval: approval }));
+  const previewIo = terminal(null, { isTTY: false });
+  const preview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...previewIo });
+  assert.match(previewIo.text(), /Approve Stage 2 PARTIAL research handoff from attempt 1/);
+  assert.match(previewIo.text(), /DRAFT_ONLY: 1; OMIT: 0; PUBLISH: 0/);
+  assert.match(previewIo.text(), /may run real downstream workers starting with game-site-template-selector/);
+  assert.match(previewIo.text(), /does not authorize deployment/);
+  const keywordCalls = s.calls.filter(skill => skill === STAGE.KEYWORD_RESEARCH).length;
+  await runFromTerminal({ command: 'retry', previewId: preview.preview_id,
+    confirm: preview.confirmation_code, runId, configuration: s.f.configuration,
+    executor: s.executor, ...terminal(null, { isTTY: false }) });
+  const approved = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  assert.equal(approved.stages[1].status, 'PARTIAL');
+  assert.equal(approved.stages[1].checkpoint.researchHandoff.approved, true);
+  assert.equal(s.calls.filter(skill => skill === STAGE.KEYWORD_RESEARCH).length, keywordCalls);
+  assert.notEqual(approved.stages[2].status, 'NOT_STARTED');
+  assert.equal(approved.deploymentExecuted, false);
 });
 
 test('checkpoint-recovery confirmation fails closed when preview evidence changes', async t => {
