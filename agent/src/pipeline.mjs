@@ -17,6 +17,7 @@ import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-rec
 import { keywordEvidencePlanReference, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { createResearchHandoffCandidate, RESEARCH_HANDOFF_KIND,
   verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from './research-handoff.mjs';
+import { inspectResearchHandoffCheckpointRecovery } from './research-handoff-recovery.mjs';
 import { assertProductionObservation } from './v2/production-observation.mjs';
 import { resolveStageIdentity } from './v2/stage-identity.mjs';
 
@@ -365,8 +366,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     await exclusive(save, true);
   }
 
-  function transition(stage, to, evidence = [], missing = []) {
-    assert(NEXT[stage.status].includes(to), `Invalid transition ${stage.status} -> ${to}`);
+  function transition(stage, to, evidence = [], missing = [], { checkpointRecovery = false } = {}) {
+    assert(NEXT[stage.status].includes(to) || (checkpointRecovery && stage.status === 'FAILED' &&
+      stage.skill === STAGE.KEYWORD_RESEARCH && to === 'PARTIAL'),
+    `Invalid transition ${stage.status} -> ${to}`);
     evidence = evidence.map(item => sanitizeDiagnosticText(item));
     const at = now();
     stage.history.push({ from: stage.status, to, at, evidence: clone(evidence),
@@ -780,6 +783,26 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       state.inputCopies ??= {};
       patch = checkInputs(patch);
       assert(!state.stages.some(s => s.status === 'IN_PROGRESS'), 'Interrupted invocation must be reconciled with advance before updating');
+      const patchKeys = Object.keys(patch);
+      const checkpointOnlyPatch = patchKeys.length === 0 || (patchKeys.length === 1 &&
+        patchKeys[0] === 'rawKeywordsFile' && patch.rawKeywordsFile === state.inputs.rawKeywordsFile);
+      const checkpointRecovery = retry && checkpointOnlyPatch
+        ? await inspectResearchHandoffCheckpointRecovery({ manifest: state, runDirectory, runId }) : null;
+      if (checkpointRecovery) {
+        await verifyLock();
+        await validateProject(state.inputs.projectPath);
+        await verifyInputCopies();
+        const keywordStage = findStage(state.stages, STAGE.KEYWORD_RESEARCH);
+        keywordStage.checkpoint.researchHandoff = await createResearchHandoffCandidate({ runId,
+          runDirectory, attempt: checkpointRecovery.attempt, recoveryRef: checkpointRecovery.recoveryRef,
+          siteRevision: state.inputs.siteRevision, domain: state.inputs.domain });
+        transition(keywordStage, 'PARTIAL', [
+          `Stage 2 research handoff checkpoint recovered from attempt ${checkpointRecovery.attempt}; the keyword worker was not rerun.`,
+          `Immutable research handoff candidate: ${keywordStage.checkpoint.researchHandoff.path} SHA256 ${keywordStage.checkpoint.researchHandoff.sha256}; exact approval is still required.`,
+        ], [], { checkpointRecovery: true });
+        await save();
+        return clone(state);
+      }
       for (const key of ['gameIdentity', 'projectPath', 'objective', 'adsEnabled', 'mode', 'targetId', 'sourceProjectPath', 'taskCardDigest']) {
         if (key === 'projectPath' && state.inputs.paths) continue;
         if (Object.hasOwn(patch, key) && state.stages.some(s => s.checkpoint.attempt > 0))
