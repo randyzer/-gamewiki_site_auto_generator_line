@@ -13,6 +13,8 @@ import { createKeywordExecutionReceipt, keywordRecoveryDecision, normalizedJson 
 import { verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { consumeRunPreviewSnapshot, createRunPreviewSnapshot,
   loadRunPreviewSnapshot } from './run-preview-snapshot.mjs';
+import { inspectResearchHandoffCheckpointRecovery,
+  researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -31,12 +33,14 @@ async function readInputs(inputsFile) {
   return { data, bytes, path };
 }
 
-export async function describeRun({ command, runId, inputs, configuration, evidencePlanDisplayPath }) {
+async function inspectRunDescription({ command, runId, inputs, configuration, evidencePlanDisplayPath }) {
   const runDirectory = join(configuration.workspace, 'runs', runId);
   const suppliedInputs = inputs;
   const manifestBytes = command === 'retry' ? await readFile(join(runDirectory, 'manifest.json')) : null;
   const manifest = manifestBytes ? JSON.parse(manifestBytes) : null;
   const previous = manifest?.inputs;
+  const checkpointRecovery = command === 'retry' && Object.keys(suppliedInputs).length === 0
+    ? await inspectResearchHandoffCheckpointRecovery({ manifest, runDirectory, runId }) : null;
   if (previous) inputs = { ...previous, ...inputs };
   inputs = resolveInputPaths(previous?.paths && !inputs.paths ? { ...inputs, paths: previous.paths } : inputs,
     { required: command === 'run' || Boolean(previous?.paths), legacyPaths: previous?.paths });
@@ -45,7 +49,7 @@ export async function describeRun({ command, runId, inputs, configuration, evide
   const currentStage = manifest?.stages?.find(stage => !['PASSED', 'SKIPPED'].includes(stage.status));
   const recoverySnapshot = keywordStage?.checkpoint?.attempt > 0 && await exists(join(runDirectory, 'artifacts',
     String(STAGES.indexOf(STAGE.KEYWORD_RESEARCH)), String(keywordStage.checkpoint.attempt), 'keyword-recovery.json'));
-  if (command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH &&
+  if (!checkpointRecovery && command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH &&
     (inputs.keywordRecovery || recoverySnapshot) && (!decision || !Object.hasOwn(suppliedInputs, 'keywordRecoveryDecision')))
     throw Error('KEYWORD_RECOVERY_DECISION_REQUIRED: choose {"mode":"recover"} with keywordRecovery or {"mode":"fresh"} without it');
   let keywords = `${inputs.rawKeywordsFile ?? '(not provided)'}`;
@@ -63,7 +67,7 @@ export async function describeRun({ command, runId, inputs, configuration, evide
   const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
   const serviceResumes = keywordServiceResumes(inputs.keywordServiceResumes);
   let recovery;
-  if (inputs.keywordRecovery) {
+  if (!checkpointRecovery && inputs.keywordRecovery) {
     if (!manifest) throw Error('KEYWORD_RECOVERY_INVALID: recovery requires an existing run');
     const stage = manifest.stages.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
     recovery = await verifyKeywordRecovery({ runId, runDirectory, inputs,
@@ -77,17 +81,24 @@ export async function describeRun({ command, runId, inputs, configuration, evide
     suppliedInputs,
   });
   let evidencePlan;
-  if (decision?.mode === 'recover') {
+  if (!checkpointRecovery && decision?.mode === 'recover') {
     if (!Object.hasOwn(suppliedInputs, 'keywordEvidencePlan') || !inputs.keywordEvidencePlan)
       throw Error('KEYWORD_EVIDENCE_PLAN_REQUIRED: recover retries need a current, reviewed incremental evidence plan');
     evidencePlan = await verifyKeywordEvidencePlan({ runId, recoverySha256: recovery.sha256,
       serviceStops, serviceResumes, recovery }, inputs.keywordEvidencePlan);
-  } else if (inputs.keywordEvidencePlan) {
+  } else if (!checkpointRecovery && inputs.keywordEvidencePlan) {
     throw Error('KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with {"mode":"recover"}');
   }
-  return [
+  return { checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery), summary: [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
     ...(manifestBytes ? [`Resume manifest SHA256: ${sha256(manifestBytes)}`] : []),
+    ...(checkpointRecovery ? [
+      `Recover Stage 2 research handoff checkpoint from attempt ${checkpointRecovery.attempt}.`,
+      'No keyword research worker will run; the recovered handoff remains PARTIAL and requires exact approval.',
+      `Checkpoint worker result SHA256: ${checkpointRecovery.workerResultSha256}`,
+      `Checkpoint recovery reference SHA256: ${checkpointRecovery.recoveryReferenceSha256}`,
+      `Checkpoint recovery manifest: ${checkpointRecovery.recoveryRef.manifestPath} SHA256 ${checkpointRecovery.recoveryRef.sha256}`,
+    ] : []),
     `Game: ${inputs.gameIdentity ?? '(not provided)'}`,
     `siteDirectory: ${inputs.paths?.siteDirectory ?? previous?.projectPath}`,
     `researchDirectory: ${inputs.paths?.researchDirectory ?? '(legacy run: research stays in run artifacts until handoff)'}`,
@@ -119,7 +130,11 @@ export async function describeRun({ command, runId, inputs, configuration, evide
       `  Review first: ${join(inputs.paths?.siteDirectory ?? previous.projectPath, 'docs', 'DEPLOYMENT_PLAN.md')}`,
       '  Confirming runs the git push, hosting deploy, DNS and GSC/GA4 steps listed in that plan.'] : []),
     ''
-  ].join('\n');
+  ].join('\n') };
+}
+
+export async function describeRun(options) {
+  return (await inspectRunDescription(options)).summary;
 }
 
 async function askYes({ stdin, stdout }) {
@@ -157,6 +172,7 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
   const currentManifestBytes = existing ? await readFile(manifest) : null;
   let snapshot = null;
   let summary;
+  let checkpointRecoveryIntent = null;
   if (previewId !== undefined) {
     snapshot = await loadRunPreviewSnapshot({ previewRoot, command, runId, previewId });
     if ((currentManifestBytes ? sha256(currentManifestBytes) : null) !== snapshot.manifestSha256)
@@ -164,14 +180,14 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
     inputDocument = snapshot.effectiveInputDocument;
     inputs = inputDocument.data;
     approvedInputs = snapshot.sourceInputDocument.data;
-    summary = await describeRun({ command, runId, inputs, configuration,
-      evidencePlanDisplayPath: snapshot.sourceEvidencePlanPath });
+    ({ summary, checkpointRecoveryIntent } = await inspectRunDescription({ command, runId, inputs, configuration,
+      evidencePlanDisplayPath: snapshot.sourceEvidencePlanPath }));
     if (summary !== snapshot.summary)
       throw Error('RUN_PREVIEW_STALE: protected inputs or execution context changed after preview; create a new preview');
   } else {
     if (!preview && confirm === undefined && !stdin.isTTY)
       throw Error('TERMINAL_CONFIRMATION_REQUIRED: run from an interactive terminal so the operator can confirm');
-    summary = await describeRun({ command, runId, inputs, configuration });
+    ({ summary, checkpointRecoveryIntent } = await inspectRunDescription({ command, runId, inputs, configuration }));
   }
   stdout.write(summary);
   let confirmationBinding = 'interactive-y';
@@ -216,5 +232,6 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
       inputsFileBytes: inputDocument.bytes, inputs, manifestBytes: currentManifestBytes, confirmationBinding,
       previewSnapshot: previewSnapshotBinding });
   }
-  return execute({ id: runId, inputs: JSON.stringify(inputs), retry: command === 'retry', keywordExecutionReceipt });
+  return execute({ id: runId, inputs: JSON.stringify(inputs), retry: command === 'retry', keywordExecutionReceipt,
+    ...(checkpointRecoveryIntent ? { checkpointRecoveryIntent } : {}) });
 }

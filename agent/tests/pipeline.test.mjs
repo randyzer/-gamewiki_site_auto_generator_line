@@ -8,6 +8,8 @@ import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
 import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
+import { inspectResearchHandoffCheckpointRecovery,
+  researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -481,6 +483,58 @@ test('Stage 2 PARTIAL advances only after exact immutable handoff approval', asy
   assert.equal(templateContext.researchHandoff.manifest.bindings.pendingRowsSha256,
     candidate.bindings.pendingRowsSha256);
   assert.equal(templateContext.upstream[1].status, 'PARTIAL');
+});
+
+test('retry recovers a Stage 2 handoff checkpoint failure without invoking the worker again', async t => {
+  const f = await fixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[1]) return f.good(skill, context);
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true });
+    await writeFixtureRecoveryLineage(native, { skillSyntax: true });
+    await writeFile(join(native, 'worker-result.json'), JSON.stringify({
+      status: 'PARTIAL', evidence: ['SYNTHETIC incomplete research'], missing_inputs: [], artifacts: [],
+    }));
+    const recovery = await (await import('../src/keyword-recovery.mjs')).captureKeywordRecovery({
+      ...context, runDirectory: join(f.workspace, 'runs', context.runId), nativeDirectory: native,
+    }, { reason: 'WORKER_STOPPED' });
+    await writeFile(join(context.outputDirectory, 'keyword-recovery.json'), JSON.stringify(recovery));
+    return { status: 'PARTIAL', artifacts: [], evidence: ['SYNTHETIC incomplete research'], missing_inputs: [] };
+  };
+  const pipeline = await f.create({ executor });
+  await advance(pipeline, 2);
+  const runId = pipeline.snapshot().runId;
+  const manifestPath = pipeline.manifestPath;
+  const manifest = JSON.parse(await readFile(manifestPath));
+  const keywordStage = manifest.stages[1];
+  keywordStage.status = 'FAILED';
+  delete keywordStage.checkpoint.researchHandoff;
+  keywordStage.diagnostic = {
+    stage: api.STAGES[1], attempt: 1, operation: 'save-stage-checkpoint', code: 'ERROR',
+    reason: 'RESEARCH_HANDOFF_INVALID: material gaps: legacy material', at: new Date().toISOString(),
+    recordPath: join(f.workspace, 'runs', runId, 'diagnostics', 'synthetic.json'),
+  };
+  keywordStage.evidence = ['SYNTHETIC checkpoint save failure'];
+  await rm(join(f.workspace, 'runs', runId, 'research-handoffs'), { recursive: true, force: true });
+  await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+
+  const checkpointRecovery = await inspectResearchHandoffCheckpointRecovery({
+    manifest: JSON.parse(await readFile(manifestPath)), runDirectory: join(f.workspace, 'runs', runId), runId,
+  });
+  const callsBefore = f.calls.length;
+  const resumed = await f.create({ runId, resume: true, inputs: {}, executor });
+  await resumed.updateUserInputs({}, { retry: true,
+    checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery) });
+  const recovered = resumed.snapshot().stages[1];
+  assert.equal(f.calls.length, callsBefore, 'checkpoint recovery must not invoke the worker');
+  assert.equal(recovered.status, 'PARTIAL');
+  assert.equal(recovered.checkpoint.attempt, 1);
+  assert.equal(recovered.checkpoint.researchHandoff.approved, false);
+  assert.equal(recovered.diagnostic, undefined);
+  assert.match(recovered.evidence.join('\n'), /recovered from attempt 1/i);
+  await resumed.advance();
+  assert.equal(resumed.snapshot().stages[2].status, 'NOT_STARTED',
+    'an unapproved recovered handoff must not advance to Stage 3');
 });
 
 test('approved research handoff is invalidated by bound revision changes', async t => {

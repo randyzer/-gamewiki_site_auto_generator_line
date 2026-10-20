@@ -123,7 +123,9 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
         if (permit?.canonicalRequired) patch.canonicalRequired = true;
         // Explicit same-path input refresh must still compare keyword bytes.
         if (inputs.rawKeywordsFile && !permit?.action && !Object.hasOwn(patch, 'deploymentPlanApproval')) patch.rawKeywordsFile = inputs.rawKeywordsFile;
-        if (Object.keys(patch).length || task.retry) await pipeline.updateUserInputs(patch, { retry: Boolean(task.retry) });
+        if (Object.keys(patch).length || task.retry) await pipeline.updateUserInputs(patch, {
+          retry: Boolean(task.retry), checkpointRecoveryIntent: task.checkpointRecoveryIntent,
+        });
       }
       while (!shouldPause(pipeline.snapshot())) {
         const current = pipeline.snapshot().stages.find(s => !['PASSED', 'SKIPPED'].includes(s.status));

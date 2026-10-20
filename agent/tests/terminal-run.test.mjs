@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { rmSync } from 'node:fs';
 import { writeFile, readFile, access, mkdir, chmod, rm } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
@@ -8,7 +9,7 @@ import { runFromTerminal, describeRun } from '../src/terminal-run.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { sha256 } from '../src/files.mjs';
 import { fixture, goodResult } from './helpers.mjs';
-import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
+import { captureKeywordRecovery, captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 
 function terminal(answer, { isTTY = true } = {}) {
   const stdin = Readable.from(answer === null ? [] : [answer + '\n']);
@@ -54,10 +55,46 @@ async function writeRecoveryLineage(nativeDirectory) {
     { category: 'Guide', keywords: ['Fixture guide'] },
   ] }));
   await writeFile(join(nativeDirectory, 'Fixture guide素材.md'),
-    '- 状态: PARTIAL\n- 缺口: Verify one missing official fact\n');
+    '- 关键词: Fixture guide\n- 状态: PARTIAL\n- 缺口: Verify one missing official fact\n');
 }
 
 const manifestPath = (f, id) => join(f.configuration.workspace, 'runs', id, 'manifest.json');
+
+async function prepareHandoffCheckpointFailure(s, runId) {
+  const executor = async (skill, context) => {
+    s.calls.push(skill);
+    if (skill !== STAGE.KEYWORD_RESEARCH) return goodResult(skill, context);
+    const native = join(context.outputDirectory, 'native');
+    await mkdir(native, { recursive: true });
+    await writeRecoveryLineage(native);
+    await writeFile(join(native, 'worker-result.json'), JSON.stringify({
+      status: 'PARTIAL', evidence: ['SYNTHETIC incomplete research'], missing_inputs: [], artifacts: [],
+    }));
+    const recovery = await captureKeywordRecovery({ ...context,
+      runDirectory: join(s.f.configuration.workspace, 'runs', runId), nativeDirectory: native,
+    }, { reason: 'WORKER_STOPPED' });
+    await writeFile(join(context.outputDirectory, 'keyword-recovery.json'), JSON.stringify(recovery));
+    return { status: 'PARTIAL', artifacts: [], evidence: ['SYNTHETIC incomplete research'], missing_inputs: [] };
+  };
+  await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor, ...terminal('y') });
+  const path = manifestPath(s.f, runId);
+  const manifest = JSON.parse(await readFile(path));
+  const keywordStage = manifest.stages[1];
+  keywordStage.status = 'FAILED';
+  delete keywordStage.checkpoint.researchHandoff;
+  keywordStage.diagnostic = {
+    stage: STAGE.KEYWORD_RESEARCH, attempt: 1, operation: 'save-stage-checkpoint', code: 'ERROR',
+    reason: 'RESEARCH_HANDOFF_INVALID: material gaps: legacy material', at: new Date().toISOString(),
+    recordPath: join(s.f.configuration.workspace, 'runs', runId, 'diagnostics', 'synthetic.json'),
+  };
+  keywordStage.evidence = ['SYNTHETIC checkpoint save failure'];
+  const runDirectory = join(s.f.configuration.workspace, 'runs', runId);
+  await rm(join(runDirectory, 'research-handoffs'), { recursive: true, force: true });
+  await writeFile(path, JSON.stringify(manifest, null, 2) + '\n');
+  await writeFile(s.inputsFile, '{}');
+  return { path, runDirectory, outputDirectory: join(runDirectory, 'artifacts/1/1') };
+}
 
 test('summary shows game, keyword file digest, Skill tree, template source and stages before asking', async t => {
   const s = await setup(t);
@@ -337,6 +374,94 @@ test('a stopped keyword attempt with a recovery snapshot requires an explicit re
   assert.equal(manifest.stages[1].checkpoint.executionReceipt.decision.mode, 'fresh');
   assert.match(manifest.stages[1].checkpoint.executionReceipt.inputsFileSha256, /^[a-f0-9]{64}$/);
   assert.match(manifest.stages[1].checkpoint.executionReceipt.manifestSha256, /^[a-f0-9]{64}$/);
+});
+
+test('retry preview recovers only a failed Stage 2 handoff checkpoint and does not start a new attempt', async t => {
+  const s = await setup(t), runId = 'handoff-checkpoint-recovery';
+  const { path } = await prepareHandoffCheckpointFailure(s, runId);
+
+  const previewIo = terminal(null, { isTTY: false });
+  const preview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true, ...previewIo });
+  assert.match(previewIo.text(), /Recover Stage 2 research handoff checkpoint from attempt 1/);
+  assert.match(previewIo.text(), /No keyword research worker will run/);
+  const callsBefore = s.calls.length;
+  const result = await runFromTerminal({ command: 'retry', previewId: preview.preview_id,
+    confirm: preview.confirmation_code, runId, configuration: s.f.configuration,
+    executor: async () => assert.fail('checkpoint recovery must not invoke a worker'),
+    ...terminal(null, { isTTY: false }) });
+  assert.equal(s.calls.length, callsBefore);
+  assert.equal(result.status, 'PARTIAL');
+  const recovered = JSON.parse(await readFile(path)).stages[1];
+  assert.equal(recovered.checkpoint.attempt, 1);
+  assert.equal(recovered.checkpoint.researchHandoff.approved, false);
+  assert.equal(JSON.parse(await readFile(path)).deploymentExecuted, false);
+});
+
+test('checkpoint-recovery confirmation fails closed when preview evidence changes', async t => {
+  const scenarios = [
+    ['recovery reference changes', async ({ outputDirectory }) => {
+      const path = join(outputDirectory, 'keyword-recovery.json');
+      const ref = JSON.parse(await readFile(path));
+      ref.sha256 = 'a'.repeat(64);
+      await writeFile(path, JSON.stringify(ref));
+    }],
+    ['failure diagnostic changes', async ({ path }) => {
+      const manifest = JSON.parse(await readFile(path));
+      manifest.stages[1].diagnostic.reason = 'RESEARCH_HANDOFF_INVALID: changed after preview';
+      await writeFile(path, JSON.stringify(manifest));
+    }],
+    ['worker result disappears', async ({ outputDirectory }) => {
+      await rm(join(outputDirectory, 'native', 'worker-result.json'));
+    }],
+    ['recovery reference disappears', async ({ outputDirectory }) => {
+      await rm(join(outputDirectory, 'keyword-recovery.json'));
+    }],
+  ];
+  for (const [index, [name, mutate]] of scenarios.entries()) await t.test(name, async subtest => {
+    const s = await setup(subtest), runId = `checkpoint-fail-closed-${index}`;
+    const prepared = await prepareHandoffCheckpointFailure(s, runId);
+    const preview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+      configuration: s.f.configuration, executor: s.executor, preview: true,
+      ...terminal(null, { isTTY: false }) });
+    await mutate(prepared);
+    let workerCalls = 0;
+    await assert.rejects(runFromTerminal({ command: 'retry', previewId: preview.preview_id,
+      confirm: preview.confirmation_code, runId, configuration: s.f.configuration,
+      executor: async () => { workerCalls++; throw Error('WORKER_RETRY_MUST_NOT_RUN'); },
+      ...terminal(null, { isTTY: false }) }));
+    assert.equal(workerCalls, 0, 'ineligible checkpoint recovery must never fall through to a worker retry');
+    const after = JSON.parse(await readFile(prepared.path));
+    assert.equal(after.stages[1].status, 'FAILED');
+    assert.equal(after.stages[1].checkpoint.attempt, 1);
+    assert.equal(after.deploymentExecuted, false);
+  });
+});
+
+test('checkpoint-recovery intent cannot fall through after confirmation', async t => {
+  const s = await setup(t), runId = 'checkpoint-post-confirmation-stale';
+  const prepared = await prepareHandoffCheckpointFailure(s, runId);
+  const preview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) });
+  let workerCalls = 0;
+  const executor = async () => { workerCalls++; throw Error('WORKER_RETRY_MUST_NOT_RUN'); };
+  let invalidated = false;
+  Object.defineProperty(executor, 'installDependencies', { get() {
+    if (!invalidated) {
+      rmSync(join(prepared.outputDirectory, 'native', 'worker-result.json'));
+      invalidated = true;
+    }
+    return undefined;
+  } });
+  await assert.rejects(runFromTerminal({ command: 'retry', previewId: preview.preview_id,
+    confirm: preview.confirmation_code, runId, configuration: s.f.configuration, executor,
+    ...terminal(null, { isTTY: false }) }), /RESEARCH_HANDOFF_CHECKPOINT_RECOVERY_STALE/);
+  assert.equal(workerCalls, 0, 'confirmed checkpoint recovery must never become a worker retry');
+  const after = JSON.parse(await readFile(prepared.path));
+  assert.equal(after.stages[1].status, 'FAILED');
+  assert.equal(after.stages[1].checkpoint.attempt, 1);
+  assert.equal(after.deploymentExecuted, false);
 });
 
 test('a terminal run executes the approved plan on retry and reports the deployment', async t => {
