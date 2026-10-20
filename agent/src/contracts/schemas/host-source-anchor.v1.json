@@ -1,0 +1,41 @@
+{
+  "$id": "HOST_SOURCE_ANCHOR_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "producer", "authorityScope", "section", "verifierId", "verifierVersion", "runId", "canonicalStageId", "attemptId", "requestedOperation", "mappingVersion", "allocationDigest", "capturePolicyDigest", "sourceReferences", "anchorDigest"],
+  "properties": {
+    "kind": { "const": "HOST_SOURCE_ANCHOR" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "PRODUCTION_HOST_SOURCE_ANCHOR_V1" },
+    "authorityScope": { "const": "SOURCE_PROVENANCE_DESCRIPTOR_ONLY" },
+    "section": { "type": "string", "minLength": 1 },
+    "verifierId": { "type": "string", "minLength": 1 },
+    "verifierVersion": { "const": 1 },
+    "runId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "canonicalStageId": { "enum": ["homepage-research", "keyword-research", "template-selection", "content-integration", "ui-ux-audit", "prelaunch-acceptance", "deployment-plan"] },
+    "attemptId": { "type": "integer", "minimum": 1 },
+    "requestedOperation": { "type": "string", "minLength": 1 },
+    "mappingVersion": { "const": "stage-identity-v1" },
+    "allocationDigest": { "type": "string", "format": "sha256" },
+    "capturePolicyDigest": { "type": "string", "format": "sha256" },
+    "sourceReferences": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "relativePath", "sha256", "byteLength", "sourceKind", "sourceVersion"],
+        "properties": {
+          "role": { "type": "string", "minLength": 1 },
+          "relativePath": { "type": "string", "format": "relative-posix-path" },
+          "sha256": { "type": "string", "format": "sha256" },
+          "byteLength": { "type": "integer", "minimum": 0 },
+          "sourceKind": { "type": "string", "minLength": 1 },
+          "sourceVersion": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "anchorDigest": { "type": "string", "format": "sha256" }
+  }
+}
