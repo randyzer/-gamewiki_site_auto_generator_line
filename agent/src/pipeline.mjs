@@ -17,7 +17,8 @@ import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-rec
 import { keywordEvidencePlanReference, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { createResearchHandoffCandidate, RESEARCH_HANDOFF_KIND,
   verifyResearchHandoffApproval, verifyResearchHandoffCandidate } from './research-handoff.mjs';
-import { inspectResearchHandoffCheckpointRecovery } from './research-handoff-recovery.mjs';
+import { inspectResearchHandoffCheckpointRecovery,
+  researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 import { assertProductionObservation } from './v2/production-observation.mjs';
 import { resolveStageIdentity } from './v2/stage-identity.mjs';
 
@@ -778,7 +779,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     });
   }
 
-  async function updateUserInputs(patch, { retry = false } = {}) {
+  async function updateUserInputs(patch, { retry = false, checkpointRecoveryIntent = null } = {}) {
     return exclusive(async () => {
       state.inputCopies ??= {};
       patch = checkInputs(patch);
@@ -786,9 +787,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       const patchKeys = Object.keys(patch);
       const checkpointOnlyPatch = patchKeys.length === 0 || (patchKeys.length === 1 &&
         patchKeys[0] === 'rawKeywordsFile' && patch.rawKeywordsFile === state.inputs.rawKeywordsFile);
-      const checkpointRecovery = retry && checkpointOnlyPatch
-        ? await inspectResearchHandoffCheckpointRecovery({ manifest: state, runDirectory, runId }) : null;
-      if (checkpointRecovery) {
+      if (checkpointRecoveryIntent) {
+        assert(retry && checkpointOnlyPatch,
+          'RESEARCH_HANDOFF_CHECKPOINT_RECOVERY_INVALID: recovery intent requires a checkpoint-only retry');
+        const checkpointRecovery = await inspectResearchHandoffCheckpointRecovery({ manifest: state, runDirectory, runId });
+        assert(checkpointRecovery && isDeepStrictEqual(
+          researchHandoffCheckpointRecoveryIntent(checkpointRecovery), checkpointRecoveryIntent),
+        'RESEARCH_HANDOFF_CHECKPOINT_RECOVERY_STALE: approved checkpoint evidence changed; preview again');
         await verifyLock();
         await validateProject(state.inputs.projectPath);
         await verifyInputCopies();

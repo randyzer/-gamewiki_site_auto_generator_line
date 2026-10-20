@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { rmSync } from 'node:fs';
 import { writeFile, readFile, access, mkdir, chmod, rm } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
@@ -435,6 +436,32 @@ test('checkpoint-recovery confirmation fails closed when preview evidence change
     assert.equal(after.stages[1].checkpoint.attempt, 1);
     assert.equal(after.deploymentExecuted, false);
   });
+});
+
+test('checkpoint-recovery intent cannot fall through after confirmation', async t => {
+  const s = await setup(t), runId = 'checkpoint-post-confirmation-stale';
+  const prepared = await prepareHandoffCheckpointFailure(s, runId);
+  const preview = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, preview: true,
+    ...terminal(null, { isTTY: false }) });
+  let workerCalls = 0;
+  const executor = async () => { workerCalls++; throw Error('WORKER_RETRY_MUST_NOT_RUN'); };
+  let invalidated = false;
+  Object.defineProperty(executor, 'installDependencies', { get() {
+    if (!invalidated) {
+      rmSync(join(prepared.outputDirectory, 'native', 'worker-result.json'));
+      invalidated = true;
+    }
+    return undefined;
+  } });
+  await assert.rejects(runFromTerminal({ command: 'retry', previewId: preview.preview_id,
+    confirm: preview.confirmation_code, runId, configuration: s.f.configuration, executor,
+    ...terminal(null, { isTTY: false }) }), /RESEARCH_HANDOFF_CHECKPOINT_RECOVERY_STALE/);
+  assert.equal(workerCalls, 0, 'confirmed checkpoint recovery must never become a worker retry');
+  const after = JSON.parse(await readFile(prepared.path));
+  assert.equal(after.stages[1].status, 'FAILED');
+  assert.equal(after.stages[1].checkpoint.attempt, 1);
+  assert.equal(after.deploymentExecuted, false);
 });
 
 test('a terminal run executes the approved plan on retry and reports the deployment', async t => {

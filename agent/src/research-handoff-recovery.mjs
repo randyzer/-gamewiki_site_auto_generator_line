@@ -4,6 +4,19 @@ import { STAGE, STAGES, findStage } from './stages.mjs';
 
 const FAILURE_OPERATION = 'save-stage-checkpoint';
 const FAILURE_PREFIX = 'RESEARCH_HANDOFF_INVALID:';
+const INTENT_KIND = 'RESEARCH_HANDOFF_CHECKPOINT_RECOVERY_V1';
+
+export function researchHandoffCheckpointRecoveryIntent(recovery) {
+  if (!recovery) return null;
+  return {
+    kind: INTENT_KIND,
+    attempt: recovery.attempt,
+    workerResultSha256: recovery.workerResultSha256,
+    recoveryReferenceSha256: recovery.recoveryReferenceSha256,
+    recoveryManifestPath: recovery.recoveryRef.manifestPath,
+    recoveryManifestSha256: recovery.recoveryRef.sha256,
+  };
+}
 
 export async function inspectResearchHandoffCheckpointRecovery({ manifest, runDirectory, runId }) {
   if (!manifest || manifest.runId !== runId || !Array.isArray(manifest.stages)) return null;

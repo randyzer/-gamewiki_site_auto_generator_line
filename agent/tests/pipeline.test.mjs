@@ -8,6 +8,8 @@ import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
 import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
+import { inspectResearchHandoffCheckpointRecovery,
+  researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -516,9 +518,13 @@ test('retry recovers a Stage 2 handoff checkpoint failure without invoking the w
   await rm(join(f.workspace, 'runs', runId, 'research-handoffs'), { recursive: true, force: true });
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 
+  const checkpointRecovery = await inspectResearchHandoffCheckpointRecovery({
+    manifest: JSON.parse(await readFile(manifestPath)), runDirectory: join(f.workspace, 'runs', runId), runId,
+  });
   const callsBefore = f.calls.length;
   const resumed = await f.create({ runId, resume: true, inputs: {}, executor });
-  await resumed.updateUserInputs({}, { retry: true });
+  await resumed.updateUserInputs({}, { retry: true,
+    checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery) });
   const recovered = resumed.snapshot().stages[1];
   assert.equal(f.calls.length, callsBefore, 'checkpoint recovery must not invoke the worker');
   assert.equal(recovered.status, 'PARTIAL');
