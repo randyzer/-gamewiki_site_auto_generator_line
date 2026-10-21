@@ -2,13 +2,26 @@ import { spawn } from 'node:child_process';
 import { sanitizeDiagnosticText, failureDiagnostic } from './diagnostics.mjs';
 
 const workerError = (message, code, details = {}) => Object.assign(Error(message), { code, ...details });
+const captureLimit = 8192;
+
+const appendHead = (current, chunk) => current.length >= captureLimit
+  ? current : current + chunk.slice(0, captureLimit - current.length);
+const appendTail = (current, chunk) => (current + chunk).slice(-captureLimit);
+
+function failureDetail(stderr, stdout, env) {
+  const both = Boolean(stderr && stdout);
+  const parts = [];
+  if (stderr) parts.push(`stderr tail: ${sanitizeDiagnosticText(stderr.slice(-(both ? 900 : 1500)), env)}`);
+  if (stdout) parts.push(`stdout tail: ${sanitizeDiagnosticText(stdout.slice(-(both ? 500 : 1500)), env)}`);
+  return sanitizeDiagnosticText(parts.join('\n'), env);
+}
 
 // Keep bounded, sanitized failure details; raw worker output is never persisted.
 export function runProcess(command, args, { cwd, input = '', env = process.env, timeoutMs = 600000, signal } = {}) {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) return reject(workerError('Worker aborted', 'WORKER_ABORTED'));
     const child = spawn(command, args, { cwd, env, detached: process.platform !== 'win32', stdio: ['pipe', 'pipe', 'pipe'] });
-    let stopped = false, killTimer, failure, stopFinished, stdout = '', stderr = '';
+    let stopped = false, killTimer, failure, stopFinished, stdout = '', stdoutTail = '', stderrTail = '';
     const kill = sig => {
       try { process.platform === 'win32' ? child.kill(sig) : process.kill(-child.pid, sig); }
       catch (error) { if (error.code !== 'ESRCH') failure = workerError('Worker termination failed', 'WORKER_TERMINATION_FAILED'); }
@@ -23,8 +36,12 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
     const duration = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 600000;
     const timer = setTimeout(stop, duration);
     signal?.addEventListener('abort', stop, { once: true });
-    child.stdout.on('data', bytes => { if (stdout.length < 8192) stdout += bytes.toString().slice(0, 8192 - stdout.length); });
-    child.stderr.on('data', bytes => { if (stderr.length < 8192) stderr += bytes.toString().slice(0, 8192 - stderr.length); });
+    child.stdout.on('data', bytes => {
+      const chunk = bytes.toString();
+      stdout = appendHead(stdout, chunk);
+      stdoutTail = appendTail(stdoutTail, chunk);
+    });
+    child.stderr.on('data', bytes => { stderrTail = appendTail(stderrTail, bytes.toString()); });
     child.stdin.on('error', () => { if (!stopped) failure ??= workerError('Worker input failed', 'WORKER_INPUT_FAILED'); });
     child.on('error', error => {
       const diagnostic = failureDiagnostic(error);
@@ -39,7 +56,7 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
       else if (stopped) reject(workerError(signal?.aborted ? 'Worker aborted' : 'Worker timed out', signal?.aborted ? 'WORKER_ABORTED' : 'WORKER_TIMEOUT'));
       else if (failure) reject(failure);
       else if (code !== 0) {
-        const detail = sanitizeDiagnosticText(stderr || stdout, env);
+        const detail = failureDetail(stderrTail, stdoutTail, env);
         reject(workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`, 'WORKER_EXIT_NONZERO', { exitCode: code, exitSignal }));
       }
       else resolve({ exitCode: code, stdout });

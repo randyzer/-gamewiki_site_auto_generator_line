@@ -5,6 +5,17 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fixture } from './helpers.mjs';
 
+const processFailure = async (source, options = {}) => {
+  let failure;
+  try {
+    await runProcess(process.execPath, ['-e', source], options);
+  } catch (error) {
+    failure = error;
+  }
+  assert.ok(failure, 'expected worker failure');
+  return failure;
+};
+
 test('worker failures do not disclose stderr', async () => {
   await assert.rejects(runProcess(process.execPath, ['-e', 'process.stderr.write("token=DO_NOT_PERSIST");process.exit(1)']), error => !error.message.includes('DO_NOT_PERSIST'));
 });
@@ -34,6 +45,41 @@ test('process failures distinguish missing binaries, timeout, abort and exit sta
     assert.doesNotMatch(error.message, /PRIVATE_PROCESS_VALUE/);
     return true;
   });
+});
+
+test('worker failure diagnostics retain the stderr tail instead of a long startup banner', async () => {
+  const error = await processFailure(`require('fs').writeSync(2,'PROMPT_START_' + 'x'.repeat(12000) + '\\nTERMINAL_FAILURE_MARKER');process.exit(1)`);
+  assert.match(error.message, /TERMINAL_FAILURE_MARKER/);
+  assert.doesNotMatch(error.message, /PROMPT_START_/);
+});
+
+test('worker failure diagnostics include bounded useful tails from stderr and stdout', async () => {
+  const error = await processFailure(`const fs=require('fs');fs.writeSync(2,'BANNER_' + 'x'.repeat(12000) + '\\nSTDERR_FAILURE_MARKER');fs.writeSync(1,'STDOUT_FAILURE_MARKER');process.exit(7)`);
+  assert.equal(error.code, 'WORKER_EXIT_NONZERO');
+  assert.equal(error.exitCode, 7);
+  assert.match(error.message, /STDERR_FAILURE_MARKER/);
+  assert.match(error.message, /STDOUT_FAILURE_MARKER/);
+  assert.ok(error.message.length <= 1700, `diagnostic length ${error.message.length}`);
+});
+
+test('worker failure diagnostics redact secrets from both stream tails across write chunks', async () => {
+  const error = await processFailure(`process.stderr.write('api_');setTimeout(()=>{process.stderr.write('key=PRIVATE_STDERR_VALUE\\n');process.stdout.write('authorization: Bearer PRIVATE_STDOUT_VALUE\\n');process.exit(1)},10)`);
+  assert.doesNotMatch(error.message, /PRIVATE_STDERR_VALUE|PRIVATE_STDOUT_VALUE/);
+  assert.match(error.message, /\[REDACTED\]/);
+});
+
+test('large worker failure streams remain bounded while preserving terminal evidence', async () => {
+  const error = await processFailure(`const fs=require('fs');fs.writeSync(1,'o'.repeat(200000) + '\\nSTDOUT_END');fs.writeSync(2,'e'.repeat(200000) + '\\nSTDERR_END');process.exit(1)`);
+  assert.match(error.message, /STDOUT_END/);
+  assert.match(error.message, /STDERR_END/);
+  assert.ok(error.message.length <= 1700, `diagnostic length ${error.message.length}`);
+});
+
+test('successful workers preserve the existing bounded stdout contract', async () => {
+  const output = await runProcess(process.execPath, ['-e', `process.stdout.write('HEAD_' + 'x'.repeat(9000) + '_TAIL')`]);
+  assert.match(output.stdout, /^HEAD_/);
+  assert.equal(output.stdout.length, 8192);
+  assert.doesNotMatch(output.stdout, /_TAIL$/);
 });
 test('timeout cleans grandchildren even when parent exits and child ignores SIGTERM', async t => {
   const f = await fixture(t), pidFile = join(f.root, 'pid');
