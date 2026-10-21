@@ -6,13 +6,32 @@ const captureLimit = 8192;
 
 const appendHead = (current, chunk) => current.length >= captureLimit
   ? current : current + chunk.slice(0, captureLimit - current.length);
-const appendTail = (current, chunk) => (current + chunk).slice(-captureLimit);
+const emptyTail = () => ({ value: '', truncated: false });
+const appendTail = (current, chunk) => {
+  const combined = current.value + chunk;
+  return combined.length <= captureLimit
+    ? { value: combined, truncated: current.truncated }
+    : { value: combined.slice(-captureLimit), truncated: true };
+};
+
+function completeTailWindow(capture, limit) {
+  let value = capture.value;
+  if (capture.truncated) {
+    const boundary = value.indexOf('\n');
+    if (boundary < 0) return '';
+    value = value.slice(boundary + 1);
+  }
+  if (value.length <= limit) return value;
+  value = value.slice(-limit);
+  const boundary = value.indexOf('\n');
+  return boundary < 0 ? '' : value.slice(boundary + 1);
+}
 
 function failureDetail(stderr, stdout, env) {
-  const both = Boolean(stderr && stdout);
+  const both = Boolean(stderr.value && stdout.value);
   const parts = [];
-  if (stderr) parts.push(`stderr tail: ${sanitizeDiagnosticText(stderr.slice(-(both ? 900 : 1500)), env)}`);
-  if (stdout) parts.push(`stdout tail: ${sanitizeDiagnosticText(stdout.slice(-(both ? 500 : 1500)), env)}`);
+  if (stderr.value) parts.push(`stderr tail: ${sanitizeDiagnosticText(completeTailWindow(stderr, both ? 900 : 1500), env)}`);
+  if (stdout.value) parts.push(`stdout tail: ${sanitizeDiagnosticText(completeTailWindow(stdout, both ? 500 : 1500), env)}`);
   return sanitizeDiagnosticText(parts.join('\n'), env);
 }
 
@@ -21,7 +40,7 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
   return new Promise((resolve, reject) => {
     if (signal?.aborted) return reject(workerError('Worker aborted', 'WORKER_ABORTED'));
     const child = spawn(command, args, { cwd, env, detached: process.platform !== 'win32', stdio: ['pipe', 'pipe', 'pipe'] });
-    let stopped = false, killTimer, failure, stopFinished, stdout = '', stdoutTail = '', stderrTail = '';
+    let stopped = false, killTimer, failure, stopFinished, stdout = '', stdoutTail = emptyTail(), stderrTail = emptyTail();
     const kill = sig => {
       try { process.platform === 'win32' ? child.kill(sig) : process.kill(-child.pid, sig); }
       catch (error) { if (error.code !== 'ESRCH') failure = workerError('Worker termination failed', 'WORKER_TERMINATION_FAILED'); }

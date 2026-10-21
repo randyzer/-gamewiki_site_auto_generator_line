@@ -68,6 +68,25 @@ test('worker failure diagnostics redact secrets from both stream tails across wr
   assert.match(error.message, /\[REDACTED\]/);
 });
 
+test('worker failure diagnostics fail closed when secrets cross both presentation boundaries', async () => {
+  const stderrSecret = `ERR_${'s'.repeat(1000)}_STDERR_BOUNDARY_LEAK`;
+  const stdoutSecret = `OUT_${'t'.repeat(650)}_STDOUT_BOUNDARY_LEAK`;
+  const source = `const fs=require('fs');fs.writeSync(2,'api_key=' + process.env.SYNTHETIC_STDERR_API_KEY + '\\nSTDERR_TERMINAL');fs.writeSync(1,'authorization: Bearer ' + process.env.SYNTHETIC_STDOUT_TOKEN + '\\nSTDOUT_TERMINAL');process.exit(1)`;
+  const error = await processFailure(source, { env: { ...process.env,
+    SYNTHETIC_STDERR_API_KEY: stderrSecret, SYNTHETIC_STDOUT_TOKEN: stdoutSecret } });
+  assert.doesNotMatch(error.message, /STDERR_BOUNDARY_LEAK|STDOUT_BOUNDARY_LEAK/);
+  assert.match(error.message, /STDERR_TERMINAL/);
+  assert.match(error.message, /STDOUT_TERMINAL/);
+});
+
+test('worker failure diagnostics fail closed when a secret crosses the rolling-tail boundary', async () => {
+  const secret = `ROLL_${'r'.repeat(9000)}_TAIL_BOUNDARY_LEAK`;
+  const source = `require('fs').writeSync(2,'api_key=' + process.env.SYNTHETIC_ROLLING_API_KEY + '\\nROLLING_TERMINAL');process.exit(1)`;
+  const error = await processFailure(source, { env: { ...process.env, SYNTHETIC_ROLLING_API_KEY: secret } });
+  assert.doesNotMatch(error.message, /TAIL_BOUNDARY_LEAK/);
+  assert.match(error.message, /ROLLING_TERMINAL/);
+});
+
 test('large worker failure streams remain bounded while preserving terminal evidence', async () => {
   const error = await processFailure(`const fs=require('fs');fs.writeSync(1,'o'.repeat(200000) + '\\nSTDOUT_END');fs.writeSync(2,'e'.repeat(200000) + '\\nSTDERR_END');process.exit(1)`);
   assert.match(error.message, /STDOUT_END/);
