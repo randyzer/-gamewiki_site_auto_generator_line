@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, realpath, mkdir, writeFile, readFile, rm, symlink, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
-import { createPipeline } from '../src/pipeline.mjs';
+import { createPipeline, OFFLINE_STAGE4_READINESS_CAPABILITY } from '../src/pipeline.mjs';
 import { createOrchestrator } from '../src/orchestrator.mjs';
 import { prepareResearchHandoff } from '../src/handoff.mjs';
 import { stageWorkerPermissions, permissionProfileConfig } from '../src/worker-permissions.mjs';
@@ -43,7 +43,8 @@ async function fixture(t) {
   await mkdir(dirname(rawKeywordsFile), { recursive: true }); await writeFile(rawKeywordsFile, '# User keywords');
   const paths = { siteDirectory: join(projectRoot, 'site'), researchDirectory, rawKeywordsFile };
   const inputs = { gameIdentity: 'Path fixture', objective: 'offline', canonicalRequired: false, paths };
-  const configuration = { workspace, inventoryPath, templateRoots: [] };
+  const configuration = { workspace, inventoryPath, templateRoots: [],
+    stage4ReadinessCapability: OFFLINE_STAGE4_READINESS_CAPABILITY };
   const contexts = [];
   const executor = async (skill, context) => { contexts.push(context); return goodResult(skill, context); };
   return { root, projectRoot, researchDirectory, rawKeywordsFile, paths, inputs, configuration, contexts, executor,

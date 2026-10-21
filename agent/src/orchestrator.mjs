@@ -53,7 +53,8 @@ export function summarize(state, paused = false) {
 
 // Host code is trusted; task JSON is not. No production approval host is installed.
 // An injected consumer AND executor are required for the offline integration seam.
-export function createOrchestrator({ configuration, executor, approvalConsumer, deploymentExecution = false } = {}) {
+export function createOrchestrator({ configuration, executor, approvalConsumer, deploymentExecution = false,
+  stage4ReadinessCapability = configuration?.stage4ReadinessCapability } = {}) {
   return async function execute(task, { shouldPause = () => false } = {}) {
     task = structuredClone(task);
     const config = structuredClone(configuration ?? await loadConfiguration());
@@ -83,7 +84,8 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
       await permit.verify();
       supplied = structuredClone(permit.inputs);
     }
-    if (supplied.schemaVersion === 1) return executeExisting(task, supplied, config, executor, shouldPause);
+    if (supplied.schemaVersion === 1)
+      return executeExisting(task, supplied, config, executor, shouldPause, stage4ReadinessCapability);
     if (supplied.mode === 'existing-project') throw Error('Existing project requires a versioned structured task card');
     let resume = resumePermit;
     if (!freshApproval) {
@@ -108,12 +110,19 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
       await permit.verify({ stage: skill });
       return result;
     } : executor;
+    const stagePreflight = executor.stagePreflight && (localPermit ? async (skill, context) => {
+      await permit.verify({ stage: skill });
+      const result = await executor.stagePreflight(skill, context);
+      await permit.verify({ stage: skill });
+      return result;
+    } : executor.stagePreflight);
     const { templateSource, templateCacheRoot, ...pipelineConfig } = config;
     const templateSnapshot = await runTemplateSnapshot(config, manifest, runId, resume);
     if (localPermit) await permit.start();
     try {
       const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor,
-        installSiteDependencies: executor.installDependencies, runId, resume, siteWrites: true,
+        installSiteDependencies: executor.installDependencies, stagePreflight, stage4ReadinessCapability,
+        runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined,
         keywordExecutionReceipt, keywordExecutionInputs: supplied, inputs: resume ? {} : inputs });
@@ -147,7 +156,7 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
   };
 }
 
-async function executeExisting(task, supplied, config, executor, shouldPause) {
+async function executeExisting(task, supplied, config, executor, shouldPause, stage4ReadinessCapability) {
   const card = validateIntakeCard(supplied), summary = intakeSummary(card);
   const runDirectory = join(config.workspace, 'runs', task.id);
   const projectPath = join(config.workspace, 'workspaces', task.id, 'site');
@@ -161,26 +170,36 @@ async function executeExisting(task, supplied, config, executor, shouldPause) {
     repo: card.repository, deploymentProvider: card.deploymentProvider, adRequested: card.adRequested,
     ...(card.adSnippetRef ? { adSnippetRef: card.adSnippetRef } : {}), adsEnabled: false };
   let preflight;
+  const ownedContext = context => ({ ...context, existingProject: { baseline: preflight.baseline, sourceEntry: entry } });
   const wrapped = async (skill, context) => {
     if (preflight.report.status !== 'PASSED') return { status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: preflight.report.blockers };
     await verifyBaseline(preflight.baseline, entry);
-    const ownedContext = { ...context, existingProject: { baseline: preflight.baseline, sourceEntry: entry } };
-    if (skill === STAGE.CONTENT_INTEGRATION) {
-      ownedContext.runDirectory = runDirectory;
-      ownedContext.nativeDirectory = join(context.outputDirectory, 'native');
+    const next = ownedContext(context);
+    if (skill === STAGE.CONTENT_INTEGRATION && !executor.stagePreflight) {
+      next.runDirectory = runDirectory;
+      next.nativeDirectory = join(context.outputDirectory, 'native');
       try {
-        ownedContext.researchHandoff = await prepareResearchHandoff(ownedContext);
-        ownedContext.existingContent = await prepareExistingContent(ownedContext);
+        next.researchHandoff = await prepareResearchHandoff(next);
+        next.existingContent = await prepareExistingContent(next);
       } catch (error) {
         if (error.code !== 'CONTRACT_INCOMPATIBLE') throw error;
         return { status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: [error.message] };
       }
     }
-    const result = await executor(skill, ownedContext);
+    const result = await executor(skill, next);
     await verifyBaseline(preflight.baseline, entry);
     return result;
   };
-  const pipeline = await createPipeline({ ...config, executor: wrapped, installSiteDependencies: executor.installDependencies, runId: task.id, inputs: resume ? {} : inputs,
+  const stagePreflight = executor.stagePreflight ? async (skill, context) => {
+    if (preflight.report.status !== 'PASSED')
+      return { status: 'BLOCKED', evidence: preflight.report.blockers, missing_inputs: [] };
+    await verifyBaseline(preflight.baseline, entry);
+    const result = await executor.stagePreflight(skill, ownedContext(context));
+    await verifyBaseline(preflight.baseline, entry);
+    return result;
+  } : undefined;
+  const pipeline = await createPipeline({ ...config, executor: wrapped, installSiteDependencies: executor.installDependencies,
+    stagePreflight, stage4ReadinessCapability, runId: task.id, inputs: resume ? {} : inputs,
     resume, siteWrites: true, recoverDeadLocks: true });
   if (pipeline.snapshot().inputs.taskCardDigest !== summary.digest) throw Error('Task card changed; use a new run and discard prior approval');
   preflight = await existingProjectPreflight(card, { allowlist: config.existingProjectAllowlist, runDirectory,

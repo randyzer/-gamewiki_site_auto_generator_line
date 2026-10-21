@@ -391,6 +391,14 @@ async function prepareFixture(root, stage) {
       commit, checkout, templateRoot: pinnedTemplateRoot,
     } };
   }
+  let stage4Readiness;
+  if (stage === 4) {
+    const path = join(outputDirectory, 'host-readiness/STAGE4_READINESS_ATTESTATION.json');
+    await mkdir(dirname(path), { recursive: true });
+    await writeFile(path, '{}', { mode: 0o400 });
+    stage4Readiness = { path, digest: '0'.repeat(64), fileSha256: '0'.repeat(64),
+      attestation: { readiness: 'READY', syntheticEnvironmentSelfcheck: true } };
+  }
   return { runId: `ENV_SELFCHECK-stage-${stage}`, runDirectory, outputDirectory,
     nativeDirectory: join(outputDirectory, 'native'), mode: stage === 7 ? 'plan' : 'audit-only',
     skillLock: { source: join(repository, 'codex-skills', STAGES[stage - 1], 'SKILL.md') },
@@ -399,7 +407,7 @@ async function prepareFixture(root, stage) {
     inputs: { gameIdentity: 'Environment Selfcheck', objective: 'Environment probes only',
       projectPath: siteDirectory, rawKeywordsFile, paths: { siteDirectory, researchDirectory, rawKeywordsFile } },
     permissions: { siteWrites: [3, 4].includes(stage), productionDeployment: false },
-    ...templateContext,
+    ...(stage4Readiness ? { stage4Readiness } : {}), ...templateContext,
   };
 }
 
@@ -440,6 +448,11 @@ export async function runSelfcheck({ reportsDirectory = join(repository, 'agent/
           return snapshotSiteEvidence(directory);
         };
         const executor = createSkillExecutor({ ...executorOptions, timeoutMs: 300000,
+          verifyStage4Readiness: async binding => {
+            if (binding?.attestation?.syntheticEnvironmentSelfcheck !== true)
+              throw Error('SELFCHECK_STAGE4_READINESS_INVALID');
+            return binding.attestation;
+          },
           previewSite: async () => ({ url: 'http://127.0.0.1:1', stop: async () => {} }),
           auditSite: syntheticEvidence, prelaunchSite: syntheticEvidence,
           run: async (command, args, options) => {

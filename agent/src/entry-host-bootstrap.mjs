@@ -12,6 +12,7 @@ import { safePath, sha256 } from './files.mjs';
 import { verifyWorkerCommandIdentity, verifyWorkerCodeModeHostIdentity } from './worker-permissions.mjs';
 import { collectIndexedOfficialSources } from './official-source-host.mjs';
 import { collectTrustedHomepageMedia, inspectHomepageMediaReadiness } from './homepage-media-host.mjs';
+import { OFFLINE_STAGE4_READINESS_CAPABILITY } from './pipeline.mjs';
 
 // Fixed host implementation and policy; neither is selected by task JSON.
 const runtimeFiles = ['src/entry-host-bootstrap.mjs', 'src/entry-approval.mjs',
@@ -55,11 +56,11 @@ export async function requireVerifiedHostRuntime(policy) {
   } catch { return fail(); }
 }
 
-async function compose({ directory, executor, humanOptions, executionStages }) {
+async function compose({ directory, executor, humanOptions, executionStages, stage4ReadinessCapability }) {
   executionStages = executionStages === undefined ? undefined : structuredClone(executionStages);
   const configuration = await loadConfiguration();
   const host = await createMacLocalEntryApprovalHost({ directory }, humanOptions);
-  const execute = createOrchestrator({ configuration, executor,
+  const execute = createOrchestrator({ configuration, executor, stage4ReadinessCapability,
     approvalConsumer: createEntryApprovalConsumer({ host, executionStages }) });
   const options = { shouldPause: state => Boolean(executionStages &&
     state.stages.slice(0, executionStages.length).every(stage => stage.status === 'PASSED')) };
@@ -117,6 +118,7 @@ export async function createOfflineEntryBootstrap({ directory, dialog, executor,
         (typeof workerRun === 'function' && executor === undefined)))
     throw Error('ENTRY_OFFLINE_DEPENDENCIES_REQUIRED');
   return compose({ directory, executionStages,
+    stage4ReadinessCapability: OFFLINE_STAGE4_READINESS_CAPABILITY,
     executor: executor ?? createSkillExecutor({ run: workerRun, browserHumanDialog: false }),
     humanOptions: { platform: 'darwin', dialog } });
 }

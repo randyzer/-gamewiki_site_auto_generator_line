@@ -1,6 +1,7 @@
 import { chmod, lstat, mkdir, open, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { sha256 } from './files.mjs';
 
 const KIND = 'RUN_PREVIEW_SNAPSHOT_V1';
@@ -8,6 +9,7 @@ const CONSUMED_KIND = 'RUN_PREVIEW_SNAPSHOT_CONSUMED_V1';
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
 const DIGEST = /^[a-f0-9]{64}$/;
 const CODE = /^[a-f0-9]{16}$/;
+const trustedConsumptions = new WeakMap();
 export const RUN_PREVIEW_SNAPSHOT_TTL_MS = 24 * 60 * 60 * 1000;
 export const RUN_PREVIEW_SNAPSHOT_FUTURE_SKEW_MS = 5 * 60 * 1000;
 const assert = (ok, detail) => { if (!ok) throw Error('RUN_PREVIEW_SNAPSHOT_INVALID: ' + detail); };
@@ -271,9 +273,28 @@ export async function consumeRunPreviewSnapshot(snapshot, { now = Date.now() } =
     throw error;
   }
   try {
+    const consumedAt = new Date().toISOString();
     await handle.writeFile(JSON.stringify({ kind: CONSUMED_KIND, previewId: snapshot.previewId,
-      snapshotSha256: snapshot.snapshotSha256, consumedAt: new Date().toISOString() }) + '\n');
+      snapshotSha256: snapshot.snapshotSha256, consumedAt }) + '\n');
     await handle.sync();
   } finally { await handle.close(); }
   await chmod(path, 0o600);
+  const consumption = Object.freeze({ kind: 'RUN_PREVIEW_CONSUMPTION_V1', schemaVersion: 1,
+    previewId: snapshot.previewId, runId: payload.runId, command: payload.command,
+    snapshotSha256: snapshot.snapshotSha256, effectiveInputsSha256: payload.effectiveInputs.sha256 });
+  const effectiveInputs = jsonObject(
+    await regularFile(payload.effectiveInputs.path, 1024 * 1024, snapshot.boundary),
+    'effective-inputs.json',
+  );
+  trustedConsumptions.set(consumption, { effectiveInputs });
+  return consumption;
+}
+
+export function assertTrustedRunPreviewConsumption(consumption, { effectiveInputs } = {}) {
+  const trusted = trustedConsumptions.get(consumption);
+  assert(trusted, 'untrusted preview consumption');
+  if (effectiveInputs !== undefined)
+    assert(isDeepStrictEqual(effectiveInputs, trusted.effectiveInputs),
+      'effective inputs do not match trusted snapshot');
+  return consumption;
 }

@@ -13,6 +13,7 @@ import { createEntry, previewEntryHandoff, inspectEntrySkills } from '../src/ent
 import { sha256 } from '../src/files.mjs';
 import { loadConfiguration } from '../src/orchestrator.mjs';
 import { previewEntryResume } from '../src/entry-resume-snapshot.mjs';
+import { OFFLINE_STAGE4_READINESS_CAPABILITY } from '../src/pipeline.mjs';
 
 test('new trusted input approval resumes missing canonical, preserves original approval and confirms exact plan without worker', async t => {
   const f = await handoffFixture(t);
@@ -171,6 +172,7 @@ async function handoffFixture(t) {
     gameMetadata: { steam: 'https://store.steampowered.com/app/570/' }, rawKeywordsFile }, runId);
   const { snapshot } = await previewEntryHandoff({ runId, expectedRevision: 1, executionRunId });
   const configuration = await loadConfiguration();
+  configuration.stage4ReadinessCapability = OFFLINE_STAGE4_READINESS_CAPABILITY;
   const host = simulatedHost();
   const binding = api.entryApprovalBinding(snapshot, configuration);
   const ticket = host.issue(binding);

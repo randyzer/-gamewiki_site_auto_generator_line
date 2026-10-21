@@ -637,7 +637,9 @@ test('two CLI processes cannot execute the same snapshot confirmation twice', as
 import { appendFile, readFile } from 'node:fs/promises';
 import { runFromTerminal } from ${JSON.stringify(new URL('../src/terminal-run.mjs', import.meta.url).href)};
 import { goodResult } from ${JSON.stringify(new URL('./helpers.mjs', import.meta.url).href)};
+import { OFFLINE_STAGE4_READINESS_CAPABILITY } from ${JSON.stringify(new URL('../src/pipeline.mjs', import.meta.url).href)};
 const configuration = JSON.parse(await readFile(process.argv[2], 'utf8'));
+configuration.stage4ReadinessCapability = OFFLINE_STAGE4_READINESS_CAPABILITY;
 const executor = async (skill, context) => {
   await appendFile(process.argv[6], process.pid + '\\n');
   await new Promise(resolve => setTimeout(resolve, 25));

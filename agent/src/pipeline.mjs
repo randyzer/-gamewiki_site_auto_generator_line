@@ -189,12 +189,22 @@ export async function recoverDeadRunLock(lockPath) {
   } finally { await guard.close(); await unlink(lockPath + '.recovery'); }
 }
 
+// Trusted in-process seam. JSON configuration and task inputs cannot recreate this identity.
+export const OFFLINE_STAGE4_READINESS_CAPABILITY = Object.freeze({
+  kind: 'OFFLINE_STAGE4_READINESS_CAPABILITY',
+});
+
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
   expectedManifestSha256, keywordExecutionReceipt, keywordExecutionInputs, deploymentExecution = false,
-  installSiteDependencies = executor?.installDependencies, productionObservation } = {}) {
+  installSiteDependencies = executor?.installDependencies, stagePreflight = executor?.stagePreflight,
+  stage4ReadinessCapability, productionObservation } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
+  assert(stage4ReadinessCapability === undefined ||
+    stage4ReadinessCapability === OFFLINE_STAGE4_READINESS_CAPABILITY,
+  'Invalid Stage 4 readiness capability');
+  const offlineStage4Readiness = stage4ReadinessCapability === OFFLINE_STAGE4_READINESS_CAPABILITY;
   if (productionObservation !== undefined)
     productionObservation = assertProductionObservation(productionObservation);
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
@@ -545,7 +555,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       .sort((a, b) => stageIndex(a[1]) - stageIndex(b[1])).map(([key, stage]) => ({ key, skill: stage, stageLabel: stageDefinition(stage).label,
         requiredByStage: stageIndex(stage) + 1, timing: stageIndex(stage) <= current ? 'now' : 'later',
         provided: state.inputs[key] !== undefined && state.inputs[key] !== '',
-        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'uiApproval', 'adCode', 'adApproval',
+        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'stage4DirtyWorktreeApproval', 'uiApproval', 'adCode', 'adApproval',
           'liveUrl', 'deploymentPlanApproval'].includes(key),
         pathOrInformation: key === 'rawKeywordsFile' ? 'User-supplied absolute Markdown file path' :
           key === 'projectPath' ? 'Resolved paths.siteDirectory (legacy runs retain their project directory)'
@@ -693,13 +703,63 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
             siteWrites: siteWrites && (executing || (!state.inputs.paths && stage.skill === STAGE.TEMPLATE_SELECTION) || stage.skill === STAGE.CONTENT_INTEGRATION || (!state.inputs.paths && stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize')) } });
         // Unknown external effects: from the moment an approved deployment starts, never report "nothing deployed".
         if (executing) { state.deploymentExecuted = true; await save(); }
-        operation = 'execute-skill';
-        if (stage.skill === STAGE.CONTENT_INTEGRATION && installSiteDependencies && !stage.checkpoint.dependencies) {
+        let result, resultSource = 'worker';
+        if (stage.skill === STAGE.CONTENT_INTEGRATION) {
+          operation = 'host-stage-readiness';
+          const readiness = typeof stagePreflight === 'function'
+            ? await stagePreflight(stage.skill, context)
+            : offlineStage4Readiness
+              ? { status: 'READY', binding: { kind: 'OFFLINE_STAGE4_READINESS_BINDING_V1',
+                runId, stage: stage.skill, attempt: stage.checkpoint.attempt } }
+              : { status: 'BLOCKED', evidence: ['HOST_STAGE4_READINESS_PROVIDER_REQUIRED'], missing_inputs: [] };
+          if (readiness.contextPatch) Object.assign(context, readiness.contextPatch);
+          if (readiness.status === 'READY') {
+            const binding = readiness.binding;
+            const productionBinding = binding && typeof binding.path === 'string' && isAbsolute(binding.path) &&
+              /^[a-f0-9]{64}$/.test(binding.digest ?? '') && /^[a-f0-9]{64}$/.test(binding.fileSha256 ?? '') &&
+              typeof binding.verifyCurrentState === 'function' &&
+              binding.attestation?.kind === 'STAGE4_READINESS_ATTESTATION' &&
+              binding.attestation?.runId === runId && binding.attestation?.stage === stage.skill &&
+              binding.attestation?.attempt === stage.checkpoint.attempt && binding.attestation?.readiness === 'READY';
+            const offlineBinding = binding?.kind === 'OFFLINE_STAGE4_READINESS_BINDING_V1' &&
+              binding.runId === runId && binding.stage === stage.skill && binding.attempt === stage.checkpoint.attempt;
+            const valid = offlineStage4Readiness ? offlineBinding : productionBinding;
+            if (!valid) {
+              result = { status: 'BLOCKED', artifacts: [], evidence: [
+                'HOST_STAGE4_READINESS_BINDING_INVALID: READY requires a valid mode-bound Host binding'],
+              missing_inputs: [] };
+              resultSource = 'host-readiness';
+            }
+          if (!result) {
+            context.stage4Readiness = readiness.binding;
+            stage.checkpoint.readinessDigest = readiness.binding.digest ?? hash(JSON.stringify(readiness.binding));
+            stage.checkpoint.readinessPath = readiness.binding.path ?? null;
+            await save();
+          }
+          } else {
+            const readinessStatus = readiness.status === 'WAITING_FOR_USER' ? 'WAITING_FOR_USER' : 'BLOCKED';
+            result = { status: readinessStatus, artifacts: [],
+              evidence: readiness.evidence ?? [readiness.status === 'NOT_APPLICABLE'
+                ? 'HOST_STAGE4_READINESS_NOT_APPLICABLE_REJECTED' : 'HOST_STAGE4_READINESS_BLOCKED'],
+              missing_inputs: readiness.missing_inputs ?? [] };
+            resultSource = 'host-readiness';
+          }
+        }
+        if (!result && stage.skill === STAGE.CONTENT_INTEGRATION && installSiteDependencies && !stage.checkpoint.dependencies) {
+          operation = 'install-site-dependencies';
           stage.checkpoint.dependencies = await installSiteDependencies(state.inputs.projectPath,
             { manifestPath: join(runDirectory, 'site-dependencies.json') });
           await save();
         }
-        const result = await executor(stage.skill, context);
+        if (!result && stage.skill === STAGE.CONTENT_INTEGRATION &&
+            typeof context.stage4Readiness?.verifyCurrentState === 'function') {
+          operation = 'verify-host-stage-readiness-before-worker';
+          await context.stage4Readiness.verifyCurrentState(context);
+        }
+        if (!result) {
+          operation = 'execute-skill';
+          result = await executor(stage.skill, context);
+        }
         operation = 'verify-upstream-after-execution';
         await verifyLock();
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
@@ -759,7 +819,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (stage.skill === STAGE.ADVERTISING_PLAN && status === 'PASSED') {
           status = 'WAITING_FOR_USER'; missing = ['externalAdvertisingImplementationAndAcceptance'];
         }
-        if (['FAILED', 'BLOCKED'].includes(status)) await recordFailure(stage, Error(evidence.join('\n')), 'worker-reported-failure', status, missing);
+        if (['FAILED', 'BLOCKED'].includes(status)) await recordFailure(stage, Error(evidence.join('\n')),
+          resultSource === 'worker' ? 'worker-reported-failure' : 'host-stage-readiness', status, missing);
         else transition(stage, status, evidence, missing);
       } catch (error) {
         await recordFailure(stage, error, operation);
