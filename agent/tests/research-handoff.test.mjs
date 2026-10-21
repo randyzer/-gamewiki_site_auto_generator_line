@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chmod, cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { chmod, cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile, symlink, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { captureKeywordRecovery } from '../src/keyword-recovery.mjs';
@@ -195,4 +195,87 @@ test('approved partial research is copied from the verified recovery snapshot fo
     '- 关键词: Partial guide\n- 状态: PARTIAL\n- 缺口: missing fact\n');
   assert.equal(JSON.parse(await readFile(join(prepared.keywordsRoot, 'keywords.json')))
     .categories[0].keywords.length, 3);
+});
+
+async function directHandoffFixture(t, { external = false } = {}) {
+  const f = await fixture(t), projectPath = join(f.root, 'site');
+  const destination = join(projectPath, 'backgroundinformation');
+  const source = external ? join(f.root, 'research') : destination;
+  await mkdir(source, { recursive: true });
+  const homepage = join(source, 'Game攻略站首页调研信息.md');
+  await writeFile(homepage, '# Verified homepage');
+  const context = { runId: f.runId, runDirectory: f.runDirectory,
+    inputs: { projectPath, gameIdentity: 'Game', paths: { researchDirectory: source } },
+    upstream: [{ skill: STAGE.HOMEPAGE_RESEARCH, artifacts: [{ kind: 'HOMEPAGE_RESEARCH.md',
+      sourcePath: homepage, sha256: hash('# Verified homepage'), runId: f.runId,
+      projectPath, gameIdentity: 'Game' }] }, { skill: STAGE.KEYWORD_RESEARCH, artifacts: [] }] };
+  return { ...f, context, source, destination, homepage };
+}
+
+test('in-place handoff preserves empty user files and still copies approved recovery', async t => {
+  const f = await directHandoffFixture(t);
+  const empty = join(f.source, '首页调研信息.md'); await writeFile(empty, '');
+  const reference = await createResearchHandoffCandidate({ ...f, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' });
+  const manifest = await verifyResearchHandoffCandidate(reference, { ...f, attempt: 1,
+    siteRevision: 'rev-1', domain: 'example.test' });
+  const before = await readFile(f.recoveryRef.manifestPath);
+  f.context.researchHandoff = { reference: { ...reference, approved: true }, manifest };
+  const result = await prepareResearchHandoff(f.context);
+  assert.equal((await stat(empty)).size, 0);
+  assert.equal(await readFile(f.homepage, 'utf8'), '# Verified homepage');
+  assert.equal(await readFile(join(result.keywordsRoot, 'Partial guide素材.md'), 'utf8'),
+    '- 关键词: Partial guide\n- 状态: PARTIAL\n- 缺口: missing fact\n');
+  assert.equal(result.manifest.materials.find(m => m.status === 'PARTIAL').publicationDisposition, 'DRAFT_ONLY');
+  assert.equal(result.manifest.materials.find(m => m.status === 'BLOCKED').publicationDisposition, 'OMIT');
+  assert.deepEqual(await readFile(f.recoveryRef.manifestPath), before);
+  assert.equal(await readFile(join(f.root, 'raw.md'), 'utf8'), '# Keywords');
+});
+
+for (const change of ['tampered', 'empty', 'identity'])
+  test(`in-place handoff still rejects invalid registered artifact: ${change}`, async t => {
+    const f = await directHandoffFixture(t);
+    if (change === 'identity') f.context.upstream[0].artifacts[0].runId = 'other-run';
+    else await writeFile(f.homepage, change === 'empty' ? '' : 'tampered');
+    await assert.rejects(prepareResearchHandoff(f.context),
+      change === 'identity' ? /identity mismatch/ : change === 'empty' ? /nonempty regular artifact/ : /hash mismatch/);
+  });
+
+for (const change of ['checksum', 'conflict'])
+  test(`in-place handoff still rejects invalid controlled recovery: ${change}`, async t => {
+    const f = await directHandoffFixture(t);
+    const reference = await createResearchHandoffCandidate({ ...f, attempt: 1,
+      siteRevision: 'rev-1', domain: 'example.test' });
+    const manifest = await verifyResearchHandoffCandidate(reference, { ...f, attempt: 1,
+      siteRevision: 'rev-1', domain: 'example.test' });
+    f.context.researchHandoff = { reference: { ...reference, approved: true }, manifest };
+    if (change === 'checksum') manifest.recovery.sha256 = '0'.repeat(64);
+    else {
+      await mkdir(join(f.source, 'keyword-materials'));
+      await writeFile(join(f.source, 'keyword-materials/Partial guide素材.md'), 'user conflict');
+    }
+    await assert.rejects(prepareResearchHandoff(f.context),
+      change === 'checksum' ? /recovery manifest changed/ : /refusing to overwrite/);
+  });
+
+test('equivalent in-place paths skip self-copy but symlink aliases remain rejected', async t => {
+  const f = await directHandoffFixture(t);
+  await writeFile(join(f.source, 'empty-user.md'), '');
+  f.context.inputs.paths.researchDirectory = f.source + '/.';
+  assert.equal((await prepareResearchHandoff(f.context)).homepageRoot, f.destination);
+  const alias = join(f.root, 'alias'); await symlink(f.source, alias);
+  f.context.inputs.paths.researchDirectory = alias;
+  await assert.rejects(prepareResearchHandoff(f.context), /Linked path/);
+});
+
+test('different research roots still copy files, reject conflicts and reject empty artifacts', async t => {
+  const f = await directHandoffFixture(t, { external: true });
+  const result = await prepareResearchHandoff(f.context);
+  const copied = join(result.homepageRoot, 'Game攻略站首页调研信息.md');
+  assert.equal(await readFile(copied, 'utf8'), '# Verified homepage');
+  await writeFile(copied, 'existing user contents');
+  await assert.rejects(prepareResearchHandoff(f.context), /refusing to overwrite/);
+  await writeFile(copied, '# Verified homepage');
+  await writeFile(join(f.source, 'empty.md'), '');
+  await assert.rejects(prepareResearchHandoff(f.context), /nonempty regular artifact/);
 });

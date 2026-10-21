@@ -1,5 +1,5 @@
 import { STAGE, findStage } from './stages.mjs';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
+import { mkdir, writeFile, unlink, realpath } from 'node:fs/promises';
 import { join, basename, dirname } from 'node:path';
 import { safePath, readArtifact, sha256, treeFiles, parseArtifactJson } from './files.mjs';
 
@@ -75,8 +75,17 @@ export async function prepareResearchHandoff(context) {
           throw Error(`Research handoff hash mismatch: ${join(directory, filename)}`);
       }
     }
-    for (const file of await treeFiles(source))
-      await copyResearchFile(file, join(destination, file.slice(source.length + 1)), [source], project);
+    await safePath(source, [source]);
+    await safePath(destination, [project]);
+    const sourceRoot = await realpath(source);
+    let destinationRoot;
+    try { destinationRoot = await realpath(destination); }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
+    // In-place research includes preserved user files, not only registered artifacts.
+    if (sourceRoot !== destinationRoot) {
+      for (const file of await treeFiles(source))
+        await copyResearchFile(file, join(destination, file.slice(source.length + 1)), [source], project);
+    }
     const controlled = await prepareControlledKeywordResearch(context, join(destination, 'keyword-materials'));
     return { homepageRoot: destination, keywordsRoot: join(destination, 'keyword-materials'),
       ...(controlled ?? {}) };
