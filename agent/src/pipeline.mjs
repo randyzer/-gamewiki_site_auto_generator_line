@@ -695,7 +695,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const workerInputs = { ...state.inputs, ...inputCopyPaths };
         const researchHandoff = index > stageIndex(STAGE.KEYWORD_RESEARCH)
           ? await verifyArtifacts(stageIndex(STAGE.KEYWORD_RESEARCH)) : null;
-        const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths, outputDirectory, templateRoots,
+        const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths,
+          runDirectory, outputDirectory, nativeDirectory: join(outputDirectory, 'native'), templateRoots,
           ...(state.inputs.paths ? { readOnlyInputPaths: Object.keys(INPUT_COPY_PREFIX).map(key => state.inputs[key]).filter(nonempty) } : {}),
           templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
           skillLock: (stage.skill === STAGE.CONTENT_INTEGRATION ? verifiedSkillLocks : state.lock.skills)

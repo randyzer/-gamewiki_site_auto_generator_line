@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, rm, symlink, readdir, chmod, stat } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
+import { createStage4ReadinessGate } from '../src/stage4-readiness.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
@@ -199,6 +201,122 @@ test('production pipeline passes verified locked Skill file descriptors to Stage
     'manifest.json'), 'utf8'));
   assert.equal(Object.hasOwn(manifest.lock.skills[3], 'files'), false,
     'runtime descriptors must not rewrite the compatible persisted lock');
+});
+
+test('production Stage 4 uses one runtime context for readiness creation and verification', async t => {
+  const f = await fixture(t);
+  let readinessNativeDirectory, verificationNativeDirectory;
+  const p = await f.create({
+    stage4ReadinessCapability: undefined,
+    stagePreflight: async (skill, context) => {
+      if (skill !== api.STAGES[3]) return { status: 'NOT_APPLICABLE' };
+      readinessNativeDirectory = context.nativeDirectory;
+      const binding = {
+        path: join(context.outputDirectory, 'host-readiness', 'STAGE4_READINESS_ATTESTATION.json'),
+        digest: 'a'.repeat(64),
+        fileSha256: 'b'.repeat(64),
+        attestation: { kind: 'STAGE4_READINESS_ATTESTATION', runId: context.runId,
+          stage: skill, attempt: context.checkpoint.attempt, readiness: 'READY' },
+        verifyCurrentState: async verificationContext => {
+          verificationNativeDirectory = verificationContext.nativeDirectory;
+          assert.equal(verificationContext.runDirectory, join(f.workspace, 'runs', context.runId));
+        },
+      };
+      return { status: 'READY', binding };
+    },
+  });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'PASSED');
+  assert.equal(readinessNativeDirectory, verificationNativeDirectory);
+  assert.equal(readinessNativeDirectory,
+    join(f.workspace, 'runs', state.runId, 'artifacts', '3', '1', 'native'));
+});
+
+test('production Stage 4 completes the real readiness gate before Worker dispatch', async t => {
+  const f = await fixture(t);
+  await mkdir(f.inputs.projectPath, { recursive: true });
+  await writeFile(join(f.template, 'package.json'), '{"name":"stage4-template"}');
+  execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: f.template });
+  execFileSync('git', ['add', '.'], { cwd: f.template });
+  execFileSync('git', ['-c', 'user.name=test', '-c', 'user.email=test@example.invalid',
+    'commit', '-q', '-m', 'fixture'], { cwd: f.template });
+  const templateCommit = execFileSync('git', ['rev-parse', 'HEAD'], {
+    cwd: f.template, encoding: 'utf8',
+  }).trim();
+  let workerCalls = 0;
+  const stage4Run = async (_command, args) => {
+    const output = args[args.indexOf('--output') + 1];
+    await writeFile(output, JSON.stringify({
+      schema_version: 1,
+      game: f.inputs.gameIdentity,
+      workspace: f.inputs.projectPath,
+      page_roots: [f.inputs.projectPath],
+      resolved_inputs: {
+        background_dir: null,
+        homepage_research: null,
+        icon_zip: null,
+        keywords: null,
+        materials_dir: null,
+        template_selection_report: null,
+        template_copy_manifest: null,
+      },
+      keyword_count: 0,
+      materials: [],
+      icon_zip: { members: [], missing: [] },
+      git: { is_repo: false, root: null, changes: [] },
+      confirmation_required: false,
+      errors: [],
+      warnings: [],
+      ready: true,
+    }));
+    return { exitCode: 0 };
+  };
+  const gate = createStage4ReadinessGate({
+    run: stage4Run,
+    pythonCommand: process.execPath,
+    gitCommand: '/usr/bin/git',
+    clock: () => 1_700_000_000_000,
+  });
+  const p = await f.create({
+    templateSnapshot: {
+      checkout: f.template,
+      commit: templateCommit,
+      templateRoot: f.template,
+    },
+    stage4ReadinessCapability: undefined,
+    stagePreflight: gate,
+    executor: async (skill, context) => {
+      if (skill === api.STAGES[3]) {
+        workerCalls++;
+        assert.equal(context.stage4Readiness.attestation.nativeDirectory, context.nativeDirectory);
+      }
+      return f.good(skill, context);
+    },
+  });
+  const state = await advance(p, 4);
+  await chmod(join(f.workspace, 'runs', state.runId, 'artifacts', '3', '1',
+    'host-readiness'), 0o700);
+
+  assert.equal(state.stages[3].status, 'PASSED', JSON.stringify(state.stages[3]));
+  assert.equal(workerCalls, 1);
+  assert.match(state.stages[3].checkpoint.readinessDigest, /^[a-f0-9]{64}$/);
+});
+
+test('executor rejects conflicting runtime directories before Stage 4 readiness work', async t => {
+  const f = await fixture(t);
+  let stage4RunCalls = 0;
+  const executor = createSkillExecutor({
+    researchPython: process.execPath,
+    stage4Run: async () => { stage4RunCalls++; },
+  });
+  await assert.rejects(executor.stagePreflight(api.STAGES[3], {
+    runId: 'runtime-context-mismatch',
+    runDirectory: join(f.root, 'wrong-run'),
+    outputDirectory: join(f.workspace, 'runs/runtime-context-mismatch/artifacts/3/1'),
+  }), /STAGE_RUNTIME_CONTEXT_MISMATCH/);
+  assert.equal(stage4RunCalls, 0);
 });
 
 test('production Stage 4 fails closed without a Host readiness provider', async t => {
