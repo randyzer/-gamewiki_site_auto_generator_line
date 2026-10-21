@@ -385,7 +385,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           'Read context.hostEvidence.routePublicationViolations and the routePublication section of HOST_EVIDENCE.json. Any violation, unprovable dynamic route, published noindex page, draft without noindex, draft sitemap entry, or public link to a draft requires a non-PASSED result.',
           `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
-      'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.',
+      ...(homepageResearch ? [
+        'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.'
+      ] : []),
       `Template phase: only use a configured template root and copy to ${stagedTemplate ? 'context.templateCopyDestination' : 'projectPath'}. Never modify the template source.`,
       ...(context.templateCopyDestination ? [
         'Use context.templateCopyDestination as --destination for the locked copy_template.py dry-run and copy. Its atomic staging sibling stays under runDirectory/template-copy. projectPath and researchDirectory are read-only.',
@@ -394,7 +396,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
       ...(skill === STAGE.CONTENT_INTEGRATION ? [
         `Stage 4 directory contract: nativeDirectory is the isolated Worker execution and artifact directory; context.inputs.projectPath (${JSON.stringify(project)}) is the authoritative target site directory. Do not infer projectPath from cwd.`,
-        'Stage 4 readiness contract: the Host readiness attestation is authoritative and its readiness is READY. Read context.stage4Readiness.path as immutable Host evidence. Do not rerun or redefine the Stage 4 readiness preflight, project path, Git requirement, or dirty-worktree decision. A non-Git site accepted by the Host is ready for integration. Never initialize Git or change repository configuration.'
+        'Stage 4 readiness contract: the Host readiness attestation is authoritative and its readiness is READY. Read context.stage4Readiness.path as immutable Host evidence. Do not rerun or redefine the Stage 4 readiness preflight, project path, Git requirement, or dirty-worktree decision. A non-Git site accepted by the Host is ready for integration. Never initialize Git or change repository configuration.',
+        'Stage 4 does not require image generation. Follow the Skill media policy by removing or neutralizing misleading demo media and recording missing screenshot, trailer, attribution or rights needs in CONTENT_GAPS.md. Lack of image_generation or view_image is not a blocker.'
       ] : []),
       ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
         'The host verified and approved context.researchHandoff. Its manifest is the only authority for keyword material status and publication disposition: COMPLETED must be PUBLISHED, PARTIAL may only be DRAFT with noindex or have no route/source, and BLOCKED must have no route/source. Preserve every PENDING row. The host derives ROUTE_PUBLICATION_MANIFEST.json; do not return that host-owned artifact role.'
