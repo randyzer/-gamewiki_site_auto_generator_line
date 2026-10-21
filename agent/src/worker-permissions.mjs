@@ -1,4 +1,4 @@
-import { dirname, isAbsolute, join, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, normalize, resolve } from 'node:path';
 import { realpath, readFile, stat } from 'node:fs/promises';
 import { inside, safePath, sha256 } from './files.mjs';
 import { STAGE, PYTHON_STAGES } from './stages.mjs';
@@ -102,6 +102,23 @@ export const deploymentExecutionApproved = (skill, context) => skill === STAGE.D
   context.mode === 'execute' && context.permissions?.productionDeployment === true &&
   /^[a-f0-9]{64}$/.test(context.approvedPlan?.digest ?? '');
 
+async function verifiedTemplateSnapshotCheckout(context) {
+  try {
+    const snapshot = context.templateSnapshot;
+    const roots = context.templateRoots;
+    if (!snapshot || typeof snapshot !== 'object' ||
+        !isAbsolute(snapshot.checkout) || resolve(snapshot.checkout) !== snapshot.checkout ||
+        !isAbsolute(snapshot.templateRoot) || resolve(snapshot.templateRoot) !== snapshot.templateRoot ||
+        typeof snapshot.subtree !== 'string' || !snapshot.subtree || isAbsolute(snapshot.subtree) ||
+        normalize(snapshot.subtree) !== snapshot.subtree || snapshot.subtree === '..' || snapshot.subtree.startsWith('../') ||
+        !/^[a-f0-9]{40}$/.test(snapshot.commit ?? '') || basename(snapshot.checkout) !== snapshot.commit ||
+        join(snapshot.checkout, snapshot.subtree) !== snapshot.templateRoot ||
+        !Array.isArray(roots) || roots.length !== 1 || roots[0] !== snapshot.templateRoot) throw Error();
+    await safePath(snapshot.checkout, [snapshot.checkout]);
+    return snapshot.checkout;
+  } catch { throw Error('WORKER_TEMPLATE_SNAPSHOT_INVALID'); }
+}
+
 export async function stageWorkerPermissions(skill, context, {
   writePaths = [], pythonToolPaths = [], gitToolPaths = [], researchToolPaths = [], researchReadOnlyPaths = [], deploymentTools,
 } = {}) {
@@ -129,7 +146,9 @@ export async function stageWorkerPermissions(skill, context, {
     if (sha256(await readFile(path)) !== context.homepageMediaEvidenceSha256) throw Error('WORKER_MEDIA_EVIDENCE_CHANGED');
     readPaths.push(path);
   }
-  if (skill === STAGE.TEMPLATE_SELECTION) readPaths.push(...(context.templateRoots ?? []));
+  if (skill === STAGE.TEMPLATE_SELECTION) {
+    readPaths.push(await verifiedTemplateSnapshotCheckout(context), ...context.templateRoots);
+  }
   if (PYTHON_STAGES.includes(skill)) readPaths.push(...pythonToolPaths);
   if (GIT_STAGES.includes(skill)) readPaths.push(...gitToolPaths);
   if (skill === STAGE.KEYWORD_RESEARCH) readPaths.push(...researchToolPaths);

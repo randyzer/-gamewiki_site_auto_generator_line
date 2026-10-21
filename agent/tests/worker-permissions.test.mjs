@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, rm, writeFile, readFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile, readFile, symlink } from 'node:fs/promises';
 import { join, dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { AGENT_ROOT } from '../src/skill-lock.mjs';
@@ -9,6 +9,63 @@ import { sha256 } from '../src/files.mjs';
 import { syntheticOfficialSources, syntheticHomepageReadiness, syntheticHomepageMedia } from './helpers.mjs';
 import { STAGES } from '../src/stages.mjs';
 
+async function withTemplateSnapshot(context, root, commit = 'f'.repeat(40)) {
+  const checkout = join(root, 'template-cache', commit);
+  const templateRoot = join(checkout, 'template');
+  await Promise.all([join(checkout, '.git'), templateRoot].map(path => mkdir(path, { recursive: true })));
+  return { ...context, templateRoots: [templateRoot], templateSnapshot: {
+    repository: 'https://example.invalid/templates.git', ref: 'main', subtree: 'template',
+    commit, checkout, templateRoot,
+  } };
+}
+
+test('Stage 3 grants only its host-verified snapshot checkout and rejects forged snapshot bindings', async t => {
+  const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
+  const id = 'TEST-template-snapshot-permissions-' + randomUUID();
+  const runDirectory = join(AGENT_ROOT, 'runs', id), commit = 'a'.repeat(40);
+  const cache = join(runDirectory, 'template-cache'), checkout = join(cache, commit);
+  const templateRoot = join(checkout, 'template'), nativeDirectory = join(runDirectory, 'artifacts/2/1/native');
+  const site = join(AGENT_ROOT, 'workspaces', id, 'site');
+  await Promise.all([join(checkout, '.git'), templateRoot, nativeDirectory, site].map(path => mkdir(path, { recursive: true })));
+  t.after(async () => {
+    await rm(runDirectory, { recursive: true, force: true });
+    await rm(join(AGENT_ROOT, 'workspaces', id), { recursive: true, force: true });
+  });
+  const snapshot = { repository: 'https://example.invalid/templates.git', ref: 'main', subtree: 'template',
+    commit, checkout, templateRoot };
+  const context = { runDirectory, nativeDirectory, inputs: { projectPath: site }, upstream: [],
+    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') }, permissions: { siteWrites: false },
+    templateRoots: [templateRoot], templateSnapshot: snapshot };
+  const { config } = await stageWorkerPermissions('game-site-template-selector', context);
+  assert.ok(config.includes(JSON.stringify(checkout) + '="read"'));
+  assert.ok(config.includes(JSON.stringify(templateRoot) + '="read"'));
+  assert.equal(config.includes(JSON.stringify(cache) + '="read"'), false);
+  assert.equal(config.includes(JSON.stringify(join(checkout, '.git')) + '="write"'), false);
+  assert.equal(config.includes(JSON.stringify(site) + '="write"'), false);
+  assert.match(config, /network=\{enabled=false\}/);
+
+  const invalid = async templateSnapshot => assert.rejects(
+    stageWorkerPermissions('game-site-template-selector', { ...context, templateSnapshot }),
+    /WORKER_TEMPLATE_SNAPSHOT_INVALID/);
+  await invalid({ ...snapshot, checkout: join(cache, 'b'.repeat(40)) });
+  await invalid({ ...snapshot, templateRoot: join(checkout, 'other') });
+  await assert.rejects(stageWorkerPermissions('game-site-template-selector', {
+    ...context, templateRoots: [templateRoot, join(checkout, 'other')],
+  }), /WORKER_TEMPLATE_SNAPSHOT_INVALID/);
+  await invalid({ ...snapshot, checkout: 'relative-checkout' });
+  await invalid({ ...snapshot, commit: 'not-a-commit' });
+  await invalid({ ...snapshot, commit: 'b'.repeat(40) });
+
+  const symlinkParent = join(runDirectory, 'linked-cache');
+  await mkdir(symlinkParent);
+  const linkedCheckout = join(symlinkParent, commit);
+  await symlink(checkout, linkedCheckout);
+  await invalid({ ...snapshot, checkout: linkedCheckout, templateRoot: join(linkedCheckout, 'template') });
+
+  const ordinary = await stageWorkerPermissions('game-site-content-integrator', context);
+  assert.equal(ordinary.config.includes(JSON.stringify(checkout) + '="read"'), false);
+});
+
 test('only Git stages receive fixed Git read access, without network or Git writes in plan', async t => {
   const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
   const root = join(AGENT_ROOT, 'runs', 'TEST-git-permissions-' + randomUUID());
@@ -16,8 +73,10 @@ test('only Git stages receive fixed Git read access, without network or Git writ
   await mkdir(nativeDirectory, { recursive: true }); await mkdir(gitRoot);
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const [index, skill] of STAGES.entries()) {
-    const result = await stageWorkerPermissions(skill, { runDirectory: root, nativeDirectory,
-      inputs: {}, mode: 'plan', skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') } },
+    const base = { runDirectory: root, nativeDirectory,
+      inputs: {}, mode: 'plan', skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') } };
+    const context = index === 2 ? await withTemplateSnapshot(base, root) : base;
+    const result = await stageWorkerPermissions(skill, context,
     { gitToolPaths: [gitRoot] });
     assert.equal(result.config.includes(JSON.stringify(gitRoot) + '="read"'), index >= 2);
     assert.equal(result.commandNetworkAllowed, index === 1);
@@ -54,10 +113,10 @@ test('pinned CLI and Code Mode host identities are rechecked before every worker
     sha256: sha256('SYNTHETIC CLI IDENTITY') };
   const codeModeHostIdentity = { path: codeModeHost, realPath: codeModeHost,
     sha256: sha256('SYNTHETIC CODE MODE HOST') };
-  const context = { runId: id, outputDirectory: join(root, 'artifacts/2/1'),
+  const context = await withTemplateSnapshot({ runId: id, outputDirectory: join(root, 'artifacts/2/1'),
     inputs: { gameIdentity: 'SYNTHETIC', projectPath: join(root, 'site') },
     permissions: { siteWrites: false }, requiredArtifacts: [],
-    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') } };
+    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') } }, root);
   let calls = 0;
   const execute = createSkillExecutor({ command, commandIdentity, codeModeHostIdentity, run: async (_command, args) => {
     calls++; await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
@@ -121,7 +180,8 @@ test('only stages with Python Skill scripts receive the pinned runtime as read-o
     'game-site-template-selector', 'game-site-content-integrator', 'game-site-ui-ux-audit-optimizer',
     'game-site-prelaunch-gate'];
   for (const skill of pythonStages) {
-    const { config } = await stageWorkerPermissions(skill, context, { pythonToolPaths: [pythonRoot] });
+    const stageContext = skill === 'game-site-template-selector' ? await withTemplateSnapshot(context, runDirectory) : context;
+    const { config } = await stageWorkerPermissions(skill, stageContext, { pythonToolPaths: [pythonRoot] });
     assert.ok(config.includes(JSON.stringify(pythonRoot) + '="read"'), `${skill} reads Python runtime`);
     assert.equal(config.includes(JSON.stringify(pythonRoot) + '="write"'), false, `${skill} cannot write Python runtime`);
     assert.equal(config.includes('network={enabled=true}'), skill === 'game-innerpage-keyword-information-research',
@@ -175,13 +235,14 @@ test('actual executor retains sandbox/approval bounds and grants only task-owned
     await rm(join(AGENT_ROOT, 'workspaces', runId), { recursive: true, force: true });
   });
   let captured;
+  const context = await withTemplateSnapshot({ runId, outputDirectory,
+    inputs: { gameIdentity: 'SYNTHETIC TEST', projectPath }, permissions: { siteWrites: true },
+    skillLock: { source: join(AGENT_ROOT, 'config', 'workflow.json') }, requiredArtifacts: [] }, root);
   await createSkillExecutor({ run: async (_command, args, options) => {
     captured = { args, options };
     await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
       status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC PERMISSIONS TEST'] }));
-  } })('game-site-template-selector', { runId, outputDirectory,
-    inputs: { gameIdentity: 'SYNTHETIC TEST', projectPath }, permissions: { siteWrites: true },
-    skillLock: { source: join(AGENT_ROOT, 'config', 'workflow.json') }, requiredArtifacts: [] });
+  } })('game-site-template-selector', context);
   assert.equal(captured.args.includes('--sandbox'), false);
   assert.ok(captured.args.includes('default_permissions="agent-worker"'));
   assert.ok(captured.args.includes('--ignore-user-config'));
@@ -221,6 +282,9 @@ test('only the homepage stage gets image generation and image viewing', async t 
     await mkdir(outputDirectory, { recursive: true });
     let captured;
     // The homepage stage sits behind the frozen G0 browser gate, so drive it with synthetic host evidence.
+    let context = { runId, outputDirectory, inputs: { gameIdentity: 'SYNTHETIC TEST', projectPath: join(AGENT_ROOT, 'workspaces', runId, 'site') },
+      permissions: { siteWrites: false }, skillLock: { source: join(AGENT_ROOT, 'config', 'workflow.json') }, requiredArtifacts: [] };
+    if (skill === 'game-site-template-selector') context = await withTemplateSnapshot(context, root);
     await createSkillExecutor({ browserHumanDialog: true, requestBrowserLaunch: async () => true,
       inspectHomepageReadiness: syntheticHomepageReadiness, collectHomepageSourceEvidence: syntheticOfficialSources,
       collectHomepageMediaEvidence: syntheticHomepageMedia,
@@ -234,8 +298,7 @@ test('only the homepage stage gets image generation and image viewing', async t 
       captured = args;
       await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
         status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC IMAGE TOOL TEST'] }));
-    } })(skill, { runId, outputDirectory, inputs: { gameIdentity: 'SYNTHETIC TEST', projectPath: join(AGENT_ROOT, 'workspaces', runId, 'site') },
-      permissions: { siteWrites: false }, skillLock: { source: join(AGENT_ROOT, 'config', 'workflow.json') }, requiredArtifacts: [] });
+    } })(skill, context);
     return captured;
   };
   const flag = (args, mode, feature) => args.some((value, i) => value === mode && args[i + 1] === feature);

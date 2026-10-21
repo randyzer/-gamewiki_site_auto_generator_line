@@ -15,6 +15,16 @@ import { goodResult } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 
+async function templateSnapshotContext(root) {
+  const commit = 'd'.repeat(40), checkout = join(root, 'template-cache', commit);
+  const templateRoot = join(checkout, 'template');
+  await Promise.all([join(checkout, '.git'), templateRoot].map(path => mkdir(path, { recursive: true })));
+  return { templateRoots: [templateRoot], templateSnapshot: {
+    repository: 'https://example.invalid/templates.git', ref: 'main', subtree: 'template',
+    commit, checkout, templateRoot,
+  } };
+}
+
 async function fixture(t) {
   const root = await mkdtemp(join(await realpath(tmpdir()), 'config-paths-'));
   t.after(() => rm(root, { recursive: true, force: true }));
@@ -149,12 +159,14 @@ test('permission matrix restricts research and site writes to their stages', asy
   const f = await fixture(t), site = join(f.projectRoot, 'site');
   const runDirectory = join(f.configuration.workspace, 'runs/permissions');
   const nativeDirectory = join(runDirectory, 'artifacts/0/1/native'); await mkdir(nativeDirectory, { recursive: true });
+  const snapshotContext = await templateSnapshotContext(runDirectory);
   for (const [skill, mode] of [...STAGES.map(s => [s, 'plan']), [STAGE.DEPLOYMENT_PLAN, 'execute']]) {
     const context = { runDirectory, nativeDirectory,
       inputs: { projectPath: site, paths: { siteDirectory: site, researchDirectory: f.researchDirectory, rawKeywordsFile: f.rawKeywordsFile } },
       skillLock: { source: join(f.root, 'codex-skills', STAGES[0] + '.md') }, mode,
       permissions: { siteWrites: true, productionDeployment: mode === 'execute' },
-      approvedPlan: { digest: 'a'.repeat(64), artifacts: [] } };
+      approvedPlan: { digest: 'a'.repeat(64), artifacts: [] },
+      ...(skill === STAGE.TEMPLATE_SELECTION ? snapshotContext : {}) };
     const profile = await stageWorkerPermissions(skill, context, { writePaths: [f.projectRoot, site, f.researchDirectory, f.rawKeywordsFile] });
     const rules = JSON.parse(profile.config.match(/filesystem=\{(.*?)\},network/)[1].replaceAll('=', ':').replace(/^/, '{') + '}');
     assert.equal(rules[f.researchDirectory], [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(skill) ? 'write' : 'read', skill);
@@ -246,12 +258,13 @@ test('template executor stages atomic copy inside run without a site write grant
     await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'BLOCKED', artifacts: [],
       missing_inputs: [], evidence: ['synthetic capture only'] }));
   } });
+  const snapshotContext = await templateSnapshotContext(join(f.configuration.workspace, 'runs/template'));
   await execute(STAGE.TEMPLATE_SELECTION, { runId: 'template',
     outputDirectory: join(f.configuration.workspace, 'runs/template/artifacts/2/1'),
     inputs: { gameIdentity: 'Path fixture', projectPath: site, paths: {
       siteDirectory: site, researchDirectory: f.researchDirectory, rawKeywordsFile: f.rawKeywordsFile } },
     permissions: { siteWrites: true }, requiredArtifacts: [],
-    skillLock: { source: join(f.root, 'codex-skills', STAGE.TEMPLATE_SELECTION + '.md') } });
+    skillLock: { source: join(f.root, 'codex-skills', STAGE.TEMPLATE_SELECTION + '.md') }, ...snapshotContext });
   assert.equal(seen, true);
 });
 
