@@ -345,7 +345,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       ...(pythonStage ? [
         `Use ${pythonCommand} for every Python Skill script. Invoke this exact absolute path; do not discover or fall back to another python or python3.`,
       ] : []),
-      'Research phases: use nativeDirectory as the research game/work directory; leave projectPath empty for template copying.',
+      ...([STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(skill) ? [
+        'Research phases: use nativeDirectory as the research game/work directory; leave projectPath empty for template copying.'
+      ] : []),
       ...(homepageResearch ?
         [context.homepageSourceCaptures
            ? 'Read context.homepageSourceCaptures.manifestPath and verify every file SHA256. Use view_image for the screenshots. Write research only from CAPTURED public source evidence, and clearly record rejected/failed pages and missing facts.'
@@ -383,6 +385,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'Write TEMPLATE_SELECTION_REPORT.md and TEMPLATE_RESIDUE_SCAN.json under templateCopyDestination/docs. Return these and templateCopyDestination/docs/template-copy-manifest.json as artifacts. Leave the manifest and copied files unchanged. The host checks and merges the complete temporary tree into projectPath, rewrites only manifest.destination, then removes the temporary directory. Never merge, rename or delete any site files yourself.'
       ] : []),
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
+      ...(skill === STAGE.CONTENT_INTEGRATION ? [
+        `Stage 4 directory contract: nativeDirectory is the isolated Worker execution and artifact directory; context.inputs.projectPath (${JSON.stringify(project)}) is the authoritative target site directory. Do not infer projectPath from cwd.`,
+        'Stage 4 readiness contract: run the locked content-integration preflight against context.inputs.projectPath. The locked content-integration preflight is authoritative for Stage readiness: git.is_repo=false is a warning when that preflight reports ready=true. A standalone Git status exit 128 is not a missing projectPath or a Stage blocker, and must not replace the locked preflight result. Git status is observational only. Never initialize Git or change repository configuration. Never override ready=false, actual missing files, invalid paths, artifact conflicts, or the existing-project dirty-worktree confirmation requirement.'
+      ] : []),
       ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
         'The host verified and approved context.researchHandoff. Its manifest is the only authority for keyword material status and publication disposition: COMPLETED must be PUBLISHED, PARTIAL may only be DRAFT with noindex or have no route/source, and BLOCKED must have no route/source. Preserve every PENDING row. The host derives ROUTE_PUBLICATION_MANIFEST.json; do not return that host-owned artifact role.'
       ] : []),
