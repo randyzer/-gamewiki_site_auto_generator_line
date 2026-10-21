@@ -1,7 +1,7 @@
 import { constants as fsConstants } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { access, chmod, lstat, mkdir, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
-import { join, dirname, relative } from 'node:path';
+import { join, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
 import { installDependencies, buildAndServe } from './site-preview-host.mjs';
@@ -32,6 +32,15 @@ import { createStage4ReadinessGate, verifyStage4ReadinessBinding } from './stage
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
 
 const shellQuote = value => `'${value.replaceAll("'", `'"'"'`)}'`;
+
+function runtimeContext(original) {
+  const runDirectory = dirname(dirname(dirname(original.outputDirectory)));
+  const nativeDirectory = join(original.outputDirectory, 'native');
+  if ((original.runDirectory !== undefined && resolve(original.runDirectory) !== resolve(runDirectory)) ||
+      (original.nativeDirectory !== undefined && resolve(original.nativeDirectory) !== resolve(nativeDirectory)))
+    throw Error('STAGE_RUNTIME_CONTEXT_MISMATCH: Pipeline and executor runtime paths differ');
+  return { ...original, runDirectory, nativeDirectory };
+}
 
 async function replaceReadOnlyFile(path, content, root, mode) {
   await safePath(path, [root]);
@@ -97,8 +106,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         !original.runId || typeof original.inputs?.gameIdentity!=='string'))
       return {status:'BLOCKED',artifacts:[],missing_inputs:[],
         evidence:['APPROVAL_CAPABILITY_UNAVAILABLE: no verified run-scoped browser approval context']};
-    const context = { ...original, runDirectory: dirname(dirname(dirname(original.outputDirectory))),
-      nativeDirectory: join(original.outputDirectory, 'native') };
+    const context = runtimeContext(original);
     if (skill === STAGE.CONTENT_INTEGRATION) {
       if (!context.stage4Readiness) return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
         evidence: ['HOST_STAGE4_READINESS_REQUIRED: the trusted Host did not provide a READY attestation'] };
@@ -599,8 +607,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
   };
   executor.stagePreflight = async (skill, original) => {
     if (skill !== STAGE.CONTENT_INTEGRATION) return { status: 'NOT_APPLICABLE' };
-    const context = { ...original, runDirectory: dirname(dirname(dirname(original.outputDirectory))),
-      nativeDirectory: join(original.outputDirectory, 'native') };
+    const context = runtimeContext(original);
     let pythonCommand, gitTool;
     try {
       await access(researchPython, fsConstants.X_OK);

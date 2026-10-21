@@ -201,6 +201,37 @@ test('production pipeline passes verified locked Skill file descriptors to Stage
     'runtime descriptors must not rewrite the compatible persisted lock');
 });
 
+test('production Stage 4 uses one runtime context for readiness creation and verification', async t => {
+  const f = await fixture(t);
+  let readinessNativeDirectory, verificationNativeDirectory;
+  const p = await f.create({
+    stage4ReadinessCapability: undefined,
+    stagePreflight: async (skill, context) => {
+      if (skill !== api.STAGES[3]) return { status: 'NOT_APPLICABLE' };
+      readinessNativeDirectory = context.nativeDirectory;
+      const binding = {
+        path: join(context.outputDirectory, 'host-readiness', 'STAGE4_READINESS_ATTESTATION.json'),
+        digest: 'a'.repeat(64),
+        fileSha256: 'b'.repeat(64),
+        attestation: { kind: 'STAGE4_READINESS_ATTESTATION', runId: context.runId,
+          stage: skill, attempt: context.checkpoint.attempt, readiness: 'READY' },
+        verifyCurrentState: async verificationContext => {
+          verificationNativeDirectory = verificationContext.nativeDirectory;
+          assert.equal(verificationContext.runDirectory, join(f.workspace, 'runs', context.runId));
+        },
+      };
+      return { status: 'READY', binding };
+    },
+  });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'PASSED');
+  assert.equal(readinessNativeDirectory, verificationNativeDirectory);
+  assert.equal(readinessNativeDirectory,
+    join(f.workspace, 'runs', state.runId, 'artifacts', '3', '1', 'native'));
+});
+
 test('production Stage 4 fails closed without a Host readiness provider', async t => {
   const f = await fixture(t); let installed = 0, workers = 0;
   const p = await f.create({ stage4ReadinessCapability: undefined, stagePreflight: undefined,
