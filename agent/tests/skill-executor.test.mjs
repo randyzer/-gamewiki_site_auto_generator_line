@@ -138,6 +138,41 @@ test('template selection blocks before worker launch when fixed Git is unavailab
   assert.equal(workerCalls, 0);
 });
 
+test('content integration prompt preserves the host non-Git new-site contract', async t => {
+  const f = await fixture(t), projectPath = f.inputs.paths.siteDirectory;
+  await mkdir(f.inputs.paths.researchDirectory, { recursive: true });
+  let invoked;
+  const executor = createSkillExecutor({ researchPython: process.execPath,
+    run: async (_command, args, options) => {
+      invoked = { args, options };
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC CONTRACT TEST'] }));
+    } });
+  await executor(STAGES[3], {
+    runId: 'content-nongit-contract',
+    inputs: { ...f.inputs, projectPath },
+    outputDirectory: join(f.configuration.workspace, 'runs/content-nongit-contract/artifacts/3/1'),
+    requiredArtifacts: ARTIFACTS[3],
+    skillLock: { source: join(f.root, 'skills', STAGES[3] + '.md') },
+    upstream: [{ skill: STAGES[0], artifacts: [] }, { skill: STAGES[1], artifacts: [] }],
+    mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false },
+  });
+
+  const prompt = invoked.options.input;
+  const nativeDirectory = join(f.configuration.workspace,
+    'runs/content-nongit-contract/artifacts/3/1/native');
+  assert.equal(invoked.options.cwd, nativeDirectory);
+  assert.match(prompt, /nativeDirectory is the isolated Worker execution and artifact directory/);
+  assert.ok(prompt.includes(`context.inputs.projectPath (${JSON.stringify(projectPath)}) is the authoritative target site directory`));
+  assert.match(prompt, /Do not infer projectPath from cwd/);
+  assert.match(prompt, /locked content-integration preflight is authoritative for Stage readiness/);
+  assert.match(prompt, /git\.is_repo=false is a warning when that preflight reports ready=true/);
+  assert.match(prompt, /standalone Git status exit 128 is not a missing projectPath or a Stage blocker/);
+  assert.match(prompt, /Never initialize Git or change repository configuration/);
+  assert.match(prompt, /Never override ready=false, actual missing files, invalid paths, artifact conflicts, or the existing-project dirty-worktree confirmation requirement/);
+  assert.doesNotMatch(prompt, /Git initialization is required/);
+});
+
 test('research handoff preserves native filenames, verifies bytes and never overwrites conflicts', async t => {
   const f = await fixture(t), runDirectory = join(f.configuration.workspace, 'runs/fixture');
   await mkdir(runDirectory, { recursive: true });
