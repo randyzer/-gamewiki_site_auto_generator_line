@@ -31,9 +31,26 @@ async function fixture(t, overrides = {}) {
   await Promise.all([source, workspace, template].map(p => mkdir(p)));
   const skills = [];
   for (const name of [...api.STAGES, api.AD_STAGE]) {
+    if (name === api.STAGES[3]) {
+      const skillRoot = join(source, name);
+      const path = join(skillRoot, 'SKILL.md');
+      const preflightPath = join(skillRoot, 'scripts/preflight.py');
+      await mkdir(join(skillRoot, 'scripts'), { recursive: true });
+      await Promise.all([
+        writeFile(path, name),
+        writeFile(preflightPath, 'locked stage 4 preflight'),
+      ]);
+      skills.push({ name, source: path, sha256: hash(name), available: true,
+        files: [
+          { path, sha256: hash(name) },
+          { path: preflightPath, sha256: hash('locked stage 4 preflight') },
+        ] });
+      continue;
+    }
     const path = join(source, `${name}.md`);
     await writeFile(path, name);
-    skills.push({ name, source: path, sha256: hash(name), available: true });
+    skills.push({ name, source: path, sha256: hash(name), available: true,
+      files: [{ path, sha256: hash(name) }] });
   }
   const inventoryPath = join(root, 'inventory.json');
   await writeFile(inventoryPath, JSON.stringify({ skillRoot: source, skills }));
@@ -158,6 +175,30 @@ test('Stage 4 Host readiness runs before dependency installation and Worker disp
 
   assert.deepEqual(order.slice(-4), [api.STAGES[2], 'readiness', 'install', api.STAGES[3]]);
   assert.match(p.snapshot().stages[3].checkpoint.readinessDigest, /^[a-f0-9]{64}$/);
+});
+
+test('production pipeline passes verified locked Skill file descriptors to Stage 4 readiness', async t => {
+  const f = await fixture(t);
+  let descriptor;
+  const p = await f.create({
+    stage4ReadinessCapability: undefined,
+    stagePreflight: async (skill, context) => {
+      if (skill !== api.STAGES[3]) return { status: 'NOT_APPLICABLE' };
+      descriptor = context.skillLock.files?.find(file => file.path.endsWith('/scripts/preflight.py'));
+      return { status: 'BLOCKED', evidence: ['fixture readiness stop'], missing_inputs: [] };
+    },
+  });
+
+  await advance(p, 4);
+
+  assert.deepEqual(descriptor, {
+    path: join(f.source, api.STAGES[3], 'scripts/preflight.py'),
+    sha256: hash('locked stage 4 preflight'),
+  });
+  const manifest = JSON.parse(await readFile(join(f.workspace, 'runs', p.snapshot().runId,
+    'manifest.json'), 'utf8'));
+  assert.equal(Object.hasOwn(manifest.lock.skills[3], 'files'), false,
+    'runtime descriptors must not rewrite the compatible persisted lock');
 });
 
 test('production Stage 4 fails closed without a Host readiness provider', async t => {

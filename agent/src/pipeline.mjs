@@ -109,7 +109,7 @@ function checkInputs(value) {
   return clone(value);
 }
 
-async function readInventory(path, names) {
+async function readInventory(path, names, { includeFiles = false } = {}) {
   const bytes = await regularFile(path);
   const inventory = JSON.parse(bytes.toString('utf8'));
   assert(isAbsolute(inventory.skillRoot ?? '') && Array.isArray(inventory.skills), 'Invalid inventory');
@@ -122,12 +122,15 @@ async function readInventory(path, names) {
     assert(entry.available === true && isAbsolute(entry.source ?? '') &&
       inside(resolve(inventory.skillRoot), resolve(entry.source)) && /^[a-f0-9]{64}$/.test(entry.sha256), `Invalid skill inventory: ${name}`);
     assert(hash(await regularFile(entry.source)) === entry.sha256, `SHA256 mismatch: ${name}`);
+    const files = [];
     for (const file of entry.files ?? []) {
       assert(isAbsolute(file.path ?? '') && inside(dirname(entry.source), file.path), 'Invalid skill dependency path');
       assert(hash(await regularFile(file.path)) === file.sha256, `Skill dependency SHA256 mismatch: ${name}`);
+      files.push({ path: resolve(file.path), sha256: file.sha256 });
     }
     skills.push({ name, source: resolve(entry.source), sha256: entry.sha256,
-      contractVersion: entry.contractVersion ?? null, version: entry.version ?? entry.commit ?? null });
+      contractVersion: entry.contractVersion ?? null, version: entry.version ?? entry.commit ?? null,
+      ...(includeFiles ? { files } : {}) });
   }
   return { inventoryPath: path, inventorySha256: hash(bytes), skillRoot: resolve(inventory.skillRoot),
     sourceTree: inventory.sourceTree ?? null, skills };
@@ -218,6 +221,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   const lockPath = join(runDirectory, '.lock');
   let busy = false;
   let state;
+  let verifiedSkillLocks = [];
   let protectedRoots = [...templateRoots];
   let initialResumeDigest = expectedManifestSha256;
 
@@ -413,8 +417,11 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
 
   async function verifyLock() {
     assert(state.lock, state.lockError ?? 'No verified skill lock; create a new run after repair');
-    const current = await readInventory(inventoryPath, state.lock.skills.map(s => s.name));
-    assert(JSON.stringify(current) === JSON.stringify(state.lock), 'Skill inventory changed during locked run');
+    const current = await readInventory(inventoryPath, state.lock.skills.map(s => s.name), { includeFiles: true });
+    const compatibleLock = { ...current,
+      skills: current.skills.map(({ files: _files, ...skill }) => skill) };
+    assert(JSON.stringify(compatibleLock) === JSON.stringify(state.lock), 'Skill inventory changed during locked run');
+    verifiedSkillLocks = current.skills;
   }
 
   // Stage 7 runs twice: first to write a plan, then, after the operator approves its digest, to execute it.
@@ -691,7 +698,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths, outputDirectory, templateRoots,
           ...(state.inputs.paths ? { readOnlyInputPaths: Object.keys(INPUT_COPY_PREFIX).map(key => state.inputs[key]).filter(nonempty) } : {}),
           templateSnapshot: state.templateSnapshot ?? null, requiredArtifacts: requiredArtifacts(index),
-          skillLock: state.lock.skills.find(s => s.name === stage.skill),
+          skillLock: (stage.skill === STAGE.CONTENT_INTEGRATION ? verifiedSkillLocks : state.lock.skills)
+            .find(s => s.name === stage.skill),
           upstream: state.stages.slice(0, index), checkpoint: stage.checkpoint, mode,
           ...(researchHandoff ? { researchHandoff: {
             reference: findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.researchHandoff,
