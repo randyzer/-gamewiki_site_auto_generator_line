@@ -26,6 +26,9 @@ async function fixture(t) {
   const researchDirectory = join(siteDirectory, 'backgroundinformation');
   const rawKeywordsFile = join(researchDirectory, 'keyword-materials/关键词.md');
   const source = join(runDirectory, 'template-copy/site');
+  const commit = 'c'.repeat(40), checkout = join(root, 'template-cache', commit);
+  const templateRoot = join(checkout, 'template');
+  await Promise.all([join(checkout, '.git'), templateRoot].map(path => mkdir(path, { recursive: true })));
   await mkdir(dirname(rawKeywordsFile), { recursive: true });
   await writeFile(rawKeywordsFile, '# original user keywords');
   await writeFile(join(siteDirectory, '.DS_Store'), 'mac metadata');
@@ -39,7 +42,9 @@ async function fixture(t) {
     destination_verified: true, custom: { retained: true }, files: Object.fromEntries(Object.entries(files).map(([p,b]) => [p,sha256(b)])) };
   await writeFile(join(source, 'docs/template-copy-manifest.json'), JSON.stringify(manifest));
   return { root, source, manifest, context: { runDirectory, inputs: { projectPath: siteDirectory,
-    paths: { siteDirectory, researchDirectory, rawKeywordsFile } } } };
+    paths: { siteDirectory, researchDirectory, rawKeywordsFile } }, templateRoots: [templateRoot],
+    templateSnapshot: { repository: 'https://example.invalid/templates.git', ref: 'main', subtree: 'template',
+      commit, checkout, templateRoot } } };
 }
 async function snapshot(root) {
   const files = {};

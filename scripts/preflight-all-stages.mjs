@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { constants } from 'node:fs';
-import { access, mkdtemp, mkdir, readFile, readdir, realpath, rm, writeFile } from 'node:fs/promises';
+import { access, mkdtemp, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -370,6 +370,27 @@ async function prepareFixture(root, stage) {
   await runProcess(git, ['-c', 'core.hooksPath=/dev/null', '-c', 'commit.gpgsign=false',
     '-c', 'user.name=Environment Selfcheck', '-c', 'user.email=selfcheck@example.invalid',
     'commit', '--quiet', '--allow-empty', '-m', 'Temporary environment selfcheck fixture'], gitOptions);
+  let templateContext = {};
+  if (stage === 3) {
+    const staging = join(stageRoot, 'template-staging'), templateRoot = join(staging, 'template');
+    await mkdir(templateRoot, { recursive: true });
+    await writeFile(join(templateRoot, 'README.md'), 'Environment selfcheck template fixture\n');
+    const templateGitOptions = { ...gitOptions, cwd: staging };
+    await runProcess(git, ['-c', 'core.hooksPath=/dev/null', 'init', '--quiet'], templateGitOptions);
+    await runProcess(git, ['-c', 'core.hooksPath=/dev/null', 'add', 'template/README.md'], templateGitOptions);
+    await runProcess(git, ['-c', 'core.hooksPath=/dev/null', '-c', 'commit.gpgsign=false',
+      '-c', 'user.name=Environment Selfcheck', '-c', 'user.email=selfcheck@example.invalid',
+      'commit', '--quiet', '-m', 'Temporary template snapshot fixture'], templateGitOptions);
+    const commit = (await runProcess(git, ['rev-parse', 'HEAD'], templateGitOptions)).stdout.trim();
+    const checkout = join(stageRoot, 'template-cache', commit);
+    await mkdir(dirname(checkout), { recursive: true });
+    await rename(staging, checkout);
+    const pinnedTemplateRoot = join(checkout, 'template');
+    templateContext = { templateRoots: [pinnedTemplateRoot], templateSnapshot: {
+      repository: 'https://example.invalid/environment-selfcheck-templates.git', ref: 'main', subtree: 'template',
+      commit, checkout, templateRoot: pinnedTemplateRoot,
+    } };
+  }
   return { runId: `ENV_SELFCHECK-stage-${stage}`, runDirectory, outputDirectory,
     nativeDirectory: join(outputDirectory, 'native'), mode: stage === 7 ? 'plan' : 'audit-only',
     skillLock: { source: join(repository, 'codex-skills', STAGES[stage - 1], 'SKILL.md') },
@@ -378,6 +399,7 @@ async function prepareFixture(root, stage) {
     inputs: { gameIdentity: 'Environment Selfcheck', objective: 'Environment probes only',
       projectPath: siteDirectory, rawKeywordsFile, paths: { siteDirectory, researchDirectory, rawKeywordsFile } },
     permissions: { siteWrites: [3, 4].includes(stage), productionDeployment: false },
+    ...templateContext,
   };
 }
 

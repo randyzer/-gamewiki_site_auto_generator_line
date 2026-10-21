@@ -15,12 +15,22 @@ import { runProcess } from '../src/process.mjs';
 import { locateGitTool } from '../src/deployment-tools.mjs';
 import { GIT_STAGES } from '../src/worker-permissions.mjs';
 
+async function withTemplateSnapshot(context, root, commit = 'e'.repeat(40)) {
+  const checkout = join(root, 'template-cache', commit);
+  const templateRoot = join(checkout, 'template');
+  await Promise.all([join(checkout, '.git'), templateRoot].map(path => mkdir(path, { recursive: true })));
+  return { ...context, templateRoots: [templateRoot], templateSnapshot: {
+    repository: 'https://example.invalid/templates.git', ref: 'main', subtree: 'template',
+    commit, checkout, templateRoot,
+  } };
+}
+
 test('non-browser executor preserves its sandbox and BLOCKED output without fabricating artifacts', async t => {
   const f = await fixture(t); let invoked;
-  const context = { runId: 'worker-fixture', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+  const context = await withTemplateSnapshot({ runId: 'worker-fixture', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
     outputDirectory: join(f.configuration.workspace, 'runs/worker-fixture/artifacts/2/1'), requiredArtifacts: ARTIFACTS[2],
-    skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [], mode: 'audit-only', templateRoots: f.configuration.templateRoots,
-    permissions: { siteWrites: false, productionDeployment: false } };
+    skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [], mode: 'audit-only',
+    permissions: { siteWrites: false, productionDeployment: false } }, f.root);
   const executor = createSkillExecutor({ command: 'offline-codex-fixture', researchPython: process.execPath,
     environment: { ...process.env, DYLD_LIBRARY_PATH: '/synthetic/untrusted-dyld' },
     run: async (command, args, options) => {
@@ -63,6 +73,8 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.equal(profile.includes(JSON.stringify(dirname(gitTool.path)) + '="read"'), false);
   for (const gitPath of gitTool.readPaths)
     assert.ok(profile.includes(JSON.stringify(gitPath) + '="read"'));
+  assert.ok(profile.includes(JSON.stringify(context.templateSnapshot.checkout) + '="read"'));
+  assert.equal(profile.includes(JSON.stringify(dirname(context.templateSnapshot.checkout)) + '="read"'), false);
   assert.ok(profile.includes(JSON.stringify(gitZdotDirectory) + '="read"'));
   assert.equal(profile.includes(JSON.stringify(gitZdotDirectory) + '="write"'), false);
   assert.match(profile, /network=\{enabled=false\}/);
@@ -78,12 +90,12 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
 
 test('Git shell environment is replaced atomically for retries without accepting linked targets', async t => {
   const f = await fixture(t);
-  const context = { runId: 'git-zdot-retry',
+  const context = await withTemplateSnapshot({ runId: 'git-zdot-retry',
     inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
     outputDirectory: join(f.configuration.workspace, 'runs/git-zdot-retry/artifacts/2/1'),
     requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') },
-    upstream: [], mode: 'audit-only', templateRoots: f.configuration.templateRoots,
-    permissions: { siteWrites: false, productionDeployment: false } };
+    upstream: [], mode: 'audit-only',
+    permissions: { siteWrites: false, productionDeployment: false } }, f.root);
   let calls = 0;
   const executor = createSkillExecutor({ researchPython: process.execPath, run: async (_command, args) => {
     calls++;
@@ -150,17 +162,18 @@ test('real adapter rejects fabricated empty directories as PASSED', async t => {
     const output = args[args.indexOf('--output-last-message') + 1];
     await writeFile(output, JSON.stringify({ status: 'PASSED', summary: 'fake', evidence: ['fake'], missing_inputs: [], artifacts: [{ kind: 'TEMPLATE_SELECTION_REPORT.md', path: outputDirectory }] }));
   } });
-  await assert.rejects(executor(STAGES[2], { runId: 'fake', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+  const context = await withTemplateSnapshot({ runId: 'fake', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
     outputDirectory, requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') }, upstream: [],
-    mode: 'audit-only', permissions: { siteWrites: false } }), /outside temporary directory|outside allowed roots|regular artifact/);
+    mode: 'audit-only', permissions: { siteWrites: false } }, f.root);
+  await assert.rejects(executor(STAGES[2], context), /outside temporary directory|outside allowed roots|regular artifact/);
 });
 
 test('worker result failures identify parsing and native validation separately', async t => {
   const f = await fixture(t);
-  const context = { runId: 'diagnostic', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
+  const context = await withTemplateSnapshot({ runId: 'diagnostic', inputs: { ...f.inputs, projectPath: join(f.configuration.workspace, 'site') },
     outputDirectory: join(f.configuration.workspace, 'runs/diagnostic/artifacts/2/1'),
     requiredArtifacts: ARTIFACTS[2], skillLock: { source: join(f.root, 'skills', STAGES[2] + '.md') },
-    upstream: [], mode: 'audit-only', permissions: { siteWrites: false } };
+    upstream: [], mode: 'audit-only', permissions: { siteWrites: false } }, f.root);
   for (const [bytes, operation] of [
     ['invalid-json', 'read-worker-result'],
     [JSON.stringify({ status: 'PASSED', evidence: ['fixture'], missing_inputs: [], artifacts: [] }), 'validate-template-copy'],
@@ -706,10 +719,11 @@ test('keyword shell inherits only credential names without exposing values in la
     await mkdir(f.f.inputs.paths.researchDirectory, { recursive: true });
     for (const index of [0, 2, 3, 4, 5, 6, 7]) {
       const otherRunDirectory = join(f.root, `other-runs/${index}`);
-      const stageContext = { ...f.context, outputDirectory: join(otherRunDirectory, `artifacts/${index}/1`),
+      let stageContext = { ...f.context, outputDirectory: join(otherRunDirectory, `artifacts/${index}/1`),
         mode: 'plan-only', requiredArtifacts: ARTIFACTS[index],
         upstream: [0, 1].map(i => ({ skill: STAGES[i], artifacts: [] })),
         skillLock: { source: join(f.f.root, 'skills', ALL_STAGES[index] + '.md') } };
+      if (index === 2) stageContext = await withTemplateSnapshot(stageContext, otherRunDirectory);
       const count = f.calls.length;
       await f.executor(ALL_STAGES[index], stageContext);
       assert.equal(f.calls.length, count + 1);
