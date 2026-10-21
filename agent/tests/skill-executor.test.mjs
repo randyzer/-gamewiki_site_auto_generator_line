@@ -84,7 +84,7 @@ test('non-browser executor preserves its sandbox and BLOCKED output without fabr
   assert.ok(invoked.options.input.includes(`Do not execute ${JSON.stringify(gitTool.path)}, /opt/homebrew/bin/git, /usr/bin/git`));
   assert.ok(invoked.options.input.includes(`Use ${process.execPath} for every Python Skill script`));
   assert.match(invoked.options.input, /Do not invoke browser commands/);
-  assert.match(invoked.options.input, /actual callable image-generation tool/);
+  assert.doesNotMatch(invoked.options.input, /actual callable image-generation tool/);
   assert.match(invoked.options.input, /No commit, push/);
 });
 
@@ -182,6 +182,9 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.match(prompt, /Never initialize Git or change repository configuration/);
   assert.match(prompt, /readiness is READY/);
   assert.doesNotMatch(prompt, /Git initialization is required/);
+  assert.doesNotMatch(prompt, /Image generation requires an actual callable image-generation tool/);
+  assert.match(prompt, /Stage 4 does not require image generation/);
+  assert.match(prompt, /Lack of image_generation or view_image is not a blocker/);
 });
 
 test('content integration cannot launch Worker without Host readiness attestation', async t => {
@@ -268,15 +271,16 @@ test('legacy browser approvals cannot change the offline homepage worker permiss
     outputDirectory: join(f.configuration.workspace, 'runs/scoped/artifacts/0/1'), requiredArtifacts: ARTIFACTS[0],
     skillLock: { source: join(f.root, 'skills', STAGES[0] + '.md') }, permissions: { siteWrites: false } };
   const calls = [];
-  const run = async (_command, args) => {
-    calls.push(args); await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+  const run = async (_command, args, options) => {
+    calls.push({ args, options }); await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
       status: 'BLOCKED', evidence: ['offline native fixture incomplete'], missing_inputs: [], artifacts: [] }));
   };
   for (const browserLaunchApproval of [null, { type: 'scoped-bsk-launch', runId: 'wrong' }])
     assert.equal((await createSkillExecutor({ run, browserLaunchApproval })(STAGES[0], context)).status, 'BLOCKED');
   assert.equal(calls.length, 2);
-  for (const args of calls) {
+  for (const { args, options } of calls) {
     assert.match(args.join(' '), /network=\{enabled=false\}/);
+    assert.match(options.input, /actual callable image-generation tool/);
     assert.ok(!args.join(' ').includes('mcp_servers.scoped_game_bsk'));
   }
 });
