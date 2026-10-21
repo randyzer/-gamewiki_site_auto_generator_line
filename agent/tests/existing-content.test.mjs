@@ -116,11 +116,18 @@ async function integrated(f) {
 test('real executor applies existing adoption before worker and validates generated output through the artifact adapter', async t => {
   const f=await setup(t);
   const {createSkillExecutor}=await import('../src/skill-executor.mjs');
+  const {prepareExistingContent}=await import('../src/existing-content-adapter.mjs');
   const {STAGES,ARTIFACTS}=await import('../src/pipeline.mjs');
   const outputDirectory=join(f.runDirectory,'artifacts/3/1');
-  const context={...f.context,outputDirectory,nativeDirectory:join(outputDirectory,'native'),requiredArtifacts:ARTIFACTS[3]};
+  const readinessPath=join(outputDirectory,'host-readiness/STAGE4_READINESS_ATTESTATION.json');
+  await mkdir(dirname(readinessPath),{recursive:true});await writeFile(readinessPath,'{}',{mode:0o400});
+  const attestation={readiness:'READY'};
+  const context={...f.context,outputDirectory,nativeDirectory:join(outputDirectory,'native'),requiredArtifacts:ARTIFACTS[3],
+    existingContent:await prepareExistingContent(f.context),stage4Readiness:{path:readinessPath,digest:'a'.repeat(64),
+      fileSha256:'b'.repeat(64),attestation}};
   let workerCalled=false;
-  const executor=createSkillExecutor({validationOptions:{existingContentBuild:offlineBuild},run:async(_command,args,options)=>{
+  const executor=createSkillExecutor({validationOptions:{existingContentBuild:offlineBuild},
+    verifyStage4Readiness:async binding=>binding.attestation,run:async(_command,args,options)=>{
     workerCalled=true;
     assert.ok(args.includes('--ignore-user-config'));
     assert.equal(args.includes('--sandbox'),false);

@@ -141,8 +141,19 @@ test('template selection blocks before worker launch when fixed Git is unavailab
 test('content integration prompt preserves the host non-Git new-site contract', async t => {
   const f = await fixture(t), projectPath = f.inputs.paths.siteDirectory;
   await mkdir(f.inputs.paths.researchDirectory, { recursive: true });
-  let invoked;
+  const outputDirectory = join(f.configuration.workspace, 'runs/content-nongit-contract/artifacts/3/1');
+  const readinessPath = join(outputDirectory, 'host-readiness/STAGE4_READINESS_ATTESTATION.json');
+  await mkdir(dirname(readinessPath), { recursive: true });
+  await writeFile(readinessPath, '{}', { mode: 0o400 });
+  const attestation = { readiness: 'READY' };
+  const stage4Readiness = { path: readinessPath, digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64), attestation };
+  let invoked, readinessVerifications = 0;
   const executor = createSkillExecutor({ researchPython: process.execPath,
+    verifyStage4Readiness: async binding => {
+      readinessVerifications++;
+      assert.equal(binding, stage4Readiness);
+      return attestation;
+    },
     run: async (_command, args, options) => {
       invoked = { args, options };
       await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
@@ -151,11 +162,11 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   await executor(STAGES[3], {
     runId: 'content-nongit-contract',
     inputs: { ...f.inputs, projectPath },
-    outputDirectory: join(f.configuration.workspace, 'runs/content-nongit-contract/artifacts/3/1'),
+    outputDirectory,
     requiredArtifacts: ARTIFACTS[3],
     skillLock: { source: join(f.root, 'skills', STAGES[3] + '.md') },
     upstream: [{ skill: STAGES[0], artifacts: [] }, { skill: STAGES[1], artifacts: [] }],
-    mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false },
+    mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false }, stage4Readiness,
   });
 
   const prompt = invoked.options.input;
@@ -165,12 +176,27 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.match(prompt, /nativeDirectory is the isolated Worker execution and artifact directory/);
   assert.ok(prompt.includes(`context.inputs.projectPath (${JSON.stringify(projectPath)}) is the authoritative target site directory`));
   assert.match(prompt, /Do not infer projectPath from cwd/);
-  assert.match(prompt, /locked content-integration preflight is authoritative for Stage readiness/);
-  assert.match(prompt, /git\.is_repo=false is a warning when that preflight reports ready=true/);
-  assert.match(prompt, /standalone Git status exit 128 is not a missing projectPath or a Stage blocker/);
+  assert.match(prompt, /Host readiness attestation is authoritative/);
+  assert.equal(readinessVerifications, 3, 'Host binding is checked on entry, before and after Worker execution');
+  assert.match(prompt, /Do not rerun or redefine the Stage 4 readiness preflight/);
   assert.match(prompt, /Never initialize Git or change repository configuration/);
-  assert.match(prompt, /Never override ready=false, actual missing files, invalid paths, artifact conflicts, or the existing-project dirty-worktree confirmation requirement/);
+  assert.match(prompt, /readiness is READY/);
   assert.doesNotMatch(prompt, /Git initialization is required/);
+});
+
+test('content integration cannot launch Worker without Host readiness attestation', async t => {
+  const f = await fixture(t); let calls = 0;
+  const result = await createSkillExecutor({ researchPython: process.execPath,
+    run: async () => { calls++; } })(STAGES[3], {
+    runId: 'content-readiness-required',
+    inputs: { ...f.inputs, projectPath: f.inputs.paths.siteDirectory },
+    outputDirectory: join(f.configuration.workspace, 'runs/content-readiness-required/artifacts/3/1'),
+    requiredArtifacts: ARTIFACTS[3], skillLock: { source: join(f.root, 'skills', STAGES[3] + '.md') },
+    upstream: [], mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false },
+  });
+  assert.equal(result.status, 'BLOCKED');
+  assert.match(result.evidence.join('\n'), /HOST_STAGE4_READINESS_REQUIRED/);
+  assert.equal(calls, 0);
 });
 
 test('research handoff preserves native filenames, verifies bytes and never overwrites conflicts', async t => {
@@ -418,6 +444,7 @@ async function keywordLaunchFixture(t, { versionFailure = null, withCookies = tr
     return snapshotSiteEvidence(directory);
   };
   const executor = createSkillExecutor({ environment, researchPython: python, researchYtDlp: link, timeoutMs: executorTimeoutMs,
+    verifyStage4Readiness: async binding => binding.attestation,
     previewSite: async () => ({ url: 'http://127.0.0.1:3001', stop: async () => {} }),
     auditSite: hostEvidence, prelaunchSite: hostEvidence,
     run: async (command, args, options) => {
@@ -759,6 +786,12 @@ test('keyword shell inherits only credential names without exposing values in la
         upstream: [0, 1].map(i => ({ skill: STAGES[i], artifacts: [] })),
         skillLock: { source: join(f.f.root, 'skills', ALL_STAGES[index] + '.md') } };
       if (index === 2) stageContext = await withTemplateSnapshot(stageContext, otherRunDirectory);
+      if (index === 3) {
+        const path = join(stageContext.outputDirectory, 'host-readiness/STAGE4_READINESS_ATTESTATION.json');
+        await mkdir(dirname(path), { recursive: true }); await writeFile(path, '{}', { mode: 0o400 });
+        stageContext.stage4Readiness = { path, digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64),
+          attestation: { readiness: 'READY' } };
+      }
       const count = f.calls.length;
       await f.executor(ALL_STAGES[index], stageContext);
       assert.equal(f.calls.length, count + 1);

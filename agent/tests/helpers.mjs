@@ -4,7 +4,7 @@ import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sha256 } from '../src/files.mjs';
 import { randomUUID } from 'node:crypto';
-import { STAGES, ARTIFACTS } from '../src/pipeline.mjs';
+import { STAGES, ARTIFACTS, OFFLINE_STAGE4_READINESS_CAPABILITY } from '../src/pipeline.mjs';
 
 // Legacy orchestration tests explicitly substitute a host. This is not an issuer
 // and does not test approval security; entry-approval.test.mjs owns that coverage.
@@ -27,7 +27,8 @@ export async function fixture(t, { local = false } = {}) {
   const inventoryPath = join(root, 'inventory.json');
   await writeFile(inventoryPath, JSON.stringify({ skillRoot: source, skills }));
   const rawKeywordsFile = join(root, 'keywords.md'); await writeFile(rawKeywordsFile, '# Offline fixture\n- Fixture guide');
-  return { root, configuration: { workspace, inventoryPath, templateRoots: [template] },
+  return { root, configuration: { workspace, inventoryPath, templateRoots: [template],
+    stage4ReadinessCapability: OFFLINE_STAGE4_READINESS_CAPABILITY },
     inputs: { gameIdentity: 'Offline Fixture', objective: 'Isolated offline integration test', rawKeywordsFile,
       paths: { siteDirectory: join(root, 'site'), researchDirectory: join(root, 'backgroundinformation') },
       canonicalRequired: false, siteRevision: 'fixture-v1', domain: 'fixture.test', repo: 'fixture/repo', branch: 'main',

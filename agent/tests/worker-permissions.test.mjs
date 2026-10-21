@@ -102,6 +102,29 @@ test('worker gets only digest-checked media receipt read access, never media-dir
     homepageMediaEvidencePath: join(nativeDirectory, 'worker.json') }), /MEDIA_EVIDENCE_INVALID/);
 });
 
+test('Stage 4 Worker receives the Host readiness attestation as an exact read-only file', async t => {
+  const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
+  const runId = 'TEST-stage4-attestation-' + randomUUID(), runDirectory = join(AGENT_ROOT, 'runs', runId);
+  const outputDirectory = join(runDirectory, 'artifacts/3/1');
+  const nativeDirectory = join(outputDirectory, 'native');
+  const projectPath = join(AGENT_ROOT, 'workspaces', runId, 'site');
+  const path = join(outputDirectory, 'host-readiness/STAGE4_READINESS_ATTESTATION.json');
+  await mkdir(nativeDirectory, { recursive: true }); await mkdir(projectPath, { recursive: true });
+  await mkdir(dirname(path), { recursive: true }); await writeFile(path, '{}', { mode: 0o400 });
+  t.after(async () => {
+    await rm(runDirectory, { recursive: true, force: true });
+    await rm(join(AGENT_ROOT, 'workspaces', runId), { recursive: true, force: true });
+  });
+  const context = { runDirectory, outputDirectory, nativeDirectory, inputs: { projectPath }, upstream: [],
+    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') }, permissions: { siteWrites: true },
+    stage4Readiness: { path, digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64) } };
+
+  const permissions = await stageWorkerPermissions('game-site-content-integrator', context);
+
+  assert.ok(permissions.config.includes(JSON.stringify(path) + '="read"'));
+  assert.equal(permissions.config.includes(JSON.stringify(dirname(path)) + '="write"'), false);
+});
+
 test('pinned CLI and Code Mode host identities are rechecked before every worker call', async t => {
   const id = 'TEST-pinned-cli-' + randomUUID(), root = join(AGENT_ROOT, 'runs', id);
   await mkdir(root); t.after(() => rm(root, { recursive: true, force: true }));

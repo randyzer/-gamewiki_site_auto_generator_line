@@ -180,7 +180,11 @@ export async function stageWorkerPermissions(skill, context, {
       if (artifact.path && inside(runDirectory, artifact.path)) readPaths.push(artifact.path);
     readPaths.push(...(deploymentTools?.readPaths ?? []));
   }
-  const stageReadOnlyPaths = skill === STAGE.KEYWORD_RESEARCH ? researchReadOnlyPaths : [];
+  const stageReadOnlyPaths = [
+    ...(skill === STAGE.KEYWORD_RESEARCH ? researchReadOnlyPaths : []),
+    ...(skill === STAGE.CONTENT_INTEGRATION && context.stage4Readiness?.path
+      ? [context.stage4Readiness.path] : []),
+  ];
   const workerWritePaths = [nativeDirectory, ...writePaths];
   for (const readOnlyPath of stageReadOnlyPaths) {
     if (workerWritePaths.some(writePath => inside(writePath, readOnlyPath) || inside(readOnlyPath, writePath)))

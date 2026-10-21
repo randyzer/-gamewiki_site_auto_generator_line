@@ -27,6 +27,7 @@ import { keywordServiceStops, keywordServiceResumes, suspendSubtitleRequests } f
 import { assessKeywordEvidenceOutcome, KEYWORD_EVIDENCE_CLAIMS_FILE, KEYWORD_EVIDENCE_OUTCOME_FILE,
   keywordEvidenceState, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
+import { createStage4ReadinessGate, verifyStage4ReadinessBinding } from './stage4-readiness.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
 
@@ -67,14 +68,16 @@ async function replaceFileInWorkerReadOnlyDirectory(directory, filename, content
 }
 
 export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex', commandIdentity = null,
-  codeModeHostIdentity = null, run = runProcess, timeoutMs,
+    codeModeHostIdentity = null, run = runProcess, stage4Run = runProcess, timeoutMs,
   validationOptions = {},
   environment = process.env,
   researchPython = '/opt/homebrew/bin/python3',
   workerGit = '/opt/homebrew/bin/git',
   researchYtDlp = '/opt/homebrew/bin/yt-dlp', deploymentTools, convertIcon = convertIconOnHost,
   previewSite = buildAndServe, auditSite = collectSiteAudit, prelaunchSite = collectPrelaunch,
-  captureHomepageSources = collectHomepageSources } = {}) {
+  captureHomepageSources = collectHomepageSources,
+  verifyStage4Readiness = verifyStage4ReadinessBinding,
+  stage4DirtyApprovalVerifier } = {}) {
   const executor = async (skill, original) => {
     stageDefinition(skill);
     const deploying = skill === STAGE.DEPLOYMENT_PLAN && original?.mode === 'execute';
@@ -96,6 +99,13 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         evidence:['APPROVAL_CAPABILITY_UNAVAILABLE: no verified run-scoped browser approval context']};
     const context = { ...original, runDirectory: dirname(dirname(dirname(original.outputDirectory))),
       nativeDirectory: join(original.outputDirectory, 'native') };
+    if (skill === STAGE.CONTENT_INTEGRATION) {
+      if (!context.stage4Readiness) return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
+        evidence: ['HOST_STAGE4_READINESS_REQUIRED: the trusted Host did not provide a READY attestation'] };
+      try { await verifyStage4Readiness(context.stage4Readiness, context); }
+      catch (error) { return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
+        evidence: [`HOST_STAGE4_READINESS_INVALID: ${sanitizeDiagnosticText(error.message)}`] }; }
+    }
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
     const keywordResearch = skill === STAGE.KEYWORD_RESEARCH;
     const keywordBudget = keywordResearch ? keywordResearchBudget(context.inputs.keywordResearchBudget) : null;
@@ -163,17 +173,6 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       context.templateCopyDestination = templateCopyDirectory(context.runDirectory);
       await safePath(context.templateCopyDestination, [context.runDirectory]);
       await mkdir(dirname(context.templateCopyDestination), { recursive: true });
-    }
-    if (skill === STAGE.CONTENT_INTEGRATION) {
-      if (context.inputs.mode === 'existing-project') {
-        try {
-          context.researchHandoff = await prepareResearchHandoff(context);
-          context.existingContent ??= await prepareExistingContent(context);
-        } catch (error) {
-          if (error.code !== 'CONTRACT_INCOMPATIBLE') throw error;
-          return { status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: [error.message] };
-        }
-      } else context.researchHandoff = await prepareResearchHandoff(context);
     }
     let researchToolPaths = [], researchReadOnlyPaths = [], researchYtDlpCommand = researchYtDlp;
     let researchTlsEnvironment = {}, researchShellEnvironment = {};
@@ -387,7 +386,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
       ...(skill === STAGE.CONTENT_INTEGRATION ? [
         `Stage 4 directory contract: nativeDirectory is the isolated Worker execution and artifact directory; context.inputs.projectPath (${JSON.stringify(project)}) is the authoritative target site directory. Do not infer projectPath from cwd.`,
-        'Stage 4 readiness contract: run the locked content-integration preflight against context.inputs.projectPath. The locked content-integration preflight is authoritative for Stage readiness: git.is_repo=false is a warning when that preflight reports ready=true. A standalone Git status exit 128 is not a missing projectPath or a Stage blocker, and must not replace the locked preflight result. Git status is observational only. Never initialize Git or change repository configuration. Never override ready=false, actual missing files, invalid paths, artifact conflicts, or the existing-project dirty-worktree confirmation requirement.'
+        'Stage 4 readiness contract: the Host readiness attestation is authoritative and its readiness is READY. Read context.stage4Readiness.path as immutable Host evidence. Do not rerun or redefine the Stage 4 readiness preflight, project path, Git requirement, or dirty-worktree decision. A non-Git site accepted by the Host is ready for integration. Never initialize Git or change repository configuration.'
       ] : []),
       ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
         'The host verified and approved context.researchHandoff. Its manifest is the only authority for keyword material status and publication disposition: COMPLETED must be PUBLISHED, PARTIAL may only be DRAFT with noindex or have no route/source, and BLOCKED must have no route/source. Preserve every PENDING row. The host derives ROUTE_PUBLICATION_MANIFEST.json; do not return that host-owned artifact role.'
@@ -412,6 +411,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       'Produce only the structured result after finishing and validating actual files.',
     ].join('\n');
     const executeWorker = async () => {
+      if (skill === STAGE.CONTENT_INTEGRATION)
+        await verifyStage4Readiness(context.stage4Readiness, context);
       if (keywordRecovery) await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
       if (keywordBudget) {
         const started = Date.now();
@@ -434,6 +435,13 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           { cwd: context.nativeDirectory, input: prompt(), env, timeoutMs: keywordBudget?.timeoutMs ?? timeoutMs ?? 600000 }));
       } catch (error) { workerFailure = error; throw error;
       } finally {
+        if (skill === STAGE.CONTENT_INTEGRATION) {
+          try { await verifyStage4Readiness(context.stage4Readiness, context); }
+          catch (error) {
+            if (!workerFailure) throw error;
+            workerFailure.message += '; STAGE4_READINESS_CHANGED_AFTER_WORKER';
+          }
+        }
         if (context.hostEvidence) await verifySiteEvidence(context.hostEvidence);
         if (context.homepageSourceCaptures) await verifySiteEvidence(context.homepageSourceCaptures);
         if (keywordRecovery) {
@@ -588,6 +596,42 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     return skill === STAGE.DEPLOYMENT_PLAN && validated.status === 'PASSED' && !deploying
       ? diagnosticStep('publish-deployment-plan', () => publishDeploymentPlan(context, validated)) : validated;
     } finally { if (preview) await preview.stop(); }
+  };
+  executor.stagePreflight = async (skill, original) => {
+    if (skill !== STAGE.CONTENT_INTEGRATION) return { status: 'NOT_APPLICABLE' };
+    const context = { ...original, runDirectory: dirname(dirname(dirname(original.outputDirectory))),
+      nativeDirectory: join(original.outputDirectory, 'native') };
+    let pythonCommand, gitTool;
+    try {
+      await access(researchPython, fsConstants.X_OK);
+      pythonCommand = await realpath(researchPython);
+      await access(pythonCommand, fsConstants.X_OK);
+      gitTool = await locateGitTool(workerGit);
+    } catch (error) {
+      return { status: 'BLOCKED', evidence: [sanitizeDiagnosticText(error.message, environment)], missing_inputs: [] };
+    }
+    const gate = createStage4ReadinessGate({ run: stage4Run, pythonCommand, gitCommand: gitTool.invocationPath,
+      dirtyWorktreeApprovalVerifier: stage4DirtyApprovalVerifier,
+      gitEnvironment: { GIT_EXEC_PATH: gitTool.execPath,
+        ...(gitTool.librarySearchPaths.length ? { DYLD_LIBRARY_PATH: gitTool.librarySearchPaths.join(':') } : {}),
+        GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' },
+      prepare: async readinessContext => {
+        try {
+          const contextPatch = { researchHandoff: await prepareResearchHandoff(readinessContext) };
+          if (readinessContext.inputs.mode === 'existing-project')
+            contextPatch.existingContent = await prepareExistingContent(readinessContext);
+          return contextPatch;
+        } catch (error) {
+          if (error.code !== 'CONTRACT_INCOMPATIBLE') throw error;
+          error.code = 'STAGE4_HOST_PREPARATION_BLOCKED';
+          throw error;
+        }
+      } });
+    try { return await gate(skill, context); }
+    catch (error) {
+      if (error.code !== 'STAGE4_HOST_PREPARATION_BLOCKED') throw error;
+      return { status: 'BLOCKED', evidence: [sanitizeDiagnosticText(error.message)], missing_inputs: [] };
+    }
   };
   executor.installDependencies = installDependencies;
   return executor;

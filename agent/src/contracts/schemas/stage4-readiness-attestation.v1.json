@@ -1,0 +1,60 @@
+{
+  "$id": "stage4-readiness-attestation.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "policyVersion", "runId", "stage", "attempt",
+    "siteMode", "projectPath", "nativeDirectory", "templateRoot", "templateSnapshotCommit",
+    "skillLockSha256", "preflightScriptSha256", "inputDigest", "upstreamDigest",
+    "researchHandoffDigest", "preflightExitCode", "preflightResultSha256", "git",
+    "readiness", "createdAtMs", "attestationDigest"
+  ],
+  "properties": {
+    "kind": { "const": "STAGE4_READINESS_ATTESTATION" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "HOST_STAGE4_READINESS_GATE" },
+    "policyVersion": { "const": "stage4-readiness-v1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "stage": { "const": "game-site-content-integrator" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "siteMode": { "type": "string", "minLength": 1 },
+    "projectPath": { "type": "string", "pattern": "^/" },
+    "nativeDirectory": { "type": "string", "pattern": "^/" },
+    "templateRoot": { "type": "string", "pattern": "^/" },
+    "templateSnapshotCommit": { "type": "string", "format": "git-sha" },
+    "skillLockSha256": { "type": "string", "format": "sha256" },
+    "preflightScriptSha256": { "type": "string", "format": "sha256" },
+    "inputDigest": { "type": "string", "format": "sha256" },
+    "upstreamDigest": { "type": "string", "format": "sha256" },
+    "researchHandoffDigest": { "type": "string", "format": "sha256" },
+    "preflightExitCode": { "type": "integer", "minimum": 0, "maximum": 255 },
+    "preflightResultSha256": { "type": "string", "format": "sha256" },
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["isRepo", "root", "changesSha256", "confirmationRequired", "approvedChangesSha256", "approvedBaselineDigest", "approvalConsumption"],
+      "properties": {
+        "isRepo": { "type": "boolean" },
+        "root": { "type": ["string", "null"] },
+        "changesSha256": { "type": "string", "format": "sha256" },
+        "confirmationRequired": { "type": "boolean" },
+        "approvedChangesSha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "approvedBaselineDigest": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "approvalConsumption": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["kind", "previewId", "snapshotSha256", "approvalDigest"],
+          "properties": {
+            "kind": { "const": "STAGE4_DIRTY_WORKTREE_APPROVAL_CONSUMPTION_V1" },
+            "previewId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" },
+            "snapshotSha256": { "type": "string", "format": "sha256" },
+            "approvalDigest": { "type": "string", "format": "sha256" }
+          }
+        }
+      }
+    },
+    "readiness": { "enum": ["READY", "BLOCKED", "INVALID"] },
+    "createdAtMs": { "type": "integer", "minimum": 0 },
+    "attestationDigest": { "type": "string", "format": "sha256" }
+  }
+}

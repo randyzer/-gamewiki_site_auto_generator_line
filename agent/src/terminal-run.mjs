@@ -13,6 +13,8 @@ import { createKeywordExecutionReceipt, keywordRecoveryDecision, normalizedJson 
 import { verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { consumeRunPreviewSnapshot, createRunPreviewSnapshot,
   loadRunPreviewSnapshot } from './run-preview-snapshot.mjs';
+import { createStage4DirtyApprovalVerifier,
+  validateStage4DirtyWorktreeApproval } from './stage4-dirty-approval.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 import { verifyResearchHandoffCandidate, verifyResearchHandoffApproval } from './research-handoff.mjs';
@@ -87,6 +89,8 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   const budget = keywordResearchBudget(inputs.keywordResearchBudget);
   const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
   const serviceResumes = keywordServiceResumes(inputs.keywordServiceResumes);
+  const dirtyApproval = inputs.stage4DirtyWorktreeApproval === undefined ? null :
+    validateStage4DirtyWorktreeApproval(inputs.stage4DirtyWorktreeApproval);
   let recovery;
   if (keywordRetry && !checkpointRecovery && !handoffApproval && inputs.keywordRecovery) {
     if (!manifest) throw Error('KEYWORD_RECOVERY_INVALID: recovery requires an existing run');
@@ -145,6 +149,14 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     `Keyword recovery decision: ${decision?.mode ?? '(not required)'}`,
     `Keyword evidence plan: ${evidencePlan ? `${evidencePlanDisplayPath ?? evidencePlan.path} SHA256 ${evidencePlan.sha256}` : '(not required)'}`,
     `Evidence tasks: ${evidencePlan?.plan.tasks.length ?? 0}`,
+    ...(dirtyApproval ? [
+      `Approve Stage 4 dirty worktree for attempt ${dirtyApproval.attempt}.`,
+      `  Project: ${dirtyApproval.projectPath}`,
+      `  Repository: ${dirtyApproval.repositoryRoot}`,
+      `  HEAD: ${dirtyApproval.headSha ?? '(unborn)'}`,
+      `  Git baseline SHA256: ${dirtyApproval.baselineDigest}`,
+      'This approval is valid only through the single-use preview snapshot and only for this exact Git baseline.',
+    ] : []),
     ...(evidencePlan ? evidencePlan.plan.tasks.map(task =>
       `  ${task.keyword}: ${task.tool} -> ${task.expectedEvidence}`) : []),
     ...(evidencePlan ? ['Pending raw row decisions:', ...evidencePlan.plan.pendingRows.map(item =>
@@ -224,6 +236,7 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
   stdout.write(summary);
   let confirmationBinding = 'interactive-y';
   let previewSnapshotBinding = null;
+  let previewConsumption = null;
   if (preview || confirm !== undefined) {
     const code = sha256(command + runId + summary + normalizedJson(approvedInputs)).slice(0, 16);
     if (preview) {
@@ -238,7 +251,7 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
     if (confirm !== code) throw Error(`CONFIRMATION_CODE_MISMATCH: provided ${JSON.stringify(confirm)}, expected ${code}. ` +
       'inputs.json may have changed, or RUN_ID or command may differ; preview again and ask the user for the current code.');
     if (snapshot) {
-      await consumeRunPreviewSnapshot(snapshot);
+      previewConsumption = await consumeRunPreviewSnapshot(snapshot);
       stdout.write('Confirmation method: preview-snapshot\n');
       confirmationBinding = `preview-snapshot:${snapshot.previewId}:${snapshot.snapshotSha256}:${code}`;
       previewSnapshotBinding = {
@@ -256,7 +269,10 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
     stdout.write('Cancelled; nothing was started.\n');
     return { status: 'CANCELLED', run_id: runId };
   }
-  const execute = createOrchestrator({ configuration, executor: executor ?? createSkillExecutor(),
+  const stage4DirtyApprovalVerifier = previewConsumption && inputs.stage4DirtyWorktreeApproval
+    ? createStage4DirtyApprovalVerifier({ previewConsumption, approvedInputs: inputs }) : undefined;
+  const execute = createOrchestrator({ configuration,
+    executor: executor ?? createSkillExecutor({ stage4DirtyApprovalVerifier }),
     approvalConsumer: operatorConfirmed, deploymentExecution: true });
   let keywordExecutionReceipt = null;
   if (command === 'retry' && inputs.keywordRecoveryDecision) {

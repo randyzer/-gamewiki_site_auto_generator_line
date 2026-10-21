@@ -58,7 +58,12 @@ async function fixture(t, overrides = {}) {
         : kind.endsWith('.json') ? '{}' : `Evidence for ${skill}`,
     })),
   });
+  const stagePreflight = async (skill, context) => skill === api.STAGES[3]
+    ? { status: 'READY', binding: { kind: 'OFFLINE_STAGE4_READINESS_BINDING_V1',
+      runId: context.runId, stage: skill, attempt: context.checkpoint.attempt } }
+    : { status: 'NOT_APPLICABLE' };
   const options = { workspace, inventoryPath, templateRoots: [template], inputs,
+    stage4ReadinessCapability: api.OFFLINE_STAGE4_READINESS_CAPABILITY, stagePreflight,
     installSiteDependencies: async () => ({ exitCode: 0, synthetic: true }),
     executor: async (skill, context) => { calls.push({ skill, context }); return good(skill, context); } };
   return { root, source, workspace, template, inputs, calls, options, good,
@@ -124,6 +129,96 @@ test('host installs once after template passes, before content; retry preserves 
   await p.updateUserInputs({ canonicalOrigin: 'https://example.test' }, { retry: true });
   await p.advance();
   assert.equal(order.filter(item => item === 'install').length, 1);
+});
+
+test('Stage 4 Host readiness runs before dependency installation and Worker dispatch', async t => {
+  const f = await fixture(t), order = [];
+  let binding;
+  const p = await f.create({
+    stagePreflight: async (skill, context) => {
+      if (skill !== api.STAGES[3]) return { status: 'NOT_APPLICABLE' };
+      order.push('readiness');
+      assert.equal(context.inputs.projectPath, f.inputs.projectPath);
+      binding = { kind: 'OFFLINE_STAGE4_READINESS_BINDING_V1', runId: context.runId,
+        stage: skill, attempt: context.checkpoint.attempt };
+      return { status: 'READY', binding, contextPatch: { researchHandoff: { manifest: 'host-owned' } } };
+    },
+    installSiteDependencies: async () => { order.push('install'); return { exitCode: 0 }; },
+    executor: async (skill, context) => {
+      order.push(skill);
+      if (skill === api.STAGES[3]) {
+        assert.deepEqual(context.stage4Readiness, binding);
+        assert.deepEqual(context.researchHandoff, { manifest: 'host-owned' });
+      }
+      return f.good(skill, context);
+    },
+  });
+
+  await advance(p, 4);
+
+  assert.deepEqual(order.slice(-4), [api.STAGES[2], 'readiness', 'install', api.STAGES[3]]);
+  assert.match(p.snapshot().stages[3].checkpoint.readinessDigest, /^[a-f0-9]{64}$/);
+});
+
+test('production Stage 4 fails closed without a Host readiness provider', async t => {
+  const f = await fixture(t); let installed = 0, workers = 0;
+  const p = await f.create({ stage4ReadinessCapability: undefined, stagePreflight: undefined,
+    installSiteDependencies: async () => { installed++; return { exitCode: 0 }; },
+    executor: async (skill, context) => { if (skill === api.STAGES[3]) workers++; return f.good(skill, context); } });
+  const state = await advance(p, 4);
+  assert.equal(state.stages[3].status, 'BLOCKED');
+  assert.match(state.stages[3].evidence.join('\n'), /HOST_STAGE4_READINESS_PROVIDER_REQUIRED/);
+  assert.equal(installed, 0);
+  assert.equal(workers, 0);
+});
+
+test('a serialized OFFLINE_TEST configuration value cannot bypass the production Stage 4 gate', async t => {
+  const f = await fixture(t); let workers = 0;
+  const p = await f.create({ stage4ReadinessCapability: undefined, stage4ReadinessMode: 'OFFLINE_TEST',
+    stagePreflight: undefined,
+    executor: async (skill, context) => { if (skill === api.STAGES[3]) workers++; return f.good(skill, context); } });
+  const state = await advance(p, 4);
+  assert.equal(state.stages[3].status, 'BLOCKED');
+  assert.match(state.stages[3].evidence.join('\n'), /HOST_STAGE4_READINESS_PROVIDER_REQUIRED/);
+  assert.equal(workers, 0);
+});
+
+test('a JSON-shaped imitation cannot recreate the offline Stage 4 capability', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.create({ stage4ReadinessCapability: {
+    kind: 'OFFLINE_STAGE4_READINESS_CAPABILITY' } }), /Invalid Stage 4 readiness capability/);
+});
+
+test('production Stage 4 rejects NOT_APPLICABLE and READY without an authoritative binding', async t => {
+  for (const readiness of [{ status: 'NOT_APPLICABLE' }, { status: 'READY' }]) {
+    const f = await fixture(t); let workers = 0;
+    const p = await f.create({ stage4ReadinessCapability: undefined,
+      stagePreflight: async skill => skill === api.STAGES[3] ? readiness : { status: 'NOT_APPLICABLE' },
+      executor: async (skill, context) => { if (skill === api.STAGES[3]) workers++; return f.good(skill, context); } });
+    const state = await advance(p, 4);
+    assert.equal(state.stages[3].status, 'BLOCKED');
+    assert.equal(workers, 0);
+  }
+});
+
+test('Stage 4 blocked Host readiness skips dependency installation and Worker dispatch', async t => {
+  const f = await fixture(t); let installed = 0, contentWorkers = 0;
+  const p = await f.create({
+    stagePreflight: async skill => skill === api.STAGES[3]
+      ? { status: 'BLOCKED', evidence: ['HOST_STAGE4_READINESS_BLOCKED'], missing_inputs: [] }
+      : { status: 'NOT_APPLICABLE' },
+    installSiteDependencies: async () => { installed++; return { exitCode: 0 }; },
+    executor: async (skill, context) => {
+      if (skill === api.STAGES[3]) contentWorkers++;
+      return f.good(skill, context);
+    },
+  });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'BLOCKED');
+  assert.equal(installed, 0);
+  assert.equal(contentWorkers, 0);
 });
 
 test('seven stages are ordered and missing startup inputs never call executor or create site', async t => {

@@ -20,7 +20,7 @@ export const STAGE_DEFINITIONS = Object.freeze([
   { name: STAGE.TEMPLATE_SELECTION, label: '模板选择与复制',
     artifacts: ['TEMPLATE_SELECTION_REPORT.md', 'template-copy-manifest.json', 'TEMPLATE_RESIDUE_SCAN.json'], inputs: [] },
   { name: STAGE.CONTENT_INTEGRATION, label: '网站内容整合',
-    artifacts: ['CONTENT_INTEGRATION_REPORT.md', 'CONTENT_PAGE_MANIFEST.json', 'CONTENT_PROVENANCE.md', 'CONTENT_GAPS.md', 'ROUTE_PUBLICATION_MANIFEST.json'], inputs: ['canonicalRequired', 'canonicalOrigin'] },
+    artifacts: ['CONTENT_INTEGRATION_REPORT.md', 'CONTENT_PAGE_MANIFEST.json', 'CONTENT_PROVENANCE.md', 'CONTENT_GAPS.md', 'ROUTE_PUBLICATION_MANIFEST.json'], inputs: ['canonicalRequired', 'canonicalOrigin', 'stage4DirtyWorktreeApproval'] },
   { name: STAGE.UI_UX_AUDIT, label: '页面体验审计', browserDependent: true,
     artifacts: ['UI_UX_AUDIT_REPORT.md', 'UI_UX_AUDIT.json', 'UI_UX_OPTIMIZATION_PLAN.md'], inputs: ['uiMode', 'uiApproval', 'siteRevision'] },
   { name: STAGE.PRELAUNCH_ACCEPTANCE, label: '上线前验收', browserDependent: true,
