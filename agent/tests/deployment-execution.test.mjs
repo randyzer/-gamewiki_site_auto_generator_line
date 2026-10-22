@@ -4,7 +4,7 @@ import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createPipeline } from '../src/pipeline.mjs';
 import { STAGE } from '../src/stages.mjs';
-import { fixture, goodResult } from './helpers.mjs';
+import { fixture, goodResult, withSyntheticStage4 } from './helpers.mjs';
 
 const DEPLOY = 6;
 const PRODUCTION_PERMISSIONS = ['gitPush', 'dns', 'productionDeployment', 'gsc', 'ga4'];
@@ -12,11 +12,11 @@ const PRODUCTION_PERMISSIONS = ['gitPush', 'dns', 'productionDeployment', 'gsc',
 async function setup(t, { deploymentExecution = true, execute } = {}) {
   const f = await fixture(t);
   const calls = [];
-  const executor = async (skill, context) => {
+  const executor = withSyntheticStage4(async (skill, context) => {
     calls.push({ skill, context: structuredClone(context) });
     if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute' && execute) return execute(context);
     return goodResult(skill, context);
-  };
+  });
   const inputs = { ...f.inputs, projectPath: f.inputs.paths.siteDirectory };
   const pipeline = await createPipeline({ ...f.configuration, inputs, executor, siteWrites: true, deploymentExecution });
   const toPlan = async () => {

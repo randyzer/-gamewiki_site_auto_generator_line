@@ -153,6 +153,12 @@ export async function stageWorkerPermissions(skill, context, {
   if (GIT_STAGES.includes(skill)) readPaths.push(...gitToolPaths);
   if (skill === STAGE.KEYWORD_RESEARCH) readPaths.push(...researchToolPaths);
   if (inputs.projectPath && skill !== STAGE.TEMPLATE_SELECTION) readPaths.push(inputs.projectPath);
+  if (skill === STAGE.CONTENT_INTEGRATION && context.stage4TargetPath) {
+    const candidate = resolve(inputs.projectPath), target = resolve(context.stage4TargetPath);
+    if (candidate === target || inside(candidate, target) || inside(target, candidate))
+      throw Error('WORKER_PERMISSION_SCOPE_INVALID');
+    readPaths.push(target);
+  }
   const deploying = deploymentExecutionApproved(skill, context);
   const configured = inputs.paths;
   const originalInputs = [];
@@ -186,6 +192,9 @@ export async function stageWorkerPermissions(skill, context, {
       ? [context.stage4Readiness.path] : []),
   ];
   const workerWritePaths = [nativeDirectory, ...writePaths];
+  if (context.stage4TargetPath && workerWritePaths.some(path =>
+    inside(path, context.stage4TargetPath) || inside(context.stage4TargetPath, path)))
+    throw Error('WORKER_PERMISSION_SCOPE_INVALID');
   for (const readOnlyPath of stageReadOnlyPaths) {
     if (workerWritePaths.some(writePath => inside(writePath, readOnlyPath) || inside(readOnlyPath, writePath)))
       throw Error('WORKER_PERMISSION_SCOPE_INVALID');

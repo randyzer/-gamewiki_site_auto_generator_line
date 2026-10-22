@@ -398,6 +398,15 @@ async function prepareFixture(root, stage) {
     await writeFile(path, '{}', { mode: 0o400 });
     stage4Readiness = { path, digest: '0'.repeat(64), fileSha256: '0'.repeat(64),
       attestation: { readiness: 'READY', syntheticEnvironmentSelfcheck: true } };
+    const candidatePath = join(stageRoot, 'stage4-candidate');
+    await mkdir(candidatePath, { recursive: true });
+    const candidateGitOptions = { ...gitOptions, cwd: candidatePath };
+    await runProcess(git, ['-c', 'core.hooksPath=/dev/null', 'init', '--quiet'], candidateGitOptions);
+    await runProcess(git, ['-c', 'core.hooksPath=/dev/null', '-c', 'commit.gpgsign=false',
+      '-c', 'user.name=Environment Selfcheck', '-c', 'user.email=selfcheck@example.invalid',
+      'commit', '--quiet', '--allow-empty', '-m', 'Temporary Stage 4 candidate fixture'], candidateGitOptions);
+    stage4Readiness.transaction = { kind: 'STAGE4_SITE_TRANSACTION_V1',
+      runId: `ENV_SELFCHECK-stage-${stage}`, attempt: 1, targetPath: siteDirectory, candidatePath };
   }
   return { runId: `ENV_SELFCHECK-stage-${stage}`, runDirectory, outputDirectory,
     nativeDirectory: join(outputDirectory, 'native'), mode: stage === 7 ? 'plan' : 'audit-only',
@@ -407,7 +416,8 @@ async function prepareFixture(root, stage) {
     inputs: { gameIdentity: 'Environment Selfcheck', objective: 'Environment probes only',
       projectPath: siteDirectory, rawKeywordsFile, paths: { siteDirectory, researchDirectory, rawKeywordsFile } },
     permissions: { siteWrites: [3, 4].includes(stage), productionDeployment: false },
-    ...(stage4Readiness ? { stage4Readiness } : {}), ...templateContext,
+    ...(stage4Readiness ? { stage4Readiness,
+      stage4Transaction: stage4Readiness.transaction, checkpoint: { attempt: 1 } } : {}), ...templateContext,
   };
 }
 

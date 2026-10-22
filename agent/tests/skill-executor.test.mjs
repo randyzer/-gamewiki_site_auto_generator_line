@@ -141,7 +141,10 @@ test('template selection blocks before worker launch when fixed Git is unavailab
 test('content integration prompt preserves the host non-Git new-site contract', async t => {
   const f = await fixture(t), projectPath = f.inputs.paths.siteDirectory;
   await mkdir(f.inputs.paths.researchDirectory, { recursive: true });
+  await mkdir(projectPath, { recursive: true });
   const outputDirectory = join(f.configuration.workspace, 'runs/content-nongit-contract/artifacts/3/1');
+  const candidatePath = join(f.configuration.workspace, '.site.agent-stage4-content-nongit-contract-1/candidate');
+  await mkdir(candidatePath, { recursive: true });
   const readinessPath = join(outputDirectory, 'host-readiness/STAGE4_READINESS_ATTESTATION.json');
   await mkdir(dirname(readinessPath), { recursive: true });
   await writeFile(readinessPath, '{}', { mode: 0o400 });
@@ -149,9 +152,10 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   const stage4Readiness = { path: readinessPath, digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64), attestation };
   let invoked, readinessVerifications = 0;
   const executor = createSkillExecutor({ researchPython: process.execPath,
-    verifyStage4Readiness: async binding => {
+    verifyStage4Readiness: async (binding, verificationContext) => {
       readinessVerifications++;
       assert.equal(binding, stage4Readiness);
+      assert.equal(verificationContext.inputs.projectPath, projectPath);
       return attestation;
     },
     run: async (_command, args, options) => {
@@ -167,6 +171,8 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     skillLock: { source: join(f.root, 'skills', STAGES[3] + '.md') },
     upstream: [{ skill: STAGES[0], artifacts: [] }, { skill: STAGES[1], artifacts: [] }],
     mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false }, stage4Readiness,
+    checkpoint: { attempt: 1 }, stage4Transaction: { kind: 'STAGE4_SITE_TRANSACTION_V1',
+      runId: 'content-nongit-contract', attempt: 1, targetPath: projectPath, candidatePath },
   });
 
   const prompt = invoked.options.input;
@@ -174,8 +180,8 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     'runs/content-nongit-contract/artifacts/3/1/native');
   assert.equal(invoked.options.cwd, nativeDirectory);
   assert.match(prompt, /nativeDirectory is the isolated Worker execution and artifact directory/);
-  assert.ok(prompt.includes(`context.inputs.projectPath (${JSON.stringify(projectPath)}) is the authoritative target site directory`));
-  assert.match(prompt, /Do not infer projectPath from cwd/);
+  assert.ok(prompt.includes(`context.inputs.projectPath (${JSON.stringify(candidatePath)}) is the isolated writable candidate`));
+  assert.ok(prompt.includes(`context.stage4TargetPath (${JSON.stringify(projectPath)}) is the real read-only site`));
   assert.match(prompt, /Host readiness attestation is authoritative/);
   assert.equal(readinessVerifications, 3, 'Host binding is checked on entry, before and after Worker execution');
   assert.match(prompt, /Do not rerun or redefine the Stage 4 readiness preflight/);
@@ -185,6 +191,7 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.doesNotMatch(prompt, /Image generation requires an actual callable image-generation tool/);
   assert.match(prompt, /Stage 4 does not require image generation/);
   assert.match(prompt, /Lack of image_generation or view_image is not a blocker/);
+  assert.match(prompt, /Host performs the authoritative offline package validation/);
 });
 
 test('content integration cannot launch Worker without Host readiness attestation', async t => {
@@ -795,6 +802,12 @@ test('keyword shell inherits only credential names without exposing values in la
         await mkdir(dirname(path), { recursive: true }); await writeFile(path, '{}', { mode: 0o400 });
         stageContext.stage4Readiness = { path, digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64),
           attestation: { readiness: 'READY' } };
+        const candidatePath = join(otherRunDirectory, 'stage4-candidate');
+        await mkdir(candidatePath, { recursive: true });
+        stageContext.checkpoint = { attempt: 1 };
+        stageContext.stage4Transaction = { kind: 'STAGE4_SITE_TRANSACTION_V1',
+          runId: stageContext.runId, attempt: 1,
+          targetPath: stageContext.inputs.projectPath, candidatePath };
       }
       const count = f.calls.length;
       await f.executor(ALL_STAGES[index], stageContext);
