@@ -804,7 +804,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           await save();
           operation = 'prepare-stage4-candidate-handoff';
           const candidatePath = stage4Transaction.binding.candidatePath;
-          context.researchHandoff = await prepareStage4Handoff({ ...context,
+          context.stage4CandidateResearchHandoff = await prepareStage4Handoff({ ...context,
             stage4TargetPath: state.inputs.projectPath,
             inputs: stage4CandidateInputs(context.inputs, stage4Transaction.binding) });
         }

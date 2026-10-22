@@ -151,12 +151,17 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   await writeFile(readinessPath, '{}', { mode: 0o400 });
   const attestation = { readiness: 'READY' };
   const stage4Readiness = { path: readinessPath, digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64), attestation };
+  const authorityHandoff = { reference: { kind: 'authority-reference' },
+    manifest: { kind: 'authority-manifest', root: researchDirectory } };
+  const candidateHandoff = { reference: { kind: 'candidate-reference' },
+    manifest: { kind: 'candidate-manifest', root: join(candidatePath, 'backgroundinformation') } };
   let invoked, readinessVerifications = 0;
   const executor = createSkillExecutor({ researchPython: process.execPath,
     verifyStage4Readiness: async (binding, verificationContext) => {
       readinessVerifications++;
       assert.equal(binding, stage4Readiness);
       assert.equal(verificationContext.inputs.projectPath, projectPath);
+      assert.deepEqual(verificationContext.researchHandoff, authorityHandoff);
       return attestation;
     },
     run: async (_command, args, options) => {
@@ -175,9 +180,11 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false }, stage4Readiness,
     checkpoint: { attempt: 1 }, stage4Transaction: { kind: 'STAGE4_SITE_TRANSACTION_V1',
       runId: 'content-nongit-contract', attempt: 1, targetPath: projectPath, candidatePath },
+    researchHandoff: authorityHandoff, stage4CandidateResearchHandoff: candidateHandoff,
   });
 
   const prompt = invoked.options.input;
+  const taskContext = JSON.parse(prompt.match(/Task context: ([^\n]+)/)[1]);
   const nativeDirectory = join(f.configuration.workspace,
     'runs/content-nongit-contract/artifacts/3/1/native');
   assert.equal(invoked.options.cwd, nativeDirectory);
@@ -186,6 +193,10 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.ok(prompt.includes(`context.stage4TargetPath (${JSON.stringify(projectPath)}) is the real read-only site`));
   assert.ok(prompt.includes(JSON.stringify(join(candidatePath, 'backgroundinformation'))),
     'Stage 4 Worker context must use the research snapshot inside the candidate');
+  assert.deepEqual(taskContext.researchHandoff, candidateHandoff,
+    'Worker must receive only the derived candidate handoff');
+  assert.equal(Object.hasOwn(taskContext, 'stage4CandidateResearchHandoff'), false,
+    'internal candidate handoff transport must not leak into Worker context');
   assert.match(prompt, /Host readiness attestation is authoritative/);
   assert.equal(readinessVerifications, 3, 'Host binding is checked on entry, before and after Worker execution');
   assert.match(prompt, /Do not rerun or redefine the Stage 4 readiness preflight/);
@@ -812,6 +823,7 @@ test('keyword shell inherits only credential names without exposing values in la
         stageContext.stage4Transaction = { kind: 'STAGE4_SITE_TRANSACTION_V1',
           runId: stageContext.runId, attempt: 1,
           targetPath: stageContext.inputs.projectPath, candidatePath };
+        stageContext.stage4CandidateResearchHandoff = { kind: 'test-candidate-handoff' };
       }
       const count = f.calls.length;
       await f.executor(ALL_STAGES[index], stageContext);

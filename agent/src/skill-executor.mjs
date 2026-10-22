@@ -122,11 +122,15 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
             resolve(transaction.targetPath ?? '.') !== targetPath ||
             !isAbsolute(transaction.candidatePath ?? '') ||
             inside(targetPath, resolve(transaction.candidatePath)) || inside(resolve(transaction.candidatePath), targetPath) ||
-            transaction.runId !== context.runId || transaction.attempt !== context.checkpoint?.attempt)
+            transaction.runId !== context.runId || transaction.attempt !== context.checkpoint?.attempt ||
+            !context.stage4CandidateResearchHandoff ||
+            typeof context.stage4CandidateResearchHandoff !== 'object')
           return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
             evidence: ['STAGE4_TRANSACTION_BINDING_INVALID: direct-site Stage 4 requires the Host candidate binding'] };
-        context = { ...context, stage4TargetPath: targetPath,
-          inputs: stage4CandidateInputs(context.inputs, transaction) };
+        const { stage4CandidateResearchHandoff, ...authorizedContext } = context;
+        context = { ...authorizedContext, stage4TargetPath: targetPath,
+          inputs: stage4CandidateInputs(context.inputs, transaction),
+          researchHandoff: stage4CandidateResearchHandoff };
       }
     }
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
