@@ -209,4 +209,3 @@ test('recovery rejects journal path tampering without touching either tree', asy
   assert.equal(await stage4SiteDigest(targetPath), tx.binding.baselineDigest);
   assert.equal(await stage4SiteDigest(tx.binding.candidatePath), tx.binding.baselineDigest);
 });
-

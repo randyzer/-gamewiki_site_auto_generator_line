@@ -121,4 +121,3 @@ test('real macOS sandbox blocks symlink escapes, network access, and a missing p
   await assert.rejects(validateStage4Candidate(missing, { environment: { PATH: emptyBin } }),
     /STAGE4_HOST_VALIDATION_FAILED/);
 });
-

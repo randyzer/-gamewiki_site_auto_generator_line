@@ -105,4 +105,3 @@ export async function validateStage4Candidate(context, { run = runProcess, envir
     report.status = 'BLOCKED'; report.reason = error.message; await save(); throw error;
   }
 }
-

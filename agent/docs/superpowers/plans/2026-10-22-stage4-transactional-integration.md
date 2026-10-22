@@ -308,4 +308,3 @@ The root fix is complete only when all statements are true:
 7. Attempt 7 residue is restored only from verified template bytes and exact baseline evidence.
 8. A real Wallpaper Engine Stage 4 retry passes and advances to Stage 5, or reports a new concrete external blocker while leaving the site consistent.
 9. Deployment remains unexecuted.
-
