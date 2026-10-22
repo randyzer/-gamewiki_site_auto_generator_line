@@ -63,11 +63,12 @@ export async function publishResearchArtifacts(context, skill, artifacts) {
 // Research stays outside the empty template destination until template copying passes.
 export async function prepareResearchHandoff(context) {
   const project = context.inputs.projectPath;
+  const artifactProject = context.stage4TargetPath ?? project;
   if (context.inputs.paths) {
     const source = context.inputs.paths.researchDirectory, destination = join(project, 'backgroundinformation');
     for (const name of [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH]) {
       for (const artifact of findStage(context.upstream, name).artifacts) {
-        if (artifact.runId !== context.runId || artifact.projectPath !== project || artifact.gameIdentity !== context.inputs.gameIdentity)
+        if (artifact.runId !== context.runId || artifact.projectPath !== artifactProject || artifact.gameIdentity !== context.inputs.gameIdentity)
           throw Error('Research handoff identity mismatch');
         const directory = name === STAGE.HOMEPAGE_RESEARCH ? source : join(source, 'keyword-materials');
         const filename = artifact.kind === 'KEYWORD_MATERIALS.md' ? artifact.kind : basename(artifact.sourcePath ?? artifact.path);

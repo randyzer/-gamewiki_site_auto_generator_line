@@ -1,7 +1,7 @@
 import { constants as fsConstants } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { access, chmod, lstat, mkdir, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
-import { join, dirname, relative, resolve } from 'node:path';
+import { isAbsolute, join, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
 import { installDependencies, buildAndServe } from './site-preview-host.mjs';
@@ -13,7 +13,7 @@ import { safePath, readArtifact, parseArtifactJson, inside, sha256 } from './fil
 import { templateCopyDirectory, mergeTemplateCopy } from './template-merge.mjs';
 import { validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, PYTHON_STAGES, stageDefinition } from './stages.mjs';
-import { prepareResearchHandoff, publishDeploymentPlan } from './handoff.mjs';
+import { publishDeploymentPlan } from './handoff.mjs';
 import { prepareExistingContent } from './existing-content-adapter.mjs';
 import { diagnosticStep, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { workerEnvironment, stageWorkerPermissions, verifyWorkerCommandIdentity,
@@ -106,13 +106,28 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         !original.runId || typeof original.inputs?.gameIdentity!=='string'))
       return {status:'BLOCKED',artifacts:[],missing_inputs:[],
         evidence:['APPROVAL_CAPABILITY_UNAVAILABLE: no verified run-scoped browser approval context']};
-    const context = runtimeContext(original);
+    let context = runtimeContext(original);
+    const readinessContext = context;
     if (skill === STAGE.CONTENT_INTEGRATION) {
       if (!context.stage4Readiness) return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
         evidence: ['HOST_STAGE4_READINESS_REQUIRED: the trusted Host did not provide a READY attestation'] };
-      try { await verifyStage4Readiness(context.stage4Readiness, context); }
+      try { await verifyStage4Readiness(context.stage4Readiness, readinessContext); }
       catch (error) { return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
         evidence: [`HOST_STAGE4_READINESS_INVALID: ${sanitizeDiagnosticText(error.message)}`] }; }
+      if (context.inputs.paths) {
+        const transaction = context.stage4Transaction;
+        const targetPath = resolve(context.inputs.projectPath);
+        if (transaction?.kind !== 'STAGE4_SITE_TRANSACTION_V1' ||
+            resolve(transaction.targetPath ?? '.') !== targetPath ||
+            !isAbsolute(transaction.candidatePath ?? '') ||
+            inside(targetPath, resolve(transaction.candidatePath)) || inside(resolve(transaction.candidatePath), targetPath) ||
+            transaction.runId !== context.runId || transaction.attempt !== context.checkpoint?.attempt)
+          return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
+            evidence: ['STAGE4_TRANSACTION_BINDING_INVALID: direct-site Stage 4 requires the Host candidate binding'] };
+        context = { ...context, stage4TargetPath: targetPath,
+          inputs: { ...context.inputs, projectPath: resolve(transaction.candidatePath),
+            paths: { ...context.inputs.paths, siteDirectory: resolve(transaction.candidatePath) } } };
+      }
     }
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
     const keywordResearch = skill === STAGE.KEYWORD_RESEARCH;
@@ -395,9 +410,14 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       ] : []),
       'Content integration: resolve research from the explicitly supplied upstream artifact paths. Preserve native filenames and lineage.',
       ...(skill === STAGE.CONTENT_INTEGRATION ? [
-        `Stage 4 directory contract: nativeDirectory is the isolated Worker execution and artifact directory; context.inputs.projectPath (${JSON.stringify(project)}) is the authoritative target site directory. Do not infer projectPath from cwd.`,
+        context.stage4TargetPath
+          ? `Stage 4 directory contract: nativeDirectory is the isolated Worker execution and artifact directory; context.inputs.projectPath (${JSON.stringify(project)}) is the isolated writable candidate. context.stage4TargetPath (${JSON.stringify(context.stage4TargetPath)}) is the real read-only site. Modify only the candidate; the Host alone may validate and promote it.`
+          : `Stage 4 directory contract: nativeDirectory is the isolated Worker execution and artifact directory; context.inputs.projectPath (${JSON.stringify(project)}) is the authoritative target site directory. Do not infer projectPath from cwd.`,
         'Stage 4 readiness contract: the Host readiness attestation is authoritative and its readiness is READY. Read context.stage4Readiness.path as immutable Host evidence. Do not rerun or redefine the Stage 4 readiness preflight, project path, Git requirement, or dirty-worktree decision. A non-Git site accepted by the Host is ready for integration. Never initialize Git or change repository configuration.',
-        'Stage 4 does not require image generation. Follow the Skill media policy by removing or neutralizing misleading demo media and recording missing screenshot, trailer, attribution or rights needs in CONTENT_GAPS.md. Lack of image_generation or view_image is not a blocker.'
+        'Stage 4 does not require image generation. Follow the Skill media policy by removing or neutralizing misleading demo media and recording missing screenshot, trailer, attribution or rights needs in CONTENT_GAPS.md. Lack of image_generation or view_image is not a blocker.',
+        ...(context.stage4TargetPath ? [
+          'Generate source and native artifacts, but do not run package-manager check, typecheck, lint, test, build, install, update, or download commands. The Host performs the authoritative offline package validation after native artifact validation.'
+        ] : [])
       ] : []),
       ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
         'The host verified and approved context.researchHandoff. Its manifest is the only authority for keyword material status and publication disposition: COMPLETED must be PUBLISHED, PARTIAL may only be DRAFT with noindex or have no route/source, and BLOCKED must have no route/source. Preserve every PENDING row. The host derives ROUTE_PUBLICATION_MANIFEST.json; do not return that host-owned artifact role.'
@@ -423,7 +443,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     ].join('\n');
     const executeWorker = async () => {
       if (skill === STAGE.CONTENT_INTEGRATION)
-        await verifyStage4Readiness(context.stage4Readiness, context);
+        await verifyStage4Readiness(context.stage4Readiness, readinessContext);
       if (keywordRecovery) await verifyKeywordRecovery(context, context.inputs.keywordRecovery);
       if (keywordBudget) {
         const started = Date.now();
@@ -447,7 +467,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       } catch (error) { workerFailure = error; throw error;
       } finally {
         if (skill === STAGE.CONTENT_INTEGRATION) {
-          try { await verifyStage4Readiness(context.stage4Readiness, context); }
+          try { await verifyStage4Readiness(context.stage4Readiness, readinessContext); }
           catch (error) {
             if (!workerFailure) throw error;
             workerFailure.message += '; STAGE4_READINESS_CHANGED_AFTER_WORKER';
@@ -627,7 +647,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' },
       prepare: async readinessContext => {
         try {
-          const contextPatch = { researchHandoff: await prepareResearchHandoff(readinessContext) };
+          const contextPatch = {};
           if (readinessContext.inputs.mode === 'existing-project')
             contextPatch.existingContent = await prepareExistingContent(readinessContext);
           return contextPatch;

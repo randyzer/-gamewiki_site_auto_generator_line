@@ -121,7 +121,8 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     if (localPermit) await permit.start();
     try {
       const pipeline = await createPipeline({ ...pipelineConfig, templateSnapshot, deploymentExecution, executor: guardedExecutor,
-        installSiteDependencies: executor.installDependencies, stagePreflight, stage4ReadinessCapability,
+        installSiteDependencies: executor.installDependencies, validateStage4: executor.validateStage4,
+        stagePreflight, stage4ReadinessCapability,
         runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined,
@@ -199,6 +200,7 @@ async function executeExisting(task, supplied, config, executor, shouldPause, st
     return result;
   } : undefined;
   const pipeline = await createPipeline({ ...config, executor: wrapped, installSiteDependencies: executor.installDependencies,
+    validateStage4: executor.validateStage4,
     stagePreflight, stage4ReadinessCapability, runId: task.id, inputs: resume ? {} : inputs,
     resume, siteWrites: true, recoverDeadLocks: true });
   if (pipeline.snapshot().inputs.taskCardDigest !== summary.digest) throw Error('Task card changed; use a new run and discard prior approval');

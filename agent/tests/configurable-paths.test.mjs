@@ -5,13 +5,12 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { createPipeline, OFFLINE_STAGE4_READINESS_CAPABILITY } from '../src/pipeline.mjs';
 import { createOrchestrator } from '../src/orchestrator.mjs';
-import { prepareResearchHandoff } from '../src/handoff.mjs';
 import { stageWorkerPermissions, permissionProfileConfig } from '../src/worker-permissions.mjs';
 import { describeRun } from '../src/terminal-run.mjs';
 import { STAGE, STAGES } from '../src/stages.mjs';
 import { AGENT_ROOT } from '../src/skill-lock.mjs';
 import { sha256 } from '../src/files.mjs';
-import { goodResult } from './helpers.mjs';
+import { goodResult, withSyntheticStage4 } from './helpers.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 
@@ -46,7 +45,9 @@ async function fixture(t) {
   const configuration = { workspace, inventoryPath, templateRoots: [],
     stage4ReadinessCapability: OFFLINE_STAGE4_READINESS_CAPABILITY };
   const contexts = [];
-  const executor = async (skill, context) => { contexts.push(context); return goodResult(skill, context); };
+  const executor = withSyntheticStage4(async (skill, context) => {
+    contexts.push(context); return goodResult(skill, context);
+  });
   return { root, projectRoot, researchDirectory, rawKeywordsFile, paths, inputs, configuration, contexts, executor,
     create: extra => createPipeline({ ...configuration, inputs, executor, runId: 'paths', ...extra }) };
 }
@@ -56,17 +57,18 @@ test('external user paths resolve and publish research before stage 4 handoff', 
   // A configured template root is required by stage 3, even for this offline executor.
   f.configuration.templateRoots = [join(f.root, 'templates')]; await mkdir(f.configuration.templateRoots[0]);
   const execute = createOrchestrator({ configuration: f.configuration, approvalConsumer: async () => true,
-    executor: async (skill, context) => {
+    executor: withSyntheticStage4(async (skill, context) => {
       if (skill === STAGE.CONTENT_INTEGRATION) {
-        const handoff = await prepareResearchHandoff({ ...context, runDirectory: join(f.configuration.workspace, 'runs/paths') });
-        assert.equal(handoff.homepageRoot, join(f.projectRoot, 'site/backgroundinformation'));
+        const candidatePath = context.stage4Transaction.candidatePath;
+        assert.equal(context.stage4Transaction.targetPath, join(f.projectRoot, 'site'));
+        assert.equal(dirname(candidatePath), dirname(context.stage4Transaction.journalPath));
       }
       return f.executor(skill, context);
-    } });
+    }) });
   await execute({ id: 'paths', inputs: JSON.stringify(f.inputs) },
     { shouldPause: state => state.stages[3].status === 'PASSED' });
   const state = JSON.parse(await readFile(join(f.configuration.workspace, 'runs/paths/manifest.json')));
-  assert.equal(state.stages[3].status, 'PASSED');
+  assert.equal(state.stages[3].status, 'PASSED', state.stages[3].evidence.join(' '));
   assert.equal(state.inputs.projectPath, join(f.projectRoot, 'site'));
   assert.equal(state.paths.rawKeywordsFile, f.rawKeywordsFile);
   for (const name of ['HOMEPAGE_RESEARCH.md', 'ICON.zip', 'keyword-materials/keywords.json']) {
@@ -230,7 +232,7 @@ test('audit worker writes native reports while the host publishes them for the u
 
 test('external site native artifacts are reverified before stage 4', async t => {
   const f = await fixture(t); const template = join(f.root, 'templates'); await mkdir(template);
-  const p = await f.create({ siteWrites: true, templateRoots: [template], executor: async (skill, context) => {
+  const p = await f.create({ siteWrites: true, templateRoots: [template], executor: withSyntheticStage4(async (skill, context) => {
     const result = await goodResult(skill, context);
     if (skill === STAGE.TEMPLATE_SELECTION) {
       const item = result.artifacts[0];
@@ -239,7 +241,7 @@ test('external site native artifacts are reverified before stage 4', async t => 
       item.sourceSha256 = sha256(item.content); await writeFile(item.sourcePath, item.content);
     }
     return result;
-  } });
+  }) });
   for (let i = 0; i < 4; i++) await p.advance();
   assert.equal(p.snapshot().stages[3].status, 'PASSED', p.snapshot().stages[3].evidence.join(' '));
 });

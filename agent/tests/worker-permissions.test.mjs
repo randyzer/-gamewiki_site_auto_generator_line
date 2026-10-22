@@ -125,6 +125,31 @@ test('Stage 4 Worker receives the Host readiness attestation as an exact read-on
   assert.equal(permissions.config.includes(JSON.stringify(dirname(path)) + '="write"'), false);
 });
 
+test('transactional Stage 4 grants candidate write while target and research stay read-only', async t => {
+  const { stageWorkerPermissions } = await import('../src/worker-permissions.mjs');
+  const runId = 'TEST-stage4-transaction-permissions-' + randomUUID();
+  const runDirectory = join(AGENT_ROOT, 'runs', runId), nativeDirectory = join(runDirectory, 'artifacts/3/1/native');
+  const root = join(AGENT_ROOT, 'workspaces', runId), target = join(root, 'site');
+  const candidate = join(root, '.site.agent-stage4-' + runId + '-1/candidate');
+  const research = join(root, 'research'), keywords = join(root, 'keywords.md');
+  await Promise.all([nativeDirectory, target, candidate, research].map(path => mkdir(path, { recursive: true })));
+  await writeFile(keywords, '# keywords\n');
+  t.after(async () => {
+    await rm(runDirectory, { recursive: true, force: true });
+    await rm(root, { recursive: true, force: true });
+  });
+  const context = { runDirectory, nativeDirectory, stage4TargetPath: target,
+    inputs: { projectPath: candidate, paths: { siteDirectory: candidate, researchDirectory: research,
+      rawKeywordsFile: keywords } }, upstream: [], readOnlyInputPaths: [keywords],
+    skillLock: { source: join(AGENT_ROOT, 'config/workflow.json') }, permissions: { siteWrites: true } };
+  const permissions = await stageWorkerPermissions('game-site-content-integrator', context, { writePaths: [candidate] });
+  assert.ok(permissions.config.includes(JSON.stringify(candidate) + '="write"'));
+  assert.ok(permissions.config.includes(JSON.stringify(target) + '="read"'));
+  assert.ok(permissions.config.includes(JSON.stringify(research) + '="read"'));
+  assert.equal(permissions.config.includes(JSON.stringify(target) + '="write"'), false);
+  assert.equal(permissions.config.includes(JSON.stringify(research) + '="write"'), false);
+});
+
 test('pinned CLI and Code Mode host identities are rechecked before every worker call', async t => {
   const id = 'TEST-pinned-cli-' + randomUUID(), root = join(AGENT_ROOT, 'runs', id);
   await mkdir(root); t.after(() => rm(root, { recursive: true, force: true }));

@@ -12,6 +12,7 @@ import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.
 import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
+import { stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -105,6 +106,74 @@ async function writeFixtureRecoveryLineage(nativeDirectory, { skillSyntax = fals
       ? '- 关键词: Example walkthrough\n- 状态: PARTIAL\n### 待确认\n- Missing official fact\n'
       : '- 关键词: Example walkthrough\n- 状态: PARTIAL\n- 缺口: Missing official fact\n');
 }
+
+async function directSiteFixture(t) {
+  const external = await mkdtemp('/private/tmp/stage4-direct-pipeline-');
+  t.after(() => rm(external, { recursive: true, force: true }));
+  const siteDirectory = join(external, 'site'), researchDirectory = join(siteDirectory, 'backgroundinformation');
+  await mkdir(researchDirectory, { recursive: true });
+  const f = await fixture(t, { paths: { siteDirectory, researchDirectory,
+    rawKeywordsFile: join(external, 'keywords.md') }, rawKeywordsFile: join(external, 'keywords.md'),
+    projectPath: siteDirectory });
+  await writeFile(f.inputs.rawKeywordsFile, '# User keywords\n- Example walkthrough\n');
+  const order = [];
+  const executor = async (skill, context) => {
+    if (skill === api.STAGES[3]) {
+      order.push('worker');
+      assert.equal(context.inputs.projectPath, siteDirectory, 'readiness context keeps the real target');
+      assert.equal(context.stage4Transaction.targetPath, siteDirectory);
+      await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
+      const result = f.good(skill, { ...context,
+        inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+      return result;
+    }
+    return f.good(skill, context);
+  };
+  const installSiteDependencies = async projectPath => {
+    order.push('install'); assert.notEqual(projectPath, siteDirectory);
+    assert.ok(projectPath.includes('.site.agent-stage4-')); return { exitCode: 0, projectPath };
+  };
+  const validateStage4 = async ({ candidatePath, nativeDirectory }) => {
+    order.push('host-validate');
+    const reportPath = join(nativeDirectory, 'STAGE4_HOST_VALIDATION.json');
+    await mkdir(nativeDirectory, { recursive: true }); await writeFile(reportPath, '{"status":"PASSED"}\n');
+    return { status: 'PASSED', reportPath, reportSha256: hash('{"status":"PASSED"}\n'),
+      candidateDigest: await stage4SiteDigest(candidatePath), commands: ['build'] };
+  };
+  return { ...f, external, siteDirectory, researchDirectory, order, executor,
+    installSiteDependencies, validateStage4 };
+}
+
+test('direct-site Stage 4 validates an isolated candidate and promotes only after Host PASS', async t => {
+  const f = await directSiteFixture(t);
+  const p = await f.create({ executor: f.executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 });
+  const state = await advance(p, 4);
+  assert.equal(state.stages[3].status, 'PASSED', JSON.stringify(state.stages[3].evidence));
+  assert.deepEqual(f.order, ['install', 'worker', 'host-validate']);
+  assert.equal(await readFile(join(f.siteDirectory, 'worker-change.txt'), 'utf8'), 'validated candidate\n');
+  assert.equal(state.stages[3].checkpoint.stage4Transaction.kind, 'STAGE4_SITE_TRANSACTION_V1');
+  const journal = JSON.parse(await readFile(state.stages[3].checkpoint.stage4Transaction.journalPath, 'utf8'));
+  assert.equal(journal.state, 'FINALIZED');
+  assert.ok(state.stages[3].artifacts.some(item => item.kind === 'STAGE4_HOST_VALIDATION.json'));
+});
+
+test('direct-site Stage 4 worker failure discards candidate and preserves the target', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'uncommitted.txt'), 'must disappear\n');
+    return { status: 'FAILED', artifacts: [], missing_inputs: [], evidence: ['synthetic worker failure'] };
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => assert.fail('Host validation must not run') });
+  await advance(p, 3);
+  const before = await stage4SiteDigest(f.siteDirectory);
+  const state = await advance(p, 1);
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(await stage4SiteDigest(f.siteDirectory), before);
+  await assert.rejects(readFile(join(f.siteDirectory, 'uncommitted.txt')));
+});
 
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
   for (const index of [4, 5]) {

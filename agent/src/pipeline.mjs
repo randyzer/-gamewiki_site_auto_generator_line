@@ -9,7 +9,7 @@ import { verifySkillSource } from './skill-lock.mjs';
 import { verifyTemplateSnapshot } from './template-snapshot.mjs';
 import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './paths.mjs';
 import { isDeepStrictEqual } from 'node:util';
-import { publishResearchArtifacts } from './handoff.mjs';
+import { prepareResearchHandoff, publishResearchArtifacts } from './handoff.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
@@ -21,6 +21,8 @@ import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 import { assertProductionObservation } from './v2/production-observation.mjs';
 import { resolveStageIdentity } from './v2/stage-identity.mjs';
+import { prepareStage4SiteTransaction, recoverStage4SiteTransaction, stage4SiteDigest } from './stage4-site-transaction.mjs';
+import { validateStage4Candidate } from './stage4-host-validation.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -201,13 +203,25 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
   expectedManifestSha256, keywordExecutionReceipt, keywordExecutionInputs, deploymentExecution = false,
   installSiteDependencies = executor?.installDependencies, stagePreflight = executor?.stagePreflight,
-  stage4ReadinessCapability, productionObservation } = {}) {
+  stage4ReadinessCapability, productionObservation,
+  prepareStage4Transaction = prepareStage4SiteTransaction,
+  recoverStage4Transaction = recoverStage4SiteTransaction,
+  prepareStage4Handoff = prepareResearchHandoff,
+  validateStage4 } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(stage4ReadinessCapability === undefined ||
     stage4ReadinessCapability === OFFLINE_STAGE4_READINESS_CAPABILITY,
   'Invalid Stage 4 readiness capability');
   const offlineStage4Readiness = stage4ReadinessCapability === OFFLINE_STAGE4_READINESS_CAPABILITY;
+  validateStage4 ??= executor?.validateStage4 ?? (offlineStage4Readiness
+    ? async ({ candidatePath, nativeDirectory }) => {
+      const reportPath = join(nativeDirectory, 'STAGE4_HOST_VALIDATION.json');
+      const content = Buffer.from('{"status":"PASSED","synthetic":true}\n');
+      await mkdir(nativeDirectory, { recursive: true }); await writeFile(reportPath, content, { flag: 'wx', mode: 0o600 });
+      return { status: 'PASSED', reportPath, reportSha256: hash(content),
+        candidateDigest: await stage4SiteDigest(candidatePath), commands: ['synthetic-offline-validation'] };
+    } : validateStage4Candidate);
   if (productionObservation !== undefined)
     productionObservation = assertProductionObservation(productionObservation);
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
@@ -570,7 +584,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         purpose: `Input for ${stage}` }));
   }
 
-  async function validateResult(result, index, outputDirectory) {
+  async function validateResult(result, index, outputDirectory, expectedProjectPath = state.inputs.projectPath) {
     assert(result && RESULT_STATES.has(result.status), 'Invalid executor output: status must be PASSED, PARTIAL, FAILED, BLOCKED or WAITING_FOR_USER');
     assert(Array.isArray(result.artifacts), 'Invalid executor output: artifacts must be an array');
     assert(Array.isArray(result.evidence) && result.evidence.every(nonempty), 'Invalid executor output: evidence must contain nonempty strings');
@@ -582,7 +596,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     for (const artifact of result.artifacts) {
       assert(nonempty(artifact.kind) && !kinds.has(artifact.kind), 'Duplicate or invalid artifact kind');
       kinds.add(artifact.kind);
-      assert(artifact.runId === runId && artifact.projectPath === state.inputs.projectPath &&
+      assert(artifact.runId === runId && artifact.projectPath === expectedProjectPath &&
         artifact.gameIdentity === state.inputs.gameIdentity, 'Wrong project/game/run artifact');
       assert(typeof artifact.path === 'string' && isAbsolute(artifact.path) && inside(outputDirectory, resolve(artifact.path)) &&
         resolve(artifact.path) !== outputDirectory && !paths.has(resolve(artifact.path)), 'Artifact path escape or duplicate target');
@@ -604,6 +618,18 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   async function advance() {
     return exclusive(async () => {
       state.inputCopies ??= {};
+      const integrationStage = findStage(state.stages, STAGE.CONTENT_INTEGRATION);
+      if (state.inputs.paths && integrationStage.checkpoint.stage4Transaction) {
+        const identity = integrationStage.checkpoint.stage4Transaction;
+        const recovery = await recoverStage4Transaction({ targetPath: state.inputs.projectPath,
+          runId, attempt: identity.attempt, manifestStage: integrationStage });
+        if (recovery.status === 'RECOVERY_REQUIRED') {
+          if (integrationStage.status === 'PASSED') transition(integrationStage, 'NOT_STARTED');
+          transition(integrationStage, 'BLOCKED', recovery.evidence.length
+            ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED']);
+          await save(); return clone(state);
+        }
+      }
       const index = state.stages.findIndex(stage => !stageSatisfied(stage));
       if (index < 0) return clone(state);
       const stage = state.stages[index];
@@ -672,11 +698,21 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           if (error.code !== 'ENOENT') { await recordFailure(stage, error, 'check-template-target', 'BLOCKED'); await save(); return clone(state); }
         }
       }
+      if (stage.skill === STAGE.CONTENT_INTEGRATION && state.inputs.paths && stage.checkpoint.stage4Transaction) {
+        const previous = stage.checkpoint.stage4Transaction;
+        const recovery = await recoverStage4Transaction({ targetPath: state.inputs.projectPath,
+          runId, attempt: previous.attempt, manifestStage: stage });
+        if (recovery.status === 'RECOVERY_REQUIRED') {
+          transition(stage, 'BLOCKED', recovery.evidence.length ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED']);
+          await save(); return clone(state);
+        }
+      }
       if (stage.status !== 'READY') { transition(stage, 'READY'); await save(); }
       stage.checkpoint.attempt++;
       stage.checkpoint.inputDigest = hash(JSON.stringify(state.inputs));
       transition(stage, 'IN_PROGRESS'); await save();
       let operation = 'prepare-stage-workspace';
+      let stage4Transaction, stage4Promoted = false;
       try {
         if (stage.skill === STAGE.KEYWORD_RESEARCH) {
           operation = 'copy-keyword-inputs';
@@ -754,9 +790,29 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
             resultSource = 'host-readiness';
           }
         }
-        if (!result && stage.skill === STAGE.CONTENT_INTEGRATION && installSiteDependencies && !stage.checkpoint.dependencies) {
+        if (!result && stage.skill === STAGE.CONTENT_INTEGRATION && state.inputs.paths) {
+          operation = 'prepare-stage4-transaction';
+          stage4Transaction = await prepareStage4Transaction({ targetPath: state.inputs.projectPath,
+            runId, attempt: stage.checkpoint.attempt,
+            readinessDigest: stage.checkpoint.readinessDigest,
+            skillLockSha256: context.skillLock.sha256 });
+          context.stage4Transaction = stage4Transaction.binding;
+          stage.checkpoint.stage4Transaction = { kind: stage4Transaction.binding.kind, runId,
+            attempt: stage.checkpoint.attempt, baselineDigest: stage4Transaction.binding.baselineDigest,
+            candidateDigest: null, journalPath: stage4Transaction.binding.journalPath };
+          await save();
+          operation = 'prepare-stage4-candidate-handoff';
+          const candidatePath = stage4Transaction.binding.candidatePath;
+          context.researchHandoff = await prepareStage4Handoff({ ...context,
+            stage4TargetPath: state.inputs.projectPath,
+            inputs: { ...context.inputs, projectPath: candidatePath,
+              paths: { ...context.inputs.paths, siteDirectory: candidatePath } } });
+        }
+        if (!result && stage.skill === STAGE.CONTENT_INTEGRATION && installSiteDependencies &&
+            (!stage.checkpoint.dependencies || stage4Transaction)) {
           operation = 'install-site-dependencies';
-          stage.checkpoint.dependencies = await installSiteDependencies(state.inputs.projectPath,
+          const dependencyProject = stage4Transaction?.binding.candidatePath ?? state.inputs.projectPath;
+          stage.checkpoint.dependencies = await installSiteDependencies(dependencyProject,
             { manifestPath: join(runDirectory, 'site-dependencies.json') });
           await save();
         }
@@ -769,13 +825,29 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           operation = 'execute-skill';
           result = await executor(stage.skill, context);
         }
+        if (stage4Transaction && result.status === 'PASSED') {
+          operation = 'host-stage4-validation';
+          const hostValidation = await validateStage4({ candidatePath: stage4Transaction.binding.candidatePath,
+            targetPath: state.inputs.projectPath, nativeDirectory: context.nativeDirectory });
+          await stage4Transaction.markValidated(hostValidation.candidateDigest, hostValidation.reportSha256);
+          const reportBytes = await regularFile(hostValidation.reportPath);
+          result = { ...result, stage4HostValidation: hostValidation,
+            evidence: [...result.evidence, `Host Stage 4 validation PASSED: ${hostValidation.reportSha256}`],
+            artifacts: [...result.artifacts, { kind: 'STAGE4_HOST_VALIDATION.json',
+              path: join(outputDirectory, 'STAGE4_HOST_VALIDATION.json'), runId,
+              projectPath: stage4Transaction.binding.candidatePath,
+              gameIdentity: state.inputs.gameIdentity, sourcePath: hostValidation.reportPath,
+              sourceSha256: hostValidation.reportSha256,
+              content: reportBytes.toString('base64'), encoding: 'base64' }] };
+        }
         operation = 'verify-upstream-after-execution';
         await verifyLock();
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         // Deployment legitimately changes the site (.vercel/, measurement tag) after the UI audit.
         if (!executing) await verifyProjectFreshness(index);
         operation = 'validate-artifacts';
-        const artifacts = await validateResult(result, index, outputDirectory);
+        const expectedProjectPath = stage4Transaction?.binding.candidatePath ?? state.inputs.projectPath;
+        const artifacts = await validateResult(result, index, outputDirectory, expectedProjectPath);
         let status = result.status;
         let missing = result.missing_inputs;
         let evidence = result.evidence;
@@ -795,6 +867,27 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           await writeFile(artifact.path, Buffer.from(artifact.content, artifact.encoding ?? 'utf8'), { flag: 'wx', mode: 0o600 });
         }
         const saved = artifacts.map(({ content, encoding, ...metadata }) => metadata);
+        if (stage4Transaction && status === 'PASSED') {
+          operation = 'promote-stage4-candidate';
+          await stage4Transaction.promote(); stage4Promoted = true;
+          for (const artifact of saved) {
+            if (artifact.projectPath !== stage4Transaction.binding.candidatePath)
+              throw Error('STAGE4_ARTIFACT_PROJECT_MISMATCH');
+            artifact.projectPath = state.inputs.projectPath;
+            if (artifact.sourcePath && inside(stage4Transaction.binding.candidatePath, resolve(artifact.sourcePath))) {
+              const relativeSource = relative(stage4Transaction.binding.candidatePath, resolve(artifact.sourcePath));
+              const promotedSource = join(state.inputs.projectPath, relativeSource);
+              if (artifact.sourceSha256 && hash(await regularFile(promotedSource)) !== artifact.sourceSha256)
+                throw Error('STAGE4_PROMOTED_ARTIFACT_CHANGED');
+              artifact.sourcePath = promotedSource;
+            }
+          }
+          stage.checkpoint.stage4Transaction = { kind: stage4Transaction.binding.kind, runId,
+            attempt: stage.checkpoint.attempt, candidateDigest: result.stage4HostValidation.candidateDigest,
+            journalPath: stage4Transaction.binding.journalPath };
+        } else if (stage4Transaction) {
+          operation = 'abort-stage4-candidate'; await stage4Transaction.abort(`Stage returned ${status}`);
+        }
         if (state.inputs.paths && status === 'PASSED' && [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH].includes(stage.skill)) {
           operation = 'publish-research-artifacts';
           await publishResearchArtifacts({ inputs: state.inputs, runDirectory }, stage.skill, saved);
@@ -832,9 +925,24 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           resultSource === 'worker' ? 'worker-reported-failure' : 'host-stage-readiness', status, missing);
         else transition(stage, status, evidence, missing);
       } catch (error) {
+        if (stage4Transaction && !stage4Promoted) {
+          try { await stage4Transaction.abort(error.code ?? error.message); }
+          catch (recoveryError) { error.message += `; ${recoveryError.message}`; }
+        } else if (stage4Transaction && stage4Promoted) {
+          try { await stage4Transaction.abort(error.code ?? error.message); stage4Promoted = false; }
+          catch (recoveryError) { error.message += `; ${recoveryError.message}`; }
+        }
         await recordFailure(stage, error, operation);
       }
-      await save();
+      try { await save(); }
+      catch (error) {
+        if (stage4Transaction && stage4Promoted) await stage4Transaction.abort('manifest save failed');
+        throw error;
+      }
+      if (stage4Transaction && stage4Promoted && stage.status === 'PASSED') {
+        await stage4Transaction.markManifestCommitted(state.sequence);
+        await stage4Transaction.finalize();
+      }
       if (productionObservation?.mode === 'SHADOW_READ_ONLY') {
         await productionObservation.observeLegacyCommit({
           runId, canonicalStageId: resolveStageIdentity({ namespace: 'legacy-skill-name', value: stage.skill }).canonicalStageId,

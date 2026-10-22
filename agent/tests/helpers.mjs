@@ -1,10 +1,11 @@
-import { mkdtemp, mkdir, writeFile, rm, realpath } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, rm, realpath, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sha256 } from '../src/files.mjs';
 import { randomUUID } from 'node:crypto';
 import { STAGES, ARTIFACTS, OFFLINE_STAGE4_READINESS_CAPABILITY } from '../src/pipeline.mjs';
+import { stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
 
 // Legacy orchestration tests explicitly substitute a host. This is not an issuer
 // and does not test approval security; entry-approval.test.mjs owns that coverage.
@@ -35,15 +36,35 @@ export async function fixture(t, { local = false } = {}) {
       dns: { provider: 'offline fixture', recordsReviewed: true }, deploymentPlanAuthorized: true } };
 }
 
+export const syntheticInstallSiteDependencies = async projectPath =>
+  ({ exitCode: 0, projectPath, synthetic: true });
+
+export async function syntheticStage4Validation({ candidatePath, nativeDirectory }) {
+  const reportPath = join(nativeDirectory, 'STAGE4_HOST_VALIDATION.json');
+  const bytes = '{"status":"PASSED","synthetic":true}\n';
+  await mkdir(nativeDirectory, { recursive: true }); await writeFile(reportPath, bytes);
+  return { status: 'PASSED', reportPath, reportSha256: sha256(await readFile(reportPath)),
+    candidateDigest: await stage4SiteDigest(candidatePath), commands: ['synthetic-build'] };
+}
+
+export function withSyntheticStage4(executor) {
+  executor.installDependencies = syntheticInstallSiteDependencies;
+  executor.validateStage4 = syntheticStage4Validation;
+  return executor;
+}
+
 export async function goodResult(skill, context) {
   const index = STAGES.indexOf(skill);
+  const projectPath = skill === STAGES[3] && context.stage4Transaction
+    ? context.stage4Transaction.candidatePath : context.inputs.projectPath;
+  if (skill === STAGES[2]) await mkdir(context.inputs.projectPath, { recursive: true });
   if (context.permissions.siteWrites) {
-    await mkdir(context.inputs.projectPath, { recursive: true });
-    await writeFile(join(context.inputs.projectPath, 'index.html'), '<h1>Offline fixture only</h1>');
+    await mkdir(projectPath, { recursive: true });
+    await writeFile(join(projectPath, 'index.html'), '<h1>Offline fixture only</h1>');
   }
   return { status: 'PASSED', missing_inputs: [], evidence: ['OFFLINE TEST FIXTURE, not a real skill execution'],
     artifacts: context.requiredArtifacts.map(kind => ({ kind, path: join(context.outputDirectory, kind),
-      runId: context.runId, projectPath: context.inputs.projectPath, gameIdentity: context.inputs.gameIdentity,
+      runId: context.runId, projectPath, gameIdentity: context.inputs.gameIdentity,
       content: kind === 'PRELAUNCH_ACCEPTANCE.json' ? JSON.stringify({ disposition: '可以上线', expected_domain: 'https://' + context.inputs.domain, siteRevision: context.inputs.siteRevision })
         : kind === 'DEPLOYMENT_REPORT.json' ? JSON.stringify({ deployment: 'PRODUCTION LIVE', production_url: 'https://' + context.inputs.domain, synthetic: true })
         : kind.endsWith('.json') ? '{}' : 'OFFLINE TEST FIXTURE: ' + skill })) };
