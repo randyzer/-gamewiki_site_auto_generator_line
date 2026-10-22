@@ -10,6 +10,7 @@ import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
 import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
+import { prepareResearchHandoff } from '../src/handoff.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
 import { stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
@@ -156,6 +157,24 @@ test('direct-site Stage 4 validates an isolated candidate and promotes only afte
   const journal = JSON.parse(await readFile(state.stages[3].checkpoint.stage4Transaction.journalPath, 'utf8'));
   assert.equal(journal.state, 'FINALIZED');
   assert.ok(state.stages[3].artifacts.some(item => item.kind === 'STAGE4_HOST_VALIDATION.json'));
+});
+
+test('direct-site Stage 4 rebinds nested research to the candidate before handoff', async t => {
+  const f = await directSiteFixture(t);
+  await writeFile(join(f.researchDirectory, '首页调研信息.md'), '');
+  let handoffContext;
+  const p = await f.create({ executor: f.executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4,
+    prepareStage4Handoff: async context => {
+      handoffContext = context;
+      return prepareResearchHandoff(context);
+    } });
+  const state = await advance(p, 4);
+  assert.equal(state.stages[3].status, 'PASSED', JSON.stringify(state.stages[3].evidence));
+  assert.equal(handoffContext.inputs.paths.researchDirectory,
+    join(handoffContext.inputs.projectPath, 'backgroundinformation'));
+  assert.notEqual(handoffContext.inputs.paths.researchDirectory, f.researchDirectory);
+  assert.equal((await stat(join(f.researchDirectory, '首页调研信息.md'))).size, 0);
 });
 
 test('direct-site Stage 4 worker failure discards candidate and preserves the target', async t => {

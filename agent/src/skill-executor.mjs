@@ -28,6 +28,7 @@ import { assessKeywordEvidenceOutcome, KEYWORD_EVIDENCE_CLAIMS_FILE, KEYWORD_EVI
   keywordEvidenceState, verifyKeywordEvidencePlan } from './keyword-evidence-plan.mjs';
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 import { createStage4ReadinessGate, verifyStage4ReadinessBinding } from './stage4-readiness.mjs';
+import { stage4CandidateInputs } from './stage4-site-transaction.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
 
@@ -125,8 +126,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           return { status: 'BLOCKED', artifacts: [], missing_inputs: [],
             evidence: ['STAGE4_TRANSACTION_BINDING_INVALID: direct-site Stage 4 requires the Host candidate binding'] };
         context = { ...context, stage4TargetPath: targetPath,
-          inputs: { ...context.inputs, projectPath: resolve(transaction.candidatePath),
-            paths: { ...context.inputs.paths, siteDirectory: resolve(transaction.candidatePath) } } };
+          inputs: stage4CandidateInputs(context.inputs, transaction) };
       }
     }
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;

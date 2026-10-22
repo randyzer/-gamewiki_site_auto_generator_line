@@ -21,7 +21,8 @@ import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 import { assertProductionObservation } from './v2/production-observation.mjs';
 import { resolveStageIdentity } from './v2/stage-identity.mjs';
-import { prepareStage4SiteTransaction, recoverStage4SiteTransaction, stage4SiteDigest } from './stage4-site-transaction.mjs';
+import { prepareStage4SiteTransaction, recoverStage4SiteTransaction, stage4CandidateInputs,
+  stage4SiteDigest } from './stage4-site-transaction.mjs';
 import { validateStage4Candidate } from './stage4-host-validation.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
@@ -805,8 +806,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           const candidatePath = stage4Transaction.binding.candidatePath;
           context.researchHandoff = await prepareStage4Handoff({ ...context,
             stage4TargetPath: state.inputs.projectPath,
-            inputs: { ...context.inputs, projectPath: candidatePath,
-              paths: { ...context.inputs.paths, siteDirectory: candidatePath } } });
+            inputs: stage4CandidateInputs(context.inputs, stage4Transaction.binding) });
         }
         if (!result && stage.skill === STAGE.CONTENT_INTEGRATION && installSiteDependencies &&
             (!stage.checkpoint.dependencies || stage4Transaction)) {

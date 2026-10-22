@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { open, mkdir, readFile, writeFile, rename, rm, stat, lstat, chmod, copyFile } from 'node:fs/promises';
-import { basename, dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve } from 'node:path';
 import { sourceFiles } from './project-baseline.mjs';
-import { safePath, sha256 } from './files.mjs';
+import { inside, safePath, sha256 } from './files.mjs';
 
 const fail = (code, detail = '') => Object.assign(Error(`${code}${detail ? `: ${detail}` : ''}`), { code });
 const digestFiles = files => sha256(JSON.stringify(files));
@@ -37,6 +37,22 @@ export async function stage4SiteFiles(root) {
 
 export async function stage4SiteDigest(root) {
   return digestFiles(await stage4SiteFiles(root));
+}
+
+export function stage4CandidateInputs(inputs, transaction) {
+  const targetPath = resolve(transaction?.targetPath ?? '.');
+  const candidatePath = resolve(transaction?.candidatePath ?? '.');
+  if (!inputs?.paths || resolve(inputs.projectPath ?? '.') !== targetPath)
+    throw fail('STAGE4_RUNTIME_CONTEXT_INVALID');
+  const rebase = value => {
+    if (typeof value !== 'string') return value;
+    const absolute = resolve(value);
+    return inside(targetPath, absolute) ? join(candidatePath, relative(targetPath, absolute)) : absolute;
+  };
+  return { ...inputs, projectPath: candidatePath, paths: { ...inputs.paths,
+    siteDirectory: candidatePath,
+    researchDirectory: rebase(inputs.paths.researchDirectory),
+    rawKeywordsFile: rebase(inputs.paths.rawKeywordsFile) } };
 }
 
 export function stage4TransactionPaths({ targetPath, runId, attempt }) {
