@@ -177,6 +177,44 @@ test('direct-site Stage 4 rebinds nested research to the candidate before handof
   assert.equal((await stat(join(f.researchDirectory, '首页调研信息.md'))).size, 0);
 });
 
+test('direct-site Stage 4 preserves readiness authority while deriving candidate handoff', async t => {
+  const f = await directSiteFixture(t);
+  const authorityHandoff = { reference: { kind: 'authority-reference' },
+    manifest: { kind: 'authority-manifest' } };
+  const authorityHandoffJson = JSON.stringify(authorityHandoff);
+  const candidateHandoff = { reference: { kind: 'candidate-reference' },
+    manifest: { kind: 'candidate-manifest' } };
+  const stagePreflight = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return { status: 'NOT_APPLICABLE' };
+    const binding = {
+      path: join(context.outputDirectory, 'host-readiness/STAGE4_READINESS_ATTESTATION.json'),
+      digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64),
+      attestation: { kind: 'STAGE4_READINESS_ATTESTATION', runId: context.runId,
+        stage: skill, attempt: context.checkpoint.attempt, readiness: 'READY' },
+      verifyCurrentState: async verificationContext => {
+        assert.equal(JSON.stringify(verificationContext.researchHandoff), authorityHandoffJson,
+          'readiness must keep verifying the approved authority handoff');
+      },
+    };
+    return { status: 'READY', binding, contextPatch: { researchHandoff: authorityHandoff } };
+  };
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    assert.equal(JSON.stringify(context.researchHandoff), authorityHandoffJson);
+    assert.deepEqual(context.stage4CandidateResearchHandoff, candidateHandoff);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
+    return f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+  };
+  const p = await f.create({ stage4ReadinessCapability: undefined, stagePreflight, executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    prepareStage4Handoff: async () => candidateHandoff });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'PASSED', JSON.stringify(state.stages[3].evidence));
+});
+
 test('direct-site Stage 4 worker failure discards candidate and preserves the target', async t => {
   const f = await directSiteFixture(t);
   const executor = async (skill, context) => {

@@ -417,7 +417,9 @@ async function prepareFixture(root, stage) {
       projectPath: siteDirectory, rawKeywordsFile, paths: { siteDirectory, researchDirectory, rawKeywordsFile } },
     permissions: { siteWrites: [3, 4].includes(stage), productionDeployment: false },
     ...(stage4Readiness ? { stage4Readiness,
-      stage4Transaction: stage4Readiness.transaction, checkpoint: { attempt: 1 } } : {}), ...templateContext,
+      stage4Transaction: stage4Readiness.transaction,
+      stage4CandidateResearchHandoff: { kind: 'STAGE4_SELFCHECK_CANDIDATE_HANDOFF' },
+      checkpoint: { attempt: 1 } } : {}), ...templateContext,
   };
 }
 
