@@ -140,7 +140,8 @@ test('template selection blocks before worker launch when fixed Git is unavailab
 
 test('content integration prompt preserves the host non-Git new-site contract', async t => {
   const f = await fixture(t), projectPath = f.inputs.paths.siteDirectory;
-  await mkdir(f.inputs.paths.researchDirectory, { recursive: true });
+  const researchDirectory = join(projectPath, 'backgroundinformation');
+  await mkdir(researchDirectory, { recursive: true });
   await mkdir(projectPath, { recursive: true });
   const outputDirectory = join(f.configuration.workspace, 'runs/content-nongit-contract/artifacts/3/1');
   const candidatePath = join(f.configuration.workspace, '.site.agent-stage4-content-nongit-contract-1/candidate');
@@ -165,7 +166,8 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     } });
   await executor(STAGES[3], {
     runId: 'content-nongit-contract',
-    inputs: { ...f.inputs, projectPath },
+    inputs: { ...f.inputs, projectPath,
+      paths: { ...f.inputs.paths, siteDirectory: projectPath, researchDirectory } },
     outputDirectory,
     requiredArtifacts: ARTIFACTS[3],
     skillLock: { source: join(f.root, 'skills', STAGES[3] + '.md') },
@@ -182,6 +184,8 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.match(prompt, /nativeDirectory is the isolated Worker execution and artifact directory/);
   assert.ok(prompt.includes(`context.inputs.projectPath (${JSON.stringify(candidatePath)}) is the isolated writable candidate`));
   assert.ok(prompt.includes(`context.stage4TargetPath (${JSON.stringify(projectPath)}) is the real read-only site`));
+  assert.ok(prompt.includes(JSON.stringify(join(candidatePath, 'backgroundinformation'))),
+    'Stage 4 Worker context must use the research snapshot inside the candidate');
   assert.match(prompt, /Host readiness attestation is authoritative/);
   assert.equal(readinessVerifications, 3, 'Host binding is checked on entry, before and after Worker execution');
   assert.match(prompt, /Do not rerun or redefine the Stage 4 readiness preflight/);
