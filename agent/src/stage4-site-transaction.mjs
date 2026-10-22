@@ -45,6 +45,7 @@ export function stage4TransactionPaths({ targetPath, runId, attempt }) {
     throw fail('STAGE4_TRANSACTION_ID_INVALID');
   const root = join(dirname(targetPath), `.${basename(targetPath)}.agent-stage4-${runId}-${attempt}`);
   return { root, candidatePath: join(root, 'candidate'), backupPath: join(root, 'backup'),
+    abandonedPath: join(root, 'uncommitted-promoted'),
     journalPath: join(root, 'journal.json'), lockPath: join(root, '.lock') };
 }
 
@@ -81,15 +82,42 @@ async function digestIfDirectory(path) {
   return stage4SiteDigest(path);
 }
 
-async function restoreBackup(paths, journal) {
+async function removeAbandoned(paths, journal) {
+  const abandonedDigest = await digestIfDirectory(paths.abandonedPath);
+  if (abandonedDigest === null) return;
+  if (abandonedDigest !== journal.candidateDigest)
+    throw fail('STAGE4_RECOVERY_REQUIRED', 'uncommitted promoted digest mismatch');
+  await rm(paths.abandonedPath, { recursive: true, force: true });
+  await syncDirectory(paths.root);
+}
+
+async function restoreBackup(paths, journal, fault = () => {}) {
   if (await exists(paths.targetPath)) throw fail('STAGE4_RECOVERY_REQUIRED', 'target exists while restoring backup');
   if (await digestIfDirectory(paths.backupPath) !== journal.baselineDigest)
     throw fail('STAGE4_RECOVERY_REQUIRED', 'backup digest mismatch');
   await writeState(paths, journal, 'ROLLBACK_INTENT');
+  await fault('after-rollback-restore-intent');
   await rename(paths.backupPath, paths.targetPath); await syncDirectory(dirname(paths.targetPath));
+  await fault('after-backup-restore-rename');
   await rm(paths.candidatePath, { recursive: true, force: true });
   await rm(paths.lockPath, { force: true });
   await writeState(paths, journal, 'ROLLED_BACK');
+}
+
+async function rollbackPromoted(paths, journal, fault = () => {}) {
+  const [targetDigest, candidateDigest, backupDigest, abandonedDigest] = await Promise.all([
+    digestIfDirectory(paths.targetPath), digestIfDirectory(paths.candidatePath),
+    digestIfDirectory(paths.backupPath), digestIfDirectory(paths.abandonedPath),
+  ]);
+  if (targetDigest !== journal.candidateDigest || candidateDigest !== null ||
+      backupDigest !== journal.baselineDigest || abandonedDigest !== null)
+    throw fail('STAGE4_RECOVERY_REQUIRED', 'promoted rollback disk state mismatch');
+  await writeState(paths, journal, 'ROLLBACK_INTENT');
+  await fault('after-rollback-intent');
+  await rename(paths.targetPath, paths.abandonedPath); await syncDirectory(dirname(paths.targetPath));
+  await fault('after-promoted-abandon-rename');
+  await restoreBackup(paths, journal, fault);
+  await removeAbandoned(paths, journal);
 }
 
 async function finalizeRecovered(paths, journal) {
@@ -189,7 +217,8 @@ export async function prepareStage4SiteTransaction({ targetPath, runId, attempt,
   return api;
 }
 
-export async function recoverStage4SiteTransaction({ targetPath, runId, attempt, manifestStage }) {
+export async function recoverStage4SiteTransaction({ targetPath, runId, attempt, manifestStage,
+  fault = () => {} }) {
   targetPath = resolve(targetPath);
   const computed = stage4TransactionPaths({ targetPath, runId, attempt });
   const paths = { ...computed, targetPath };
@@ -197,7 +226,8 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
   if (!journal) return { status: 'NONE', evidence: [] };
   if (journal.schemaVersion !== journalVersion || journal.kind !== 'STAGE4_SITE_TRANSACTION_V1' ||
       journal.targetPath !== targetPath || journal.runId !== runId || journal.attempt !== attempt ||
-      ['root', 'candidatePath', 'backupPath', 'journalPath', 'lockPath'].some(key => journal[key] !== paths[key]) ||
+      ['root', 'candidatePath', 'backupPath', 'abandonedPath', 'journalPath', 'lockPath']
+        .some(key => journal[key] !== paths[key]) ||
       !/^[a-f0-9]{64}$/.test(journal.baselineDigest ?? ''))
     return { status: 'RECOVERY_REQUIRED', evidence: ['STAGE4_TRANSACTION_IDENTITY_MISMATCH'] };
   try {
@@ -211,23 +241,35 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
     if (journal.state === 'ROLLED_BACK') {
       if (await digestIfDirectory(targetPath) !== journal.baselineDigest)
         throw fail('STAGE4_RECOVERY_REQUIRED', 'rolled-back target digest mismatch');
-      const abandoned = join(paths.root, 'uncommitted-promoted');
-      const abandonedDigest = await digestIfDirectory(abandoned);
-      if (abandonedDigest !== null && abandonedDigest !== journal.candidateDigest)
-        throw fail('STAGE4_RECOVERY_REQUIRED', 'uncommitted promoted digest mismatch');
-      if (abandonedDigest) await rm(abandoned, { recursive: true, force: true });
+      await removeAbandoned(paths, journal);
       await rm(paths.candidatePath, { recursive: true, force: true }); await rm(paths.lockPath, { force: true });
       return { status: 'ROLLED_BACK', evidence: [] };
     }
     if (journal.state === 'ROLLBACK_INTENT') {
-      const [targetDigest, backupDigest] = await Promise.all([
-        digestIfDirectory(targetPath), digestIfDirectory(paths.backupPath)]);
-      if (targetDigest === null && backupDigest === journal.baselineDigest) {
-        await restoreBackup(paths, journal); return { status: 'ROLLED_BACK', evidence: [] };
+      const [targetDigest, candidateDigest, backupDigest, abandonedDigest] = await Promise.all([
+        digestIfDirectory(targetPath), digestIfDirectory(paths.candidatePath),
+        digestIfDirectory(paths.backupPath), digestIfDirectory(paths.abandonedPath),
+      ]);
+      if (targetDigest === journal.candidateDigest && candidateDigest === null &&
+          backupDigest === journal.baselineDigest && abandonedDigest === null) {
+        await rollbackPromoted(paths, journal, fault); return { status: 'ROLLED_BACK', evidence: [] };
       }
       if (targetDigest === journal.baselineDigest && backupDigest === null) {
+        if (candidateDigest !== null && candidateDigest !== journal.candidateDigest)
+          throw fail('STAGE4_RECOVERY_REQUIRED', 'candidate digest mismatch during rollback');
+        if (abandonedDigest !== null && abandonedDigest !== journal.candidateDigest)
+          throw fail('STAGE4_RECOVERY_REQUIRED', 'uncommitted promoted digest mismatch');
+        await removeAbandoned(paths, journal);
         await rm(paths.candidatePath, { recursive: true, force: true }); await rm(paths.lockPath, { force: true });
         await writeState(paths, journal, 'ROLLED_BACK'); return { status: 'ROLLED_BACK', evidence: [] };
+      }
+      if (targetDigest === null && backupDigest === journal.baselineDigest &&
+          candidateDigest === null && abandonedDigest === journal.candidateDigest) {
+        await restoreBackup(paths, journal, fault); await removeAbandoned(paths, journal);
+        return { status: 'ROLLED_BACK', evidence: [] };
+      }
+      if (targetDigest === null && backupDigest === journal.baselineDigest && abandonedDigest === null) {
+        await restoreBackup(paths, journal, fault); return { status: 'ROLLED_BACK', evidence: [] };
       }
       throw fail('STAGE4_RECOVERY_REQUIRED', 'ambiguous rollback intent');
     }
@@ -263,9 +305,7 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
         if (manifestMatches(journal, manifestStage)) {
           await finalizeRecovered(paths, journal); return { status: 'FINALIZED', evidence: [] };
         }
-        const abandoned = join(paths.root, 'uncommitted-promoted');
-        await rename(targetPath, abandoned); await restoreBackup(paths, journal);
-        await rm(abandoned, { recursive: true, force: true }); return { status: 'ROLLED_BACK', evidence: [] };
+        await rollbackPromoted(paths, journal, fault); return { status: 'ROLLED_BACK', evidence: [] };
       }
       throw fail('STAGE4_RECOVERY_REQUIRED', 'ambiguous promote intent');
     }
@@ -273,10 +313,7 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
       if (manifestMatches(journal, manifestStage)) {
         await finalizeRecovered(paths, journal); return { status: 'FINALIZED', evidence: [] };
       }
-      const abandoned = join(paths.root, 'uncommitted-promoted');
-      if (await exists(abandoned)) throw fail('STAGE4_RECOVERY_REQUIRED', 'abandoned path already exists');
-      await rename(targetPath, abandoned); await restoreBackup(paths, journal);
-      await rm(abandoned, { recursive: true, force: true }); return { status: 'ROLLED_BACK', evidence: [] };
+      await rollbackPromoted(paths, journal, fault); return { status: 'ROLLED_BACK', evidence: [] };
     }
     throw fail('STAGE4_RECOVERY_REQUIRED', `unknown journal state ${journal.state}`);
   } catch (error) {

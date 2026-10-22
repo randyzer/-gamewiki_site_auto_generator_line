@@ -113,6 +113,66 @@ test('recovery is idempotent after rollback cleanup was interrupted', async t =>
   assert.equal(await stage4SiteDigest(targetPath), tx.binding.baselineDigest);
 });
 
+test('rollback intent recovers every promoted rollback rename window idempotently', async t => {
+  const points = ['after-rollback-intent', 'after-promoted-abandon-rename', 'after-backup-restore-rename'];
+  for (const [index, point] of points.entries()) {
+    const { targetPath } = await fixture(t);
+    const attempt = 20 + index;
+    const tx = await prepareStage4SiteTransaction({ ...options(targetPath), attempt });
+    await writeFile(join(tx.binding.candidatePath, 'src/index.js'), `export const crash = ${JSON.stringify(point)};\n`);
+    await tx.markValidated(await stage4SiteDigest(tx.binding.candidatePath), 'c'.repeat(64));
+    await tx.promote();
+
+    const interrupted = await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+      attempt, manifestStage: null, fault: current => { if (current === point) throw Error('SYNTHETIC_CRASH'); } });
+    assert.equal(interrupted.status, 'RECOVERY_REQUIRED');
+
+    const recovered = await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+      attempt, manifestStage: null });
+    assert.equal(recovered.status, 'ROLLED_BACK');
+    assert.equal(await stage4SiteDigest(targetPath), tx.binding.baselineDigest);
+    assert.equal((await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+      attempt, manifestStage: null })).status, 'ROLLED_BACK');
+  }
+});
+
+test('recovery never deletes a tampered abandoned promoted tree', async t => {
+  const { targetPath } = await fixture(t);
+  const attempt = 23;
+  const tx = await prepareStage4SiteTransaction({ ...options(targetPath), attempt });
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'export const version = 23;\n');
+  await tx.markValidated(await stage4SiteDigest(tx.binding.candidatePath), 'c'.repeat(64));
+  await tx.promote();
+  const interrupted = await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+    attempt, manifestStage: null,
+    fault: point => { if (point === 'after-promoted-abandon-rename') throw Error('SYNTHETIC_CRASH'); } });
+  assert.equal(interrupted.status, 'RECOVERY_REQUIRED');
+  await writeFile(join(tx.binding.abandonedPath, 'src/index.js'), 'tampered\n');
+  const recovered = await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+    attempt, manifestStage: null });
+  assert.equal(recovered.status, 'RECOVERY_REQUIRED');
+  assert.equal(await readFile(join(tx.binding.abandonedPath, 'src/index.js'), 'utf8'), 'tampered\n');
+});
+
+test('manifest PASSED finalizes PROMOTED and repeated recovery cleans a stale lock', async t => {
+  const { targetPath } = await fixture(t);
+  const attempt = 24;
+  const tx = await prepareStage4SiteTransaction({ ...options(targetPath), attempt });
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'export const version = 24;\n');
+  const candidateDigest = await stage4SiteDigest(tx.binding.candidatePath);
+  await tx.markValidated(candidateDigest, 'c'.repeat(64));
+  await tx.promote();
+  const manifestStage = { status: 'PASSED', checkpoint: { stage4Transaction: {
+    runId: 'wallpaper-engine-002', attempt, candidateDigest,
+  } } };
+  assert.equal((await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+    attempt, manifestStage })).status, 'FINALIZED');
+  await writeFile(tx.binding.lockPath, 'stale-lock\n');
+  assert.equal((await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+    attempt, manifestStage })).status, 'FINALIZED');
+  await assert.rejects(access(tx.binding.lockPath));
+});
+
 test('rollback and finalization recover after their directory rename already completed', async t => {
   const rollback = await fixture(t);
   const tx = await prepareStage4SiteTransaction(options(rollback.targetPath));

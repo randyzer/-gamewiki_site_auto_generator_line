@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { resolve, join } from 'node:path';
 import { validateStage4Candidate } from '../src/stage4-host-validation.mjs';
 import { stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
@@ -85,5 +86,39 @@ test('real macOS sandbox allows candidate build output and blocks writes to the 
     `import {writeFileSync} from 'node:fs'; writeFileSync(${JSON.stringify(targetPath)},'changed');\n`);
   await assert.rejects(validateStage4Candidate({ ...blocked, targetPath }), /STAGE4_HOST_VALIDATION_FAILED/);
   assert.equal(await readFile(targetPath, 'utf8'), 'original\n');
+});
+
+test('real macOS sandbox blocks symlink escapes, network access, and a missing package manager', {
+  skip: process.platform !== 'darwin',
+}, async t => {
+  const alias = await fixture(t, { build: 'node build.mjs' });
+  const outside = join(alias.nativeDirectory, '..', 'outside');
+  await mkdir(outside);
+  await writeFile(join(outside, 'protected.txt'), 'original\n');
+  await writeFile(join(alias.candidatePath, 'build.mjs'),
+    `import {symlinkSync,writeFileSync} from 'node:fs'; symlinkSync(${JSON.stringify(outside)},'escape','dir'); writeFileSync('escape/protected.txt','changed');\n`);
+  await assert.rejects(validateStage4Candidate({ ...alias, targetPath: outside }), /STAGE4_HOST_VALIDATION_FAILED/);
+  assert.equal(await readFile(join(outside, 'protected.txt'), 'utf8'), 'original\n');
+
+  let connections = 0;
+  const server = createServer(socket => { connections += 1; socket.end(); });
+  await new Promise((accept, reject) => {
+    server.once('error', reject); server.listen(0, '127.0.0.1', accept);
+  });
+  t.after(() => new Promise(accept => server.close(accept)));
+  const network = await fixture(t, { build: 'node build.mjs' });
+  const port = server.address().port;
+  await writeFile(join(network.candidatePath, 'build.mjs'),
+    `import {connect} from 'node:net'; import {mkdirSync,writeFileSync} from 'node:fs'; const socket=connect(${port},'127.0.0.1'); socket.on('connect',()=>{mkdirSync('dist',{recursive:true});writeFileSync('dist/index.html','unexpected');socket.end();}); socket.on('error',error=>{console.error(error.code);process.exit(7);});\n`);
+  await assert.rejects(validateStage4Candidate(network), /STAGE4_HOST_VALIDATION_FAILED/);
+  assert.equal(connections, 0);
+
+  const missing = await fixture(t, { build: 'node build.mjs' });
+  const emptyBin = join(missing.nativeDirectory, 'empty-bin');
+  await mkdir(emptyBin);
+  await writeFile(join(missing.candidatePath, 'build.mjs'),
+    "import {mkdirSync,writeFileSync} from 'node:fs'; mkdirSync('dist',{recursive:true}); writeFileSync('dist/index.html','ok');\n");
+  await assert.rejects(validateStage4Candidate(missing, { environment: { PATH: emptyBin } }),
+    /STAGE4_HOST_VALIDATION_FAILED/);
 });
 
