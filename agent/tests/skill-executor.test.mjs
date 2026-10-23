@@ -216,7 +216,10 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.match(prompt, /never reuse or infer any prior Worker result/);
   assert.match(prompt, /STAGE4_WORKER_HANDOFF_V1/);
   assert.match(prompt, /blocking_gaps/);
-  assert.match(prompt, /Host validation pending is the only remaining gate/);
+  assert.match(prompt, /launch_blockers/);
+  assert.match(prompt, /launch-only/);
+  assert.match(prompt, /Stage 6 and Stage 7/);
+  assert.doesNotMatch(prompt, /content, source, SEO, legal-policy and route-publication gate passes/);
   assert.equal(Object.hasOwn(result, 'stage4WorkerArtifactsValidated'), false,
     'Worker output cannot forge the Host-only validation marker');
 });

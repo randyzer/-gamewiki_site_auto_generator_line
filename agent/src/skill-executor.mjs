@@ -23,6 +23,7 @@ import { locateDeploymentTools, locateGitTool } from './deployment-tools.mjs';
 import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
 import { stage4ExecutionBudget } from './stage4-budget.mjs';
+import { STAGE4_LAUNCH_BLOCKERS, validateStage4WorkerHandoff } from './stage4-launch-gap-policy.mjs';
 import { captureKeywordRecovery, verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, suspendSubtitleRequests } from './keyword-service-stops.mjs';
 import { assessKeywordEvidenceOutcome, KEYWORD_EVIDENCE_CLAIMS_FILE, KEYWORD_EVIDENCE_OUTCOME_FILE,
@@ -410,6 +411,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
             : 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
         ] : hostPrelaunch ? [
           'Read context.hostEvidence and verify every SHA256. Use view_image to inspect the host screenshots. Do not invoke browser commands, network requests, build/test/lint/typecheck commands, or site repairs; the host already collected those results.',
+          'context.launchReadiness is a Host-verified clearance bound to the accepted Stage 4 candidate, current site revision and post-audit project digest. It is required for launch readiness and cannot be replaced, cleared or inferred from Worker prose or omitted fields.',
           'Read context.hostEvidence.routePublicationViolations and the routePublication section of HOST_EVIDENCE.json. Any violation, unprovable dynamic route, published noindex page, draft without noindex, draft sitemap entry, or public link to a draft requires a non-PASSED result.',
           `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
@@ -433,7 +435,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'Stage 4 does not require image generation. Follow the Skill media policy by removing or neutralizing misleading demo media and recording missing screenshot, trailer, attribution or rights needs in CONTENT_GAPS.md. Lack of image_generation or view_image is not a blocker.',
         ...(context.stage4TargetPath ? [
           'Generate source and native artifacts, but do not run package-manager check, typecheck, lint, test, build, install, update, or download commands. The Host performs the authoritative offline package validation after native artifact validation.',
-          'For this direct-site Stage 4 transaction, Worker status is provisional. If every Worker-owned content, source, SEO, legal-policy and route-publication gate passes and Host validation pending is the only remaining gate, return PARTIAL and include stage4_completion exactly as {"kind":"STAGE4_WORKER_HANDOFF_V1","worker_owned_gates":"PASSED","host_validation":"REQUIRED","blocking_gaps":[]}. If any other blocker remains, omit stage4_completion and report it truthfully. Never create or claim a Host validation report.'
+          `For this direct-site Stage 4 transaction, Worker status is provisional. If every Worker-owned content, source, SEO and route-publication gate passes, return PARTIAL and include stage4_completion as {"kind":"STAGE4_WORKER_HANDOFF_V1","worker_owned_gates":"PASSED","host_validation":"REQUIRED","blocking_gaps":[],"launch_blockers":${JSON.stringify(STAGE4_LAUNCH_BLOCKERS)}}. launch_blockers must contain this complete Host-owned launch-readiness set in canonical order: ${STAGE4_LAUNCH_BLOCKERS.join(', ')}. Operator identity, contact, jurisdiction, final Privacy/Terms review and DNS delegation belong to Stage 6 and Stage 7 launch readiness; record them truthfully in CONTENT_GAPS.md, but do not treat them as a Stage 4 content-integration failure. Any content, source, SEO, template-residue or route-publication blocker must leave stage4_completion null. Never infer a launch-only classification from free text, and never create or claim a Host validation report.`
         ] : [])
       ] : []),
       ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
@@ -443,6 +445,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'Read the approved keywordSourceLineageFile alongside approved rawKeywordsFile. Only complete retained terms are eligible; pending truncated and missing rows remain pending, never fabricate or restore them. Preserve original SHA256 and source/table line references in the native keyword processing record.'
       ] : []),
       ...(context.existingContent ? [context.existingContent.workerInstructions] : []),
+      ...(hostPrelaunch ? [
+        'Stage 4 PASSED means content integration and Host technical validation passed; it is not launch approval. Any unresolved operator identity, contact, jurisdiction, Privacy/Terms review or DNS delegation recorded in upstream CONTENT_GAPS.md remains a launch blocker and requires a non-PASSED prelaunch result.'
+      ] : []),
       'Audit phases: only write reports/screenshots, unless permissions.uiChanges is explicitly true.',
       ...(deploying ? [
         `Deployment: Execute the APPROVED deployment plan (digest ${context.approvedPlan.digest}). Read the approved plan files listed in context.approvedPlan.artifacts and follow the Skill execution steps (GitHub sync, deploy, DNS, GSC/GA4, production verification) strictly within that plan.`,
@@ -503,7 +508,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       }
       return diagnosticStep('read-worker-result', async () => {
         const parsed = parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output);
-        const { stage4WorkerArtifactsValidated: _untrustedHostMarker, ...workerResult } = parsed;
+        const { stage4WorkerArtifactsValidated: _untrustedHostMarker,
+          stage4LaunchBlockers: _untrustedLaunchBlockers, ...workerResult } = parsed;
         return workerResult;
       });
     };
@@ -632,13 +638,11 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     const validationContext = stagedTemplate && result.status !== 'PASSED'
       ? { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } } : context;
-    const stage4Completion = result.stage4_completion;
+    const stage4Completion = skill === STAGE.CONTENT_INTEGRATION
+      ? validateStage4WorkerHandoff(result.stage4_completion) : null;
     const stage4HostPending = skill === STAGE.CONTENT_INTEGRATION && Boolean(context.inputs.paths) &&
       result.status === 'PARTIAL' && result.missing_inputs.length === 0 &&
-      stage4Completion?.kind === 'STAGE4_WORKER_HANDOFF_V1' &&
-      stage4Completion.worker_owned_gates === 'PASSED' &&
-      stage4Completion.host_validation === 'REQUIRED' &&
-      Array.isArray(stage4Completion.blocking_gaps) && stage4Completion.blocking_gaps.length === 0;
+      stage4Completion !== null;
     let validated;
     try {
       validated = await diagnosticStep('validate-native-artifacts', () =>
@@ -651,8 +655,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     if (stage4HostPending) validated = { ...validated, status: 'PARTIAL',
       stage4WorkerArtifactsValidated: true,
+      stage4LaunchBlockers: [...stage4Completion.launchBlockers],
       evidence: [...result.evidence,
-        'Host independently validated the complete Worker artifact handoff; technical validation remains pending.'] };
+        'Host independently validated the complete Worker artifact handoff; technical validation remains pending.',
+        `Stage 4 launch blockers remain for Stage 6/7: ${stage4Completion.launchBlockers.join(', ') || '(none)'}`] };
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];
