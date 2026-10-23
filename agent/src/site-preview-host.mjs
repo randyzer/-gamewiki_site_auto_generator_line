@@ -1,4 +1,5 @@
-import { readFile, mkdir, writeFile, lstat } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import { access, readFile, mkdir, rm, writeFile, lstat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { createServer } from 'node:net';
 import { spawn } from 'node:child_process';
@@ -6,8 +7,10 @@ import { runProcess } from './process.mjs';
 import { safePath, sha256 } from './files.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
 import { siteProcessEnvironment } from './site-process-environment.mjs';
+import { packageManagerEnvironment, resolveSitePackageManager } from './site-package-manager.mjs';
 
 const fail = (code, detail) => Object.assign(Error(`${code}: ${sanitizeDiagnosticText(detail)}`), { code });
+const installSandboxProfile = () => '(version 1)\n(allow default)\n(deny network*)\n';
 async function manager(projectPath) {
   await safePath(projectPath, [projectPath]);
   for (const [name, command, args] of [['pnpm-lock.yaml', 'pnpm', ['install', '--frozen-lockfile']], ['package-lock.json', 'npm', ['ci']]]) {
@@ -19,18 +22,35 @@ async function manager(projectPath) {
   throw fail('SITE_LOCKFILE_MISSING', `project ${projectPath}; expected pnpm-lock.yaml or package-lock.json`);
 }
 
-export async function installDependencies(projectPath, { run = runProcess, manifestPath = join(projectPath, 'docs/agent-runs/site-dependencies.json') } = {}) {
-  const selected = await manager(projectPath);
-  const manifest = { projectPath, lockfile: selected.lockfile, command: [selected.command, ...selected.args], exitCode: null };
+export async function installDependencies(projectPath, { run = runProcess,
+  manifestPath = join(projectPath, 'docs/agent-runs/site-dependencies.json'),
+  environment = process.env, resolvePackageManager = resolveSitePackageManager,
+  platform = process.platform, sandboxCommand = '/usr/bin/sandbox-exec' } = {}) {
+  const toolchain = await resolvePackageManager(projectPath, {
+    run, environment, platform, sandboxCommand,
+  });
+  const manifest = { projectPath, lockfile: toolchain.lockfile,
+    toolchain, command: [toolchain.executable, ...toolchain.installArgs],
+    sandbox: 'macos-deny-network', exitCode: null };
   let failure;
+  const installTmp = join(projectPath, '.agent-install-tmp');
   try {
-    const result = await run(selected.command, selected.args, { cwd: projectPath, env: siteProcessEnvironment(), timeoutMs: 600000 });
-    manifest.exitCode = result?.exitCode ?? 0;
+    if (platform !== 'darwin') throw fail('SITE_INSTALL_SANDBOX_UNAVAILABLE', platform);
+    try { await access(sandboxCommand, fsConstants.X_OK); }
+    catch { throw fail('SITE_INSTALL_SANDBOX_UNAVAILABLE', sandboxCommand); }
+    await mkdir(installTmp, { recursive: true, mode: 0o700 });
+    const profile = installSandboxProfile();
+    const result = await run(sandboxCommand, ['-p', profile, toolchain.executable, ...toolchain.installArgs], {
+      cwd: projectPath, env: packageManagerEnvironment(environment, { tmpdir: installTmp }), timeoutMs: 600000 });
+    manifest.exitCode = result?.exitCode;
+    if (!Number.isInteger(manifest.exitCode)) throw Error('installation returned no concrete exit code');
     if (manifest.exitCode !== 0) throw Object.assign(Error('installation exited unsuccessfully'), { exitCode: manifest.exitCode });
   } catch (error) {
     manifest.exitCode = error.exitCode ?? null;
     manifest.error = sanitizeDiagnosticText(error.message);
     failure = fail('SITE_INSTALL_FAILED', `${projectPath}; exit ${manifest.exitCode}; ${manifest.error}`);
+  } finally {
+    await rm(installTmp, { recursive: true, force: true });
   }
   await safePath(manifestPath, [dirname(manifestPath)]);
   await mkdir(dirname(manifestPath), { recursive: true });
