@@ -11,6 +11,9 @@ const fail = (code, detail = '') => Object.assign(Error(`${code}${detail ? `: ${
 const outputDirectories = ['.next', 'dist', 'build', '.output'];
 const orderedScripts = ['check', 'typecheck', 'type-check', 'lint', 'test', 'build'];
 const forbiddenScript = /(?:^|[;&|\s])(?:npm|pnpm|yarn|bun)\s+(?:i|install|add|update|upgrade|dlx)\b|(?:^|[;&|\s])(?:npx|bunx|curl|wget)\b/i;
+const packageEnvironmentReference = /\$(?:\{)?((?:npm|pnpm)_[A-Za-z0-9_]+|INIT_CWD)(?:\})?/g;
+const supportedPackageEnvironment = new Set(['npm_lifecycle_event', 'npm_lifecycle_script', 'npm_package_name',
+  'npm_package_version', 'npm_package_json', 'npm_execpath', 'npm_node_execpath', 'npm_command', 'INIT_CWD']);
 const secretKey = /(?:TOKEN|SECRET|PASSWORD|COOKIE|PRIVATE|CREDENTIAL|API_KEY|AUTH|NODE_OPTIONS|NPM_CONFIG_USERCONFIG|HOME|CODEX_HOME)/i;
 
 async function existsDirectory(path) {
@@ -35,8 +38,28 @@ function safeEnvironment(source, nativeDirectory) {
 
 function sandboxProfile(candidatePath, nativeDirectory) {
   const literal = value => value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
-  return `(version 1)\n(allow default)\n(deny network*)\n(deny file-write*)\n` +
+  return `(version 1)\n(allow default)\n(deny network*)\n` +
+    `(allow network-bind (local ip "localhost:*"))\n` +
+    `(allow network-inbound (local ip "localhost:*"))\n` +
+    `(allow network-outbound (remote ip "localhost:*"))\n` +
+    `(deny file-write*)\n` +
+    `(allow file-write* (literal "/dev/null"))\n` +
     `(allow file-write* (subpath "${literal(candidatePath)}") (subpath "${literal(nativeDirectory)}"))\n`;
+}
+
+function scriptPlan(pkg, selected) {
+  const plan = [];
+  for (const requested of selected) {
+    for (const name of [`pre${requested}`, requested, `post${requested}`]) {
+      const body = pkg.scripts?.[name];
+      if (!body) continue;
+      const references = [...body.matchAll(packageEnvironmentReference)].map(match => match[1]);
+      if (references.some(reference => !supportedPackageEnvironment.has(reference)))
+        throw fail('STAGE4_SCRIPT_SEMANTICS_UNSUPPORTED', name);
+      plan.push({ requested, name, body });
+    }
+  }
+  return plan;
 }
 
 export async function validateStage4Candidate(context, { run = runProcess, environment = process.env,
@@ -61,6 +84,7 @@ export async function validateStage4Candidate(context, { run = runProcess, envir
       throw fail('STAGE4_VALIDATION_SCRIPT_UNSAFE', name);
   }
   const selected = orderedScripts.filter(name => pkg.scripts[name]);
+  const scripts = scriptPlan(pkg, selected);
   const beforeDigest = await candidateSourceDigest(candidatePath);
   for (const name of outputDirectories) await rm(join(candidatePath, name), { recursive: true, force: true });
   const reportPath = join(nativeDirectory, 'STAGE4_HOST_VALIDATION.json');
@@ -74,19 +98,31 @@ export async function validateStage4Candidate(context, { run = runProcess, envir
   env.PATH = [join(candidatePath, 'node_modules', '.bin'), env.PATH].filter(Boolean).join(delimiter);
   const profile = sandboxProfile(candidatePath, nativeDirectory);
   try {
-    for (const script of selected) {
-      const item = { script, status: 'IN_PROGRESS', exitCode: null }; report.commands.push(item); await save();
+    for (const script of scripts) {
+      const item = { script: script.name, requestedScript: script.requested,
+        status: 'IN_PROGRESS', exitCode: null }; report.commands.push(item); await save();
       try {
-        const result = await run(sandboxCommand, ['-p', profile, '/bin/sh', '-c', pkg.scripts[script]], {
-          cwd: candidatePath, env, timeoutMs: 600000 });
+        const scriptEnvironment = { ...env,
+          npm_lifecycle_event: script.name,
+          npm_lifecycle_script: script.body,
+          npm_package_name: typeof pkg.name === 'string' ? pkg.name : '',
+          npm_package_version: typeof pkg.version === 'string' ? pkg.version : '',
+          npm_package_json: join(candidatePath, 'package.json'),
+          npm_execpath: packageManager.executable,
+          npm_node_execpath: process.execPath,
+          npm_command: 'run-script',
+          INIT_CWD: candidatePath,
+        };
+        const result = await run(sandboxCommand, ['-p', profile, '/bin/sh', '-c', script.body], {
+          cwd: candidatePath, env: scriptEnvironment, timeoutMs: 600000 });
         item.exitCode = result?.exitCode;
         if (!Number.isInteger(item.exitCode)) throw Error('validation returned no concrete exit code');
         if (item.exitCode !== 0) throw Error(`exit ${item.exitCode}`);
         item.status = 'PASSED'; await save();
-        if (await candidateSourceDigest(candidatePath) !== beforeDigest) throw fail('STAGE4_SOURCE_MUTATED', script);
+        if (await candidateSourceDigest(candidatePath) !== beforeDigest) throw fail('STAGE4_SOURCE_MUTATED', script.name);
       } catch (error) {
         item.status = 'FAILED'; item.error = error.message; await save();
-        throw fail('STAGE4_HOST_VALIDATION_FAILED', `${script}: ${error.message}`);
+        throw fail('STAGE4_HOST_VALIDATION_FAILED', `${script.name}: ${error.message}`);
       }
     }
     if (await candidateSourceDigest(candidatePath) !== beforeDigest) throw fail('STAGE4_SOURCE_MUTATED');

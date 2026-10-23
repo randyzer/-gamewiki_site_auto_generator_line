@@ -1,6 +1,6 @@
 import { constants as fsConstants } from 'node:fs';
 import { access, lstat, readFile, realpath } from 'node:fs/promises';
-import { delimiter, dirname, join } from 'node:path';
+import { delimiter, dirname, isAbsolute, join } from 'node:path';
 import { runProcess } from './process.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
 import { safePath, sha256 } from './files.mjs';
@@ -10,8 +10,8 @@ const fail = (code, detail = '') => Object.assign(
   Error(`${code}${detail ? `: ${sanitizeDiagnosticText(detail)}` : ''}`), { code });
 const exactVersion = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const managers = Object.freeze({
-  'pnpm-lock.yaml': { manager: 'pnpm', installArgs: ['install', '--frozen-lockfile', '--offline'] },
-  'package-lock.json': { manager: 'npm', installArgs: ['ci', '--offline'] },
+  'pnpm-lock.yaml': { manager: 'pnpm', installArgs: ['install', '--frozen-lockfile', '--offline', '--ignore-scripts'] },
+  'package-lock.json': { manager: 'npm', installArgs: ['ci', '--offline', '--ignore-scripts'] },
 });
 
 async function regularFile(path) {
@@ -111,6 +111,8 @@ export function packageManagerEnvironment(source = process.env, { home = source.
     npm_config_audit: 'false',
     npm_config_fund: 'false',
     npm_config_manage_package_manager_versions: 'false',
+    npm_config_pm_on_fail: 'ignore',
+    npm_config_update_notifier: 'false',
     PNPM_NETWORK_CONCURRENCY: '0',
     YARN_ENABLE_NETWORK: 'false',
     COREPACK_ENABLE_NETWORK: '0',
@@ -119,8 +121,38 @@ export function packageManagerEnvironment(source = process.env, { home = source.
   return env;
 }
 
+async function verifiedStoragePath(path) {
+  if (!path || !isAbsolute(path) || path === '/')
+    throw fail('SITE_PACKAGE_MANAGER_STORAGE_CHECK_FAILED', 'storage command returned no safe absolute path');
+  try {
+    const resolved = await realpath(path);
+    if (!(await lstat(resolved)).isDirectory()) throw Error('not a directory');
+    return resolved;
+  } catch {
+    throw fail('SITE_PACKAGE_MANAGER_STORAGE_UNAVAILABLE', path);
+  }
+}
+
+async function packageStorage(identity, executable, run, environment, options) {
+  const args = identity.manager === 'pnpm' ? ['store', 'path', '--silent'] : ['config', 'get', 'cache'];
+  let result;
+  try {
+    result = await run(executable, args, {
+      cwd: dirname(executable),
+      env: packageManagerEnvironment(environment, options),
+      timeoutMs: 30000,
+    });
+  } catch (error) {
+    throw fail('SITE_PACKAGE_MANAGER_STORAGE_CHECK_FAILED', error.message);
+  }
+  const path = result?.stdout?.trim();
+  if (result?.exitCode !== 0)
+    throw fail('SITE_PACKAGE_MANAGER_STORAGE_CHECK_FAILED', 'storage command returned no safe absolute path');
+  return verifiedStoragePath(path);
+}
+
 export async function resolveSitePackageManager(projectPath, { run = runProcess,
-  environment = process.env, executable, home, tmpdir } = {}) {
+  environment = process.env, executable, storagePath, home, tmpdir } = {}) {
   const identity = await projectIdentity(projectPath);
   let resolvedExecutable;
   try {
@@ -152,6 +184,9 @@ export async function resolveSitePackageManager(projectPath, { run = runProcess,
     throw fail('SITE_PACKAGE_MANAGER_VERSION_INVALID', version);
   if (identity.declaredVersion && version !== identity.declaredVersion)
     throw fail('SITE_PACKAGE_MANAGER_VERSION_MISMATCH', `declared ${identity.declaredVersion}; executable reports ${version}`);
+  const resolvedStoragePath = storagePath
+    ? await verifiedStoragePath(storagePath)
+    : await packageStorage(identity, resolvedExecutable, run, environment, { home, tmpdir });
   return Object.freeze({
     schemaVersion: 1,
     kind: 'SITE_PACKAGE_MANAGER_CONTEXT_V1',
@@ -159,6 +194,7 @@ export async function resolveSitePackageManager(projectPath, { run = runProcess,
     executable: resolvedExecutable,
     executableSha256: sha256(executableBytes),
     version,
+    storagePath: resolvedStoragePath,
     declared: identity.declared,
     packageJson: identity.packageJson,
     lockfile: identity.lockfile,
@@ -169,8 +205,9 @@ export async function resolveSitePackageManager(projectPath, { run = runProcess,
 export async function verifySitePackageManager(projectPath, expected, options = {}) {
   if (expected?.kind !== 'SITE_PACKAGE_MANAGER_CONTEXT_V1' || typeof expected.executable !== 'string')
     throw fail('SITE_PACKAGE_MANAGER_CONTEXT_INVALID');
-  const current = await resolveSitePackageManager(projectPath, { ...options, executable: expected.executable });
-  const fields = ['manager', 'executable', 'executableSha256', 'version', 'declared'];
+  const current = await resolveSitePackageManager(projectPath, { ...options,
+    executable: expected.executable, storagePath: expected.storagePath });
+  const fields = ['manager', 'executable', 'executableSha256', 'version', 'storagePath', 'declared'];
   const same = fields.every(name => current[name] === expected[name]) &&
     current.packageJson.sha256 === expected.packageJson?.sha256 &&
     current.lockfile.name === expected.lockfile?.name &&

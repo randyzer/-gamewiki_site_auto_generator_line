@@ -10,17 +10,17 @@ import {
 
 async function fixture(t, { declared = 'pnpm@12.6.0', reported = '12.6.0' } = {}) {
   const root = await mkdtemp(resolve('.site-package-manager-test-'));
-  const projectPath = join(root, 'site'), bin = join(root, 'bin');
-  await Promise.all([mkdir(projectPath), mkdir(bin)]);
+  const projectPath = join(root, 'site'), bin = join(root, 'bin'), storagePath = join(root, 'store');
+  await Promise.all([mkdir(projectPath), mkdir(bin), mkdir(storagePath)]);
   const pkg = { name: 'site' };
   if (declared !== null) pkg.packageManager = declared;
   await writeFile(join(projectPath, 'package.json'), JSON.stringify(pkg));
   await writeFile(join(projectPath, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n');
   const executable = join(bin, 'pnpm');
-  await writeFile(executable, `#!/bin/sh\nprintf '%s\\n' ${JSON.stringify(reported)}\n`);
+  await writeFile(executable, `#!/bin/sh\nif [ "$1" = "--version" ]; then printf '%s\\n' ${JSON.stringify(reported)}; else printf '%s\\n' ${JSON.stringify(storagePath)}; fi\n`);
   await chmod(executable, 0o755);
   t.after(() => rm(root, { recursive: true, force: true }));
-  return { projectPath, bin, executable };
+  return { projectPath, bin, executable, storagePath };
 }
 
 test('resolves an exact local pnpm executable without bootstrap-capable environment', async t => {
@@ -32,6 +32,7 @@ test('resolves an exact local pnpm executable without bootstrap-capable environm
   assert.equal(context.manager, 'pnpm');
   assert.equal(context.executable, f.executable);
   assert.equal(context.version, '12.6.0');
+  assert.equal(context.storagePath, f.storagePath);
   assert.equal(context.declared, 'pnpm@12.6.0');
   assert.match(context.packageJson.sha256, /^[a-f0-9]{64}$/);
   assert.match(context.lockfile.sha256, /^[a-f0-9]{64}$/);
@@ -59,7 +60,7 @@ test('prefers the exact pnpm runtime already cached by PNPM_HOME over a mismatch
   const pnpmHome = join(f.projectPath, '..', 'pnpm-home');
   const cached = join(pnpmHome, '.tools', 'pnpm', '12.6.0', 'node_modules', 'pnpm', 'pnpm');
   await mkdir(join(cached, '..'), { recursive: true });
-  await writeFile(cached, '#!/bin/sh\nprintf \'12.6.0\\n\'\n');
+  await writeFile(cached, `#!/bin/sh\nif [ "$1" = "--version" ]; then printf '12.6.0\\n'; else printf '%s\\n' ${JSON.stringify(f.storagePath)}; fi\n`);
   await chmod(cached, 0o755);
   const context = await resolveSitePackageManager(f.projectPath, {
     environment: { PATH: f.bin, PNPM_HOME: pnpmHome },
