@@ -32,6 +32,7 @@ import { stage4RecoveryDecision } from './stage4-recovery-receipt.mjs';
 import { createStage4LaunchReadinessBinding, verifyStage4LaunchReadinessBinding,
   validateLaunchReadinessClearance, createStage6LaunchReadinessAttestation,
   verifyStage6LaunchReadinessAttestation } from './stage4-launch-gap-policy.mjs';
+import { projectContentDigest } from './project-content-digest.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -505,30 +506,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   }
 
   async function projectDigest() {
-    const files = [];
-    async function walk(directory) {
-      await noLinks(directory);
-      let entries;
-      try { entries = await readdir(directory, { withFileTypes: true }); }
-      catch (error) { if (error.code === 'ENOENT' && directory === state.inputs.projectPath) return; throw error; }
-      for (const entry of entries.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)) {
-        // Git is owned by the future adapter; never inspect or mutate its internals.
-        if (['.git', 'node_modules', '.next', '.astro', 'dist', 'build'].includes(entry.name)) continue;
-        const path = join(directory, entry.name);
-        const rel = relative(state.inputs.projectPath, path);
-        if (/^docs\/(ui-ux-audit|prelaunch|agent-runs)(\/|$)/.test(rel) || /^docs\/DEPLOYMENT_(PLAN|REPORT)\./.test(rel)) continue;
-        assert(!entry.isSymbolicLink(), 'Project contains an unsafe symlink');
-        if (entry.isDirectory()) await walk(path);
-        else {
-          assert(entry.isFile(), 'Project contains a non-regular file');
-          // Next.js/TypeScript regenerate these during the prelaunch build and typecheck.
-          if (entry.name.endsWith('.tsbuildinfo') || entry.name === 'next-env.d.ts') continue;
-          files.push([relative(state.inputs.projectPath, path), hash(await regularFile(path))]);
-        }
-      }
-    }
-    await walk(state.inputs.projectPath);
-    return hash(JSON.stringify(files));
+    return projectContentDigest(state.inputs.projectPath);
   }
 
   async function verifyProjectFreshness(index) {
@@ -706,9 +684,21 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           targetPath: state.inputs.projectPath, runId,
           attempt: integrationStage.checkpoint.stage4Transaction.attempt, manifestStage: integrationStage });
         if (recovery.status === 'RECOVERY_REQUIRED') {
+          const recoveryEvidence = recovery.evidence.length ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED'];
+          const integrationIndex = stageIndex(STAGE.CONTENT_INTEGRATION);
+          for (let i = state.stages.length - 1; i > integrationIndex; i--) {
+            const downstream = state.stages[i];
+            if (downstream.status === 'SKIPPED' || downstream.status === 'NOT_STARTED') continue;
+            if (['READY', 'IN_PROGRESS'].includes(downstream.status))
+              transition(downstream, 'BLOCKED', [
+                `Upstream Stage 4 recovery failed; ${downstream.skill} execution was reconciled before reset.`,
+              ]);
+            transition(downstream, 'NOT_STARTED', [
+              `Reset because Stage 4 requires recovery: ${recoveryEvidence.join('; ')}`,
+            ]);
+          }
           if (integrationStage.status === 'PASSED') transition(integrationStage, 'NOT_STARTED');
-          transition(integrationStage, 'BLOCKED', recovery.evidence.length
-            ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED']);
+          transition(integrationStage, 'BLOCKED', recoveryEvidence);
           await save(); return clone(state);
         }
         if (recovery.status === 'HELD') {

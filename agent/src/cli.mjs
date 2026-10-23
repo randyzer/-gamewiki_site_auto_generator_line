@@ -10,6 +10,8 @@ import { randomUUID } from 'node:crypto';
 import {previewEntry,createEntry,updateEntry,statusEntry,previewEntryHandoff,validateEntryHandoff} from './entry-v1.mjs';
 import { runFromTerminal } from './terminal-run.mjs';
 import { reportCliResult } from './cli-result.mjs';
+import { previewFinalizedStage4Reconciliation,
+  applyFinalizedStage4Reconciliation } from './stage4-finalized-reconciliation.mjs';
 
 const [command, file, id, revision] = process.argv.slice(2);
 async function entryInput(file) {
@@ -66,6 +68,28 @@ else if (command === 'preflight' && file) {
   console.log(JSON.stringify({ runId, reportDirectory: join(config.workspace, 'runs', runId), ...report }, null, 2));
   if (report.status !== 'PASSED') process.exitCode = 2;
 }
+else if (command === 'reconcile-stage4-preview' && file && process.argv.slice(2).length === 2) {
+  try {
+    const config = await loadConfiguration();
+    reportEntry(await previewFinalizedStage4Reconciliation({ workspace: config.workspace, runId: file }));
+  } catch (error) {
+    reportEntry({ status: 'BLOCKED', code: error.code ?? 'MANUAL_RECONCILIATION_REQUIRED',
+      reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
+      releaseAuthorized: false });
+  }
+}
+else if (command === 'reconcile-stage4-confirm' && file && id && revision &&
+  process.argv.slice(2).length === 4) {
+  try {
+    const config = await loadConfiguration();
+    reportEntry(await applyFinalizedStage4Reconciliation({ workspace: config.workspace,
+      previewId: file, runId: id, confirmationCode: revision }));
+  } catch (error) {
+    reportEntry({ status: 'BLOCKED', code: error.code ?? 'MANUAL_RECONCILIATION_REQUIRED',
+      reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
+      releaseAuthorized: false });
+  }
+}
 else if (['run-confirm', 'retry-confirm'].includes(command) && file && id && revision &&
   process.argv.slice(2).length === 4) {
   const result = await runFromTerminal({ command: command === 'run-confirm' ? 'run' : 'retry',
@@ -82,6 +106,6 @@ else if (['run', 'retry'].includes(command) && file && id) {
   const result = await runFromTerminal({ command, inputsFile: file, runId: id, ...confirmation });
   if (result.status !== 'PREVIEW') reportEntry(result);
 } else {
-  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | run INPUTS.json RUN_ID [--preview | --confirm CODE] | retry INPUTS.json RUN_ID [--preview | --confirm CODE] | run-confirm PREVIEW_ID RUN_ID CODE | retry-confirm PREVIEW_ID RUN_ID CODE');
+  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | reconcile-stage4-preview RUN_ID | reconcile-stage4-confirm PREVIEW_ID RUN_ID CODE | run INPUTS.json RUN_ID [--preview | --confirm CODE] | retry INPUTS.json RUN_ID [--preview | --confirm CODE] | run-confirm PREVIEW_ID RUN_ID CODE | retry-confirm PREVIEW_ID RUN_ID CODE');
   process.exitCode = 2;
 }

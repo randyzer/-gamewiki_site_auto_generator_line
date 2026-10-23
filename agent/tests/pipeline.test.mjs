@@ -1601,6 +1601,25 @@ test('interrupted checkpoint is blocked rather than automatically replayed', asy
   assert.equal(resumed.snapshot().stages[0].status, 'BLOCKED'); assert.equal(f.calls.length, 0);
 });
 
+test('Stage 4 recovery failure resets interrupted downstream stages before saving', async t => {
+  const f = await directSiteFixture(t);
+  const pipelineOptions = { executor: f.executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 };
+  const p = await f.create(pipelineOptions); await advance(p, 4);
+  const disk = p.snapshot();
+  disk.stages[4].status = 'IN_PROGRESS'; disk.stages[4].checkpoint.attempt = 1;
+  await writeFile(p.manifestPath, JSON.stringify(disk));
+  const resumed = await f.create({ ...pipelineOptions, runId: disk.runId, inputs: {}, resume: true,
+    recoverStage4Transaction: async () => ({ status: 'RECOVERY_REQUIRED',
+      evidence: ['STAGE4_RECOVERY_REQUIRED: synthetic finalized drift'] }) });
+  await resumed.advance();
+  const state = resumed.snapshot();
+  assert.equal(state.stages[3].status, 'BLOCKED');
+  assert.equal(state.stages[4].status, 'NOT_STARTED');
+  const reloaded = await f.create({ ...pipelineOptions, runId: disk.runId, inputs: {}, resume: true });
+  assert.equal(reloaded.snapshot().stages[4].status, 'NOT_STARTED');
+});
+
 test('site file changes after UI audit invalidate downstream execution', async t => {
   const f = await fixture(t); const p = await f.create(); await advance(p, 5);
   await mkdir(f.inputs.projectPath); await writeFile(join(f.inputs.projectPath, 'index.html'), 'changed site');
