@@ -11,6 +11,8 @@ import { sha256 } from '../src/files.mjs';
 import { fixture, goodResult } from './helpers.mjs';
 import { captureKeywordRecovery, captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
+import { diagnosticStep } from '../src/diagnostics.mjs';
+import { runProcess } from '../src/process.mjs';
 
 function terminal(answer, { isTTY = true } = {}) {
   const stdin = Readable.from(answer === null ? [] : [answer + '\n']);
@@ -686,6 +688,42 @@ test('snapshot confirmation rejects manifest drift before invoking the executor'
   await writeFile(path, original);
   const resumed = await confirmSnapshot(s, approved, { command: 'retry', runId });
   assert.notEqual(resumed.status, 'FAILED');
+});
+
+test('held Stage 4 retry requires an exact recover or fresh preview decision', async t => {
+  const s = await setup(t), runId = 'stage4-held-preview';
+  let stage4Calls = 0;
+  s.executor = async (skill, context) => {
+    s.calls.push(skill);
+    if (skill !== STAGE.CONTENT_INTEGRATION) return goodResult(skill, context);
+    stage4Calls++;
+    if (stage4Calls === 1) {
+      await writeFile(join(context.stage4Transaction.candidatePath, 'held.txt'), 'held progress\n');
+      return diagnosticStep('execute-worker', () => runProcess(process.execPath, ['-e',
+        `process.stderr.write("ERROR: You've hit your usage limit. Retry later.\\nERROR: You've hit your usage limit. Retry later.\\ntokens used\\n118,844\\n");process.exit(1)`]));
+    }
+    assert.equal(context.stage4Recovery.kind, 'STAGE4_RECOVERY_CONTEXT_V1');
+    assert.equal(await readFile(join(context.stage4Transaction.candidatePath, 'held.txt'), 'utf8'),
+      'held progress\n');
+    return goodResult(skill, context);
+  };
+  const first = await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId,
+    configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
+  assert.equal(first.status, 'FAILED');
+  await writeFile(s.inputsFile, '{}');
+  await assert.rejects(preview(s, { command: 'retry', runId }), /STAGE4_RECOVERY_DECISION_REQUIRED/);
+
+  const manifest = JSON.parse(await readFile(manifestPath(s.f, runId)));
+  const identity = manifest.stages[3].checkpoint.stage4Transaction;
+  const journal = JSON.parse(await readFile(identity.journalPath, 'utf8'));
+  const decision = { mode: 'recover', sourceAttempt: identity.attempt,
+    heldCandidateDigest: journal.candidateDigest, baselineDigest: journal.baselineDigest };
+  await writeFile(s.inputsFile, JSON.stringify({ stage4RecoveryDecision: decision }));
+  const approved = await preview(s, { command: 'retry', runId });
+  assert.match(approved.text, /Stage 4 held candidate decision: recover/);
+  const result = await confirmSnapshot(s, approved, { command: 'retry', runId });
+  assert.notEqual(result.status, 'FAILED');
+  assert.equal(stage4Calls, 2);
 });
 
 test('preview prints the exact summary and deterministic SHA256 code without creating a manifest or executing', async t => {

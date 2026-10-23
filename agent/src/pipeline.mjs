@@ -21,10 +21,12 @@ import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 import { assertProductionObservation } from './v2/production-observation.mjs';
 import { resolveStageIdentity } from './v2/stage-identity.mjs';
-import { prepareStage4SiteTransaction, recoverStage4SiteTransaction, stage4CandidateInputs,
+import { prepareStage4SiteTransaction, prepareRecoveredStage4SiteTransaction,
+  recoverStage4SiteTransaction, discardHeldStage4SiteTransaction, stage4CandidateInputs,
   stage4SiteDigest } from './stage4-site-transaction.mjs';
 import { validateStage4Candidate } from './stage4-host-validation.mjs';
 import { isTrustedRetryableExternalFailure } from './process.mjs';
+import { stage4RecoveryDecision } from './stage4-recovery-receipt.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -205,10 +207,13 @@ export const OFFLINE_STAGE4_READINESS_CAPABILITY = Object.freeze({
 export async function createPipeline({ workspace, executor, inputs = {}, inventoryPath = DEFAULT_INVENTORY,
   templateRoots = [], templateSnapshot, runId = randomUUID(), resume = false, recoverDeadLocks = false, siteWrites = false, preparedRun,
   expectedManifestSha256, keywordExecutionReceipt, keywordExecutionInputs, deploymentExecution = false,
+  stage4RecoveryReceipt, stage4RecoveryInputs,
   installSiteDependencies = executor?.installDependencies, stagePreflight = executor?.stagePreflight,
   stage4ReadinessCapability, productionObservation,
   prepareStage4Transaction = prepareStage4SiteTransaction,
+  prepareRecoveredStage4Transaction = prepareRecoveredStage4SiteTransaction,
   recoverStage4Transaction = recoverStage4SiteTransaction,
+  discardHeldStage4Transaction = discardHeldStage4SiteTransaction,
   prepareStage4Handoff = prepareResearchHandoff,
   validateStage4 } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
@@ -357,6 +362,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   if (resume) {
     if (keywordExecutionReceipt) assert(hash(await regularFile(manifestPath)) === keywordExecutionReceipt.manifestSha256,
       'KEYWORD_EXECUTION_RECEIPT_INVALID: manifest changed');
+    if (stage4RecoveryReceipt) assert(hash(await regularFile(manifestPath)) === stage4RecoveryReceipt.manifestSha256,
+      'STAGE4_RECOVERY_RECEIPT_INVALID: manifest changed');
     if (expectedManifestSha256 !== undefined) assert(hash(await regularFile(manifestPath)) === expectedManifestSha256,
       'ENTRY_RESUME_MANIFEST_CHANGED');
     assert(Object.keys(inputs).length === 0 || JSON.stringify(checkInputs(inputs)) ===
@@ -579,7 +586,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       .sort((a, b) => stageIndex(a[1]) - stageIndex(b[1])).map(([key, stage]) => ({ key, skill: stage, stageLabel: stageDefinition(stage).label,
         requiredByStage: stageIndex(stage) + 1, timing: stageIndex(stage) <= current ? 'now' : 'later',
         provided: state.inputs[key] !== undefined && state.inputs[key] !== '',
-        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'stage4DirtyWorktreeApproval', 'uiApproval', 'adCode', 'adApproval',
+        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'stage4DirtyWorktreeApproval', 'stage4RecoveryDecision', 'uiApproval', 'adCode', 'adApproval',
           'liveUrl', 'deploymentPlanApproval'].includes(key),
         pathOrInformation: key === 'rawKeywordsFile' ? 'User-supplied absolute Markdown file path' :
           key === 'projectPath' ? 'Resolved paths.siteDirectory (legacy runs retain their project directory)'
@@ -622,10 +629,36 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     return exclusive(async () => {
       state.inputCopies ??= {};
       const integrationStage = findStage(state.stages, STAGE.CONTENT_INTEGRATION);
+      const heldCandidate = async stage => {
+        const identities = [...(stage.checkpoint.stage4HeldCandidates ?? []),
+          ...(stage.checkpoint.stage4Transaction ? [stage.checkpoint.stage4Transaction] : [])];
+        for (const identity of identities.reverse()) {
+          if (!Number.isSafeInteger(identity?.attempt)) continue;
+          const recovery = await recoverStage4Transaction({ targetPath: state.inputs.projectPath,
+            runId, attempt: identity.attempt, manifestStage: stage });
+          if (recovery.status === 'RECOVERY_REQUIRED') return recovery;
+          if (recovery.status === 'HELD') return recovery;
+        }
+        return null;
+      };
+      if (state.inputs.paths && integrationStage.status === 'PASSED' &&
+          integrationStage.checkpoint.stage4HeldCandidates?.length) {
+        const allowedTargetDigest = integrationStage.checkpoint.stage4Transaction?.candidateDigest;
+        assert(/^[a-f0-9]{64}$/.test(allowedTargetDigest ?? ''),
+          'STAGE4_RECOVERY_REQUIRED: promoted candidate digest is missing');
+        for (const held of integrationStage.checkpoint.stage4HeldCandidates) {
+          await discardHeldStage4Transaction({ targetPath: state.inputs.projectPath, runId,
+            attempt: held.attempt, heldCandidateDigest: held.candidateDigest, allowedTargetDigest });
+        }
+        delete integrationStage.checkpoint.stage4HeldCandidates;
+        delete integrationStage.checkpoint.stage4Recovery;
+        delete state.inputs.stage4RecoveryDecision;
+        await save();
+      }
       if (state.inputs.paths && integrationStage.checkpoint.stage4Transaction) {
-        const identity = integrationStage.checkpoint.stage4Transaction;
-        const recovery = await recoverStage4Transaction({ targetPath: state.inputs.projectPath,
-          runId, attempt: identity.attempt, manifestStage: integrationStage });
+        const recovery = await heldCandidate(integrationStage) ?? await recoverStage4Transaction({
+          targetPath: state.inputs.projectPath, runId,
+          attempt: integrationStage.checkpoint.stage4Transaction.attempt, manifestStage: integrationStage });
         if (recovery.status === 'RECOVERY_REQUIRED') {
           if (integrationStage.status === 'PASSED') transition(integrationStage, 'NOT_STARTED');
           transition(integrationStage, 'BLOCKED', recovery.evidence.length
@@ -633,6 +666,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           await save(); return clone(state);
         }
         if (recovery.status === 'HELD') {
+          const approved = integrationStage.checkpoint.stage4Recovery;
+          if (approved && approved.mode === 'recover' && approved.sourceAttempt === recovery.attempt &&
+              approved.heldCandidateDigest === recovery.candidateDigest &&
+              approved.baselineDigest === recovery.baselineDigest) {
+            // The single-use preview receipt was consumed by updateUserInputs; continue into a new attempt.
+          } else {
           if (integrationStage.status !== 'BLOCKED') {
             if (!['NOT_STARTED', 'READY', 'IN_PROGRESS'].includes(integrationStage.status)) {
               transition(integrationStage, 'NOT_STARTED');
@@ -641,6 +680,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
             await save();
           }
           return clone(state);
+          }
         }
       }
       const index = state.stages.findIndex(stage => !stageSatisfied(stage));
@@ -711,17 +751,24 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           if (error.code !== 'ENOENT') { await recordFailure(stage, error, 'check-template-target', 'BLOCKED'); await save(); return clone(state); }
         }
       }
+      let stage4HeldSource = null;
       if (stage.skill === STAGE.CONTENT_INTEGRATION && state.inputs.paths && stage.checkpoint.stage4Transaction) {
         const previous = stage.checkpoint.stage4Transaction;
-        const recovery = await recoverStage4Transaction({ targetPath: state.inputs.projectPath,
-          runId, attempt: previous.attempt, manifestStage: stage });
+        const recovery = await heldCandidate(stage) ?? await recoverStage4Transaction({
+          targetPath: state.inputs.projectPath, runId, attempt: previous.attempt, manifestStage: stage });
         if (recovery.status === 'RECOVERY_REQUIRED') {
           transition(stage, 'BLOCKED', recovery.evidence.length ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED']);
           await save(); return clone(state);
         }
         if (recovery.status === 'HELD') {
-          transition(stage, 'BLOCKED', recovery.evidence);
-          await save(); return clone(state);
+          const approved = stage.checkpoint.stage4Recovery;
+          if (!approved || approved.mode !== 'recover' || approved.sourceAttempt !== recovery.attempt ||
+              approved.heldCandidateDigest !== recovery.candidateDigest ||
+              approved.baselineDigest !== recovery.baselineDigest) {
+            transition(stage, 'BLOCKED', recovery.evidence);
+            await save(); return clone(state);
+          }
+          stage4HeldSource = recovery;
         }
       }
       if (stage.status !== 'READY') { transition(stage, 'READY'); await save(); }
@@ -809,14 +856,28 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         }
         if (!result && stage.skill === STAGE.CONTENT_INTEGRATION && state.inputs.paths) {
           operation = 'prepare-stage4-transaction';
-          stage4Transaction = await prepareStage4Transaction({ targetPath: state.inputs.projectPath,
-            runId, attempt: stage.checkpoint.attempt,
-            readinessDigest: stage.checkpoint.readinessDigest,
-            skillLockSha256: context.skillLock.sha256 });
+          const transactionOptions = { targetPath: state.inputs.projectPath,
+            runId, attempt: stage.checkpoint.attempt, readinessDigest: stage.checkpoint.readinessDigest,
+            skillLockSha256: context.skillLock.sha256 };
+          stage4Transaction = stage4HeldSource
+            ? await prepareRecoveredStage4Transaction({ ...transactionOptions,
+              sourceAttempt: stage4HeldSource.attempt,
+              heldCandidateDigest: stage4HeldSource.candidateDigest })
+            : await prepareStage4Transaction(transactionOptions);
           context.stage4Transaction = stage4Transaction.binding;
+          if (stage4HeldSource) context.stage4Recovery = { kind: 'STAGE4_RECOVERY_CONTEXT_V1',
+            mode: 'recover', sourceAttempt: stage4HeldSource.attempt,
+            heldCandidateDigest: stage4HeldSource.candidateDigest };
           stage.checkpoint.stage4Transaction = { kind: stage4Transaction.binding.kind, runId,
             attempt: stage.checkpoint.attempt, baselineDigest: stage4Transaction.binding.baselineDigest,
             candidateDigest: null, journalPath: stage4Transaction.binding.journalPath };
+          if (stage4HeldSource) {
+            stage.checkpoint.stage4HeldCandidates ??= [];
+            if (!stage.checkpoint.stage4HeldCandidates.some(item => item.attempt === stage4HeldSource.attempt))
+              stage.checkpoint.stage4HeldCandidates.push({ kind: 'STAGE4_SITE_TRANSACTION_V1', runId,
+                attempt: stage4HeldSource.attempt, baselineDigest: stage4HeldSource.baselineDigest,
+                candidateDigest: stage4HeldSource.candidateDigest, journalPath: stage4HeldSource.journalPath });
+          }
           await save();
           operation = 'prepare-stage4-candidate-handoff';
           const candidatePath = stage4Transaction.binding.candidatePath;
@@ -968,6 +1029,15 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       if (stage4Transaction && stage4Promoted && stage.status === 'PASSED') {
         await stage4Transaction.markManifestCommitted(state.sequence);
         await stage4Transaction.finalize();
+        for (const held of stage.checkpoint.stage4HeldCandidates ?? []) {
+          await discardHeldStage4Transaction({ targetPath: state.inputs.projectPath, runId,
+            attempt: held.attempt, heldCandidateDigest: held.candidateDigest,
+            allowedTargetDigest: stage.checkpoint.stage4Transaction.candidateDigest });
+        }
+        delete stage.checkpoint.stage4HeldCandidates;
+        delete stage.checkpoint.stage4Recovery;
+        delete state.inputs.stage4RecoveryDecision;
+        await save();
       }
       if (productionObservation?.mode === 'SHADOW_READ_ONLY') {
         await productionObservation.observeLegacyCommit({
@@ -1031,6 +1101,55 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       if (Object.hasOwn(patch, 'adsEnabled')) assert(patch.adsEnabled === state.inputs.adsEnabled, 'Ad branch is locked at creation');
       const current = state.stages.findIndex(stage => !stageSatisfied(stage));
       const keywordStage = findStage(state.stages, STAGE.KEYWORD_RESEARCH);
+      const integrationStage = findStage(state.stages, STAGE.CONTENT_INTEGRATION);
+      if (current === stageIndex(STAGE.CONTENT_INTEGRATION) && retry &&
+          Object.hasOwn(patch, 'stage4RecoveryDecision')) {
+        const decision = stage4RecoveryDecision(updated.stage4RecoveryDecision);
+        assert(stage4RecoveryReceipt && stage4RecoveryInputs &&
+          normalizedJson(stage4RecoveryReceipt.decision) === normalizedJson(decision) &&
+          normalizedJson(stage4RecoveryInputs.stage4RecoveryDecision) === normalizedJson(decision),
+        'STAGE4_RECOVERY_RECEIPT_REQUIRED: preview and confirm this exact held candidate decision');
+        const identities = [...(integrationStage.checkpoint.stage4HeldCandidates ?? []),
+          ...(integrationStage.checkpoint.stage4Transaction ? [integrationStage.checkpoint.stage4Transaction] : [])];
+        const heldCandidates = [];
+        const attempts = new Set();
+        for (const identity of identities) {
+          if (!Number.isSafeInteger(identity?.attempt)) continue;
+          if (attempts.has(identity.attempt)) continue;
+          attempts.add(identity.attempt);
+          const candidate = await recoverStage4Transaction({ targetPath: state.inputs.projectPath,
+            runId, attempt: identity.attempt, manifestStage: integrationStage });
+          if (candidate.status === 'RECOVERY_REQUIRED') throw Error(candidate.evidence.join('; '));
+          if (candidate.status === 'HELD') heldCandidates.push(candidate);
+        }
+        const held = heldCandidates.at(-1);
+        assert(held, 'STAGE4_RECOVERY_DECISION_INVALID: no verified held candidate');
+        stage4RecoveryDecision(decision, { held });
+        state.inputs = updated;
+        if (decision.mode === 'fresh') {
+          for (const candidate of heldCandidates) {
+            await discardHeldStage4Transaction({ targetPath: state.inputs.projectPath, runId,
+              attempt: candidate.attempt, heldCandidateDigest: candidate.candidateDigest,
+              allowedTargetDigest: candidate.baselineDigest });
+          }
+          delete integrationStage.checkpoint.stage4Transaction;
+          delete integrationStage.checkpoint.stage4HeldCandidates;
+          delete integrationStage.checkpoint.stage4Recovery;
+          delete state.inputs.stage4RecoveryDecision;
+        } else {
+          integrationStage.checkpoint.stage4Recovery = clone(decision);
+          integrationStage.checkpoint.stage4HeldCandidates ??= [];
+          if (!integrationStage.checkpoint.stage4HeldCandidates.some(item => item.attempt === held.attempt))
+            integrationStage.checkpoint.stage4HeldCandidates.push({ kind: 'STAGE4_SITE_TRANSACTION_V1', runId,
+              attempt: held.attempt, baselineDigest: held.baselineDigest,
+              candidateDigest: held.candidateDigest, journalPath: held.journalPath });
+        }
+        transition(integrationStage, 'NOT_STARTED', [
+          `Explicit Stage 4 ${decision.mode} decision consumed for held attempt ${held.attempt}.`,
+        ]);
+        integrationStage.artifacts = [];
+        await save(); return clone(state);
+      }
       if (keywordStage.status === 'PARTIAL' && keywordStage.checkpoint.researchHandoff &&
         Object.hasOwn(patch, 'researchHandoffApproval')) {
         assert(Object.keys(patch).length === 1,

@@ -181,6 +181,8 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     mode: 'audit-only', permissions: { siteWrites: true, productionDeployment: false }, stage4Readiness,
     checkpoint: { attempt: 1 }, stage4Transaction: { kind: 'STAGE4_SITE_TRANSACTION_V1',
       runId: 'content-nongit-contract', attempt: 1, targetPath: projectPath, candidatePath },
+    stage4Recovery: { kind: 'STAGE4_RECOVERY_CONTEXT_V1', mode: 'recover', sourceAttempt: 4,
+      heldCandidateDigest: 'c'.repeat(64) },
     researchHandoff: authorityHandoff, stage4CandidateResearchHandoff: candidateHandoff,
   });
 
@@ -208,6 +210,9 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.match(prompt, /Stage 4 does not require image generation/);
   assert.match(prompt, /Lack of image_generation or view_image is not a blocker/);
   assert.match(prompt, /Host performs the authoritative offline package validation/);
+  assert.match(prompt, /writable candidate contains unvalidated work from a prior interrupted Worker/);
+  assert.match(prompt, /write this attempt's new strict worker-result\.json in nativeDirectory/);
+  assert.match(prompt, /never reuse or infer any prior Worker result/);
   assert.match(prompt, /STAGE4_WORKER_HANDOFF_V1/);
   assert.match(prompt, /blocking_gaps/);
   assert.match(prompt, /Host validation pending is the only remaining gate/);

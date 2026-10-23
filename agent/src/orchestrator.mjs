@@ -16,6 +16,8 @@ import { prepareExistingContent } from './existing-content-adapter.mjs';
 import { materializeTemplateSnapshot } from './template-snapshot.mjs';
 import { resolveInputPaths } from './paths.mjs';
 import { verifyKeywordExecutionReceipt } from './keyword-execution-receipt.mjs';
+import { verifyStage4RecoveryReceipt } from './stage4-recovery-receipt.mjs';
+import { recoverStage4SiteTransaction } from './stage4-site-transaction.mjs';
 
 export async function loadConfiguration(file = join(AGENT_ROOT, 'config/workflow.json')) {
   const data = JSON.parse(await readFile(file, 'utf8'));
@@ -99,6 +101,16 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
     const previous = manifestBytes ? JSON.parse(manifestBytes).inputs : null;
     const keywordExecutionReceipt = task.keywordExecutionReceipt
       ? verifyKeywordExecutionReceipt(task.keywordExecutionReceipt, { runId, inputs: supplied, manifestBytes }) : null;
+    let stage4RecoveryReceipt = null;
+    if (task.stage4RecoveryReceipt) {
+      const manifestState = JSON.parse(manifestBytes);
+      const integration = findStage(manifestState.stages, STAGE.CONTENT_INTEGRATION);
+      const decision = supplied.stage4RecoveryDecision;
+      const held = await recoverStage4SiteTransaction({ targetPath: manifestState.inputs.projectPath,
+        runId, attempt: decision?.sourceAttempt, manifestStage: integration });
+      stage4RecoveryReceipt = verifyStage4RecoveryReceipt(task.stage4RecoveryReceipt,
+        { runId, inputs: supplied, manifestBytes, held });
+    }
     const handoffApprovalOnly = Object.keys(supplied).length === 1 &&
       Object.hasOwn(supplied, 'researchHandoffApproval');
     const inputs = resolveInputPaths(previous?.paths && !supplied.paths ? { ...supplied, paths: previous.paths } : supplied,
@@ -126,7 +138,8 @@ export function createOrchestrator({ configuration, executor, approvalConsumer, 
         runId, resume, siteWrites: true,
         preparedRun: localPermit && !resumePermit ? permit : undefined, recoverDeadLocks: resumePermit || !freshApproval,
         expectedManifestSha256: resumePermit ? permit.manifestSha256 : undefined,
-        keywordExecutionReceipt, keywordExecutionInputs: supplied, inputs: resume ? {} : inputs });
+        keywordExecutionReceipt, keywordExecutionInputs: supplied, stage4RecoveryReceipt,
+        stage4RecoveryInputs: supplied, inputs: resume ? {} : inputs });
       if (resume) {
         if (pipeline.snapshot().stages.some(s => s.status === 'IN_PROGRESS')) await pipeline.advance();
         const old = pipeline.snapshot().inputs;

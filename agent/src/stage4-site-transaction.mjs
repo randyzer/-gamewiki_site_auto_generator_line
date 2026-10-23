@@ -245,6 +245,62 @@ export async function prepareStage4SiteTransaction({ targetPath, runId, attempt,
   return api;
 }
 
+export async function prepareRecoveredStage4SiteTransaction({ targetPath, runId, attempt,
+  sourceAttempt, heldCandidateDigest, readinessDigest, skillLockSha256, fault = () => {} }) {
+  if (!Number.isSafeInteger(sourceAttempt) || sourceAttempt < 1 || sourceAttempt === attempt ||
+      !/^[a-f0-9]{64}$/.test(heldCandidateDigest ?? ''))
+    throw fail('STAGE4_HELD_IDENTITY_INVALID');
+  const held = await recoverStage4SiteTransaction({ targetPath, runId, attempt: sourceAttempt,
+    manifestStage: null });
+  if (held.status !== 'HELD' || held.candidateDigest !== heldCandidateDigest)
+    throw fail('STAGE4_HELD_IDENTITY_MISMATCH');
+  const transaction = await prepareStage4SiteTransaction({ targetPath, runId, attempt,
+    readinessDigest, skillLockSha256, fault });
+  try {
+    await rm(transaction.binding.candidatePath, { recursive: true, force: true });
+    const files = await stage4SiteFiles(held.candidatePath);
+    await copySourceTree(held.candidatePath, transaction.binding.candidatePath, files);
+    if (await stage4SiteDigest(transaction.binding.candidatePath) !== heldCandidateDigest)
+      throw fail('STAGE4_RECOVERED_CANDIDATE_COPY_INVALID');
+    return transaction;
+  } catch (error) {
+    await transaction.abort('recovered candidate copy failed').catch(() => {});
+    throw error;
+  }
+}
+
+export async function discardHeldStage4SiteTransaction({ targetPath, runId, attempt,
+  heldCandidateDigest, allowedTargetDigest }) {
+  targetPath = resolve(targetPath);
+  if (!/^[a-f0-9]{64}$/.test(heldCandidateDigest ?? '') ||
+      !/^[a-f0-9]{64}$/.test(allowedTargetDigest ?? ''))
+    throw fail('STAGE4_HELD_IDENTITY_INVALID');
+  const computed = stage4TransactionPaths({ targetPath, runId, attempt });
+  const paths = { ...computed, targetPath };
+  const journal = await loadJournal(paths);
+  if (!journal || !['HELD', 'DISCARDED'].includes(journal.state) ||
+      journal.runId !== runId || journal.attempt !== attempt ||
+      journal.targetPath !== targetPath || journal.candidateDigest !== heldCandidateDigest)
+    throw fail('STAGE4_HELD_IDENTITY_MISMATCH');
+  if (journal.state === 'DISCARDED') {
+    if (await digestIfDirectory(paths.candidatePath) !== null ||
+        await digestIfDirectory(targetPath) !== allowedTargetDigest ||
+        journal.discardedAgainstTargetDigest !== allowedTargetDigest)
+      throw fail('STAGE4_RECOVERY_REQUIRED', 'discarded candidate state mismatch');
+    await rm(paths.lockPath, { force: true });
+    return { status: 'DISCARDED', attempt, candidateDigest: heldCandidateDigest };
+  }
+  if (await digestIfDirectory(paths.candidatePath) !== heldCandidateDigest)
+    throw fail('STAGE4_RECOVERY_REQUIRED', 'held candidate digest mismatch');
+  if (await digestIfDirectory(targetPath) !== allowedTargetDigest)
+    throw fail('STAGE4_RECOVERY_REQUIRED', 'held discard target mismatch');
+  await rm(paths.candidatePath, { recursive: true, force: true });
+  await rm(paths.lockPath, { force: true });
+  await syncDirectory(paths.root);
+  await writeState(paths, journal, 'DISCARDED', { discardedAgainstTargetDigest: allowedTargetDigest });
+  return { status: 'DISCARDED', attempt, candidateDigest: heldCandidateDigest };
+}
+
 export async function recoverStage4SiteTransaction({ targetPath, runId, attempt, manifestStage,
   fault = () => {} }) {
   targetPath = resolve(targetPath);
@@ -272,8 +328,11 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
       await rm(paths.lockPath, { force: true });
       if (journal.state === 'HOLD_INTENT') await writeState(paths, journal, 'HELD');
       return { status: 'HELD', evidence: ['STAGE4_HELD_CANDIDATE_DECISION_REQUIRED'],
-        candidateDigest: journal.candidateDigest, failureCode: journal.failureCode };
+        attempt: journal.attempt, baselineDigest: journal.baselineDigest,
+        candidateDigest: journal.candidateDigest, failureCode: journal.failureCode,
+        candidatePath: paths.candidatePath, journalPath: paths.journalPath };
     }
+    if (journal.state === 'DISCARDED') return { status: 'DISCARDED', evidence: [] };
     if (journal.state === 'FINALIZED') {
       if (await digestIfDirectory(targetPath) !== journal.candidateDigest || await exists(paths.backupPath) ||
           await exists(paths.candidatePath)) throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized disk state mismatch');
