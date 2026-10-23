@@ -3,6 +3,7 @@ import { open, mkdir, readFile, writeFile, rename, rm, stat, lstat, chmod, copyF
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { sourceFiles } from './project-baseline.mjs';
 import { inside, safePath, sha256 } from './files.mjs';
+import { projectContentDigest, PROJECT_CONTENT_POLICY_VERSION } from './project-content-digest.mjs';
 
 const fail = (code, detail = '') => Object.assign(Error(`${code}${detail ? `: ${detail}` : ''}`), { code });
 const digestFiles = files => sha256(JSON.stringify(files));
@@ -143,11 +144,15 @@ async function finalizeRecovered(paths, journal) {
   const backupDigest = await digestIfDirectory(paths.backupPath);
   if (backupDigest !== null && backupDigest !== journal.baselineDigest)
     throw fail('STAGE4_RECOVERY_REQUIRED', 'backup digest mismatch');
+  const finalizedProjectDigest = await projectContentDigest(paths.targetPath);
   await rm(paths.backupPath, { recursive: true, force: true });
   await rm(paths.candidatePath, { recursive: true, force: true });
   await rm(paths.lockPath, { force: true });
   await syncDirectory(paths.root);
-  await writeState(paths, journal, 'FINALIZED');
+  await writeState(paths, journal, 'FINALIZED', {
+    projectContentPolicyVersion: PROJECT_CONTENT_POLICY_VERSION,
+    finalizedProjectDigest,
+  });
 }
 
 export async function prepareStage4SiteTransaction({ targetPath, runId, attempt,
@@ -335,8 +340,15 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
     }
     if (journal.state === 'DISCARDED') return { status: 'DISCARDED', evidence: [] };
     if (journal.state === 'FINALIZED') {
-      if (await digestIfDirectory(targetPath) !== journal.candidateDigest || await exists(paths.backupPath) ||
-          await exists(paths.candidatePath)) throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized disk state mismatch');
+      if (!manifestMatches(journal, manifestStage))
+        throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized manifest identity mismatch');
+      if (journal.projectContentPolicyVersion !== PROJECT_CONTENT_POLICY_VERSION ||
+          !/^[a-f0-9]{64}$/.test(journal.finalizedProjectDigest ?? ''))
+        throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized project projection missing');
+      if (await projectContentDigest(targetPath) !== journal.finalizedProjectDigest)
+        throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized project content drift');
+      if (await exists(paths.backupPath) || await exists(paths.candidatePath) || await exists(paths.abandonedPath))
+        throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized transaction residue');
       await rm(paths.lockPath, { force: true });
       return { status: 'FINALIZED', evidence: [] };
     }

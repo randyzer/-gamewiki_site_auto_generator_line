@@ -290,6 +290,32 @@ test('manifest PASSED finalizes PROMOTED and repeated recovery cleans a stale lo
   await assert.rejects(access(tx.binding.lockPath));
 });
 
+test('finalized recovery ignores Stage 5 audit evidence but preserves Stage 4 source integrity', async t => {
+  const { targetPath } = await fixture(t);
+  const attempt = 25;
+  const tx = await prepareStage4SiteTransaction({ ...options(targetPath), attempt });
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'export const version = 25;\n');
+  const candidateDigest = await stage4SiteDigest(tx.binding.candidatePath);
+  await tx.markValidated(candidateDigest, 'c'.repeat(64));
+  await tx.promote();
+  await tx.markManifestCommitted(44);
+  await tx.finalize();
+  const manifestStage = { status: 'PASSED', checkpoint: { stage4Transaction: {
+    runId: 'wallpaper-engine-002', attempt, candidateDigest,
+  } } };
+
+  await mkdir(join(targetPath, 'docs/ui-ux-audit/run/screenshots'), { recursive: true });
+  await writeFile(join(targetPath, 'docs/ui-ux-audit/run/screenshots/home.png'), 'audit evidence\n');
+  assert.equal((await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+    attempt, manifestStage })).status, 'FINALIZED');
+
+  await writeFile(join(targetPath, 'src/index.js'), 'export const tampered = true;\n');
+  const drift = await recoverStage4SiteTransaction({ targetPath, runId: 'wallpaper-engine-002',
+    attempt, manifestStage });
+  assert.equal(drift.status, 'RECOVERY_REQUIRED');
+  assert.match(drift.evidence.join(' '), /content|digest|drift/i);
+});
+
 test('rollback and finalization recover after their directory rename already completed', async t => {
   const rollback = await fixture(t);
   const tx = await prepareStage4SiteTransaction(options(rollback.targetPath));
