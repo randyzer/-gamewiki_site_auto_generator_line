@@ -825,13 +825,16 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           operation = 'execute-skill';
           result = await executor(stage.skill, context);
         }
-        if (stage4Transaction && result.status === 'PASSED') {
+        const stage4HostValidationEligible = stage4Transaction &&
+          (result.status === 'PASSED' ||
+            (result.status === 'PARTIAL' && result.stage4WorkerArtifactsValidated === true));
+        if (stage4HostValidationEligible) {
           operation = 'host-stage4-validation';
           const hostValidation = await validateStage4({ candidatePath: stage4Transaction.binding.candidatePath,
             targetPath: state.inputs.projectPath, nativeDirectory: context.nativeDirectory });
           await stage4Transaction.markValidated(hostValidation.candidateDigest, hostValidation.reportSha256);
           const reportBytes = await regularFile(hostValidation.reportPath);
-          result = { ...result, stage4HostValidation: hostValidation,
+          result = { ...result, status: 'PASSED', stage4HostValidation: hostValidation,
             evidence: [...result.evidence, `Host Stage 4 validation PASSED: ${hostValidation.reportSha256}`],
             artifacts: [...result.artifacts, { kind: 'STAGE4_HOST_VALIDATION.json',
               path: join(outputDirectory, 'STAGE4_HOST_VALIDATION.json'), runId,

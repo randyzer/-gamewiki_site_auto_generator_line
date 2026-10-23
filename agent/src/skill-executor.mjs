@@ -420,7 +420,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'Stage 4 readiness contract: the Host readiness attestation is authoritative and its readiness is READY. Read context.stage4Readiness.path as immutable Host evidence. Do not rerun or redefine the Stage 4 readiness preflight, project path, Git requirement, or dirty-worktree decision. A non-Git site accepted by the Host is ready for integration. Never initialize Git or change repository configuration.',
         'Stage 4 does not require image generation. Follow the Skill media policy by removing or neutralizing misleading demo media and recording missing screenshot, trailer, attribution or rights needs in CONTENT_GAPS.md. Lack of image_generation or view_image is not a blocker.',
         ...(context.stage4TargetPath ? [
-          'Generate source and native artifacts, but do not run package-manager check, typecheck, lint, test, build, install, update, or download commands. The Host performs the authoritative offline package validation after native artifact validation.'
+          'Generate source and native artifacts, but do not run package-manager check, typecheck, lint, test, build, install, update, or download commands. The Host performs the authoritative offline package validation after native artifact validation.',
+          'For this direct-site Stage 4 transaction, Worker status is provisional. If every Worker-owned content, source, SEO, legal-policy and route-publication gate passes and Host validation pending is the only remaining gate, return PARTIAL and include stage4_completion exactly as {"kind":"STAGE4_WORKER_HANDOFF_V1","worker_owned_gates":"PASSED","host_validation":"REQUIRED","blocking_gaps":[]}. If any other blocker remains, omit stage4_completion and report it truthfully. Never create or claim a Host validation report.'
         ] : [])
       ] : []),
       ...(skill === STAGE.CONTENT_INTEGRATION && context.researchHandoff?.manifest ? [
@@ -487,7 +488,11 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           }
         }
       }
-      return diagnosticStep('read-worker-result', async () => parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output));
+      return diagnosticStep('read-worker-result', async () => {
+        const parsed = parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output);
+        const { stage4WorkerArtifactsValidated: _untrustedHostMarker, ...workerResult } = parsed;
+        return workerResult;
+      });
     };
     let keywordCheckpoint;
     const preserveKeywordProgress = async reason => {
@@ -614,15 +619,27 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     }
     const validationContext = stagedTemplate && result.status !== 'PASSED'
       ? { ...context, inputs: { ...context.inputs, projectPath: context.templateCopyDestination } } : context;
+    const stage4Completion = result.stage4_completion;
+    const stage4HostPending = skill === STAGE.CONTENT_INTEGRATION && Boolean(context.inputs.paths) &&
+      result.status === 'PARTIAL' && result.missing_inputs.length === 0 &&
+      stage4Completion?.kind === 'STAGE4_WORKER_HANDOFF_V1' &&
+      stage4Completion.worker_owned_gates === 'PASSED' &&
+      stage4Completion.host_validation === 'REQUIRED' &&
+      Array.isArray(stage4Completion.blocking_gaps) && stage4Completion.blocking_gaps.length === 0;
     let validated;
     try {
       validated = await diagnosticStep('validate-native-artifacts', () =>
-        validateNativeArtifacts(skill, validationContext, result, validationOptions));
+        validateNativeArtifacts(skill, validationContext,
+          stage4HostPending ? { ...result, status: 'PASSED' } : result, validationOptions));
     } catch (error) {
       error.workerStatus = result.status;
       error.hostValidation = 'FAILED';
       throw error;
     }
+    if (stage4HostPending) validated = { ...validated, status: 'PARTIAL',
+      stage4WorkerArtifactsValidated: true,
+      evidence: [...result.evidence,
+        'Host independently validated the complete Worker artifact handoff; technical validation remains pending.'] };
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];

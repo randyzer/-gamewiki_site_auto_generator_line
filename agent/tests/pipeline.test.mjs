@@ -159,6 +159,74 @@ test('direct-site Stage 4 validates an isolated candidate and promotes only afte
   assert.ok(state.stages[3].artifacts.some(item => item.kind === 'STAGE4_HOST_VALIDATION.json'));
 });
 
+test('direct-site Stage 4 accepts a Host-validated provisional Worker handoff', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
+    const result = f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...result, status: 'PARTIAL',
+      stage4WorkerArtifactsValidated: true,
+      evidence: ['Worker-owned gates passed; Host technical validation is pending.'] };
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'PASSED', JSON.stringify(state.stages[3].evidence));
+  assert.deepEqual(f.order, ['install', 'host-validate']);
+  assert.equal(await readFile(join(f.siteDirectory, 'worker-change.txt'), 'utf8'), 'validated candidate\n');
+  assert.ok(state.stages[3].artifacts.some(item => item.kind === 'STAGE4_HOST_VALIDATION.json'));
+});
+
+test('direct-site Stage 4 never upgrades an ordinary PARTIAL result', async t => {
+  const f = await directSiteFixture(t); let hostCalls = 0;
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'uncommitted.txt'), 'must disappear\n');
+    const result = f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...result, status: 'PARTIAL', artifacts: [],
+      evidence: ['Legal operator identity is still unresolved.'] };
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async input => { hostCalls++; return f.validateStage4(input); } });
+  await advance(p, 3);
+  const before = await stage4SiteDigest(f.siteDirectory);
+
+  const state = await advance(p, 1);
+
+  assert.equal(state.stages[3].status, 'PARTIAL');
+  assert.equal(hostCalls, 0);
+  assert.equal(await stage4SiteDigest(f.siteDirectory), before);
+  await assert.rejects(readFile(join(f.siteDirectory, 'uncommitted.txt')));
+});
+
+test('direct-site Stage 4 provisional handoff rolls back when Host validation fails', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'uncommitted.txt'), 'must disappear\n');
+    const result = f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+      evidence: ['Worker-owned gates passed; Host technical validation is pending.'] };
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => { throw Error('synthetic Host build failure'); } });
+  await advance(p, 3);
+  const before = await stage4SiteDigest(f.siteDirectory);
+
+  const state = await advance(p, 1);
+
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.match(state.stages[3].diagnostic.reason, /synthetic Host build failure/);
+  assert.equal(await stage4SiteDigest(f.siteDirectory), before);
+  await assert.rejects(readFile(join(f.siteDirectory, 'uncommitted.txt')));
+});
+
 test('direct-site Stage 4 rebinds nested research to the candidate before handoff', async t => {
   const f = await directSiteFixture(t);
   await writeFile(join(f.researchDirectory, '首页调研信息.md'), '');
