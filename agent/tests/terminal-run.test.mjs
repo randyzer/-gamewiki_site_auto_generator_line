@@ -206,6 +206,24 @@ test('preview exposes the keyword budget and binds the current retry manifest', 
   assert.notEqual(before.confirmation_code, after.confirmation_code);
 });
 
+test('preview exposes and binds the Stage 4 execution budget', async t => {
+  const s = await setup(t);
+  const inputs = { ...s.f.inputs, stage4ExecutionBudget: { timeoutMs: 1800000 } };
+  const text = await describeRun({ command: 'run', runId: 'stage4-budget-preview', inputs,
+    configuration: s.f.configuration });
+  assert.match(text, /Stage 4 execution budget: 1800000 ms; source: run-inputs/);
+  await writeFile(s.inputsFile, JSON.stringify(inputs));
+  const first = await runFromTerminal({ command: 'run', inputsFile: s.inputsFile,
+    runId: 'stage4-budget-preview', configuration: s.f.configuration,
+    executor: s.executor, preview: true, ...terminal(null, { isTTY: false }) });
+  await writeFile(s.inputsFile, JSON.stringify({ ...inputs,
+    stage4ExecutionBudget: { timeoutMs: 2400000 } }));
+  const second = await runFromTerminal({ command: 'run', inputsFile: s.inputsFile,
+    runId: 'stage4-budget-preview', configuration: s.f.configuration,
+    executor: s.executor, preview: true, ...terminal(null, { isTTY: false }) });
+  assert.notEqual(first.confirmation_code, second.confirmation_code);
+});
+
 test('retry preview validates selected recovery bytes and confirms selection and provider stops', async t => {
   const s = await setup(t), runId = 'selected-recovery';
   const pausing = async (skill, context) => skill === STAGE.KEYWORD_RESEARCH

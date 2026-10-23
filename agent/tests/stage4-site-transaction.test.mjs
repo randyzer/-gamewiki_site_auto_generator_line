@@ -49,6 +49,24 @@ test('retryable external failure holds an immutable candidate without changing t
   assert.equal(recovered.candidateDigest, held.candidateDigest);
 });
 
+test('a confirmed Worker timeout can hold an immutable candidate without publishing it', async t => {
+  const { targetPath } = await fixture(t);
+  const before = await stage4SiteDigest(targetPath);
+  const tx = await prepareStage4SiteTransaction(options(targetPath));
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'timeout progress\n');
+  const held = await tx.holdCandidate('WORKER_TIMEOUT');
+  const journal = JSON.parse(await readFile(tx.binding.journalPath, 'utf8'));
+  assert.equal(journal.state, 'HELD');
+  assert.equal(journal.failureCode, 'WORKER_TIMEOUT');
+  assert.equal(journal.candidateDigest, held.candidateDigest);
+  assert.equal(await stage4SiteDigest(targetPath), before);
+  assert.equal(await readFile(join(tx.binding.candidatePath, 'src/index.js'), 'utf8'), 'timeout progress\n');
+  const recovered = await recoverStage4SiteTransaction({ ...options(targetPath), manifestStage: null });
+  assert.equal(recovered.status, 'HELD');
+  assert.equal(recovered.failureCode, 'WORKER_TIMEOUT');
+  assert.equal(recovered.candidateDigest, held.candidateDigest);
+});
+
 test('recovery completes a durable hold intent after a crash', async t => {
   const { targetPath } = await fixture(t);
   const before = await stage4SiteDigest(targetPath);

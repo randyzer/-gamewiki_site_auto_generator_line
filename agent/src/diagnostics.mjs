@@ -43,6 +43,13 @@ export function failureDiagnostic(error, { stage = null, attempt = 0, operation 
     ...(['PASSED', 'PARTIAL', 'FAILED', 'BLOCKED', 'WAITING_FOR_USER'].includes(error?.workerStatus)
       ? { workerStatus: error.workerStatus } : {}),
     ...(error?.hostValidation === 'FAILED' ? { hostValidation: 'FAILED' } : {}),
+    ...(Number.isSafeInteger(error?.configuredTimeoutMs) && error.configuredTimeoutMs > 0
+      ? { configuredTimeoutMs: error.configuredTimeoutMs } : {}),
+    ...(Number.isSafeInteger(error?.elapsedMs) && error.elapsedMs >= 0 ? { elapsedMs: error.elapsedMs } : {}),
+    ...(typeof error?.terminationConfirmed === 'boolean'
+      ? { terminationConfirmed: error.terminationConfirmed } : {}),
+    ...(['HELD', 'ABORTED'].includes(error?.candidateDisposition)
+      ? { candidateDisposition: error.candidateDisposition } : {}),
     at: new Date().toISOString() };
 }
 

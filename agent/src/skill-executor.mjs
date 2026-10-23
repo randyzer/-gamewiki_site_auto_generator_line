@@ -22,6 +22,7 @@ import { workerEnvironment, stageWorkerPermissions, verifyWorkerCommandIdentity,
 import { locateDeploymentTools, locateGitTool } from './deployment-tools.mjs';
 import { keywordYtDlpWrapper } from './keyword-ytdlp.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
+import { stage4ExecutionBudget } from './stage4-budget.mjs';
 import { captureKeywordRecovery, verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, suspendSubtitleRequests } from './keyword-service-stops.mjs';
 import { assessKeywordEvidenceOutcome, KEYWORD_EVIDENCE_CLAIMS_FILE, KEYWORD_EVIDENCE_OUTCOME_FILE,
@@ -136,12 +137,20 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     const homepageResearch = skill === STAGE.HOMEPAGE_RESEARCH;
     const keywordResearch = skill === STAGE.KEYWORD_RESEARCH;
     const keywordBudget = keywordResearch ? keywordResearchBudget(context.inputs.keywordResearchBudget) : null;
+    const stage4Budget = skill === STAGE.CONTENT_INTEGRATION
+      ? stage4ExecutionBudget(context.inputs.stage4ExecutionBudget) : null;
     if (keywordBudget && timeoutMs !== undefined) {
       const hostLimit = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 600000;
       keywordBudget.timeoutMs = Math.min(keywordBudget.timeoutMs, hostLimit);
       keywordBudget.handoffMarginMs = Math.min(keywordBudget.handoffMarginMs, Math.max(0, keywordBudget.timeoutMs - 30000));
       keywordBudget.hostTimeoutMs = hostLimit;
       keywordBudget.configurationSource += '+host-cap';
+    }
+    if (stage4Budget && timeoutMs !== undefined) {
+      const hostLimit = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 600000;
+      stage4Budget.timeoutMs = Math.min(stage4Budget.timeoutMs, hostLimit);
+      stage4Budget.hostTimeoutMs = hostLimit;
+      stage4Budget.configurationSource += '+host-cap';
     }
     const stoppedServices = keywordResearch ? keywordServiceStops(context.inputs.keywordServiceStops) : [];
     const resumedServices = keywordResearch ? keywordServiceResumes(context.inputs.keywordServiceResumes) : [];
@@ -471,7 +480,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       let workerFailure;
       try {
         await diagnosticStep('execute-worker', () => run(command, [...args, ...permissions.args, '-'],
-          { cwd: context.nativeDirectory, input: prompt(), env, timeoutMs: keywordBudget?.timeoutMs ?? timeoutMs ?? 600000 }));
+          { cwd: context.nativeDirectory, input: prompt(), env,
+            timeoutMs: keywordBudget?.timeoutMs ?? stage4Budget?.timeoutMs ?? timeoutMs ?? 600000 }));
       } catch (error) { workerFailure = error; throw error;
       } finally {
         if (skill === STAGE.CONTENT_INTEGRATION) {

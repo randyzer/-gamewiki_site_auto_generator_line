@@ -11,6 +11,7 @@ import { resolveInputPaths, validateInputPaths, validateSiteIntake } from './pat
 import { isDeepStrictEqual } from 'node:util';
 import { prepareResearchHandoff, publishResearchArtifacts } from './handoff.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
+import { stage4ExecutionBudget } from './stage4-budget.mjs';
 import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
@@ -36,7 +37,7 @@ export const STATES = Object.freeze(['NOT_STARTED', 'READY', 'IN_PROGRESS', 'WAI
 export const DEFAULT_INVENTORY = fileURLToPath(new URL('../config/skill-manifest.json', import.meta.url));
 
 const RESULT_STATES = new Set(['PASSED', 'PARTIAL', 'FAILED', 'BLOCKED', 'WAITING_FOR_USER']);
-const STAGE4_HOLD_CODES = new Set(['WORKER_USAGE_LIMIT']);
+const STAGE4_HOLD_CODES = new Set(['WORKER_USAGE_LIMIT', 'WORKER_TIMEOUT']);
 const NEXT = {
   NOT_STARTED: ['READY', 'WAITING_FOR_USER', 'BLOCKED'],
   READY: ['IN_PROGRESS', 'WAITING_FOR_USER', 'BLOCKED'],
@@ -96,6 +97,7 @@ function checkInputs(value) {
   for (const key of Object.keys(value)) assert(Object.hasOwn(INPUT_STAGE, key), `Unknown input: ${key}`);
   assert(value.mode === undefined || ['new-site', 'existing-project'].includes(value.mode), 'Unknown project mode');
   if (value.keywordResearchBudget !== undefined) keywordResearchBudget(value.keywordResearchBudget);
+  if (value.stage4ExecutionBudget !== undefined) stage4ExecutionBudget(value.stage4ExecutionBudget);
   if (value.keywordServiceStops !== undefined) keywordServiceStops(value.keywordServiceStops);
   if (value.keywordServiceResumes !== undefined) keywordServiceResumes(value.keywordServiceResumes);
   if (value.keywordRecoveryDecision !== undefined)
@@ -1010,13 +1012,21 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
             if (operation === 'execute-skill' && error.diagnosticOperation === 'execute-worker' &&
                 STAGE4_HOLD_CODES.has(error.code) && isTrustedRetryableExternalFailure(error)) {
               const held = await stage4Transaction.holdCandidate(error.code);
+              error.candidateDisposition = held.state;
               stage.checkpoint.stage4Transaction = { ...stage.checkpoint.stage4Transaction,
                 candidateDigest: held.candidateDigest, state: held.state, failureCode: error.code };
-            } else await stage4Transaction.abort(error.code ?? error.message);
+            } else {
+              await stage4Transaction.abort(error.code ?? error.message);
+              error.candidateDisposition = 'ABORTED';
+            }
           }
           catch (recoveryError) { error.message += `; ${recoveryError.message}`; }
         } else if (stage4Transaction && stage4Promoted) {
-          try { await stage4Transaction.abort(error.code ?? error.message); stage4Promoted = false; }
+          try {
+            await stage4Transaction.abort(error.code ?? error.message);
+            stage4Promoted = false;
+            error.candidateDisposition = 'ABORTED';
+          }
           catch (recoveryError) { error.message += `; ${recoveryError.message}`; }
         }
         await recordFailure(stage, error, operation);

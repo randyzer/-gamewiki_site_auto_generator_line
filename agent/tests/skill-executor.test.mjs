@@ -172,7 +172,7 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     } });
   const result = await executor(STAGES[3], {
     runId: 'content-nongit-contract',
-    inputs: { ...f.inputs, projectPath,
+    inputs: { ...f.inputs, projectPath, stage4ExecutionBudget: { timeoutMs: 1800000 },
       paths: { ...f.inputs.paths, siteDirectory: projectPath, researchDirectory } },
     outputDirectory,
     requiredArtifacts: ARTIFACTS[3],
@@ -191,6 +191,7 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   const nativeDirectory = join(f.configuration.workspace,
     'runs/content-nongit-contract/artifacts/3/1/native');
   assert.equal(invoked.options.cwd, nativeDirectory);
+  assert.equal(invoked.options.timeoutMs, 1800000);
   assert.match(prompt, /nativeDirectory is the isolated Worker execution and artifact directory/);
   assert.ok(prompt.includes(`context.inputs.projectPath (${JSON.stringify(candidatePath)}) is the isolated writable candidate`));
   assert.ok(prompt.includes(`context.stage4TargetPath (${JSON.stringify(projectPath)}) is the real read-only site`));

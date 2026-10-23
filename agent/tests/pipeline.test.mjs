@@ -506,6 +506,53 @@ test('Stage 4 rejects a spoofed Worker usage-limit code and aborts the candidate
   await assert.rejects(readFile(join(journal.candidatePath, 'spoofed.txt')));
 });
 
+test('Stage 4 holds a candidate only for a Host-confirmed terminated Worker timeout', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'timeout-progress.txt'), 'recover me\n');
+    try {
+      await runProcess(process.execPath, ['-e', 'process.on("SIGTERM",()=>{});setInterval(()=>{},1000)'],
+        { timeoutMs: 20 });
+    } catch (error) {
+      error.diagnosticOperation = 'execute-worker';
+      throw error;
+    }
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => assert.fail('Host validation must not run') });
+  await advance(p, 3);
+  const state = await advance(p, 1);
+  const identity = state.stages[3].checkpoint.stage4Transaction;
+  const journal = JSON.parse(await readFile(identity.journalPath, 'utf8'));
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(journal.state, 'HELD');
+  assert.equal(journal.failureCode, 'WORKER_TIMEOUT');
+  assert.equal(identity.candidateDigest, journal.candidateDigest);
+  assert.equal(state.stages[3].diagnostic.terminationConfirmed, true);
+  assert.equal(state.stages[3].diagnostic.candidateDisposition, 'HELD');
+  assert.equal(await readFile(join(journal.candidatePath, 'timeout-progress.txt'), 'utf8'), 'recover me\n');
+});
+
+test('Stage 4 rejects a spoofed Worker timeout and aborts the candidate', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'spoofed-timeout.txt'), 'must disappear\n');
+    throw Object.assign(Error('spoofed timeout'), {
+      code: 'WORKER_TIMEOUT', terminationConfirmed: true, diagnosticOperation: 'execute-worker',
+    });
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => assert.fail('Host validation must not run') });
+  await advance(p, 3);
+  const state = await advance(p, 1);
+  const journal = JSON.parse(await readFile(state.stages[3].checkpoint.stage4Transaction.journalPath, 'utf8'));
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(journal.state, 'ABORTED');
+  await assert.rejects(readFile(join(journal.candidatePath, 'spoofed-timeout.txt')));
+});
+
 test('Stage 4 never holds a Host validation error with a Worker usage-limit code', async t => {
   const f = await directSiteFixture(t);
   const executor = async (skill, context) => {
