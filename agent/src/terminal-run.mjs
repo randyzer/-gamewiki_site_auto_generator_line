@@ -7,6 +7,7 @@ import { STAGES, STAGE, stageSatisfied } from './stages.mjs';
 import { sha256 } from './files.mjs';
 import { resolveInputPaths } from './paths.mjs';
 import { keywordResearchBudget } from './keyword-budget.mjs';
+import { stage4ExecutionBudget } from './stage4-budget.mjs';
 import { verifyKeywordRecovery } from './keyword-recovery.mjs';
 import { keywordServiceStops, keywordServiceResumes, recoveredKeywordServiceDecisions } from './keyword-service-stops.mjs';
 import { createKeywordExecutionReceipt, keywordRecoveryDecision, normalizedJson } from './keyword-execution-receipt.mjs';
@@ -116,6 +117,7 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     : configuration.templateRoots?.join(', ') ?? '(none)';
   const stages = inputs.adsEnabled === true ? [...STAGES, 'game-site-adsterra-ad-integration'] : STAGES;
   const budget = keywordResearchBudget(inputs.keywordResearchBudget);
+  const stage4Budget = stage4ExecutionBudget(inputs.stage4ExecutionBudget);
   const serviceStops = keywordServiceStops(inputs.keywordServiceStops);
   const serviceResumes = keywordServiceResumes(inputs.keywordServiceResumes);
   const dirtyApproval = inputs.stage4DirtyWorktreeApproval === undefined ? null :
@@ -174,6 +176,7 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     `Skills: ${inventory.skillRoot} tree ${inventory.sourceTree ?? '(unversioned)'}`,
     `Templates: ${template}`,
     `Keyword research budget: ${budget.timeoutMs} ms; handoff margin: ${budget.handoffMarginMs} ms; source: ${budget.configurationSource}`,
+    `Stage 4 execution budget: ${stage4Budget.timeoutMs} ms; source: ${stage4Budget.configurationSource}`,
     `Suspended services (all keywords): ${serviceStops.join(', ') || '(none)'}`,
     `Recovered service restrictions: ${serviceDecisions.historicalStops.join(', ') || '(none)'}`,
     `Explicitly resumed services: ${serviceResumes.join(', ') || '(none)'}`,

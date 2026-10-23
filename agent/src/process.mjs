@@ -51,16 +51,45 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
   return new Promise((resolve, reject) => {
     if (signal?.aborted) return reject(workerError('Worker aborted', 'WORKER_ABORTED'));
     const child = spawn(command, args, { cwd, env, detached: process.platform !== 'win32', stdio: ['pipe', 'pipe', 'pipe'] });
-    let stopped = false, killTimer, failure, stopFinished, stdout = '', stdoutTail = emptyTail(), stderrTail = emptyTail();
+    const startedAt = Date.now();
+    let stopped = false, killTimer, failure, stopFinished, terminationConfirmed = false,
+      stdout = '', stdoutTail = emptyTail(), stderrTail = emptyTail();
     const kill = sig => {
       try { process.platform === 'win32' ? child.kill(sig) : process.kill(-child.pid, sig); }
       catch (error) { if (error.code !== 'ESRCH') failure = workerError('Worker termination failed', 'WORKER_TERMINATION_FAILED'); }
+    };
+    const processGroupExists = () => {
+      if (process.platform === 'win32') return true;
+      try { process.kill(-child.pid, 0); return true; }
+      catch (error) {
+        if (error.code === 'ESRCH') return false;
+        if (error.code === 'EPERM') return true;
+        throw error;
+      }
+    };
+    const confirmStopped = async () => {
+      if (process.platform === 'win32') return false;
+      const deadline = Date.now() + 1000;
+      while (Date.now() < deadline) {
+        try { if (!processGroupExists()) return true; }
+        catch (error) {
+          failure = workerError(`Worker termination verification failed: ${error.code ?? error.name}`,
+            'WORKER_TERMINATION_FAILED');
+          return false;
+        }
+        await new Promise(done => setTimeout(done, 20));
+      }
+      return false;
     };
     const stop = () => {
       if (stopped) return;
       stopped = true; kill('SIGTERM');
       stopFinished = new Promise(done => {
-        killTimer = setTimeout(() => { kill('SIGKILL'); done(); }, 500);
+        killTimer = setTimeout(async () => {
+          kill('SIGKILL');
+          terminationConfirmed = await confirmStopped();
+          done();
+        }, 500);
       });
     };
     const duration = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 600000;
@@ -83,7 +112,17 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
       if (stopped) await stopFinished;
       clearTimeout(timer); clearTimeout(killTimer); signal?.removeEventListener('abort', stop);
       if (failure?.code === 'WORKER_TERMINATION_FAILED') reject(failure);
-      else if (stopped) reject(workerError(signal?.aborted ? 'Worker aborted' : 'Worker timed out', signal?.aborted ? 'WORKER_ABORTED' : 'WORKER_TIMEOUT'));
+      else if (stopped) {
+        const aborted = signal?.aborted;
+        const detail = failureDetail(stderrTail, stdoutTail, env);
+        const elapsedMs = Date.now() - startedAt;
+        const error = workerError(aborted ? 'Worker aborted' :
+          `Worker timed out after ${duration}ms${detail ? `; ${detail}` : ''}`,
+        aborted ? 'WORKER_ABORTED' : 'WORKER_TIMEOUT',
+        { configuredTimeoutMs: duration, elapsedMs, terminationConfirmed });
+        if (!aborted && terminationConfirmed) trustedRetryableExternalFailures.add(error);
+        reject(error);
+      }
       else if (failure) reject(failure);
       else if (code !== 0) {
         const detail = failureDetail(stderrTail, stdoutTail, env);

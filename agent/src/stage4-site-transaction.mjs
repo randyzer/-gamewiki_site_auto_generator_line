@@ -7,6 +7,7 @@ import { inside, safePath, sha256 } from './files.mjs';
 const fail = (code, detail = '') => Object.assign(Error(`${code}${detail ? `: ${detail}` : ''}`), { code });
 const digestFiles = files => sha256(JSON.stringify(files));
 const journalVersion = 1;
+const holdFailureCodes = new Set(['WORKER_USAGE_LIMIT', 'WORKER_TIMEOUT']);
 
 async function exists(path) {
   try { return await lstat(path); }
@@ -218,7 +219,7 @@ export async function prepareStage4SiteTransaction({ targetPath, runId, attempt,
       await finalizeRecovered(paths, journal);
     },
     async holdCandidate(failureCode) {
-      if (journal.state !== 'PREPARED' || failureCode !== 'WORKER_USAGE_LIMIT')
+      if (journal.state !== 'PREPARED' || !holdFailureCodes.has(failureCode))
         throw fail('STAGE4_TRANSACTION_STATE_INVALID');
       const candidateDigest = await stage4SiteDigest(paths.candidatePath);
       await verifyTargetUnchanged();
@@ -316,7 +317,7 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
     return { status: 'RECOVERY_REQUIRED', evidence: ['STAGE4_TRANSACTION_IDENTITY_MISMATCH'] };
   try {
     if (['HOLD_INTENT', 'HELD'].includes(journal.state)) {
-      if (!/^[a-f0-9]{64}$/.test(journal.candidateDigest ?? '') || journal.failureCode !== 'WORKER_USAGE_LIMIT')
+      if (!/^[a-f0-9]{64}$/.test(journal.candidateDigest ?? '') || !holdFailureCodes.has(journal.failureCode))
         throw fail('STAGE4_RECOVERY_REQUIRED', 'held candidate identity invalid');
       const [targetDigest, candidateDigest, backup, abandoned] = await Promise.all([
         digestIfDirectory(targetPath), digestIfDirectory(paths.candidatePath),

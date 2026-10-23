@@ -21,7 +21,14 @@ test('worker failures do not disclose stderr', async () => {
 });
 test('timeout terminates a worker that ignores SIGTERM before returning', async () => {
   const start = Date.now();
-  await assert.rejects(runProcess(process.execPath, ['-e', 'process.on("SIGTERM",()=>{});setInterval(()=>{},1000)'], { timeoutMs: 100 }), /timed out/);
+  const error = await processFailure('process.on("SIGTERM",()=>{});process.stderr.write("TIMEOUT_TAIL\\n");setInterval(()=>{},1000)',
+    { timeoutMs: 100 });
+  assert.equal(error.code, 'WORKER_TIMEOUT');
+  assert.equal(error.configuredTimeoutMs, 100);
+  assert.equal(error.terminationConfirmed, true);
+  assert.ok(error.elapsedMs >= 500);
+  assert.match(error.message, /TIMEOUT_TAIL/);
+  assert.equal(isTrustedRetryableExternalFailure(error), true);
   assert.ok(Date.now() - start >= 500);
 });
 
@@ -68,6 +75,9 @@ test('usage-limit text outside the approved stderr terminal is never trusted', a
   assert.equal(isTrustedRetryableExternalFailure(stdout), false);
   assert.equal(isTrustedRetryableExternalFailure(Object.assign(Error('spoof'), {
     code: 'WORKER_USAGE_LIMIT', diagnosticOperation: 'execute-worker',
+  })), false);
+  assert.equal(isTrustedRetryableExternalFailure(Object.assign(Error('spoof timeout'), {
+    code: 'WORKER_TIMEOUT', terminationConfirmed: true,
   })), false);
 });
 
