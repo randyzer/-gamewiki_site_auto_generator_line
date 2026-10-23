@@ -10,6 +10,7 @@ import { STAGE, findStage } from './stages.mjs';
 const fail = (code, detail = '') => Object.assign(Error(`${code}${detail ? `: ${detail}` : ''}`), { code });
 const digestFiles = files => sha256(JSON.stringify(files));
 const hashPattern = /^[a-f0-9]{64}$/;
+const jsonBytes = value => Buffer.from(JSON.stringify(value, null, 2) + '\n');
 
 async function exists(path) {
   try { await access(path); return true; }
@@ -31,7 +32,7 @@ async function syncDirectory(path) {
 }
 
 async function durableJson(path, value) {
-  return durableBytes(path, Buffer.from(JSON.stringify(value, null, 2) + '\n'));
+  return durableBytes(path, jsonBytes(value));
 }
 
 async function durableBytes(path, bytes) {
@@ -45,6 +46,7 @@ async function durableBytes(path, bytes) {
 }
 
 async function writeOnceOrVerify(path, bytes) {
+  await mkdir(dirname(path), { recursive: true, mode: 0o700 });
   try {
     const handle = await open(path, 'wx', 0o400);
     try { await handle.writeFile(bytes); await handle.sync(); }
@@ -62,14 +64,15 @@ function historyEntry(stage, to, evidence, at) {
   })), skillSha256: null, next: to === 'PASSED' ? 'Advance next stage' : 'Review checkpoint' };
 }
 
-async function assess({ workspace, runId, expected = null, ignoreRunLock = false }) {
+async function assess({ workspace, runId, expected = null, ignoreRunLock = false,
+  suppliedManifestBytes = null, suppliedJournalBytes = null }) {
   if (!/^[A-Za-z0-9_-]{1,100}$/.test(runId)) throw fail('MANUAL_RECONCILIATION_REQUIRED', 'unsafe run id');
   workspace = resolve(workspace);
   const runDirectory = join(workspace, 'runs', runId);
   const manifestPath = join(runDirectory, 'manifest.json');
   if (!ignoreRunLock && await exists(join(runDirectory, '.lock')))
     throw fail('MANUAL_RECONCILIATION_REQUIRED', 'run lock exists');
-  const manifestBytes = await regularBytes(manifestPath, [workspace]);
+  const manifestBytes = suppliedManifestBytes ?? await regularBytes(manifestPath, [workspace]);
   const manifest = JSON.parse(manifestBytes.toString('utf8'));
   if (manifest.runId !== runId || manifest.workspace !== workspace || manifest.deploymentExecuted !== false)
     throw fail('MANUAL_RECONCILIATION_REQUIRED', 'manifest identity or deployment state mismatch');
@@ -86,7 +89,8 @@ async function assess({ workspace, runId, expected = null, ignoreRunLock = false
   const paths = stage4TransactionPaths({ targetPath: projectPath, runId, attempt: transaction.attempt });
   if (transaction.journalPath !== paths.journalPath)
     throw fail('MANUAL_RECONCILIATION_REQUIRED', 'journal path mismatch');
-  const journalBytes = await regularBytes(paths.journalPath, [dirname(projectPath)]);
+  const journalBytes = suppliedJournalBytes ??
+    await regularBytes(paths.journalPath, [dirname(projectPath)]);
   const journal = JSON.parse(journalBytes.toString('utf8'));
   if (journal.state !== 'FINALIZED' || journal.runId !== runId || journal.attempt !== transaction.attempt ||
       journal.targetPath !== projectPath || journal.candidateDigest !== transaction.candidateDigest ||
@@ -159,6 +163,61 @@ async function assess({ workspace, runId, expected = null, ignoreRunLock = false
     projectPath, paths, journal, journalBytes, evidence };
 }
 
+function proposedState({ assessment, preview, reconciledAt, backupDirectory }) {
+  const journal = { ...assessment.journal,
+    projectContentPolicyVersion: PROJECT_CONTENT_POLICY_VERSION,
+    finalizedProjectDigest: assessment.evidence.projectDigest,
+    reconciliationPreviewId: preview.previewId, reconciledAt };
+  const journalBytes = jsonBytes(journal);
+  const manifest = JSON.parse(JSON.stringify(assessment.manifest));
+  const stage4 = findStage(manifest.stages, STAGE.CONTENT_INTEGRATION);
+  const stage5 = findStage(manifest.stages, STAGE.UI_UX_AUDIT);
+  const lastPass = [...stage4.history].reverse().find(item => item.to === 'PASSED');
+  if (!lastPass) throw fail('MANUAL_RECONCILIATION_REQUIRED', 'Stage 4 PASS history missing');
+  stage4.history.push(historyEntry(stage4, 'PASSED', [
+    `Authenticated finalized Stage 4 transaction reconciled by preview ${preview.previewId}.`,
+  ], reconciledAt));
+  stage4.status = 'PASSED'; stage4.evidence = lastPass.evidence; stage4.missing_inputs = [];
+  stage4.checkpoint.updatedAt = reconciledAt; stage4.checkpoint.next = 'Advance next stage';
+  stage4.checkpoint.finalizedReconciliation = { previewId: preview.previewId,
+    previewDigest: preview.previewDigest, projectDigest: assessment.evidence.projectDigest };
+  stage5.history.push(historyEntry(stage5, 'BLOCKED', [
+    'Interrupted Stage 5 invocation reconciled; explicit retry is required.',
+  ], reconciledAt));
+  stage5.status = 'BLOCKED'; stage5.evidence = [
+    'Interrupted Stage 5 invocation reconciled; explicit retry is required.',
+  ]; stage5.missing_inputs = [];
+  stage5.checkpoint.updatedAt = reconciledAt; stage5.checkpoint.next = 'Review checkpoint';
+  manifest.sequence += 1;
+  const manifestBytes = jsonBytes(manifest);
+  const receipt = { schemaVersion: 1, kind: 'STAGE4_FINALIZED_RECONCILIATION_RECEIPT_V1',
+    previewId: preview.previewId, previewDigest: preview.previewDigest, runId: preview.runId,
+    reconciledAt, preManifestSha256: assessment.evidence.manifestSha256,
+    postManifestSha256: sha256(manifestBytes), journalSha256: sha256(journalBytes), backupDirectory };
+  return { journalBytes, manifestBytes, receipt, receiptBytes: jsonBytes(receipt) };
+}
+
+async function replayState({ assessment, intent, proposed, receiptPath }) {
+  const currentManifest = await regularBytes(assessment.manifestPath, [assessment.workspace]);
+  const currentJournal = await regularBytes(assessment.paths.journalPath, [dirname(assessment.projectPath)]);
+  const manifestSha256 = sha256(currentManifest), journalSha256 = sha256(currentJournal);
+  const hasReceipt = await exists(receiptPath);
+  if (hasReceipt) {
+    const receiptBytes = await regularBytes(receiptPath, [assessment.workspace]);
+    if (sha256(receiptBytes) === sha256(proposed.receiptBytes) &&
+        manifestSha256 === intent.postManifestSha256 && journalSha256 === intent.postJournalSha256)
+      return 'RECEIPT_COMMITTED';
+    throw fail('MANUAL_RECONCILIATION_REQUIRED', 'conflicting reconciliation receipt state');
+  }
+  if (manifestSha256 === intent.preManifestSha256 && journalSha256 === intent.preJournalSha256)
+    return 'PRE_COMMIT';
+  if (manifestSha256 === intent.preManifestSha256 && journalSha256 === intent.postJournalSha256)
+    return 'JOURNAL_COMMITTED';
+  if (manifestSha256 === intent.postManifestSha256 && journalSha256 === intent.postJournalSha256)
+    return 'MANIFEST_COMMITTED';
+  throw fail('MANUAL_RECONCILIATION_REQUIRED', 'unrecognized reconciliation replay state');
+}
+
 export async function previewFinalizedStage4Reconciliation({ workspace, runId }) {
   const assessment = await assess({ workspace, runId });
   const previewId = randomUUID();
@@ -188,13 +247,6 @@ export async function applyFinalizedStage4Reconciliation({ workspace, runId, pre
       })) || confirmationCode !== sha256(`${preview.previewDigest}:${runId}`).slice(0, 16))
     throw fail('RECONCILIATION_CONFIRMATION_INVALID');
   const receiptPath = join(runDirectory, 'reconciliations', 'receipts', `${previewId}.json`);
-  if (await exists(receiptPath)) {
-    const receipt = JSON.parse((await regularBytes(receiptPath, [workspace])).toString('utf8'));
-    const current = await regularBytes(join(runDirectory, 'manifest.json'), [workspace]);
-    if (receipt.previewDigest === preview.previewDigest && receipt.postManifestSha256 === sha256(current))
-      return { status: 'APPLIED', idempotent: true, receiptPath, manifestSha256: receipt.postManifestSha256 };
-    throw fail('MANUAL_RECONCILIATION_REQUIRED', 'receipt state mismatch');
-  }
   const lockPath = join(runDirectory, '.lock');
   const backupDirectory = join(runDirectory, 'reconciliations', 'backups', previewId);
   const intentPath = join(runDirectory, 'reconciliations', 'intents', `${previewId}.json`);
@@ -202,67 +254,56 @@ export async function applyFinalizedStage4Reconciliation({ workspace, runId, pre
   try { lock = await open(lockPath, 'wx', 0o600); await lock.writeFile(`reconcile:${previewId}\n`); await lock.sync(); }
   catch (error) { if (error.code === 'EEXIST') throw fail('MANUAL_RECONCILIATION_REQUIRED', 'run lock exists'); throw error; }
   try {
-    if (await exists(intentPath)) {
-      const intent = JSON.parse((await regularBytes(intentPath, [workspace])).toString('utf8'));
-      if (intent.previewDigest !== preview.previewDigest || intent.manifestSha256 !== preview.expected.manifestSha256 ||
-          intent.journalSha256 !== preview.expected.journalSha256)
+    let intent, assessment, proposed;
+    if (!await exists(intentPath)) {
+      assessment = await assess({ workspace, runId, expected: preview.expected, ignoreRunLock: true });
+      await mkdir(backupDirectory, { recursive: true, mode: 0o700 });
+      await writeOnceOrVerify(join(backupDirectory, 'manifest.json'), assessment.manifestBytes);
+      await writeOnceOrVerify(join(backupDirectory, 'journal.json'), assessment.journalBytes);
+      const reconciledAt = new Date().toISOString();
+      proposed = proposedState({ assessment, preview, reconciledAt, backupDirectory });
+      intent = { schemaVersion: 1, kind: 'STAGE4_FINALIZED_RECONCILIATION_INTENT_V1',
+        previewId, previewDigest: preview.previewDigest, reconciledAt,
+        preManifestSha256: assessment.evidence.manifestSha256,
+        preJournalSha256: assessment.evidence.journalSha256,
+        postManifestSha256: sha256(proposed.manifestBytes),
+        postJournalSha256: sha256(proposed.journalBytes), createdAt: reconciledAt };
+      await durableJson(intentPath, intent);
+    } else {
+      intent = JSON.parse((await regularBytes(intentPath, [workspace])).toString('utf8'));
+      if (intent.kind !== 'STAGE4_FINALIZED_RECONCILIATION_INTENT_V1' ||
+          intent.previewId !== previewId || intent.previewDigest !== preview.previewDigest ||
+          intent.preManifestSha256 !== preview.expected.manifestSha256 ||
+          intent.preJournalSha256 !== preview.expected.journalSha256 ||
+          !hashPattern.test(intent.postManifestSha256 ?? '') ||
+          !hashPattern.test(intent.postJournalSha256 ?? ''))
         throw fail('MANUAL_RECONCILIATION_REQUIRED', 'reconciliation intent identity mismatch');
       const originalManifest = await regularBytes(join(backupDirectory, 'manifest.json'), [workspace]);
       const originalJournal = await regularBytes(join(backupDirectory, 'journal.json'), [workspace]);
-      if (sha256(originalManifest) !== intent.manifestSha256 || sha256(originalJournal) !== intent.journalSha256)
+      if (sha256(originalManifest) !== intent.preManifestSha256 ||
+          sha256(originalJournal) !== intent.preJournalSha256)
         throw fail('MANUAL_RECONCILIATION_REQUIRED', 'reconciliation backup mismatch');
-      await durableBytes(join(runDirectory, 'manifest.json'), originalManifest);
-      const original = JSON.parse(originalManifest.toString('utf8'));
-      const transaction = findStage(original.stages, STAGE.CONTENT_INTEGRATION).checkpoint.stage4Transaction;
-      await durableBytes(transaction.journalPath, originalJournal);
+      assessment = await assess({ workspace, runId, expected: preview.expected, ignoreRunLock: true,
+        suppliedManifestBytes: originalManifest, suppliedJournalBytes: originalJournal });
+      proposed = proposedState({ assessment, preview, reconciledAt: intent.reconciledAt, backupDirectory });
+      if (sha256(proposed.manifestBytes) !== intent.postManifestSha256 ||
+          sha256(proposed.journalBytes) !== intent.postJournalSha256)
+        throw fail('MANUAL_RECONCILIATION_REQUIRED', 'reconciliation proposal mismatch');
     }
-    const assessment = await assess({ workspace, runId, expected: preview.expected, ignoreRunLock: true });
-    await mkdir(backupDirectory, { recursive: true, mode: 0o700 });
-    await writeOnceOrVerify(join(backupDirectory, 'manifest.json'), assessment.manifestBytes);
-    await writeOnceOrVerify(join(backupDirectory, 'journal.json'), assessment.journalBytes);
-    await durableJson(intentPath, { schemaVersion: 1, kind: 'STAGE4_FINALIZED_RECONCILIATION_INTENT_V1',
-      previewId, previewDigest: preview.previewDigest, manifestSha256: assessment.evidence.manifestSha256,
-      journalSha256: assessment.evidence.journalSha256, createdAt: new Date().toISOString() });
-
-    const reconciledAt = new Date().toISOString();
-    const journal = { ...assessment.journal,
-      projectContentPolicyVersion: PROJECT_CONTENT_POLICY_VERSION,
-      finalizedProjectDigest: assessment.evidence.projectDigest,
-      reconciliationPreviewId: previewId, reconciledAt };
-    await durableJson(assessment.paths.journalPath, journal);
-    await fault('after-journal');
-
-    const manifest = JSON.parse(JSON.stringify(assessment.manifest));
-    const stage4 = findStage(manifest.stages, STAGE.CONTENT_INTEGRATION);
-    const stage5 = findStage(manifest.stages, STAGE.UI_UX_AUDIT);
-    const lastPass = [...stage4.history].reverse().find(item => item.to === 'PASSED');
-    if (!lastPass) throw fail('MANUAL_RECONCILIATION_REQUIRED', 'Stage 4 PASS history missing');
-    stage4.history.push(historyEntry(stage4, 'PASSED', [
-      `Authenticated finalized Stage 4 transaction reconciled by preview ${previewId}.`,
-    ], reconciledAt));
-    stage4.status = 'PASSED'; stage4.evidence = lastPass.evidence; stage4.missing_inputs = [];
-    stage4.checkpoint.updatedAt = reconciledAt; stage4.checkpoint.next = 'Advance next stage';
-    stage4.checkpoint.finalizedReconciliation = { previewId, previewDigest: preview.previewDigest,
-      projectDigest: assessment.evidence.projectDigest };
-    stage5.history.push(historyEntry(stage5, 'BLOCKED', [
-      'Interrupted Stage 5 invocation reconciled; explicit retry is required.',
-    ], reconciledAt));
-    stage5.status = 'BLOCKED'; stage5.evidence = [
-      'Interrupted Stage 5 invocation reconciled; explicit retry is required.',
-    ]; stage5.missing_inputs = [];
-    stage5.checkpoint.updatedAt = reconciledAt; stage5.checkpoint.next = 'Review checkpoint';
-    manifest.sequence += 1;
-    await durableJson(assessment.manifestPath, manifest);
-    await fault('after-manifest');
-    const postManifestBytes = await regularBytes(assessment.manifestPath, [workspace]);
-    const receipt = { schemaVersion: 1, kind: 'STAGE4_FINALIZED_RECONCILIATION_RECEIPT_V1',
-      previewId, previewDigest: preview.previewDigest, runId, reconciledAt,
-      preManifestSha256: assessment.evidence.manifestSha256,
-      postManifestSha256: sha256(postManifestBytes), journalSha256: sha256(await readFile(assessment.paths.journalPath)),
-      backupDirectory };
-    await durableJson(receiptPath, receipt);
+    const state = await replayState({ assessment, intent, proposed, receiptPath });
+    if (state === 'RECEIPT_COMMITTED') return { status: 'APPLIED', idempotent: true,
+      receiptPath, manifestSha256: intent.postManifestSha256 };
+    if (state === 'PRE_COMMIT') {
+      await durableBytes(assessment.paths.journalPath, proposed.journalBytes);
+      await fault('after-journal');
+    }
+    if (['PRE_COMMIT', 'JOURNAL_COMMITTED'].includes(state)) {
+      await durableBytes(assessment.manifestPath, proposed.manifestBytes);
+      await fault('after-manifest');
+    }
+    await writeOnceOrVerify(receiptPath, proposed.receiptBytes);
     return { status: 'APPLIED', idempotent: false, receiptPath,
-      manifestSha256: receipt.postManifestSha256 };
+      manifestSha256: intent.postManifestSha256 };
   } finally {
     await lock.close();
     await unlink(lockPath).catch(error => { if (error.code !== 'ENOENT') throw error; });

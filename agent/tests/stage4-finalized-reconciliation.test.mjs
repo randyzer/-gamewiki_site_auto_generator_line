@@ -8,6 +8,7 @@ import { stage4SiteFiles, stage4TransactionPaths,
   recoverStage4SiteTransaction } from '../src/stage4-site-transaction.mjs';
 import { previewFinalizedStage4Reconciliation,
   applyFinalizedStage4Reconciliation } from '../src/stage4-finalized-reconciliation.mjs';
+import { createPipeline } from '../src/pipeline.mjs';
 
 const digestFiles = files => sha256(JSON.stringify(files));
 
@@ -15,9 +16,12 @@ async function fixture(t) {
   const root = await mkdtemp(resolve('.stage4-reconcile-test-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const workspace = join(root, 'workspace'), runId = 'legacy-run', runDirectory = join(workspace, 'runs', runId);
-  const projectPath = join(root, 'site');
+  const projectPath = join(workspace, 'site');
   await mkdir(join(projectPath, 'src'), { recursive: true });
   await mkdir(runDirectory, { recursive: true });
+  const skillRoot = join(root, 'skills'), inventoryPath = join(root, 'inventory.json');
+  await mkdir(skillRoot);
+  await writeFile(inventoryPath, JSON.stringify({ skillRoot, skills: [] }));
   await writeFile(join(projectPath, 'src/index.js'), 'export const site = true;\n');
   const rawKeywordsFile = join(projectPath, 'keywords.md');
   await writeFile(rawKeywordsFile, '# Keywords\n');
@@ -49,7 +53,10 @@ async function fixture(t) {
 
   const stages = ALL_STAGES.map(skill => ({ skill, status: 'NOT_STARTED', artifacts: [], evidence: [],
     missing_inputs: [], history: [], checkpoint: { attempt: 0, inputDigest: null, updatedAt: null, next: 'Validate stage inputs' } }));
-  for (let i = 0; i < 3; i++) stages[i].status = 'PASSED';
+  for (let i = 0; i < 3; i++) {
+    stages[i].status = 'PASSED'; stages[i].evidence = ['Historical fixture evidence'];
+    stages[i].artifacts = [{ path: hostValidationPath, sha256: hostSha }];
+  }
   const stage4 = stages[3];
   stage4.status = 'BLOCKED'; stage4.checkpoint = { attempt, inputDigest: 'e'.repeat(64), updatedAt: journal.updatedAt,
     next: 'Review checkpoint', stage4Transaction: { kind: journal.kind, runId, attempt, candidateDigest,
@@ -65,11 +72,11 @@ async function fixture(t) {
   stage5.history = [{ from: 'READY', to: 'IN_PROGRESS', at: journal.updatedAt,
     evidence: [], artifacts: [], skillSha256: null, next: 'Review checkpoint' }];
   stages[7].status = 'SKIPPED';
-  const manifest = { schemaVersion: 1, runId, workspace, sequence: 12,
-    inputs: { projectPath, rawKeywordsFile }, inputCopies: {}, deploymentExecuted: false, stages };
+  const manifest = { schemaVersion: 1, runId, workspace, inventoryPath, templateRoots: [], sequence: 12,
+    inputs: { projectPath, rawKeywordsFile }, inputCopies: {}, lock: {}, deploymentExecuted: false, stages };
   const manifestPath = join(runDirectory, 'manifest.json');
   await writeFile(manifestPath, JSON.stringify(manifest));
-  return { workspace, runId, runDirectory, projectPath, paths, manifestPath, auditPaths };
+  return { workspace, runId, runDirectory, projectPath, paths, manifestPath, auditPaths, inventoryPath };
 }
 
 test('preview and confirmation reconcile a finalized Stage 4 with interrupted Stage 5', async t => {
@@ -90,6 +97,14 @@ test('preview and confirmation reconcile a finalized Stage 4 with interrupted St
   const repeated = await applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
     confirmationCode: preview.confirmationCode });
   assert.equal(repeated.idempotent, true);
+  let executorCalls = 0;
+  const loaded = await createPipeline({ workspace: f.workspace, inventoryPath: f.inventoryPath,
+    templateRoots: [], runId: f.runId, resume: true,
+    executor: async () => { executorCalls++; throw Error('executor must not run while loading'); } });
+  assert.equal(loaded.snapshot().stages[3].status, 'PASSED');
+  assert.equal(loaded.snapshot().stages[4].status, 'BLOCKED');
+  assert.equal(loaded.snapshot().deploymentExecuted, false);
+  assert.equal(executorCalls, 0);
 });
 
 test('confirmation rejects a stale preview after Stage 4 source changes', async t => {
@@ -122,3 +137,51 @@ for (const crashPoint of ['after-journal', 'after-manifest']) {
     assert.equal(manifest.stages[4].status, 'BLOCKED');
   });
 }
+
+test('replay rejects intervening manifest changes after journal commit without overwriting them', async t => {
+  const f = await fixture(t);
+  const preview = await previewFinalizedStage4Reconciliation(f);
+  await assert.rejects(applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
+    confirmationCode: preview.confirmationCode,
+    fault: point => { if (point === 'after-journal') throw Error('SYNTHETIC_CRASH'); } }), /SYNTHETIC_CRASH/);
+  const manifest = JSON.parse(await readFile(f.manifestPath, 'utf8'));
+  manifest.sequence += 100;
+  await writeFile(f.manifestPath, JSON.stringify(manifest));
+  const beforeManifest = await readFile(f.manifestPath), beforeJournal = await readFile(f.paths.journalPath);
+  await assert.rejects(applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
+    confirmationCode: preview.confirmationCode }), /MANUAL_RECONCILIATION_REQUIRED/);
+  assert.deepEqual(await readFile(f.manifestPath), beforeManifest);
+  assert.deepEqual(await readFile(f.paths.journalPath), beforeJournal);
+});
+
+test('replay rejects intervening journal changes after manifest commit without overwriting them', async t => {
+  const f = await fixture(t);
+  const preview = await previewFinalizedStage4Reconciliation(f);
+  await assert.rejects(applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
+    confirmationCode: preview.confirmationCode,
+    fault: point => { if (point === 'after-manifest') throw Error('SYNTHETIC_CRASH'); } }), /SYNTHETIC_CRASH/);
+  const journal = JSON.parse(await readFile(f.paths.journalPath, 'utf8'));
+  journal.operatorNote = 'intervening change';
+  await writeFile(f.paths.journalPath, JSON.stringify(journal));
+  const beforeManifest = await readFile(f.manifestPath), beforeJournal = await readFile(f.paths.journalPath);
+  await assert.rejects(applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
+    confirmationCode: preview.confirmationCode }), /MANUAL_RECONCILIATION_REQUIRED/);
+  assert.deepEqual(await readFile(f.manifestPath), beforeManifest);
+  assert.deepEqual(await readFile(f.paths.journalPath), beforeJournal);
+});
+
+test('replay rejects an unrelated receipt without changing committed files', async t => {
+  const f = await fixture(t);
+  const preview = await previewFinalizedStage4Reconciliation(f);
+  await assert.rejects(applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
+    confirmationCode: preview.confirmationCode,
+    fault: point => { if (point === 'after-journal') throw Error('SYNTHETIC_CRASH'); } }), /SYNTHETIC_CRASH/);
+  const receiptPath = join(f.runDirectory, 'reconciliations', 'receipts', `${preview.previewId}.json`);
+  await mkdir(join(receiptPath, '..'), { recursive: true });
+  await writeFile(receiptPath, '{"kind":"unrelated"}\n');
+  const beforeManifest = await readFile(f.manifestPath), beforeJournal = await readFile(f.paths.journalPath);
+  await assert.rejects(applyFinalizedStage4Reconciliation({ ...f, previewId: preview.previewId,
+    confirmationCode: preview.confirmationCode }), /MANUAL_RECONCILIATION_REQUIRED/);
+  assert.deepEqual(await readFile(f.manifestPath), beforeManifest);
+  assert.deepEqual(await readFile(f.paths.journalPath), beforeJournal);
+});
