@@ -35,6 +35,12 @@ function failureDetail(stderr, stdout, env) {
   return sanitizeDiagnosticText(parts.join('\n'), env);
 }
 
+function workerExitCode(code, stderr) {
+  const tail = completeTailWindow(stderr, captureLimit);
+  const usageLimit = /(?:^|\n)ERROR: You've hit your usage limit\.[^\n]*\nERROR: You've hit your usage limit\.[^\n]*\ntokens used\n[\d,]+\s*$/;
+  return code === 1 && usageLimit.test(tail) ? 'WORKER_USAGE_LIMIT' : 'WORKER_EXIT_NONZERO';
+}
+
 // Keep bounded, sanitized failure details; raw worker output is never persisted.
 export function runProcess(command, args, { cwd, input = '', env = process.env, timeoutMs = 600000, signal } = {}) {
   return new Promise((resolve, reject) => {
@@ -76,7 +82,8 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
       else if (failure) reject(failure);
       else if (code !== 0) {
         const detail = failureDetail(stderrTail, stdoutTail, env);
-        reject(workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`, 'WORKER_EXIT_NONZERO', { exitCode: code, exitSignal }));
+        reject(workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`,
+          workerExitCode(code, stderrTail), { exitCode: code, exitSignal }));
       }
       else resolve({ exitCode: code, stdout });
     });

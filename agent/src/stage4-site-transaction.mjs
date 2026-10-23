@@ -217,6 +217,17 @@ export async function prepareStage4SiteTransaction({ targetPath, runId, attempt,
       if (!['PROMOTED', 'MANIFEST_COMMITTED'].includes(journal.state)) throw fail('STAGE4_TRANSACTION_STATE_INVALID');
       await finalizeRecovered(paths, journal);
     },
+    async holdCandidate(failureCode) {
+      if (journal.state !== 'PREPARED' || failureCode !== 'WORKER_USAGE_LIMIT')
+        throw fail('STAGE4_TRANSACTION_STATE_INVALID');
+      const candidateDigest = await stage4SiteDigest(paths.candidatePath);
+      await verifyTargetUnchanged();
+      await writeState(paths, journal, 'HOLD_INTENT', { candidateDigest, failureCode });
+      await fault('after-hold-intent');
+      await rm(paths.lockPath, { force: true }); await syncDirectory(paths.root);
+      await writeState(paths, journal, 'HELD');
+      return { state: journal.state, candidateDigest };
+    },
     async abort(reason = 'aborted') {
       if (['PREPARED', 'VALIDATED'].includes(journal.state)) {
         await verifyTargetUnchanged(); await rm(paths.candidatePath, { recursive: true, force: true });
@@ -227,7 +238,8 @@ export async function prepareStage4SiteTransaction({ targetPath, runId, attempt,
         if (recovered.status !== 'ROLLED_BACK') throw fail('STAGE4_RECOVERY_REQUIRED');
         return;
       }
-      if (!['ABORTED', 'ROLLED_BACK', 'FINALIZED'].includes(journal.state)) throw fail('STAGE4_TRANSACTION_STATE_INVALID');
+      if (!['ABORTED', 'ROLLED_BACK', 'FINALIZED', 'HELD'].includes(journal.state))
+        throw fail('STAGE4_TRANSACTION_STATE_INVALID');
     },
   };
   return api;
@@ -247,6 +259,21 @@ export async function recoverStage4SiteTransaction({ targetPath, runId, attempt,
       !/^[a-f0-9]{64}$/.test(journal.baselineDigest ?? ''))
     return { status: 'RECOVERY_REQUIRED', evidence: ['STAGE4_TRANSACTION_IDENTITY_MISMATCH'] };
   try {
+    if (['HOLD_INTENT', 'HELD'].includes(journal.state)) {
+      if (!/^[a-f0-9]{64}$/.test(journal.candidateDigest ?? '') || journal.failureCode !== 'WORKER_USAGE_LIMIT')
+        throw fail('STAGE4_RECOVERY_REQUIRED', 'held candidate identity invalid');
+      const [targetDigest, candidateDigest, backup, abandoned] = await Promise.all([
+        digestIfDirectory(targetPath), digestIfDirectory(paths.candidatePath),
+        exists(paths.backupPath), exists(paths.abandonedPath),
+      ]);
+      if (targetDigest !== journal.baselineDigest) throw fail('STAGE4_RECOVERY_REQUIRED', 'held target baseline mismatch');
+      if (candidateDigest !== journal.candidateDigest) throw fail('STAGE4_RECOVERY_REQUIRED', 'held candidate digest mismatch');
+      if (backup || abandoned) throw fail('STAGE4_RECOVERY_REQUIRED', 'held disk state mismatch');
+      await rm(paths.lockPath, { force: true });
+      if (journal.state === 'HOLD_INTENT') await writeState(paths, journal, 'HELD');
+      return { status: 'HELD', evidence: ['STAGE4_HELD_CANDIDATE_DECISION_REQUIRED'],
+        candidateDigest: journal.candidateDigest, failureCode: journal.failureCode };
+    }
     if (journal.state === 'FINALIZED') {
       if (await digestIfDirectory(targetPath) !== journal.candidateDigest || await exists(paths.backupPath) ||
           await exists(paths.candidatePath)) throw fail('STAGE4_RECOVERY_REQUIRED', 'finalized disk state mismatch');

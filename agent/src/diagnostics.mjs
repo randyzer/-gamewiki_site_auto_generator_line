@@ -1,7 +1,8 @@
 const sensitiveKey = /password|passwd|secret|token|cookie|credential|private.?key|api.?key|authorization/i;
 const safeCodes = new Set(['ENOENT', 'EACCES', 'EPERM', 'EEXIST', 'ELOOP', 'ENOSPC', 'EIO', 'ETIMEDOUT',
   'ECONNREFUSED', 'ECONNRESET', 'CONTRACT_INCOMPATIBLE', 'WORKER_START_FAILED', 'WORKER_TIMEOUT',
-  'WORKER_ABORTED', 'WORKER_INPUT_FAILED', 'WORKER_TERMINATION_FAILED', 'WORKER_EXIT_NONZERO', 'ARTIFACT_INVALID_JSON']);
+  'WORKER_ABORTED', 'WORKER_INPUT_FAILED', 'WORKER_TERMINATION_FAILED', 'WORKER_EXIT_NONZERO',
+  'WORKER_USAGE_LIMIT', 'ARTIFACT_INVALID_JSON']);
 const adapterOperations = new Set(['execute-worker', 'read-worker-result', 'validate-native-artifacts', 'publish-deployment-plan', 'prepare-research-handoff']);
 
 export async function diagnosticStep(operation, work) {

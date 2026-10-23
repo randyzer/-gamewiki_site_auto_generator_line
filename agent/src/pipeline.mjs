@@ -33,6 +33,7 @@ export const STATES = Object.freeze(['NOT_STARTED', 'READY', 'IN_PROGRESS', 'WAI
 export const DEFAULT_INVENTORY = fileURLToPath(new URL('../config/skill-manifest.json', import.meta.url));
 
 const RESULT_STATES = new Set(['PASSED', 'PARTIAL', 'FAILED', 'BLOCKED', 'WAITING_FOR_USER']);
+const STAGE4_HOLD_CODES = new Set(['WORKER_USAGE_LIMIT']);
 const NEXT = {
   NOT_STARTED: ['READY', 'WAITING_FOR_USER', 'BLOCKED'],
   READY: ['IN_PROGRESS', 'WAITING_FOR_USER', 'BLOCKED'],
@@ -630,6 +631,16 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
             ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED']);
           await save(); return clone(state);
         }
+        if (recovery.status === 'HELD') {
+          if (integrationStage.status !== 'BLOCKED') {
+            if (!['NOT_STARTED', 'READY', 'IN_PROGRESS'].includes(integrationStage.status)) {
+              transition(integrationStage, 'NOT_STARTED');
+            }
+            transition(integrationStage, 'BLOCKED', recovery.evidence);
+            await save();
+          }
+          return clone(state);
+        }
       }
       const index = state.stages.findIndex(stage => !stageSatisfied(stage));
       if (index < 0) return clone(state);
@@ -705,6 +716,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           runId, attempt: previous.attempt, manifestStage: stage });
         if (recovery.status === 'RECOVERY_REQUIRED') {
           transition(stage, 'BLOCKED', recovery.evidence.length ? recovery.evidence : ['STAGE4_RECOVERY_REQUIRED']);
+          await save(); return clone(state);
+        }
+        if (recovery.status === 'HELD') {
+          transition(stage, 'BLOCKED', recovery.evidence);
           await save(); return clone(state);
         }
       }
@@ -929,7 +944,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         else transition(stage, status, evidence, missing);
       } catch (error) {
         if (stage4Transaction && !stage4Promoted) {
-          try { await stage4Transaction.abort(error.code ?? error.message); }
+          try {
+            if (STAGE4_HOLD_CODES.has(error.code)) {
+              const held = await stage4Transaction.holdCandidate(error.code);
+              stage.checkpoint.stage4Transaction = { ...stage.checkpoint.stage4Transaction,
+                candidateDigest: held.candidateDigest, state: held.state, failureCode: error.code };
+            } else await stage4Transaction.abort(error.code ?? error.message);
+          }
           catch (recoveryError) { error.message += `; ${recoveryError.message}`; }
         } else if (stage4Transaction && stage4Promoted) {
           try { await stage4Transaction.abort(error.code ?? error.message); stage4Promoted = false; }

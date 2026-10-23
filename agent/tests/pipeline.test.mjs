@@ -300,6 +300,34 @@ test('direct-site Stage 4 worker failure discards candidate and preserves the ta
   await assert.rejects(readFile(join(f.siteDirectory, 'uncommitted.txt')));
 });
 
+test('direct-site Stage 4 holds candidate only for a trusted usage-limit failure', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'recoverable.txt'), 'held progress\n');
+    throw Object.assign(Error('provider usage window exhausted'), { code: 'WORKER_USAGE_LIMIT' });
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => assert.fail('Host validation must not run') });
+  await advance(p, 3);
+  const before = await stage4SiteDigest(f.siteDirectory);
+
+  const state = await advance(p, 1);
+
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(await stage4SiteDigest(f.siteDirectory), before);
+  const transaction = state.stages[3].checkpoint.stage4Transaction;
+  const journal = JSON.parse(await readFile(transaction.journalPath, 'utf8'));
+  assert.equal(journal.state, 'HELD');
+  assert.equal(journal.failureCode, 'WORKER_USAGE_LIMIT');
+  assert.equal(await readFile(join(journal.candidatePath, 'recoverable.txt'), 'utf8'), 'held progress\n');
+
+  const retried = await advance(p, 1);
+  assert.equal(retried.stages[3].status, 'BLOCKED');
+  assert.match(retried.stages[3].evidence.join('\n'), /HELD_CANDIDATE_DECISION_REQUIRED/);
+  assert.equal(retried.stages[3].checkpoint.attempt, transaction.attempt);
+});
+
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
   for (const index of [4, 5]) {
     const f = await fixture(t);

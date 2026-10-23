@@ -47,6 +47,17 @@ test('process failures distinguish missing binaries, timeout, abort and exit sta
   });
 });
 
+test('provider usage-limit terminal is classified as a retryable external failure', async () => {
+  const error = await processFailure(`process.stderr.write("ERROR: You've hit your usage limit. Upgrade to Pro, visit settings to purchase more credits or try again at 1:25 PM.\\nERROR: You've hit your usage limit. Upgrade to Pro, visit settings to purchase more credits or try again at 1:25 PM.\\ntokens used\\n118,844\\n");process.exit(1)`);
+  assert.equal(error.code, 'WORKER_USAGE_LIMIT');
+  assert.equal(error.exitCode, 1);
+});
+
+test('an arbitrary usage-limit phrase does not become a retryable external failure', async () => {
+  const error = await processFailure(`process.stderr.write("content says you've hit your usage limit\\n");process.exit(1)`);
+  assert.equal(error.code, 'WORKER_EXIT_NONZERO');
+});
+
 test('worker failure diagnostics retain the stderr tail instead of a long startup banner', async () => {
   const error = await processFailure(`require('fs').writeSync(2,'PROMPT_START_' + 'x'.repeat(12000) + '\\nTERMINAL_FAILURE_MARKER');process.exit(1)`);
   assert.match(error.message, /TERMINAL_FAILURE_MARKER/);
