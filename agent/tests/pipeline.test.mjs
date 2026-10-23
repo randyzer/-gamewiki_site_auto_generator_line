@@ -183,6 +183,30 @@ test('direct-site Stage 4 accepts a Host-validated provisional Worker handoff', 
   assert.ok(state.stages[3].artifacts.some(item => item.kind === 'STAGE4_HOST_VALIDATION.json'));
 });
 
+test('direct-site Stage 4 preserves launch blockers after Host validation', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
+    const result = f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+      evidence: [
+        'Worker-owned content, source, SEO and route-publication gates passed.',
+        'Stage 4 launch blockers remain: OPERATOR_IDENTITY_REQUIRED, DNS_DELEGATION_REQUIRED',
+      ] };
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'PASSED');
+  assert.match(state.stages[3].evidence.join('\n'), /OPERATOR_IDENTITY_REQUIRED/);
+  assert.match(state.stages[3].evidence.join('\n'), /DNS_DELEGATION_REQUIRED/);
+  assert.deepEqual(f.order, ['install', 'host-validate']);
+});
+
 test('direct-site Stage 4 never upgrades an ordinary PARTIAL result', async t => {
   const f = await directSiteFixture(t); let hostCalls = 0;
   const executor = async (skill, context) => {

@@ -41,4 +41,13 @@ test('Stage 4 completion handoff is required and nullable for non-Stage-4 worker
   assert.equal(completion.properties.worker_owned_gates.type, 'string');
   assert.equal(completion.properties.host_validation.type, 'string');
   assert.deepEqual(completion.properties.blocking_gaps.items, { type: 'string' });
+  assert.deepEqual(completion.properties.launch_blockers.items.enum, [
+    'OPERATOR_IDENTITY_REQUIRED',
+    'CONTACT_CHANNEL_REQUIRED',
+    'JURISDICTION_REQUIRED',
+    'PRIVACY_POLICY_REVIEW_REQUIRED',
+    'TERMS_POLICY_REVIEW_REQUIRED',
+    'DNS_DELEGATION_REQUIRED',
+  ]);
+  assert.ok(completion.required.includes('launch_blockers'));
 });

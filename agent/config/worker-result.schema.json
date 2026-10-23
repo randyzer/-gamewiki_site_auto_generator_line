@@ -11,9 +11,17 @@
         "kind": { "type": "string", "const": "STAGE4_WORKER_HANDOFF_V1" },
         "worker_owned_gates": { "type": "string", "const": "PASSED" },
         "host_validation": { "type": "string", "const": "REQUIRED" },
-        "blocking_gaps": { "type": "array", "items": { "type": "string" }, "maxItems": 0 }
+        "blocking_gaps": { "type": "array", "items": { "type": "string" }, "maxItems": 0 },
+        "launch_blockers": { "type": "array", "items": { "type": "string", "enum": [
+          "OPERATOR_IDENTITY_REQUIRED",
+          "CONTACT_CHANNEL_REQUIRED",
+          "JURISDICTION_REQUIRED",
+          "PRIVACY_POLICY_REVIEW_REQUIRED",
+          "TERMS_POLICY_REVIEW_REQUIRED",
+          "DNS_DELEGATION_REQUIRED"
+        ] }, "maxItems": 6 }
       },
-      "required": ["kind", "worker_owned_gates", "host_validation", "blocking_gaps"],
+      "required": ["kind", "worker_owned_gates", "host_validation", "blocking_gaps", "launch_blockers"],
       "additionalProperties": false
     },
     "artifacts": { "type": "array", "items": {
