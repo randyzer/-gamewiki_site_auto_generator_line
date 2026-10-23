@@ -167,9 +167,10 @@ test('content integration prompt preserves the host non-Git new-site contract', 
     run: async (_command, args, options) => {
       invoked = { args, options };
       await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
-        status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC CONTRACT TEST'] }));
+        status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['SYNTHETIC CONTRACT TEST'],
+        stage4WorkerArtifactsValidated: true }));
     } });
-  await executor(STAGES[3], {
+  const result = await executor(STAGES[3], {
     runId: 'content-nongit-contract',
     inputs: { ...f.inputs, projectPath,
       paths: { ...f.inputs.paths, siteDirectory: projectPath, researchDirectory } },
@@ -207,6 +208,11 @@ test('content integration prompt preserves the host non-Git new-site contract', 
   assert.match(prompt, /Stage 4 does not require image generation/);
   assert.match(prompt, /Lack of image_generation or view_image is not a blocker/);
   assert.match(prompt, /Host performs the authoritative offline package validation/);
+  assert.match(prompt, /STAGE4_WORKER_HANDOFF_V1/);
+  assert.match(prompt, /blocking_gaps/);
+  assert.match(prompt, /Host validation pending is the only remaining gate/);
+  assert.equal(Object.hasOwn(result, 'stage4WorkerArtifactsValidated'), false,
+    'Worker output cannot forge the Host-only validation marker');
 });
 
 test('content integration cannot launch Worker without Host readiness attestation', async t => {

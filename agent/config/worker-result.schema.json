@@ -5,6 +5,17 @@
     "summary": { "type": "string" },
     "evidence": { "type": "array", "items": { "type": "string" } },
     "missing_inputs": { "type": "array", "items": { "type": "string" } },
+    "stage4_completion": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "STAGE4_WORKER_HANDOFF_V1" },
+        "worker_owned_gates": { "const": "PASSED" },
+        "host_validation": { "const": "REQUIRED" },
+        "blocking_gaps": { "type": "array", "maxItems": 0 }
+      },
+      "required": ["kind", "worker_owned_gates", "host_validation", "blocking_gaps"],
+      "additionalProperties": false
+    },
     "artifacts": { "type": "array", "items": {
       "type": "object", "properties": {"kind": {"type": "string"}, "path": {"type": "string"}},
       "required": ["kind", "path"], "additionalProperties": false
