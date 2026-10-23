@@ -6,6 +6,7 @@ import { runProcess } from './process.mjs';
 import { safePath, sha256 } from './files.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
 import { siteProcessEnvironment } from './site-process-environment.mjs';
+import { packageManagerEnvironment, resolveSitePackageManager } from './site-package-manager.mjs';
 
 const fail = (code, detail) => Object.assign(Error(`${code}: ${sanitizeDiagnosticText(detail)}`), { code });
 async function manager(projectPath) {
@@ -19,13 +20,18 @@ async function manager(projectPath) {
   throw fail('SITE_LOCKFILE_MISSING', `project ${projectPath}; expected pnpm-lock.yaml or package-lock.json`);
 }
 
-export async function installDependencies(projectPath, { run = runProcess, manifestPath = join(projectPath, 'docs/agent-runs/site-dependencies.json') } = {}) {
-  const selected = await manager(projectPath);
-  const manifest = { projectPath, lockfile: selected.lockfile, command: [selected.command, ...selected.args], exitCode: null };
+export async function installDependencies(projectPath, { run = runProcess,
+  manifestPath = join(projectPath, 'docs/agent-runs/site-dependencies.json'),
+  environment = process.env, resolvePackageManager = resolveSitePackageManager } = {}) {
+  const toolchain = await resolvePackageManager(projectPath, { run, environment });
+  const manifest = { projectPath, lockfile: toolchain.lockfile,
+    toolchain, command: [toolchain.executable, ...toolchain.installArgs], exitCode: null };
   let failure;
   try {
-    const result = await run(selected.command, selected.args, { cwd: projectPath, env: siteProcessEnvironment(), timeoutMs: 600000 });
-    manifest.exitCode = result?.exitCode ?? 0;
+    const result = await run(toolchain.executable, toolchain.installArgs, {
+      cwd: projectPath, env: packageManagerEnvironment(environment), timeoutMs: 600000 });
+    manifest.exitCode = result?.exitCode;
+    if (!Number.isInteger(manifest.exitCode)) throw Error('installation returned no concrete exit code');
     if (manifest.exitCode !== 0) throw Object.assign(Error('installation exited unsuccessfully'), { exitCode: manifest.exitCode });
   } catch (error) {
     manifest.exitCode = error.exitCode ?? null;

@@ -134,12 +134,16 @@ async function directSiteFixture(t) {
     }
     return f.good(skill, context);
   };
+  const installedToolchain = { kind: 'SITE_PACKAGE_MANAGER_CONTEXT_V1', manager: 'pnpm',
+    executable: '/fixed/pnpm', version: '12.6.0' };
   const installSiteDependencies = async projectPath => {
     order.push('install'); assert.notEqual(projectPath, siteDirectory);
-    assert.ok(projectPath.includes('.site.agent-stage4-')); return { exitCode: 0, projectPath };
+    assert.ok(projectPath.includes('.site.agent-stage4-'));
+    return { exitCode: 0, projectPath, toolchain: installedToolchain };
   };
-  const validateStage4 = async ({ candidatePath, nativeDirectory }) => {
+  const validateStage4 = async ({ candidatePath, nativeDirectory, packageManager }) => {
     order.push('host-validate');
+    assert.equal(packageManager, installedToolchain);
     const reportPath = join(nativeDirectory, 'STAGE4_HOST_VALIDATION.json');
     await mkdir(nativeDirectory, { recursive: true }); await writeFile(reportPath, '{"status":"PASSED"}\n');
     return { status: 'PASSED', reportPath, reportSha256: hash('{"status":"PASSED"}\n'),

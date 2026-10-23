@@ -963,7 +963,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (stage4HostValidationEligible) {
           operation = 'host-stage4-validation';
           const hostValidation = await validateStage4({ candidatePath: stage4Transaction.binding.candidatePath,
-            targetPath: state.inputs.projectPath, nativeDirectory: context.nativeDirectory });
+            targetPath: state.inputs.projectPath, nativeDirectory: context.nativeDirectory,
+            packageManager: stage.checkpoint.dependencies?.toolchain });
           await stage4Transaction.markValidated(hostValidation.candidateDigest, hostValidation.reportSha256);
           const reportBytes = await regularFile(hostValidation.reportPath);
           result = { ...result, status: 'PASSED', stage4HostValidation: hostValidation,

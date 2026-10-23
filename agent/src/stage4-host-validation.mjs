@@ -1,10 +1,11 @@
 import { constants as fsConstants } from 'node:fs';
 import { access, lstat, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { delimiter, join } from 'node:path';
 import { runProcess } from './process.mjs';
 import { sourceFiles } from './project-baseline.mjs';
 import { safePath, sha256, treeFiles } from './files.mjs';
 import { stage4SiteDigest } from './stage4-site-transaction.mjs';
+import { packageManagerEnvironment, verifySitePackageManager } from './site-package-manager.mjs';
 
 const fail = (code, detail = '') => Object.assign(Error(`${code}${detail ? `: ${detail}` : ''}`), { code });
 const outputDirectories = ['.next', 'dist', 'build', '.output'];
@@ -24,15 +25,11 @@ async function candidateSourceDigest(root) {
 }
 
 function safeEnvironment(source, nativeDirectory) {
-  const env = {};
-  for (const key of ['PATH', 'LANG', 'LC_ALL']) if (typeof source[key] === 'string' && source[key]) env[key] = source[key];
+  const env = packageManagerEnvironment(source, { home: nativeDirectory, tmpdir: nativeDirectory });
   for (const [key, value] of Object.entries(source)) {
     if (secretKey.test(key)) continue;
     if (/^(?:CI|TERM|TZ|NO_COLOR)$/.test(key) && typeof value === 'string') env[key] = value;
   }
-  Object.assign(env, { HOME: nativeDirectory, TMPDIR: nativeDirectory,
-    npm_config_offline: 'true', npm_config_audit: 'false', npm_config_fund: 'false',
-    PNPM_NETWORK_CONCURRENCY: '0', YARN_ENABLE_NETWORK: 'false', COREPACK_ENABLE_NETWORK: '0' });
   return env;
 }
 
@@ -43,7 +40,8 @@ function sandboxProfile(candidatePath, nativeDirectory) {
 }
 
 export async function validateStage4Candidate(context, { run = runProcess, environment = process.env,
-  platform = process.platform, sandboxCommand = '/usr/bin/sandbox-exec' } = {}) {
+  platform = process.platform, sandboxCommand = '/usr/bin/sandbox-exec',
+  verifyPackageManager = verifySitePackageManager } = {}) {
   const candidatePath = context?.candidatePath, nativeDirectory = context?.nativeDirectory;
   if (typeof candidatePath !== 'string' || typeof nativeDirectory !== 'string') throw fail('STAGE4_HOST_CONTEXT_INVALID');
   await safePath(candidatePath, [candidatePath]); await safePath(nativeDirectory, [nativeDirectory]);
@@ -53,13 +51,9 @@ export async function validateStage4Candidate(context, { run = runProcess, envir
     try { await access(sandboxCommand, fsConstants.X_OK); }
     catch { throw fail('STAGE4_HOST_SANDBOX_UNAVAILABLE', sandboxCommand); }
   }
-  const lockfiles = [['pnpm-lock.yaml', 'pnpm'], ['package-lock.json', 'npm']];
-  const found = [];
-  for (const [name, manager] of lockfiles) {
-    try { if ((await lstat(join(candidatePath, name))).isFile()) found.push({ name, manager }); }
-    catch (error) { if (error.code !== 'ENOENT') throw error; }
-  }
-  if (found.length !== 1) throw fail('STAGE4_LOCKFILE_INVALID', `expected one lockfile, found ${found.length}`);
+  const packageManager = await verifyPackageManager(candidatePath, context.packageManager, {
+    run, environment, home: nativeDirectory, tmpdir: nativeDirectory,
+  });
   const pkg = JSON.parse(await readFile(join(candidatePath, 'package.json'), 'utf8'));
   if (!pkg.scripts?.build) throw fail('STAGE4_BUILD_SCRIPT_MISSING');
   for (const [name, body] of Object.entries(pkg.scripts ?? {})) {
@@ -71,19 +65,22 @@ export async function validateStage4Candidate(context, { run = runProcess, envir
   for (const name of outputDirectories) await rm(join(candidatePath, name), { recursive: true, force: true });
   const reportPath = join(nativeDirectory, 'STAGE4_HOST_VALIDATION.json');
   const report = { schemaVersion: 1, kind: 'STAGE4_HOST_VALIDATION_V1', status: 'IN_PROGRESS',
-    candidatePath, targetPath: context.targetPath ?? null, manager: found[0].manager,
-    lockfile: found[0].name, inputDigest: beforeDigest, commands: [] };
+    candidatePath, targetPath: context.targetPath ?? null, manager: packageManager.manager,
+    managerVersion: packageManager.version, managerExecutable: packageManager.executable,
+    lockfile: packageManager.lockfile.name, inputDigest: beforeDigest, commands: [] };
   const save = () => writeFile(reportPath, JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
   await save();
   const env = safeEnvironment(environment, nativeDirectory);
+  env.PATH = [join(candidatePath, 'node_modules', '.bin'), env.PATH].filter(Boolean).join(delimiter);
   const profile = sandboxProfile(candidatePath, nativeDirectory);
   try {
     for (const script of selected) {
       const item = { script, status: 'IN_PROGRESS', exitCode: null }; report.commands.push(item); await save();
       try {
-        const result = await run(sandboxCommand, ['-p', profile, found[0].manager, 'run', script], {
+        const result = await run(sandboxCommand, ['-p', profile, '/bin/sh', '-c', pkg.scripts[script]], {
           cwd: candidatePath, env, timeoutMs: 600000 });
-        item.exitCode = result?.exitCode ?? 0;
+        item.exitCode = result?.exitCode;
+        if (!Number.isInteger(item.exitCode)) throw Error('validation returned no concrete exit code');
         if (item.exitCode !== 0) throw Error(`exit ${item.exitCode}`);
         item.status = 'PASSED'; await save();
         if (await candidateSourceDigest(candidatePath) !== beforeDigest) throw fail('STAGE4_SOURCE_MUTATED', script);
