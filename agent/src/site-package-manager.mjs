@@ -9,6 +9,14 @@ import { siteProcessEnvironment } from './site-process-environment.mjs';
 const fail = (code, detail = '') => Object.assign(
   Error(`${code}${detail ? `: ${sanitizeDiagnosticText(detail)}` : ''}`), { code });
 const exactVersion = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+const querySandboxProfile = () => [
+  '(version 1)',
+  '(allow default)',
+  '(deny network*)',
+  '(deny file-write*)',
+  '(allow file-write* (literal "/dev/null"))',
+  '',
+].join('\n');
 const managers = Object.freeze({
   'pnpm-lock.yaml': { manager: 'pnpm', installArgs: ['install', '--frozen-lockfile', '--offline', '--ignore-scripts'] },
   'package-lock.json': { manager: 'npm', installArgs: ['ci', '--offline', '--ignore-scripts'] },
@@ -133,15 +141,23 @@ async function verifiedStoragePath(path) {
   }
 }
 
+async function sandboxedQuery(executable, args, { run, environment, home, tmpdir,
+  platform, sandboxCommand }) {
+  if (platform !== 'darwin') throw fail('SITE_PACKAGE_MANAGER_SANDBOX_UNAVAILABLE', platform);
+  try { await access(sandboxCommand, fsConstants.X_OK); }
+  catch { throw fail('SITE_PACKAGE_MANAGER_SANDBOX_UNAVAILABLE', sandboxCommand); }
+  return run(sandboxCommand, ['-p', querySandboxProfile(), executable, ...args], {
+    cwd: dirname(executable),
+    env: packageManagerEnvironment(environment, { home, tmpdir }),
+    timeoutMs: 30000,
+  });
+}
+
 async function packageStorage(identity, executable, run, environment, options) {
   const args = identity.manager === 'pnpm' ? ['store', 'path', '--silent'] : ['config', 'get', 'cache'];
   let result;
   try {
-    result = await run(executable, args, {
-      cwd: dirname(executable),
-      env: packageManagerEnvironment(environment, options),
-      timeoutMs: 30000,
-    });
+    result = await sandboxedQuery(executable, args, { run, environment, ...options });
   } catch (error) {
     throw fail('SITE_PACKAGE_MANAGER_STORAGE_CHECK_FAILED', error.message);
   }
@@ -152,7 +168,8 @@ async function packageStorage(identity, executable, run, environment, options) {
 }
 
 export async function resolveSitePackageManager(projectPath, { run = runProcess,
-  environment = process.env, executable, storagePath, home, tmpdir } = {}) {
+  environment = process.env, executable, storagePath, home, tmpdir,
+  platform = process.platform, sandboxCommand = '/usr/bin/sandbox-exec' } = {}) {
   const identity = await projectIdentity(projectPath);
   let resolvedExecutable;
   try {
@@ -169,10 +186,8 @@ export async function resolveSitePackageManager(projectPath, { run = runProcess,
   const executableBytes = await regularFile(resolvedExecutable);
   let result;
   try {
-    result = await run(resolvedExecutable, ['--version'], {
-      cwd: dirname(resolvedExecutable),
-      env: packageManagerEnvironment(environment, { home, tmpdir }),
-      timeoutMs: 30000,
+    result = await sandboxedQuery(resolvedExecutable, ['--version'], {
+      run, environment, home, tmpdir, platform, sandboxCommand,
     });
   } catch (error) {
     throw fail('SITE_PACKAGE_MANAGER_VERSION_CHECK_FAILED', error.message);
@@ -186,7 +201,9 @@ export async function resolveSitePackageManager(projectPath, { run = runProcess,
     throw fail('SITE_PACKAGE_MANAGER_VERSION_MISMATCH', `declared ${identity.declaredVersion}; executable reports ${version}`);
   const resolvedStoragePath = storagePath
     ? await verifiedStoragePath(storagePath)
-    : await packageStorage(identity, resolvedExecutable, run, environment, { home, tmpdir });
+    : await packageStorage(identity, resolvedExecutable, run, environment, {
+      home, tmpdir, platform, sandboxCommand,
+    });
   return Object.freeze({
     schemaVersion: 1,
     kind: 'SITE_PACKAGE_MANAGER_CONTEXT_V1',

@@ -70,12 +70,11 @@ export async function validateStage4Candidate(context, { run = runProcess, envir
   await safePath(candidatePath, [candidatePath]); await safePath(nativeDirectory, [nativeDirectory]);
   await mkdir(nativeDirectory, { recursive: true, mode: 0o700 });
   if (platform !== 'darwin') throw fail('STAGE4_HOST_SANDBOX_UNAVAILABLE', platform);
-  if (run === runProcess) {
-    try { await access(sandboxCommand, fsConstants.X_OK); }
-    catch { throw fail('STAGE4_HOST_SANDBOX_UNAVAILABLE', sandboxCommand); }
-  }
+  try { await access(sandboxCommand, fsConstants.X_OK); }
+  catch { throw fail('STAGE4_HOST_SANDBOX_UNAVAILABLE', sandboxCommand); }
   const packageManager = await verifyPackageManager(candidatePath, context.packageManager, {
     run, environment, home: nativeDirectory, tmpdir: nativeDirectory,
+    platform, sandboxCommand,
   });
   const pkg = JSON.parse(await readFile(join(candidatePath, 'package.json'), 'utf8'));
   if (!pkg.scripts?.build) throw fail('STAGE4_BUILD_SCRIPT_MISSING');

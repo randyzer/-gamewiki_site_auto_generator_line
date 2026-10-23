@@ -26,7 +26,9 @@ export async function installDependencies(projectPath, { run = runProcess,
   manifestPath = join(projectPath, 'docs/agent-runs/site-dependencies.json'),
   environment = process.env, resolvePackageManager = resolveSitePackageManager,
   platform = process.platform, sandboxCommand = '/usr/bin/sandbox-exec' } = {}) {
-  const toolchain = await resolvePackageManager(projectPath, { run, environment });
+  const toolchain = await resolvePackageManager(projectPath, {
+    run, environment, platform, sandboxCommand,
+  });
   const manifest = { projectPath, lockfile: toolchain.lockfile,
     toolchain, command: [toolchain.executable, ...toolchain.installArgs],
     sandbox: 'macos-deny-network', exitCode: null };
@@ -34,10 +36,8 @@ export async function installDependencies(projectPath, { run = runProcess,
   const installTmp = join(projectPath, '.agent-install-tmp');
   try {
     if (platform !== 'darwin') throw fail('SITE_INSTALL_SANDBOX_UNAVAILABLE', platform);
-    if (run === runProcess) {
-      try { await access(sandboxCommand, fsConstants.X_OK); }
-      catch { throw fail('SITE_INSTALL_SANDBOX_UNAVAILABLE', sandboxCommand); }
-    }
+    try { await access(sandboxCommand, fsConstants.X_OK); }
+    catch { throw fail('SITE_INSTALL_SANDBOX_UNAVAILABLE', sandboxCommand); }
     await mkdir(installTmp, { recursive: true, mode: 0o700 });
     const profile = installSandboxProfile();
     const result = await run(sandboxCommand, ['-p', profile, toolchain.executable, ...toolchain.installArgs], {
