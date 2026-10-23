@@ -30,6 +30,65 @@ test('candidate is isolated and abort leaves target byte-identical', async t => 
   await assert.rejects(access(tx.binding.candidatePath));
 });
 
+test('retryable external failure holds an immutable candidate without changing target', async t => {
+  const { targetPath } = await fixture(t);
+  const before = await stage4SiteDigest(targetPath);
+  const tx = await prepareStage4SiteTransaction(options(targetPath));
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'export const version = 2;\n');
+  const held = await tx.holdCandidate('WORKER_USAGE_LIMIT');
+  const journal = JSON.parse(await readFile(tx.binding.journalPath, 'utf8'));
+  assert.equal(journal.state, 'HELD');
+  assert.equal(journal.failureCode, 'WORKER_USAGE_LIMIT');
+  assert.equal(journal.candidateDigest, held.candidateDigest);
+  assert.equal(await stage4SiteDigest(tx.binding.candidatePath), held.candidateDigest);
+  assert.equal(await stage4SiteDigest(targetPath), before);
+
+  const recovered = await recoverStage4SiteTransaction({ ...options(targetPath), manifestStage: null });
+  assert.equal(recovered.status, 'HELD');
+  assert.equal(recovered.candidateDigest, held.candidateDigest);
+});
+
+test('recovery completes a durable hold intent after a crash', async t => {
+  const { targetPath } = await fixture(t);
+  const before = await stage4SiteDigest(targetPath);
+  const tx = await prepareStage4SiteTransaction({ ...options(targetPath),
+    fault: point => { if (point === 'after-hold-intent') throw Error('SYNTHETIC_CRASH'); } });
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'export const version = 2;\n');
+  await assert.rejects(tx.holdCandidate('WORKER_USAGE_LIMIT'), /SYNTHETIC_CRASH/);
+  assert.equal(JSON.parse(await readFile(tx.binding.journalPath, 'utf8')).state, 'HOLD_INTENT');
+
+  const recovered = await recoverStage4SiteTransaction({ ...options(targetPath), manifestStage: null });
+  assert.equal(recovered.status, 'HELD');
+  assert.equal(JSON.parse(await readFile(tx.binding.journalPath, 'utf8')).state, 'HELD');
+  assert.equal(await stage4SiteDigest(targetPath), before);
+  assert.equal(await stage4SiteDigest(tx.binding.candidatePath), recovered.candidateDigest);
+});
+
+test('held target drift fails closed without deleting the candidate', async t => {
+  const { targetPath } = await fixture(t);
+  const tx = await prepareStage4SiteTransaction(options(targetPath));
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'candidate evidence\n');
+  await tx.holdCandidate('WORKER_USAGE_LIMIT');
+  await writeFile(join(targetPath, 'src/index.js'), 'target drift\n');
+
+  const recovered = await recoverStage4SiteTransaction({ ...options(targetPath), manifestStage: null });
+  assert.equal(recovered.status, 'RECOVERY_REQUIRED');
+  assert.match(recovered.evidence.join('\n'), /held target baseline mismatch/i);
+  assert.equal(await readFile(join(tx.binding.candidatePath, 'src/index.js'), 'utf8'), 'candidate evidence\n');
+  assert.equal(await readFile(join(targetPath, 'src/index.js'), 'utf8'), 'target drift\n');
+});
+
+test('held candidate tampering fails closed and preserves evidence', async t => {
+  const { targetPath } = await fixture(t);
+  const tx = await prepareStage4SiteTransaction(options(targetPath));
+  await tx.holdCandidate('WORKER_USAGE_LIMIT');
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'tampered\n');
+  const recovered = await recoverStage4SiteTransaction({ ...options(targetPath), manifestStage: null });
+  assert.equal(recovered.status, 'RECOVERY_REQUIRED');
+  assert.match(recovered.evidence.join('\n'), /held candidate digest mismatch/i);
+  assert.equal(await readFile(join(tx.binding.candidatePath, 'src/index.js'), 'utf8'), 'tampered\n');
+});
+
 test('validated candidate promotes only after target and candidate digests are rechecked', async t => {
   const { targetPath } = await fixture(t);
   const tx = await prepareStage4SiteTransaction(options(targetPath));

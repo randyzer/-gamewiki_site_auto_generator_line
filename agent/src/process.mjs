@@ -3,6 +3,11 @@ import { sanitizeDiagnosticText, failureDiagnostic } from './diagnostics.mjs';
 
 const workerError = (message, code, details = {}) => Object.assign(Error(message), { code, ...details });
 const captureLimit = 8192;
+const trustedRetryableExternalFailures = new WeakSet();
+
+export function isTrustedRetryableExternalFailure(error) {
+  return error instanceof Error && trustedRetryableExternalFailures.has(error);
+}
 
 const appendHead = (current, chunk) => current.length >= captureLimit
   ? current : current + chunk.slice(0, captureLimit - current.length);
@@ -33,6 +38,12 @@ function failureDetail(stderr, stdout, env) {
   if (stderr.value) parts.push(`stderr tail: ${sanitizeDiagnosticText(completeTailWindow(stderr, both ? 900 : 1500), env)}`);
   if (stdout.value) parts.push(`stdout tail: ${sanitizeDiagnosticText(completeTailWindow(stdout, both ? 500 : 1500), env)}`);
   return sanitizeDiagnosticText(parts.join('\n'), env);
+}
+
+function workerExitCode(code, stderr) {
+  const tail = completeTailWindow(stderr, captureLimit);
+  const usageLimit = /(?:^|\n)ERROR: You've hit your usage limit\.[^\n]*\nERROR: You've hit your usage limit\.[^\n]*\ntokens used\n[\d,]+\s*$/;
+  return code === 1 && usageLimit.test(tail) ? 'WORKER_USAGE_LIMIT' : 'WORKER_EXIT_NONZERO';
 }
 
 // Keep bounded, sanitized failure details; raw worker output is never persisted.
@@ -76,7 +87,10 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
       else if (failure) reject(failure);
       else if (code !== 0) {
         const detail = failureDetail(stderrTail, stdoutTail, env);
-        reject(workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`, 'WORKER_EXIT_NONZERO', { exitCode: code, exitSignal }));
+        const failure = workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`,
+          workerExitCode(code, stderrTail), { exitCode: code, exitSignal });
+        if (failure.code === 'WORKER_USAGE_LIMIT') trustedRetryableExternalFailures.add(failure);
+        reject(failure);
       }
       else resolve({ exitCode: code, stdout });
     });

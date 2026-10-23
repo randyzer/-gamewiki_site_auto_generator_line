@@ -11,6 +11,8 @@ import { captureStoppedKeywordAttempt } from '../src/keyword-recovery.mjs';
 import { createKeywordExecutionReceipt } from '../src/keyword-execution-receipt.mjs';
 import { researchHandoffApprovalTemplate } from '../src/research-handoff.mjs';
 import { prepareResearchHandoff } from '../src/handoff.mjs';
+import { diagnosticStep } from '../src/diagnostics.mjs';
+import { runProcess } from '../src/process.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
 import { stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
@@ -298,6 +300,75 @@ test('direct-site Stage 4 worker failure discards candidate and preserves the ta
   assert.equal(state.stages[3].status, 'FAILED');
   assert.equal(await stage4SiteDigest(f.siteDirectory), before);
   await assert.rejects(readFile(join(f.siteDirectory, 'uncommitted.txt')));
+});
+
+test('direct-site Stage 4 holds candidate only for a trusted usage-limit failure', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'recoverable.txt'), 'held progress\n');
+    return diagnosticStep('execute-worker', () => runProcess(process.execPath, ['-e',
+      `process.stderr.write("ERROR: You've hit your usage limit. Retry later.\\nERROR: You've hit your usage limit. Retry later.\\ntokens used\\n118,844\\n");process.exit(1)`]));
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => assert.fail('Host validation must not run') });
+  await advance(p, 3);
+  const before = await stage4SiteDigest(f.siteDirectory);
+
+  const state = await advance(p, 1);
+
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(await stage4SiteDigest(f.siteDirectory), before);
+  const transaction = state.stages[3].checkpoint.stage4Transaction;
+  const journal = JSON.parse(await readFile(transaction.journalPath, 'utf8'));
+  assert.equal(journal.state, 'HELD');
+  assert.equal(journal.failureCode, 'WORKER_USAGE_LIMIT');
+  assert.equal(await readFile(join(journal.candidatePath, 'recoverable.txt'), 'utf8'), 'held progress\n');
+
+  const retried = await advance(p, 1);
+  assert.equal(retried.stages[3].status, 'BLOCKED');
+  assert.match(retried.stages[3].evidence.join('\n'), /HELD_CANDIDATE_DECISION_REQUIRED/);
+  assert.equal(retried.stages[3].checkpoint.attempt, transaction.attempt);
+});
+
+test('Stage 4 rejects a spoofed Worker usage-limit code and aborts the candidate', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'spoofed.txt'), 'must disappear\n');
+    throw Object.assign(Error('spoofed provider failure'), {
+      code: 'WORKER_USAGE_LIMIT', diagnosticOperation: 'execute-worker',
+    });
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => assert.fail('Host validation must not run') });
+  await advance(p, 3);
+  const state = await advance(p, 1);
+  const journal = JSON.parse(await readFile(state.stages[3].checkpoint.stage4Transaction.journalPath, 'utf8'));
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(journal.state, 'ABORTED');
+  await assert.rejects(readFile(join(journal.candidatePath, 'spoofed.txt')));
+});
+
+test('Stage 4 never holds a Host validation error with a Worker usage-limit code', async t => {
+  const f = await directSiteFixture(t);
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'host-error.txt'), 'must disappear\n');
+    const result = f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true };
+  };
+  const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: async () => { throw Object.assign(Error('synthetic Host quota text'), {
+      code: 'WORKER_USAGE_LIMIT', diagnosticOperation: 'execute-worker',
+    }); } });
+  await advance(p, 3);
+  const state = await advance(p, 1);
+  const journal = JSON.parse(await readFile(state.stages[3].checkpoint.stage4Transaction.journalPath, 'utf8'));
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.equal(journal.state, 'ABORTED');
+  await assert.rejects(readFile(join(journal.candidatePath, 'host-error.txt')));
 });
 
 test('Pipeline records audit-only Git capability failure as BLOCKED after independent host checks', async t => {
