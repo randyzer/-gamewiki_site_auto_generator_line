@@ -3,6 +3,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { isAbsolute, resolve, relative, dirname, join, parse, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hostname } from 'node:os';
+import { resolveNs } from 'node:dns/promises';
 import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { parseArtifactJson } from './files.mjs';
 import { verifySkillSource } from './skill-lock.mjs';
@@ -220,7 +221,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   recoverStage4Transaction = recoverStage4SiteTransaction,
   discardHeldStage4Transaction = discardHeldStage4SiteTransaction,
   prepareStage4Handoff = prepareResearchHandoff,
-  validateStage4 } = {}) {
+  validateStage4, resolveLaunchNameServers = resolveNs } = {}) {
   if (templateSnapshot) templateRoots = [templateSnapshot.templateRoot];
   assert(typeof executor === 'function', 'Inject an async executor');
   assert(stage4ReadinessCapability === undefined ||
@@ -240,6 +241,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
   assert(isAbsolute(workspace ?? '') && isAbsolute(inventoryPath), 'Absolute workspace and inventory paths required');
   assert(/^[a-zA-Z0-9_-]{1,100}$/.test(runId), 'Unsafe runId');
   assert(Array.isArray(templateRoots) && templateRoots.every(p => typeof p === 'string' && isAbsolute(p)), 'Absolute templateRoots required');
+  assert(typeof resolveLaunchNameServers === 'function', 'Inject an async DNS name-server resolver');
   keywordExecutionInputs = keywordExecutionInputs === undefined ? {} : checkInputs(keywordExecutionInputs);
   workspace = resolve(workspace); inventoryPath = resolve(inventoryPath);
   templateRoots = templateRoots.map(p => resolve(p));
@@ -546,17 +548,17 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     if (!binding) return null;
     const projectDigestValue = findStage(state.stages, STAGE.UI_UX_AUDIT).checkpoint.projectDigest;
     assert(/^[a-f0-9]{64}$/.test(projectDigestValue ?? ''), 'LAUNCH_READINESS_PROJECT_DIGEST_MISSING');
-    const verified = validateLaunchReadinessClearance(state.inputs.launchReadinessClearance, {
+    const verified = await validateLaunchReadinessClearance(state.inputs.launchReadinessClearance, {
       binding, siteRevision: state.inputs.siteRevision, projectDigest: projectDigestValue,
+      domain: state.inputs.domain, resolveNameServers: resolveLaunchNameServers,
+      readPolicyEvidence: async path => {
+        const evidencePath = resolve(path);
+        assert(isAbsolute(path) && inside(state.inputs.projectPath, evidencePath) &&
+          evidencePath !== resolve(state.inputs.projectPath),
+        `LAUNCH_READINESS_CLEARANCE_INVALID: evidence outside project: ${path}`);
+        return hash(await regularFile(evidencePath));
+      },
     });
-    for (const item of verified.clearance.clearances) {
-      const evidencePath = resolve(item.evidencePath);
-      assert(isAbsolute(item.evidencePath) && inside(state.inputs.projectPath, evidencePath) &&
-        evidencePath !== resolve(state.inputs.projectPath),
-      `LAUNCH_READINESS_CLEARANCE_INVALID: evidence outside project: ${item.evidencePath}`);
-      assert(hash(await regularFile(evidencePath)) === item.evidenceSha256,
-        `LAUNCH_READINESS_CLEARANCE_INVALID: evidence changed: ${item.evidencePath}`);
-    }
     return { ...verified, binding, projectDigest: projectDigestValue };
   }
 

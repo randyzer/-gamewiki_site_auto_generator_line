@@ -215,10 +215,20 @@ test('direct-site Stage 4 preserves launch blockers after Host validation', asyn
 
 async function launchReadinessFixture(t, pipelineOptions = {}) {
   const f = await directSiteFixture(t);
+  const privacyBytes = 'Privacy policy reviewed for Example Operator\n';
+  const termsBytes = 'Terms reviewed for Example Operator\n';
+  const nameServers = ['ns1.example-dns.test', 'ns2.example-dns.test'];
+  const resolveLaunchNameServers = async domain => {
+    assert.equal(domain, f.inputs.domain);
+    return [...nameServers];
+  };
   let stage6Calls = 0;
   const executor = async (skill, context) => {
     if (skill === api.STAGES[3]) {
       await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
+      await mkdir(join(context.stage4Transaction.candidatePath, 'legal'));
+      await writeFile(join(context.stage4Transaction.candidatePath, 'legal/privacy-policy.md'), privacyBytes);
+      await writeFile(join(context.stage4Transaction.candidatePath, 'legal/terms-of-service.md'), termsBytes);
       const result = f.good(skill, { ...context,
         inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
       return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
@@ -229,8 +239,37 @@ async function launchReadinessFixture(t, pipelineOptions = {}) {
     return f.good(skill, context);
   };
   const pipeline = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
-    validateStage4: f.validateStage4, ...pipelineOptions });
-  return { ...f, executor, pipeline, stage6Calls: () => stage6Calls };
+    validateStage4: f.validateStage4, resolveLaunchNameServers, ...pipelineOptions });
+  return { ...f, executor, pipeline, privacyBytes, termsBytes, nameServers,
+    resolveLaunchNameServers, stage6Calls: () => stage6Calls };
+}
+
+function launchReadinessClearance(f, binding, projectDigest) {
+  const subjectDomain = f.inputs.domain;
+  return {
+    kind: 'LAUNCH_READINESS_CLEARANCE_V2', stage4BindingDigest: binding.bindingDigest,
+    siteRevision: f.inputs.siteRevision, projectDigest, domain: subjectDomain,
+    clearances: [
+      { code: 'OPERATOR_IDENTITY_REQUIRED', kind: 'OPERATOR_IDENTITY_CLEARANCE_V1',
+        subjectDomain, authority: 'USER', operatorName: 'Example Operator',
+        operatorType: 'INDIVIDUAL', userConfirmed: true },
+      { code: 'CONTACT_CHANNEL_REQUIRED', kind: 'CONTACT_CHANNEL_CLEARANCE_V1',
+        subjectDomain, authority: 'USER', channelType: 'EMAIL', channelValue: 'owner@example.test',
+        userConfirmed: true },
+      { code: 'JURISDICTION_REQUIRED', kind: 'JURISDICTION_CLEARANCE_V1',
+        subjectDomain, authority: 'USER', countryCode: 'US', jurisdiction: 'California',
+        userConfirmed: true },
+      { code: 'PRIVACY_POLICY_REVIEW_REQUIRED', kind: 'POLICY_REVIEW_CLEARANCE_V1',
+        subjectDomain, authority: 'USER_REVIEW', policyType: 'PRIVACY', decision: 'APPROVED',
+        policyPath: join(f.siteDirectory, 'legal/privacy-policy.md'), policySha256: hash(f.privacyBytes) },
+      { code: 'TERMS_POLICY_REVIEW_REQUIRED', kind: 'POLICY_REVIEW_CLEARANCE_V1',
+        subjectDomain, authority: 'USER_REVIEW', policyType: 'TERMS', decision: 'APPROVED',
+        policyPath: join(f.siteDirectory, 'legal/terms-of-service.md'), policySha256: hash(f.termsBytes) },
+      { code: 'DNS_DELEGATION_REQUIRED', kind: 'DNS_DELEGATION_CLEARANCE_V1',
+        subjectDomain, authority: 'HOST_DNS', provider: 'Example DNS',
+        expectedNameServers: [...f.nameServers] },
+    ],
+  };
 }
 
 test('Stage 6 cannot run or pass while persisted Stage 4 launch blockers are unresolved', async t => {
@@ -248,19 +287,11 @@ test('Stage 6 persists verified clearances and Stage 7 rejects a forged clearanc
   const f = await launchReadinessFixture(t);
   await advance(f.pipeline, 4);
   const binding = f.pipeline.snapshot().stages[3].checkpoint.launchReadiness;
-  const evidencePath = join(f.siteDirectory, 'worker-change.txt');
-  const evidenceBytes = 'validated candidate\n';
   await f.pipeline.advance();
   const projectDigest = f.pipeline.snapshot().stages[4].checkpoint.projectDigest;
-  await f.pipeline.updateUserInputs({ launchReadinessClearance: {
-    kind: 'LAUNCH_READINESS_CLEARANCE_V1',
-    stage4BindingDigest: binding.bindingDigest,
-    siteRevision: f.inputs.siteRevision,
-    projectDigest,
-    clearances: STAGE4_LAUNCH_BLOCKERS.map(code => ({
-      code, evidencePath, evidenceSha256: hash(evidenceBytes),
-    })),
-  } });
+  await f.pipeline.updateUserInputs({
+    launchReadinessClearance: launchReadinessClearance(f, binding, projectDigest),
+  });
   await f.pipeline.advance();
   const accepted = f.pipeline.snapshot();
   assert.equal(accepted.stages[5].status, 'PASSED');
@@ -270,7 +301,8 @@ test('Stage 6 persists verified clearances and Stage 7 rejects a forged clearanc
   manifest.stages[5].checkpoint.launchReadiness.attestationDigest = '0'.repeat(64);
   await writeFile(f.pipeline.manifestPath, JSON.stringify(manifest, null, 2) + '\n');
   const resumed = await f.create({ runId: accepted.runId, resume: true, inputs: {}, executor: f.executor,
-    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4 });
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    resolveLaunchNameServers: f.resolveLaunchNameServers });
   const rejected = await resumed.advance();
   assert.equal(rejected.stages[6].status, 'BLOCKED');
   assert.match(rejected.stages[6].evidence.join('\n'), /LAUNCH_READINESS/);
@@ -280,25 +312,65 @@ test('Stage 7 refuses an approved deployment plan after launch-clearance evidenc
   const f = await launchReadinessFixture(t, { deploymentExecution: true });
   await advance(f.pipeline, 4);
   const binding = f.pipeline.snapshot().stages[3].checkpoint.launchReadiness;
-  const evidencePath = join(f.siteDirectory, 'worker-change.txt');
-  const evidenceBytes = 'validated candidate\n';
   await f.pipeline.advance();
   const projectDigest = f.pipeline.snapshot().stages[4].checkpoint.projectDigest;
-  await f.pipeline.updateUserInputs({ launchReadinessClearance: {
-    kind: 'LAUNCH_READINESS_CLEARANCE_V1', stage4BindingDigest: binding.bindingDigest,
-    siteRevision: f.inputs.siteRevision, projectDigest,
-    clearances: STAGE4_LAUNCH_BLOCKERS.map(code => ({
-      code, evidencePath, evidenceSha256: hash(evidenceBytes),
-    })),
-  } });
+  await f.pipeline.updateUserInputs({
+    launchReadinessClearance: launchReadinessClearance(f, binding, projectDigest),
+  });
   await advance(f.pipeline, 2);
   const planDigest = f.pipeline.snapshot().stages[6].checkpoint.planDigest;
-  await writeFile(evidencePath, 'stale evidence\n');
+  await writeFile(join(f.siteDirectory, 'legal/privacy-policy.md'), 'stale evidence\n');
 
   await assert.rejects(f.pipeline.updateUserInputs({ deploymentPlanApproval: {
     approved: true, digest: planDigest,
   } }), /LAUNCH_READINESS_CLEARANCE_INVALID/);
   assert.equal(f.pipeline.snapshot().deploymentExecuted, false);
+});
+
+test('Stage 6 rejects generic, reused, unverified, unrelated or DNS-mismatched clearance evidence', async t => {
+  const cases = [
+    ['generic evidence', clearance => ({ ...clearance, kind: 'LAUNCH_READINESS_CLEARANCE_V1',
+      clearances: STAGE4_LAUNCH_BLOCKERS.map(code => ({ code,
+        evidencePath: clearance.clearances[3].policyPath,
+        evidenceSha256: clearance.clearances[3].policySha256 })) })],
+    ['reused policy file', clearance => ({ ...clearance, clearances: clearance.clearances.map(item =>
+      item.code === 'TERMS_POLICY_REVIEW_REQUIRED' ? { ...item,
+        policyPath: clearance.clearances[3].policyPath,
+        policySha256: clearance.clearances[3].policySha256 } : item) })],
+    ['unverified operator claim', clearance => ({ ...clearance, clearances: clearance.clearances.map(item =>
+      item.code === 'OPERATOR_IDENTITY_REQUIRED' ? { ...item, userConfirmed: false } : item) })],
+    ['unverified contact claim', clearance => ({ ...clearance, clearances: clearance.clearances.map(item =>
+      item.code === 'CONTACT_CHANNEL_REQUIRED' ? { ...item, userConfirmed: false } : item) })],
+    ['unrelated legal evidence', clearance => ({ ...clearance, clearances: clearance.clearances.map(item =>
+      item.code === 'PRIVACY_POLICY_REVIEW_REQUIRED' ? { ...item, policyType: 'TERMS' } : item) })],
+    ['unreviewed terms evidence', clearance => ({ ...clearance, clearances: clearance.clearances.map(item =>
+      item.code === 'TERMS_POLICY_REVIEW_REQUIRED' ? { ...item, decision: 'PENDING' } : item) })],
+  ];
+  for (const [name, mutate] of cases) await t.test(name, async t => {
+    const f = await launchReadinessFixture(t);
+    await advance(f.pipeline, 5);
+    const state = f.pipeline.snapshot();
+    const clearance = launchReadinessClearance(f, state.stages[3].checkpoint.launchReadiness,
+      state.stages[4].checkpoint.projectDigest);
+    await f.pipeline.updateUserInputs({ launchReadinessClearance: mutate(clearance) });
+    const rejected = await f.pipeline.advance();
+    assert.equal(rejected.stages[5].status, 'FAILED');
+    assert.match(rejected.stages[5].evidence.join('\n'), /LAUNCH_READINESS_CLEARANCE_INVALID/);
+    assert.equal(f.stage6Calls(), 0);
+  });
+  await t.test('unverified DNS delegation', async t => {
+    const f = await launchReadinessFixture(t, {
+      resolveLaunchNameServers: async () => ['wrong.example-dns.test'],
+    });
+    await advance(f.pipeline, 5);
+    const state = f.pipeline.snapshot();
+    await f.pipeline.updateUserInputs({ launchReadinessClearance: launchReadinessClearance(f,
+      state.stages[3].checkpoint.launchReadiness, state.stages[4].checkpoint.projectDigest) });
+    const rejected = await f.pipeline.advance();
+    assert.equal(rejected.stages[5].status, 'FAILED');
+    assert.match(rejected.stages[5].evidence.join('\n'), /DNS delegation/);
+    assert.equal(f.stage6Calls(), 0);
+  });
 });
 
 test('direct-site Stage 4 never upgrades an ordinary PARTIAL result', async t => {

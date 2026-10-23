@@ -11,6 +11,9 @@ export const STAGE4_LAUNCH_BLOCKERS = Object.freeze([
 
 const sha256 = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
+const nonempty = value => typeof value === 'string' && value.trim().length > 0;
+const domainName = value => typeof value === 'string' &&
+  /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9-]+$/i.test(value);
 const exactKeys = (value, keys) => JSON.stringify(Object.keys(value).sort()) === JSON.stringify([...keys].sort());
 
 const invalid = detail => Object.assign(Error(`STAGE4_WORKER_HANDOFF_INVALID: ${detail}`), {
@@ -64,22 +67,85 @@ export function verifyStage4LaunchReadinessBinding(value, { runId, siteRevision 
   return value;
 }
 
-export function validateLaunchReadinessClearance(value, { binding, siteRevision, projectDigest }) {
+export async function validateLaunchReadinessClearance(value, { binding, siteRevision, projectDigest,
+  domain, readPolicyEvidence, resolveNameServers }) {
   const fail = detail => { throw Object.assign(Error(`LAUNCH_READINESS_CLEARANCE_INVALID: ${detail}`), {
     code: 'LAUNCH_READINESS_CLEARANCE_INVALID',
   }); };
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      !exactKeys(value, ['clearances', 'kind', 'projectDigest', 'siteRevision', 'stage4BindingDigest']) ||
-      value.kind !== 'LAUNCH_READINESS_CLEARANCE_V1' || value.stage4BindingDigest !== binding.bindingDigest ||
+      !exactKeys(value, ['clearances', 'domain', 'kind', 'projectDigest', 'siteRevision', 'stage4BindingDigest']) ||
+      value.kind !== 'LAUNCH_READINESS_CLEARANCE_V2' || value.stage4BindingDigest !== binding.bindingDigest ||
       value.siteRevision !== siteRevision || value.projectDigest !== projectDigest ||
+      value.domain !== domain || !domainName(domain) || typeof readPolicyEvidence !== 'function' ||
+      typeof resolveNameServers !== 'function' ||
       !Array.isArray(value.clearances) || value.clearances.length !== binding.blockers.length) fail('identity mismatch');
-  for (const [index, clearance] of value.clearances.entries()) {
+
+  const common = (clearance, index, keys) => {
     if (!clearance || typeof clearance !== 'object' || Array.isArray(clearance) ||
-        !exactKeys(clearance, ['code', 'evidencePath', 'evidenceSha256']) ||
-        clearance.code !== binding.blockers[index] || typeof clearance.evidencePath !== 'string' ||
-        clearance.evidencePath.length === 0 || !digest(clearance.evidenceSha256)) fail('incomplete or unordered evidence');
+        !exactKeys(clearance, ['authority', 'code', 'kind', 'subjectDomain', ...keys]) ||
+        clearance.code !== binding.blockers[index] || clearance.subjectDomain !== domain)
+      fail('incomplete, unordered or unrelated evidence');
+  };
+  const [operator, contact, jurisdiction, privacy, terms, dns] = value.clearances;
+  common(operator, 0, ['operatorName', 'operatorType', 'userConfirmed']);
+  if (operator.kind !== 'OPERATOR_IDENTITY_CLEARANCE_V1' || operator.authority !== 'USER' ||
+      !nonempty(operator.operatorName) || !['INDIVIDUAL', 'ORGANIZATION'].includes(operator.operatorType) ||
+      operator.userConfirmed !== true) fail('operator identity is not explicitly user-confirmed');
+
+  common(contact, 1, ['channelType', 'channelValue', 'userConfirmed']);
+  if (contact.kind !== 'CONTACT_CHANNEL_CLEARANCE_V1' || contact.authority !== 'USER' ||
+      !['EMAIL', 'URL'].includes(contact.channelType) || !nonempty(contact.channelValue) ||
+      contact.userConfirmed !== true) fail('contact channel is not explicitly user-confirmed');
+  if (contact.channelType === 'EMAIL' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.channelValue))
+    fail('contact email is invalid');
+  if (contact.channelType === 'URL') {
+    try { if (new URL(contact.channelValue).protocol !== 'https:') fail('contact URL must use HTTPS'); }
+    catch { fail('contact URL is invalid'); }
   }
-  return { clearance: value, clearanceDigest: sha256(value) };
+
+  common(jurisdiction, 2, ['countryCode', 'jurisdiction', 'userConfirmed']);
+  if (jurisdiction.kind !== 'JURISDICTION_CLEARANCE_V1' || jurisdiction.authority !== 'USER' ||
+      !/^[A-Z]{2}$/.test(jurisdiction.countryCode) || !nonempty(jurisdiction.jurisdiction) ||
+      jurisdiction.userConfirmed !== true) fail('jurisdiction is not explicitly user-confirmed');
+
+  const policy = async (clearance, index, policyType) => {
+    common(clearance, index, ['decision', 'policyPath', 'policySha256', 'policyType']);
+    if (clearance.kind !== 'POLICY_REVIEW_CLEARANCE_V1' || clearance.authority !== 'USER_REVIEW' ||
+        clearance.policyType !== policyType || clearance.decision !== 'APPROVED' ||
+        !nonempty(clearance.policyPath) || !digest(clearance.policySha256))
+      fail(`${policyType.toLowerCase()} policy review is invalid`);
+    const observedSha256 = await readPolicyEvidence(clearance.policyPath);
+    if (observedSha256 !== clearance.policySha256)
+      fail(`${policyType.toLowerCase()} policy evidence changed`);
+    return { ...clearance, observedSha256 };
+  };
+  const verifiedPrivacy = await policy(privacy, 3, 'PRIVACY');
+  const verifiedTerms = await policy(terms, 4, 'TERMS');
+  if (privacy.policyPath === terms.policyPath) fail('privacy and terms evidence must be distinct');
+
+  common(dns, 5, ['expectedNameServers', 'provider']);
+  if (dns.kind !== 'DNS_DELEGATION_CLEARANCE_V1' || dns.authority !== 'HOST_DNS' ||
+      !nonempty(dns.provider) || !Array.isArray(dns.expectedNameServers) ||
+      dns.expectedNameServers.length === 0 || dns.expectedNameServers.some(item => !domainName(item)))
+    fail('DNS delegation evidence is invalid');
+  const expectedNameServers = [...new Set(dns.expectedNameServers.map(item => item.toLowerCase()))].sort();
+  if (expectedNameServers.length !== dns.expectedNameServers.length ||
+      JSON.stringify(expectedNameServers) !== JSON.stringify(dns.expectedNameServers))
+    fail('expected DNS name servers must be unique and canonical');
+  let observedNameServers;
+  try {
+    observedNameServers = [...new Set((await resolveNameServers(domain)).map(item => item.toLowerCase()))].sort();
+  } catch (error) { fail(`DNS delegation could not be verified: ${error?.code ?? 'lookup failed'}`); }
+  if (JSON.stringify(observedNameServers) !== JSON.stringify(expectedNameServers))
+    fail('DNS delegation does not match the expected name servers');
+
+  for (const [index, clearance] of value.clearances.entries()) {
+    if (clearance.code !== binding.blockers[index]) fail('clearance order changed');
+  }
+  const clearance = { ...value, kind: 'LAUNCH_READINESS_CLEARANCE_VERIFIED_V1',
+    clearances: [operator, contact, jurisdiction, verifiedPrivacy, verifiedTerms,
+      { ...dns, observedNameServers }] };
+  return { clearance, clearanceDigest: sha256(clearance) };
 }
 
 export function createStage6LaunchReadinessAttestation({ binding, siteRevision, projectDigest,
