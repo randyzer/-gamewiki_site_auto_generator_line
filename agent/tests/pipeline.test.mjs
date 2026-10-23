@@ -15,7 +15,7 @@ import { diagnosticStep } from '../src/diagnostics.mjs';
 import { runProcess } from '../src/process.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
-import { stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
+import { discardHeldStage4SiteTransaction, stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -329,6 +329,162 @@ test('direct-site Stage 4 holds candidate only for a trusted usage-limit failure
   assert.equal(retried.stages[3].status, 'BLOCKED');
   assert.match(retried.stages[3].evidence.join('\n'), /HELD_CANDIDATE_DECISION_REQUIRED/);
   assert.equal(retried.stages[3].checkpoint.attempt, transaction.attempt);
+});
+
+test('an exact recover decision starts a new Stage 4 attempt and requires the normal Worker and Host gates', async t => {
+  const f = await directSiteFixture(t);
+  let stage4Calls = 0;
+  let discardCalls = 0;
+  const nativeDirectories = [];
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    stage4Calls++;
+    nativeDirectories.push(context.nativeDirectory);
+    if (stage4Calls === 1) {
+      await writeFile(join(context.stage4Transaction.candidatePath, 'recoverable.txt'), 'held progress\n');
+      await mkdir(context.nativeDirectory, { recursive: true });
+      await writeFile(join(context.nativeDirectory, 'worker-result.json'), '{"stale":true}\n');
+      return diagnosticStep('execute-worker', () => runProcess(process.execPath, ['-e',
+        `process.stderr.write("ERROR: You've hit your usage limit. Retry later.\\nERROR: You've hit your usage limit. Retry later.\\ntokens used\\n118,844\\n");process.exit(1)`]));
+    }
+    assert.deepEqual(context.stage4Recovery, { kind: 'STAGE4_RECOVERY_CONTEXT_V1', mode: 'recover',
+      sourceAttempt: 1, heldCandidateDigest: context.stage4Recovery.heldCandidateDigest });
+    assert.equal(await readFile(join(context.stage4Transaction.candidatePath, 'recoverable.txt'), 'utf8'),
+      'held progress\n');
+    await assert.rejects(readFile(join(context.nativeDirectory, 'worker-result.json')),
+      /ENOENT/, 'a recovered attempt must not reuse the old Worker result');
+    await writeFile(join(context.stage4Transaction.candidatePath, 'continued.txt'), 'fresh worker result\n');
+    return f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+  };
+  const initial = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 });
+  await advance(initial, 3);
+  const failed = await advance(initial, 1);
+  const source = failed.stages[3].checkpoint.stage4Transaction;
+  const sourceJournal = JSON.parse(await readFile(source.journalPath, 'utf8'));
+  const decision = { mode: 'recover', sourceAttempt: source.attempt,
+    heldCandidateDigest: sourceJournal.candidateDigest, baselineDigest: sourceJournal.baselineDigest };
+  const manifestPath = initial.manifestPath;
+  const manifestBytes = await readFile(manifestPath);
+  const receipt = { manifestSha256: hash(manifestBytes), decision };
+  const resumed = await f.create({ inputs: {}, resume: true, runId: failed.runId, executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    stage4RecoveryReceipt: receipt, stage4RecoveryInputs: { stage4RecoveryDecision: decision },
+    discardHeldStage4Transaction: async options => {
+      discardCalls++;
+      const discarded = await discardHeldStage4SiteTransaction(options);
+      if (discardCalls === 1) throw Error('synthetic cleanup interruption');
+      return discarded;
+    } });
+
+  await resumed.updateUserInputs({ stage4RecoveryDecision: decision }, { retry: true });
+  await assert.rejects(resumed.advance(), /synthetic cleanup interruption/);
+  const passed = await resumed.advance();
+
+  assert.equal(passed.stages[3].status, 'PASSED', JSON.stringify(passed.stages[3].evidence));
+  assert.equal(passed.stages[3].checkpoint.attempt, 2);
+  assert.equal(stage4Calls, 2);
+  assert.notEqual(nativeDirectories[0], nativeDirectories[1]);
+  assert.equal(await readFile(join(f.siteDirectory, 'recoverable.txt'), 'utf8'), 'held progress\n');
+  assert.equal(await readFile(join(f.siteDirectory, 'continued.txt'), 'utf8'), 'fresh worker result\n');
+  assert.equal(JSON.parse(await readFile(source.journalPath, 'utf8')).state, 'DISCARDED');
+  assert.equal(passed.inputs.stage4RecoveryDecision, undefined);
+  assert.equal(passed.stages[3].checkpoint.stage4HeldCandidates, undefined);
+  assert.equal(discardCalls, 2);
+});
+
+test('an exact fresh decision discards held progress and starts from the unchanged target', async t => {
+  const f = await directSiteFixture(t);
+  let stage4Calls = 0;
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    stage4Calls++;
+    if (stage4Calls === 1) {
+      await writeFile(join(context.stage4Transaction.candidatePath, 'must-not-survive.txt'), 'held progress\n');
+      return diagnosticStep('execute-worker', () => runProcess(process.execPath, ['-e',
+        `process.stderr.write("ERROR: You've hit your usage limit. Retry later.\\nERROR: You've hit your usage limit. Retry later.\\ntokens used\\n118,844\\n");process.exit(1)`]));
+    }
+    assert.equal(context.stage4Recovery, undefined);
+    await assert.rejects(readFile(join(context.stage4Transaction.candidatePath, 'must-not-survive.txt')),
+      /ENOENT/);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'fresh-only.txt'), 'fresh worker result\n');
+    return f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+  };
+  const initial = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 });
+  await advance(initial, 3);
+  const failed = await advance(initial, 1);
+  const source = failed.stages[3].checkpoint.stage4Transaction;
+  const sourceJournal = JSON.parse(await readFile(source.journalPath, 'utf8'));
+  const decision = { mode: 'fresh', sourceAttempt: source.attempt,
+    heldCandidateDigest: sourceJournal.candidateDigest, baselineDigest: sourceJournal.baselineDigest };
+  const receipt = { manifestSha256: hash(await readFile(initial.manifestPath)), decision };
+  const resumed = await f.create({ inputs: {}, resume: true, runId: failed.runId, executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    stage4RecoveryReceipt: receipt, stage4RecoveryInputs: { stage4RecoveryDecision: decision } });
+
+  await resumed.updateUserInputs({ stage4RecoveryDecision: decision }, { retry: true });
+  const passed = await resumed.advance();
+
+  assert.equal(passed.stages[3].status, 'PASSED', JSON.stringify(passed.stages[3].evidence));
+  assert.equal(passed.stages[3].checkpoint.attempt, 2);
+  assert.equal(stage4Calls, 2);
+  await assert.rejects(readFile(join(f.siteDirectory, 'must-not-survive.txt')), /ENOENT/);
+  assert.equal(await readFile(join(f.siteDirectory, 'fresh-only.txt'), 'utf8'), 'fresh worker result\n');
+  assert.equal(JSON.parse(await readFile(source.journalPath, 'utf8')).state, 'DISCARDED');
+});
+
+test('fresh discards every accumulated held candidate after repeated usage limits', async t => {
+  const f = await directSiteFixture(t);
+  let stage4Calls = 0;
+  const executor = async (skill, context) => {
+    if (skill !== api.STAGES[3]) return f.good(skill, context);
+    stage4Calls++;
+    if (stage4Calls <= 2) {
+      await writeFile(join(context.stage4Transaction.candidatePath, `held-${stage4Calls}.txt`),
+        `held ${stage4Calls}\n`);
+      return diagnosticStep('execute-worker', () => runProcess(process.execPath, ['-e',
+        `process.stderr.write("ERROR: You've hit your usage limit. Retry later.\\nERROR: You've hit your usage limit. Retry later.\\ntokens used\\n118,844\\n");process.exit(1)`]));
+    }
+    await assert.rejects(readFile(join(context.stage4Transaction.candidatePath, 'held-1.txt')), /ENOENT/);
+    await assert.rejects(readFile(join(context.stage4Transaction.candidatePath, 'held-2.txt')), /ENOENT/);
+    await writeFile(join(context.stage4Transaction.candidatePath, 'fresh-third.txt'), 'fresh third attempt\n');
+    return f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+  };
+  const initial = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4 });
+  await advance(initial, 3);
+  const failed1 = await advance(initial, 1);
+  const source1 = failed1.stages[3].checkpoint.stage4Transaction;
+  const journal1 = JSON.parse(await readFile(source1.journalPath, 'utf8'));
+  const recover = { mode: 'recover', sourceAttempt: source1.attempt,
+    heldCandidateDigest: journal1.candidateDigest, baselineDigest: journal1.baselineDigest };
+  const resumed1 = await f.create({ inputs: {}, resume: true, runId: failed1.runId, executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    stage4RecoveryReceipt: { manifestSha256: hash(await readFile(initial.manifestPath)), decision: recover },
+    stage4RecoveryInputs: { stage4RecoveryDecision: recover } });
+  await resumed1.updateUserInputs({ stage4RecoveryDecision: recover }, { retry: true });
+  const failed2 = await resumed1.advance();
+  const source2 = failed2.stages[3].checkpoint.stage4Transaction;
+  const journal2 = JSON.parse(await readFile(source2.journalPath, 'utf8'));
+  const fresh = { mode: 'fresh', sourceAttempt: source2.attempt,
+    heldCandidateDigest: journal2.candidateDigest, baselineDigest: journal2.baselineDigest };
+  const resumed2 = await f.create({ inputs: {}, resume: true, runId: failed2.runId, executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    stage4RecoveryReceipt: { manifestSha256: hash(await readFile(initial.manifestPath)), decision: fresh },
+    stage4RecoveryInputs: { stage4RecoveryDecision: fresh } });
+
+  await resumed2.updateUserInputs({ stage4RecoveryDecision: fresh }, { retry: true });
+
+  assert.equal(JSON.parse(await readFile(source1.journalPath, 'utf8')).state, 'DISCARDED');
+  assert.equal(JSON.parse(await readFile(source2.journalPath, 'utf8')).state, 'DISCARDED');
+  const passed = await resumed2.advance();
+  assert.equal(passed.stages[3].status, 'PASSED', JSON.stringify(passed.stages[3].evidence));
+  assert.equal(passed.stages[3].checkpoint.attempt, 3);
+  assert.equal(await readFile(join(f.siteDirectory, 'fresh-third.txt'), 'utf8'), 'fresh third attempt\n');
 });
 
 test('Stage 4 rejects a spoofed Worker usage-limit code and aborts the candidate', async t => {

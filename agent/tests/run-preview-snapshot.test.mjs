@@ -102,6 +102,29 @@ test('preview snapshot preserves an explicit null evidence plan', async t => {
   assert.equal(loaded.effectiveEvidencePlanSha256, null);
 });
 
+test('preview snapshot binds the exact Stage 4 recover decision', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'run-preview-stage4-recovery-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const inputsFile = join(root, 'inputs.json');
+  const decision = { mode: 'recover', sourceAttempt: 13,
+    heldCandidateDigest: 'a'.repeat(64), baselineDigest: 'b'.repeat(64) };
+  const inputs = { stage4RecoveryDecision: decision };
+  const bytes = Buffer.from(JSON.stringify(inputs));
+  await writeFile(inputsFile, bytes);
+  const binding = { decision, sha256: sha256(JSON.stringify({ baselineDigest: decision.baselineDigest,
+    heldCandidateDigest: decision.heldCandidateDigest, mode: decision.mode,
+    sourceAttempt: decision.sourceAttempt })) };
+  const previewRoot = join(root, 'runs', '.preview-approvals', 'snapshot-run');
+  const created = await createRunPreviewSnapshot({ previewRoot, command: 'retry', runId: 'snapshot-run',
+    inputDocument: { path: inputsFile, bytes, data: inputs }, summary: 'stage4 recovery\n',
+    confirmationCode: '0123456789abcdef', manifestBytes: Buffer.from('{"sequence":9}'),
+    stage4Recovery: binding });
+  const loaded = await loadRunPreviewSnapshot({ previewRoot, command: 'retry', runId: 'snapshot-run',
+    previewId: created.previewId });
+  assert.equal(loaded.stage4RecoverySha256, binding.sha256);
+  assert.deepEqual(loaded.effectiveInputDocument.data.stage4RecoveryDecision, decision);
+});
+
 test('preview snapshot rejects approved-byte changes made after loading', async t => {
   const s = await setup(t);
   const created = await createRunPreviewSnapshot({ previewRoot: s.previewRoot,

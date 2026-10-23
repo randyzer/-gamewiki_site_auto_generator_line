@@ -18,6 +18,9 @@ import { createStage4DirtyApprovalVerifier,
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from './research-handoff-recovery.mjs';
 import { verifyResearchHandoffCandidate, verifyResearchHandoffApproval } from './research-handoff.mjs';
+import { recoverStage4SiteTransaction } from './stage4-site-transaction.mjs';
+import { createStage4RecoveryReceipt, stage4RecoveryBinding,
+  stage4RecoveryDecision } from './stage4-recovery-receipt.mjs';
 
 // Each run/retry is approved by terminal "y" or a user-returned preview code, replacing the G0 trusted-host ticket.
 const operatorConfirmed = async () => true;
@@ -36,6 +39,22 @@ async function readInputs(inputsFile) {
   return { data, bytes, path };
 }
 
+async function inspectHeldStage4Candidate({ manifest, runId }) {
+  const stage = manifest?.stages?.find(item => item.skill === STAGE.CONTENT_INTEGRATION);
+  if (!stage || !manifest.inputs?.paths) return null;
+  const identities = [...(stage.checkpoint?.stage4HeldCandidates ?? []),
+    ...(stage.checkpoint?.stage4Transaction ? [stage.checkpoint.stage4Transaction] : [])];
+  for (const identity of identities.reverse()) {
+    if (!Number.isSafeInteger(identity?.attempt)) continue;
+    const recovery = await recoverStage4SiteTransaction({ targetPath: manifest.inputs.projectPath,
+      runId, attempt: identity.attempt, manifestStage: stage });
+    if (recovery.status === 'RECOVERY_REQUIRED')
+      throw Error(`STAGE4_RECOVERY_REQUIRED: ${recovery.evidence.join('; ')}`);
+    if (recovery.status === 'HELD') return recovery;
+  }
+  return null;
+}
+
 async function inspectRunDescription({ command, runId, inputs, configuration, evidencePlanDisplayPath }) {
   const runDirectory = join(configuration.workspace, 'runs', runId);
   const suppliedInputs = inputs;
@@ -48,6 +67,8 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     throw Error('RESEARCH_HANDOFF_APPROVAL_INVALID: approval must be the only supplied retry input');
   const keywordStage = manifest?.stages?.find(stage => stage.skill === STAGE.KEYWORD_RESEARCH);
   const currentStage = manifest?.stages?.find(stage => !stageSatisfied(stage));
+  const stage4Retry = command === 'retry' && currentStage?.skill === STAGE.CONTENT_INTEGRATION;
+  const heldStage4 = stage4Retry ? await inspectHeldStage4Candidate({ manifest, runId }) : null;
   const keywordRetry = command === 'retry' && currentStage?.skill === STAGE.KEYWORD_RESEARCH;
   const checkpointRecovery = keywordRetry && Object.keys(suppliedInputs).length === 0
     ? await inspectResearchHandoffCheckpointRecovery({ manifest, runDirectory, runId }) : null;
@@ -56,6 +77,14 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     { required: command === 'run' || Boolean(previous?.paths), legacyPaths: previous?.paths });
   const decision = keywordRetry
     ? keywordRecoveryDecision(inputs.keywordRecoveryDecision, { recovery: inputs.keywordRecovery }) : null;
+  let stage4Decision = null;
+  if (heldStage4) {
+    if (!Object.hasOwn(suppliedInputs, 'stage4RecoveryDecision'))
+      throw Error('STAGE4_RECOVERY_DECISION_REQUIRED: choose recover or fresh for the exact held candidate');
+    stage4Decision = stage4RecoveryDecision(inputs.stage4RecoveryDecision, { held: heldStage4 });
+  } else if (Object.hasOwn(suppliedInputs, 'stage4RecoveryDecision')) {
+    throw Error('STAGE4_RECOVERY_DECISION_INVALID: no verified held Stage 4 candidate is available');
+  }
   let handoffApproval;
   if (suppliedHandoffApproval) {
     const handoff = keywordStage?.checkpoint?.researchHandoff;
@@ -114,7 +143,9 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
   } else if (keywordRetry && !checkpointRecovery && !handoffApproval && inputs.keywordEvidencePlan) {
     throw Error('KEYWORD_EVIDENCE_PLAN_INVALID: a plan is allowed only with {"mode":"recover"}');
   }
-  return { checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery), summary: [
+  const stage4Binding = stage4Decision ? stage4RecoveryBinding(stage4Decision) : null;
+  return { checkpointRecoveryIntent: researchHandoffCheckpointRecoveryIntent(checkpointRecovery),
+    stage4RecoveryBinding: stage4Binding, heldStage4, summary: [
     command === 'retry' ? `Retry existing run ${runId}` : `New run ${runId}`,
     ...(manifestBytes ? [`Resume manifest SHA256: ${sha256(manifestBytes)}`] : []),
     ...(manifestBytes ? [`Current stage: ${currentStage?.skill ?? '(all satisfied)'}${currentStage ? ` (${currentStage.status}, attempt ${currentStage.checkpoint?.attempt ?? 0})` : ''}`] : []),
@@ -148,6 +179,13 @@ async function inspectRunDescription({ command, runId, inputs, configuration, ev
     `Explicitly resumed services: ${serviceResumes.join(', ') || '(none)'}`,
     `Keyword recovery decision: ${decision?.mode ?? '(not required)'}`,
     `Keyword evidence plan: ${evidencePlan ? `${evidencePlanDisplayPath ?? evidencePlan.path} SHA256 ${evidencePlan.sha256}` : '(not required)'}`,
+    ...(stage4Decision ? [
+      `Stage 4 held candidate decision: ${stage4Decision.mode}`,
+      `Held source attempt: ${stage4Decision.sourceAttempt}`,
+      `Held candidate SHA256: ${stage4Decision.heldCandidateDigest}`,
+      `Held baseline SHA256: ${stage4Decision.baselineDigest}`,
+      'Recover starts a new attempt and requires a fresh Worker result plus all Host validation; fresh discards this held candidate.',
+    ] : []),
     `Evidence tasks: ${evidencePlan?.plan.tasks.length ?? 0}`,
     ...(dirtyApproval ? [
       `Approve Stage 4 dirty worktree for attempt ${dirtyApproval.attempt}.`,
@@ -217,6 +255,8 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
   let snapshot = null;
   let summary;
   let checkpointRecoveryIntent = null;
+  let stage4RecoveryBinding = null;
+  let heldStage4 = null;
   if (previewId !== undefined) {
     snapshot = await loadRunPreviewSnapshot({ previewRoot, command, runId, previewId });
     if ((currentManifestBytes ? sha256(currentManifestBytes) : null) !== snapshot.manifestSha256)
@@ -224,14 +264,15 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
     inputDocument = snapshot.effectiveInputDocument;
     inputs = inputDocument.data;
     approvedInputs = snapshot.sourceInputDocument.data;
-    ({ summary, checkpointRecoveryIntent } = await inspectRunDescription({ command, runId, inputs, configuration,
+    ({ summary, checkpointRecoveryIntent, stage4RecoveryBinding, heldStage4 } = await inspectRunDescription({ command, runId, inputs, configuration,
       evidencePlanDisplayPath: snapshot.sourceEvidencePlanPath }));
     if (summary !== snapshot.summary)
       throw Error('RUN_PREVIEW_STALE: protected inputs or execution context changed after preview; create a new preview');
   } else {
     if (!preview && confirm === undefined && !stdin.isTTY)
       throw Error('TERMINAL_CONFIRMATION_REQUIRED: run from an interactive terminal so the operator can confirm');
-    ({ summary, checkpointRecoveryIntent } = await inspectRunDescription({ command, runId, inputs, configuration }));
+    ({ summary, checkpointRecoveryIntent, stage4RecoveryBinding, heldStage4 } =
+      await inspectRunDescription({ command, runId, inputs, configuration }));
   }
   stdout.write(summary);
   let confirmationBinding = 'interactive-y';
@@ -241,7 +282,8 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
     const code = sha256(command + runId + summary + normalizedJson(approvedInputs)).slice(0, 16);
     if (preview) {
       const created = await createRunPreviewSnapshot({ previewRoot, command, runId, inputDocument,
-        summary, confirmationCode: code, manifestBytes: currentManifestBytes });
+        summary, confirmationCode: code, manifestBytes: currentManifestBytes,
+        stage4Recovery: stage4RecoveryBinding });
       stdout.write(`Preview ID: ${created.previewId}\n`);
       stdout.write(`Confirmation code: ${code}\n`);
       return { status: 'PREVIEW', run_id: runId, preview_id: created.previewId, confirmation_code: code };
@@ -260,6 +302,7 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
         approvedSummarySha256: snapshot.approvedSummarySha256,
         effectiveInputsSha256: sha256(snapshot.effectiveInputDocument.bytes),
         effectiveEvidencePlanSha256: snapshot.effectiveEvidencePlanSha256,
+        ...(snapshot.stage4RecoverySha256 ? { stage4RecoverySha256: snapshot.stage4RecoverySha256 } : {}),
       };
     } else {
       stdout.write('Confirmation method: confirmation-code\n');
@@ -280,6 +323,11 @@ export async function runFromTerminal({ command, inputsFile, runId, configuratio
       inputsFileBytes: inputDocument.bytes, inputs, manifestBytes: currentManifestBytes, confirmationBinding,
       previewSnapshot: previewSnapshotBinding });
   }
+  const stage4RecoveryReceipt = inputs.stage4RecoveryDecision
+    ? createStage4RecoveryReceipt({ runId, inputsFile: inputDocument.path,
+      inputsFileBytes: inputDocument.bytes, inputs, manifestBytes: currentManifestBytes,
+      confirmationBinding, previewSnapshot: previewSnapshotBinding, held: heldStage4 }) : null;
   return execute({ id: runId, inputs: JSON.stringify(inputs), retry: command === 'retry', keywordExecutionReceipt,
+    stage4RecoveryReceipt,
     ...(checkpointRecoveryIntent ? { checkpointRecoveryIntent } : {}) });
 }

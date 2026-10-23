@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { sha256 } from './files.mjs';
+import { normalizedJson } from './keyword-execution-receipt.mjs';
+import { stage4RecoveryDecision } from './stage4-recovery-receipt.mjs';
 
 const KIND = 'RUN_PREVIEW_SNAPSHOT_V1';
 const CONSUMED_KIND = 'RUN_PREVIEW_SNAPSHOT_CONSUMED_V1';
@@ -104,7 +106,7 @@ function validateEnvelope(envelope, { command, runId, previewId, directory, now 
   assert(payloadSha256(envelope.payload) === envelope.payloadSha256, 'snapshot metadata digest changed');
   const payload = envelope.payload;
   assert(exactKeys(payload, ['schemaVersion', 'kind', 'previewId', 'command', 'runId', 'createdAt',
-    'sourceInputs', 'effectiveInputs', 'evidencePlan', 'summary', 'confirmationCode', 'manifestSha256']) &&
+    'sourceInputs', 'effectiveInputs', 'evidencePlan', 'stage4Recovery', 'summary', 'confirmationCode', 'manifestSha256']) &&
     payload.schemaVersion === 1 && payload.kind === KIND && payload.previewId === previewId &&
     payload.command === command && payload.runId === runId && !Number.isNaN(Date.parse(payload.createdAt)) &&
     CODE.test(payload.confirmationCode ?? '') &&
@@ -123,12 +125,16 @@ function validateEnvelope(envelope, { command, runId, previewId, directory, now 
     resolve(payload.evidencePlan.sourcePath) === payload.evidencePlan.sourcePath &&
     payload.evidencePlan.path === join(directory, 'evidence-plan.json') &&
     DIGEST.test(payload.evidencePlan.sha256 ?? ''), 'evidence plan binding');
+  if (payload.stage4Recovery !== null) assert(exactKeys(payload.stage4Recovery, ['decision', 'sha256']) &&
+    DIGEST.test(payload.stage4Recovery.sha256 ?? '') &&
+    payload.stage4Recovery.sha256 === sha256(normalizedJson(stage4RecoveryDecision(payload.stage4Recovery.decision))),
+  'stage4 recovery binding');
   validateCreatedAt(payload.createdAt, now);
   return payload;
 }
 
 export async function createRunPreviewSnapshot({ previewRoot, command, runId, inputDocument,
-  summary, confirmationCode, manifestBytes, now = Date.now() }) {
+  summary, confirmationCode, manifestBytes, stage4Recovery = null, now = Date.now() }) {
   assert(['run', 'retry'].includes(command) && /^[a-zA-Z0-9_-]{1,100}$/.test(runId ?? ''), 'command or run id');
   assert(inputDocument && isAbsolute(inputDocument.path ?? '') && Buffer.isBuffer(inputDocument.bytes) &&
     inputDocument.data && typeof inputDocument.data === 'object' && !Array.isArray(inputDocument.data),
@@ -145,6 +151,12 @@ export async function createRunPreviewSnapshot({ previewRoot, command, runId, in
     const sourceInputsPath = join(temporary, 'source-inputs.json');
     await privateFile(sourceInputsPath, inputDocument.bytes, temporary);
     const effectiveInputs = clone(inputDocument.data);
+    if (stage4Recovery !== null) {
+      const decision = stage4RecoveryDecision(effectiveInputs.stage4RecoveryDecision);
+      assert(normalizedJson(decision) === normalizedJson(stage4Recovery.decision) &&
+        stage4Recovery.sha256 === sha256(normalizedJson(decision)), 'stage4 recovery input binding');
+    } else assert(effectiveInputs.stage4RecoveryDecision === undefined,
+      'unexpected stage4 recovery decision');
     let evidencePlan = null;
     if (effectiveInputs.keywordEvidencePlan) {
       const reference = effectiveInputs.keywordEvidencePlan;
@@ -170,6 +182,7 @@ export async function createRunPreviewSnapshot({ previewRoot, command, runId, in
       sourceInputs: { path: resolve(inputDocument.path), sha256: sha256(inputDocument.bytes) },
       effectiveInputs: { path: join(directory, 'effective-inputs.json'), sha256: sha256(effectiveInputsBytes) },
       evidencePlan,
+      stage4Recovery,
       summary: { path: join(directory, 'summary.txt'), sha256: sha256(summaryBytes) },
       confirmationCode,
       manifestSha256: manifestBytes ? sha256(manifestBytes) : null,
@@ -187,6 +200,7 @@ export async function createRunPreviewSnapshot({ previewRoot, command, runId, in
       effectiveInputDocument: { path: payload.effectiveInputs.path, bytes: effectiveInputsBytes, data: effectiveInputs },
       sourceEvidencePlanPath: evidencePlan?.sourcePath ?? null,
       effectiveEvidencePlanSha256: evidencePlan?.sha256 ?? null,
+      stage4RecoverySha256: stage4Recovery?.sha256 ?? null,
       summary,
       confirmationCode,
       manifestSha256: payload.manifestSha256,
@@ -227,6 +241,14 @@ export async function loadRunPreviewSnapshot({ previewRoot, command, runId, prev
     'evidence plan references changed');
   } else assert(!sourceInputs.keywordEvidencePlan && !effectiveInputs.keywordEvidencePlan,
     'unexpected evidence plan reference');
+  if (payload.stage4Recovery) {
+    const sourceDecision = stage4RecoveryDecision(sourceInputs.stage4RecoveryDecision);
+    const effectiveDecision = stage4RecoveryDecision(effectiveInputs.stage4RecoveryDecision);
+    assert(normalizedJson(sourceDecision) === normalizedJson(payload.stage4Recovery.decision) &&
+      normalizedJson(effectiveDecision) === normalizedJson(payload.stage4Recovery.decision),
+    'stage4 recovery decision changed');
+  } else assert(sourceInputs.stage4RecoveryDecision === undefined &&
+    effectiveInputs.stage4RecoveryDecision === undefined, 'unexpected stage4 recovery decision');
   return {
     previewId,
     directory,
@@ -237,6 +259,7 @@ export async function loadRunPreviewSnapshot({ previewRoot, command, runId, prev
     effectiveInputDocument: { path: payload.effectiveInputs.path, bytes: effectiveBytes, data: effectiveInputs },
     sourceEvidencePlanPath: payload.evidencePlan?.sourcePath ?? null,
     effectiveEvidencePlanSha256: payload.evidencePlan?.sha256 ?? null,
+    stage4RecoverySha256: payload.stage4Recovery?.sha256 ?? null,
     summary: summaryBytes.toString('utf8'),
     confirmationCode: payload.confirmationCode,
     manifestSha256: payload.manifestSha256,

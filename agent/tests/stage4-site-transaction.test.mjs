@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, rm, access } from 'node:fs/promises';
 import { resolve, join, dirname } from 'node:path';
 import { prepareStage4SiteTransaction, recoverStage4SiteTransaction,
+  prepareRecoveredStage4SiteTransaction, discardHeldStage4SiteTransaction,
   stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
 
 async function fixture(t) {
@@ -62,6 +63,45 @@ test('recovery completes a durable hold intent after a crash', async t => {
   assert.equal(JSON.parse(await readFile(tx.binding.journalPath, 'utf8')).state, 'HELD');
   assert.equal(await stage4SiteDigest(targetPath), before);
   assert.equal(await stage4SiteDigest(tx.binding.candidatePath), recovered.candidateDigest);
+});
+
+test('a verified held candidate is copied into an independent new attempt', async t => {
+  const { targetPath } = await fixture(t);
+  const held = await prepareStage4SiteTransaction({ ...options(targetPath), attempt: 8 });
+  await writeFile(join(held.binding.candidatePath, 'src/index.js'), 'recovered progress\n');
+  const heldIdentity = await held.holdCandidate('WORKER_USAGE_LIMIT');
+
+  const recovered = await prepareRecoveredStage4SiteTransaction({
+    ...options(targetPath), attempt: 9, sourceAttempt: 8,
+    heldCandidateDigest: heldIdentity.candidateDigest,
+  });
+  assert.notEqual(recovered.binding.candidatePath, held.binding.candidatePath);
+  assert.equal(await stage4SiteDigest(recovered.binding.candidatePath), heldIdentity.candidateDigest);
+  assert.equal(await readFile(join(recovered.binding.candidatePath, 'src/index.js'), 'utf8'), 'recovered progress\n');
+  assert.equal((await recoverStage4SiteTransaction({ ...options(targetPath), attempt: 8,
+    manifestStage: null })).status, 'HELD');
+  await recovered.abort('test cleanup');
+});
+
+test('held candidates are discarded only with exact identity and an allowed target digest', async t => {
+  const { targetPath } = await fixture(t);
+  const tx = await prepareStage4SiteTransaction(options(targetPath));
+  await writeFile(join(tx.binding.candidatePath, 'src/index.js'), 'held progress\n');
+  const held = await tx.holdCandidate('WORKER_USAGE_LIMIT');
+  await assert.rejects(discardHeldStage4SiteTransaction({ ...options(targetPath),
+    heldCandidateDigest: '0'.repeat(64), allowedTargetDigest: tx.binding.baselineDigest }),
+  /STAGE4_HELD_IDENTITY_MISMATCH/);
+  assert.equal(await readFile(join(tx.binding.candidatePath, 'src/index.js'), 'utf8'), 'held progress\n');
+
+  const discarded = await discardHeldStage4SiteTransaction({ ...options(targetPath),
+    heldCandidateDigest: held.candidateDigest, allowedTargetDigest: tx.binding.baselineDigest });
+  assert.equal(discarded.status, 'DISCARDED');
+  const repeated = await discardHeldStage4SiteTransaction({ ...options(targetPath),
+    heldCandidateDigest: held.candidateDigest, allowedTargetDigest: tx.binding.baselineDigest });
+  assert.equal(repeated.status, 'DISCARDED');
+  await assert.rejects(access(tx.binding.candidatePath));
+  assert.equal((await recoverStage4SiteTransaction({ ...options(targetPath), manifestStage: null })).status,
+    'DISCARDED');
 });
 
 test('held target drift fails closed without deleting the candidate', async t => {
