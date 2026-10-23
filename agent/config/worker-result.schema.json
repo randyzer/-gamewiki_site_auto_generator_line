@@ -6,12 +6,12 @@
     "evidence": { "type": "array", "items": { "type": "string" } },
     "missing_inputs": { "type": "array", "items": { "type": "string" } },
     "stage4_completion": {
-      "type": "object",
+      "type": ["object", "null"],
       "properties": {
-        "kind": { "const": "STAGE4_WORKER_HANDOFF_V1" },
-        "worker_owned_gates": { "const": "PASSED" },
-        "host_validation": { "const": "REQUIRED" },
-        "blocking_gaps": { "type": "array", "maxItems": 0 }
+        "kind": { "type": "string", "const": "STAGE4_WORKER_HANDOFF_V1" },
+        "worker_owned_gates": { "type": "string", "const": "PASSED" },
+        "host_validation": { "type": "string", "const": "REQUIRED" },
+        "blocking_gaps": { "type": "array", "items": { "type": "string" }, "maxItems": 0 }
       },
       "required": ["kind", "worker_owned_gates", "host_validation", "blocking_gaps"],
       "additionalProperties": false
@@ -21,6 +21,6 @@
       "required": ["kind", "path"], "additionalProperties": false
     } }
   },
-  "required": ["status", "summary", "evidence", "missing_inputs", "artifacts"],
+  "required": ["status", "summary", "evidence", "missing_inputs", "stage4_completion", "artifacts"],
   "additionalProperties": false
 }
