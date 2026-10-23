@@ -13,11 +13,12 @@ const handoff = launchBlockers => ({
 test('Stage 4 handoff accepts only canonical launch-only blockers', () => {
   const launchBlockers = [...STAGE4_LAUNCH_BLOCKERS];
   assert.deepEqual(validateStage4WorkerHandoff(handoff(launchBlockers)), { launchBlockers });
-  assert.deepEqual(validateStage4WorkerHandoff(handoff([])), { launchBlockers: [] });
 });
 
-test('Stage 4 handoff rejects unknown, duplicate, unordered and content blockers', () => {
+test('Stage 4 handoff rejects omissions, unknown, duplicate, unordered and content blockers', () => {
   for (const launchBlockers of [
+    [],
+    STAGE4_LAUNCH_BLOCKERS.slice(0, -1),
     ['UNKNOWN_GAP'],
     ['CONTACT_CHANNEL_REQUIRED', 'CONTACT_CHANNEL_REQUIRED'],
     ['TERMS_POLICY_REVIEW_REQUIRED', 'OPERATOR_IDENTITY_REQUIRED'],

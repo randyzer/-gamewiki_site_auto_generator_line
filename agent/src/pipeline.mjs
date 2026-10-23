@@ -28,6 +28,9 @@ import { prepareStage4SiteTransaction, prepareRecoveredStage4SiteTransaction,
 import { validateStage4Candidate } from './stage4-host-validation.mjs';
 import { isTrustedRetryableExternalFailure } from './process.mjs';
 import { stage4RecoveryDecision } from './stage4-recovery-receipt.mjs';
+import { createStage4LaunchReadinessBinding, verifyStage4LaunchReadinessBinding,
+  validateLaunchReadinessClearance, createStage6LaunchReadinessAttestation,
+  verifyStage6LaunchReadinessAttestation } from './stage4-launch-gap-policy.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -531,6 +534,42 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       'Project files changed after UI audit; update siteRevision and explicitly retry affected stages');
   }
 
+  function stage4LaunchReadinessBinding() {
+    const binding = findStage(state.stages, STAGE.CONTENT_INTEGRATION).checkpoint.launchReadiness;
+    return binding ? verifyStage4LaunchReadinessBinding(binding, {
+      runId, siteRevision: state.inputs.siteRevision,
+    }) : null;
+  }
+
+  async function verifyLaunchReadinessClearance() {
+    const binding = stage4LaunchReadinessBinding();
+    if (!binding) return null;
+    const projectDigestValue = findStage(state.stages, STAGE.UI_UX_AUDIT).checkpoint.projectDigest;
+    assert(/^[a-f0-9]{64}$/.test(projectDigestValue ?? ''), 'LAUNCH_READINESS_PROJECT_DIGEST_MISSING');
+    const verified = validateLaunchReadinessClearance(state.inputs.launchReadinessClearance, {
+      binding, siteRevision: state.inputs.siteRevision, projectDigest: projectDigestValue,
+    });
+    for (const item of verified.clearance.clearances) {
+      const evidencePath = resolve(item.evidencePath);
+      assert(isAbsolute(item.evidencePath) && inside(state.inputs.projectPath, evidencePath) &&
+        evidencePath !== resolve(state.inputs.projectPath),
+      `LAUNCH_READINESS_CLEARANCE_INVALID: evidence outside project: ${item.evidencePath}`);
+      assert(hash(await regularFile(evidencePath)) === item.evidenceSha256,
+        `LAUNCH_READINESS_CLEARANCE_INVALID: evidence changed: ${item.evidencePath}`);
+    }
+    return { ...verified, binding, projectDigest: projectDigestValue };
+  }
+
+  async function verifyStage6LaunchReadiness() {
+    const verified = await verifyLaunchReadinessClearance();
+    if (!verified) return null;
+    const attestation = findStage(state.stages, STAGE.PRELAUNCH_ACCEPTANCE).checkpoint.launchReadiness;
+    verifyStage6LaunchReadinessAttestation(attestation, { binding: verified.binding,
+      siteRevision: state.inputs.siteRevision, projectDigest: verified.projectDigest,
+      clearanceDigest: verified.clearanceDigest });
+    return attestation;
+  }
+
   const scopedApproval = value => value?.approved === true && value.projectPath === state.inputs.projectPath && nonempty(value.scope);
   const uiApproval = value => scopedApproval(value) && value.runId === runId && stageName(value.stage) === STAGE.UI_UX_AUDIT &&
     value.siteRevision === state.inputs.siteRevision && Array.isArray(value.files) && value.files.length > 0 &&
@@ -568,6 +607,9 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       if (!nonempty(input.siteRevision)) missing.push('siteRevision');
     }
     if (index >= stageIndex(STAGE.PRELAUNCH_ACCEPTANCE) && !/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9-]+$/i.test(input.domain ?? '')) missing.push('domain');
+    if (state.stages[index].skill === STAGE.PRELAUNCH_ACCEPTANCE &&
+        stage4LaunchReadinessBinding() && input.launchReadinessClearance === undefined)
+      missing.push('launchReadinessClearance');
     if (state.stages[index].skill === STAGE.DEPLOYMENT_PLAN) {
       for (const key of ['repo', 'branch']) if (!nonempty(input[key])) missing.push(key);
       if (!nonempty(input.dns?.provider) || input.dns.recordsReviewed !== true) missing.push('dns');
@@ -588,7 +630,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       .sort((a, b) => stageIndex(a[1]) - stageIndex(b[1])).map(([key, stage]) => ({ key, skill: stage, stageLabel: stageDefinition(stage).label,
         requiredByStage: stageIndex(stage) + 1, timing: stageIndex(stage) <= current ? 'now' : 'later',
         provided: state.inputs[key] !== undefined && state.inputs[key] !== '',
-        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'stage4DirtyWorktreeApproval', 'stage4RecoveryDecision', 'uiApproval', 'adCode', 'adApproval',
+        conditional: ['researchHandoffApproval', 'canonicalOrigin', 'stage4DirtyWorktreeApproval', 'stage4RecoveryDecision', 'uiApproval', 'launchReadinessClearance', 'adCode', 'adApproval',
           'liveUrl', 'deploymentPlanApproval'].includes(key),
         pathOrInformation: key === 'rawKeywordsFile' ? 'User-supplied absolute Markdown file path' :
           key === 'projectPath' ? 'Resolved paths.siteDirectory (legacy runs retain their project directory)'
@@ -699,6 +741,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (state.templateSnapshot) await verifyTemplateSnapshot(state.templateSnapshot);
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         await verifyProjectFreshness(index);
+        if (index >= stageIndex(STAGE.DEPLOYMENT_PLAN)) await verifyStage6LaunchReadiness();
         if (index > stageIndex(STAGE.KEYWORD_RESEARCH)) {
           const expected = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256;
           assert(expected && hash(await regularFile(state.inputs.rawKeywordsFile)) === expected, 'Raw keywords changed; explicitly update input or start a new run');
@@ -795,6 +838,9 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           : stage.skill === STAGE.UI_UX_AUDIT && state.inputs.uiMode === 'optimize' ? 'optimize' : 'audit-only';
         const inputCopyPaths = Object.fromEntries(Object.entries(state.inputCopies ?? {}).map(([key, copy]) => [key, copy.copyPath]));
         const workerInputs = { ...state.inputs, ...inputCopyPaths };
+        const launchReadiness = stage.skill === STAGE.PRELAUNCH_ACCEPTANCE
+          ? await verifyLaunchReadinessClearance()
+          : stage.skill === STAGE.DEPLOYMENT_PLAN ? await verifyStage6LaunchReadiness() : null;
         const researchHandoff = index > stageIndex(STAGE.KEYWORD_RESEARCH)
           ? await verifyArtifacts(stageIndex(STAGE.KEYWORD_RESEARCH)) : null;
         const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths,
@@ -808,6 +854,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
             reference: findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.researchHandoff,
             manifest: researchHandoff,
           } } : {}),
+          ...(launchReadiness ? { launchReadiness } : {}),
           ...(executing ? { approvedPlan: { digest: stage.checkpoint.approvedPlanDigest, artifacts: stage.artifacts } } : {}),
           permissions: { uiChanges: stage.skill === STAGE.UI_UX_AUDIT && uiApproval(state.inputs.uiApproval) && state.inputs.uiMode === 'optimize',
             gitPush: executing, dns: executing, productionDeployment: executing, gsc: executing, ga4: executing, advertisingScripts: false,
@@ -904,8 +951,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           operation = 'execute-skill';
           result = await executor(stage.skill, context);
         }
+        if (stage4Transaction && result.status === 'PASSED' && !offlineStage4Readiness)
+          throw Object.assign(Error('STAGE4_WORKER_HANDOFF_REQUIRED: direct-site Stage 4 must remain provisional until Host validation'), {
+            code: 'STAGE4_WORKER_HANDOFF_REQUIRED',
+          });
         const stage4HostValidationEligible = stage4Transaction &&
-          (result.status === 'PASSED' ||
+          ((offlineStage4Readiness && result.status === 'PASSED') ||
             (result.status === 'PARTIAL' && result.stage4WorkerArtifactsValidated === true));
         if (stage4HostValidationEligible) {
           operation = 'host-stage4-validation';
@@ -967,6 +1018,11 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           stage.checkpoint.stage4Transaction = { kind: stage4Transaction.binding.kind, runId,
             attempt: stage.checkpoint.attempt, candidateDigest: result.stage4HostValidation.candidateDigest,
             journalPath: stage4Transaction.binding.journalPath };
+          if (result.stage4WorkerArtifactsValidated === true)
+            stage.checkpoint.launchReadiness = createStage4LaunchReadinessBinding({ runId,
+              attempt: stage.checkpoint.attempt, siteRevision: state.inputs.siteRevision,
+              candidateDigest: result.stage4HostValidation.candidateDigest,
+              launchBlockers: result.stage4LaunchBlockers });
         } else if (stage4Transaction) {
           operation = 'abort-stage4-candidate'; await stage4Transaction.abort(`Stage returned ${status}`);
         }
@@ -996,6 +1052,17 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           }
         }
         if (stage.skill === STAGE.UI_UX_AUDIT && status === 'PASSED') stage.checkpoint.projectDigest = await projectDigest();
+        if (stage.skill === STAGE.PRELAUNCH_ACCEPTANCE && status === 'PASSED') {
+          const verified = await verifyLaunchReadinessClearance();
+          if (verified) {
+            stage.checkpoint.launchReadiness = createStage6LaunchReadinessAttestation({
+              binding: verified.binding, siteRevision: state.inputs.siteRevision,
+              projectDigest: verified.projectDigest, clearanceDigest: verified.clearanceDigest,
+            });
+            evidence = [...evidence,
+              `Host launch-readiness clearance verified: ${stage.checkpoint.launchReadiness.attestationDigest}`];
+          }
+        }
         if (stage.skill === STAGE.DEPLOYMENT_PLAN && status === 'PASSED' && !executing) {
           stage.checkpoint.planDigest = hash(JSON.stringify(stage.artifacts.map(a => a.sha256)));
           status = 'WAITING_FOR_USER'; missing = ['deploymentPlanApproval'];
@@ -1183,6 +1250,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const approval = patch.deploymentPlanApproval;
         assert(approval?.approved === true && approval.digest === findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest, 'Approval must match current deployment plan digest');
         await verifyLock();
+        await verifyStage6LaunchReadiness();
         for (let i = 0; i <= stageIndex(STAGE.DEPLOYMENT_PLAN); i++) await verifyArtifacts(i);
         await verifyProjectFreshness(stageIndex(STAGE.DEPLOYMENT_PLAN));
         assert(hash(await regularFile(state.inputs.rawKeywordsFile)) === findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256,
@@ -1213,6 +1281,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       if (keywordStage.checkpoint.researchHandoff &&
         changed.some(key => ['siteRevision', 'domain'].includes(key)))
         start = Math.min(start, stageIndex(STAGE.KEYWORD_RESEARCH));
+      if (integrationStage.checkpoint.launchReadiness && changed.includes('siteRevision'))
+        start = Math.min(start, stageIndex(STAGE.CONTENT_INTEGRATION));
       // Supplying a currently requested fact is the only automatic resume trigger.
       if (current >= 0 && state.stages[current].status === 'WAITING_FOR_USER' &&
         state.stages[current].missing_inputs.some(key => Object.hasOwn(patch, key))) start = Math.min(start, current);
@@ -1229,7 +1299,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         transition(stage, 'NOT_STARTED', ['Explicit user input update/retry; previous attempt retained in history']);
         stage.artifacts = [];
         for (const key of ['planDigest', 'approvedPlanDigest', 'projectDigest', 'keywordSha256',
-          'researchHandoff']) delete stage.checkpoint[key];
+          'researchHandoff', 'launchReadiness']) delete stage.checkpoint[key];
       }
       if (start <= stageIndex(STAGE.DEPLOYMENT_PLAN)) delete state.inputs.deploymentPlanApproval;
       await save(); return clone(state);

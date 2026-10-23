@@ -16,6 +16,7 @@ import { runProcess } from '../src/process.mjs';
 import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
 import { discardHeldStage4SiteTransaction, stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
+import { STAGE4_LAUNCH_BLOCKERS } from '../src/stage4-launch-gap-policy.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -128,7 +129,8 @@ async function directSiteFixture(t) {
       await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
       const result = f.good(skill, { ...context,
         inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
-      return result;
+      return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+        stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
     }
     return f.good(skill, context);
   };
@@ -170,6 +172,7 @@ test('direct-site Stage 4 accepts a Host-validated provisional Worker handoff', 
       inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
     return { ...result, status: 'PARTIAL',
       stage4WorkerArtifactsValidated: true,
+      stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS],
       evidence: ['Worker-owned gates passed; Host technical validation is pending.'] };
   };
   const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
@@ -191,6 +194,7 @@ test('direct-site Stage 4 preserves launch blockers after Host validation', asyn
     const result = f.good(skill, { ...context,
       inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
     return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+      stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS],
       evidence: [
         'Worker-owned content, source, SEO and route-publication gates passed.',
         'Stage 4 launch blockers remain: OPERATOR_IDENTITY_REQUIRED, DNS_DELEGATION_REQUIRED',
@@ -204,7 +208,97 @@ test('direct-site Stage 4 preserves launch blockers after Host validation', asyn
   assert.equal(state.stages[3].status, 'PASSED');
   assert.match(state.stages[3].evidence.join('\n'), /OPERATOR_IDENTITY_REQUIRED/);
   assert.match(state.stages[3].evidence.join('\n'), /DNS_DELEGATION_REQUIRED/);
+  assert.deepEqual(state.stages[3].checkpoint.launchReadiness.blockers, STAGE4_LAUNCH_BLOCKERS);
+  assert.equal(state.stages[3].checkpoint.launchReadiness.siteRevision, f.inputs.siteRevision);
   assert.deepEqual(f.order, ['install', 'host-validate']);
+});
+
+async function launchReadinessFixture(t, pipelineOptions = {}) {
+  const f = await directSiteFixture(t);
+  let stage6Calls = 0;
+  const executor = async (skill, context) => {
+    if (skill === api.STAGES[3]) {
+      await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
+      const result = f.good(skill, { ...context,
+        inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+      return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+        stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS],
+        evidence: ['Worker-owned gates passed; launch readiness remains Host-owned.'] };
+    }
+    if (skill === api.STAGES[5]) stage6Calls++;
+    return f.good(skill, context);
+  };
+  const pipeline = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
+    validateStage4: f.validateStage4, ...pipelineOptions });
+  return { ...f, executor, pipeline, stage6Calls: () => stage6Calls };
+}
+
+test('Stage 6 cannot run or pass while persisted Stage 4 launch blockers are unresolved', async t => {
+  const f = await launchReadinessFixture(t);
+  await advance(f.pipeline, 5);
+
+  const state = await advance(f.pipeline, 1);
+
+  assert.equal(state.stages[5].status, 'WAITING_FOR_USER');
+  assert.deepEqual(state.stages[5].missing_inputs, ['launchReadinessClearance']);
+  assert.equal(f.stage6Calls(), 0);
+});
+
+test('Stage 6 persists verified clearances and Stage 7 rejects a forged clearance attestation', async t => {
+  const f = await launchReadinessFixture(t);
+  await advance(f.pipeline, 4);
+  const binding = f.pipeline.snapshot().stages[3].checkpoint.launchReadiness;
+  const evidencePath = join(f.siteDirectory, 'worker-change.txt');
+  const evidenceBytes = 'validated candidate\n';
+  await f.pipeline.advance();
+  const projectDigest = f.pipeline.snapshot().stages[4].checkpoint.projectDigest;
+  await f.pipeline.updateUserInputs({ launchReadinessClearance: {
+    kind: 'LAUNCH_READINESS_CLEARANCE_V1',
+    stage4BindingDigest: binding.bindingDigest,
+    siteRevision: f.inputs.siteRevision,
+    projectDigest,
+    clearances: STAGE4_LAUNCH_BLOCKERS.map(code => ({
+      code, evidencePath, evidenceSha256: hash(evidenceBytes),
+    })),
+  } });
+  await f.pipeline.advance();
+  const accepted = f.pipeline.snapshot();
+  assert.equal(accepted.stages[5].status, 'PASSED');
+  assert.equal(accepted.stages[5].checkpoint.launchReadiness.unresolved.length, 0);
+
+  const manifest = JSON.parse(await readFile(f.pipeline.manifestPath, 'utf8'));
+  manifest.stages[5].checkpoint.launchReadiness.attestationDigest = '0'.repeat(64);
+  await writeFile(f.pipeline.manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+  const resumed = await f.create({ runId: accepted.runId, resume: true, inputs: {}, executor: f.executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4 });
+  const rejected = await resumed.advance();
+  assert.equal(rejected.stages[6].status, 'BLOCKED');
+  assert.match(rejected.stages[6].evidence.join('\n'), /LAUNCH_READINESS/);
+});
+
+test('Stage 7 refuses an approved deployment plan after launch-clearance evidence becomes stale', async t => {
+  const f = await launchReadinessFixture(t, { deploymentExecution: true });
+  await advance(f.pipeline, 4);
+  const binding = f.pipeline.snapshot().stages[3].checkpoint.launchReadiness;
+  const evidencePath = join(f.siteDirectory, 'worker-change.txt');
+  const evidenceBytes = 'validated candidate\n';
+  await f.pipeline.advance();
+  const projectDigest = f.pipeline.snapshot().stages[4].checkpoint.projectDigest;
+  await f.pipeline.updateUserInputs({ launchReadinessClearance: {
+    kind: 'LAUNCH_READINESS_CLEARANCE_V1', stage4BindingDigest: binding.bindingDigest,
+    siteRevision: f.inputs.siteRevision, projectDigest,
+    clearances: STAGE4_LAUNCH_BLOCKERS.map(code => ({
+      code, evidencePath, evidenceSha256: hash(evidenceBytes),
+    })),
+  } });
+  await advance(f.pipeline, 2);
+  const planDigest = f.pipeline.snapshot().stages[6].checkpoint.planDigest;
+  await writeFile(evidencePath, 'stale evidence\n');
+
+  await assert.rejects(f.pipeline.updateUserInputs({ deploymentPlanApproval: {
+    approved: true, digest: planDigest,
+  } }), /LAUNCH_READINESS_CLEARANCE_INVALID/);
+  assert.equal(f.pipeline.snapshot().deploymentExecuted, false);
 });
 
 test('direct-site Stage 4 never upgrades an ordinary PARTIAL result', async t => {
@@ -228,6 +322,28 @@ test('direct-site Stage 4 never upgrades an ordinary PARTIAL result', async t =>
   assert.equal(hostCalls, 0);
   assert.equal(await stage4SiteDigest(f.siteDirectory), before);
   await assert.rejects(readFile(join(f.siteDirectory, 'uncommitted.txt')));
+});
+
+test('direct-site Stage 4 rejects PASSED without the Host-owned provisional handoff', async t => {
+  const f = await directSiteFixture(t);
+  const p = await f.create({ stage4ReadinessCapability: undefined,
+    stagePreflight: async (skill, context) => skill === api.STAGES[3]
+      ? { status: 'READY', binding: { path: join(context.outputDirectory, 'readiness.json'),
+        digest: 'a'.repeat(64), fileSha256: 'b'.repeat(64),
+        attestation: { kind: 'STAGE4_READINESS_ATTESTATION', runId: context.runId,
+          stage: skill, attempt: context.checkpoint.attempt, readiness: 'READY' },
+        verifyCurrentState: async () => {} } }
+      : { status: 'NOT_APPLICABLE' },
+    executor: async (skill, context) => skill === api.STAGES[3]
+    ? f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } })
+    : f.good(skill, context), installSiteDependencies: f.installSiteDependencies,
+  validateStage4: async () => assert.fail('Host validation must not run') });
+
+  const state = await advance(p, 4);
+
+  assert.equal(state.stages[3].status, 'FAILED');
+  assert.match(state.stages[3].evidence.join('\n'), /STAGE4_WORKER_HANDOFF_REQUIRED/);
 });
 
 test('direct-site Stage 4 provisional handoff rolls back when Host validation fails', async t => {
@@ -297,8 +413,10 @@ test('direct-site Stage 4 preserves readiness authority while deriving candidate
     assert.equal(JSON.stringify(context.researchHandoff), authorityHandoffJson);
     assert.deepEqual(context.stage4CandidateResearchHandoff, candidateHandoff);
     await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
-    return f.good(skill, { ...context,
-      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } }),
+    status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+    stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
   };
   const p = await f.create({ stage4ReadinessCapability: undefined, stagePreflight, executor,
     installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
@@ -378,8 +496,10 @@ test('an exact recover decision starts a new Stage 4 attempt and requires the no
     await assert.rejects(readFile(join(context.nativeDirectory, 'worker-result.json')),
       /ENOENT/, 'a recovered attempt must not reuse the old Worker result');
     await writeFile(join(context.stage4Transaction.candidatePath, 'continued.txt'), 'fresh worker result\n');
-    return f.good(skill, { ...context,
-      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } }),
+    status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+    stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
   };
   const initial = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
     validateStage4: f.validateStage4 });
@@ -433,8 +553,10 @@ test('an exact fresh decision discards held progress and starts from the unchang
     await assert.rejects(readFile(join(context.stage4Transaction.candidatePath, 'must-not-survive.txt')),
       /ENOENT/);
     await writeFile(join(context.stage4Transaction.candidatePath, 'fresh-only.txt'), 'fresh worker result\n');
-    return f.good(skill, { ...context,
-      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } }),
+    status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+    stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
   };
   const initial = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
     validateStage4: f.validateStage4 });
@@ -475,8 +597,10 @@ test('fresh discards every accumulated held candidate after repeated usage limit
     await assert.rejects(readFile(join(context.stage4Transaction.candidatePath, 'held-1.txt')), /ENOENT/);
     await assert.rejects(readFile(join(context.stage4Transaction.candidatePath, 'held-2.txt')), /ENOENT/);
     await writeFile(join(context.stage4Transaction.candidatePath, 'fresh-third.txt'), 'fresh third attempt\n');
-    return f.good(skill, { ...context,
-      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
+    return { ...f.good(skill, { ...context,
+      inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } }),
+    status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+    stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
   };
   const initial = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
     validateStage4: f.validateStage4 });
@@ -584,7 +708,8 @@ test('Stage 4 never holds a Host validation error with a Worker usage-limit code
     await writeFile(join(context.stage4Transaction.candidatePath, 'host-error.txt'), 'must disappear\n');
     const result = f.good(skill, { ...context,
       inputs: { ...context.inputs, projectPath: context.stage4Transaction.candidatePath } });
-    return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true };
+    return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+      stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
   };
   const p = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
     validateStage4: async () => { throw Object.assign(Error('synthetic Host quota text'), {
