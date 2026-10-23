@@ -3,6 +3,11 @@ import { sanitizeDiagnosticText, failureDiagnostic } from './diagnostics.mjs';
 
 const workerError = (message, code, details = {}) => Object.assign(Error(message), { code, ...details });
 const captureLimit = 8192;
+const trustedRetryableExternalFailures = new WeakSet();
+
+export function isTrustedRetryableExternalFailure(error) {
+  return error instanceof Error && trustedRetryableExternalFailures.has(error);
+}
 
 const appendHead = (current, chunk) => current.length >= captureLimit
   ? current : current + chunk.slice(0, captureLimit - current.length);
@@ -82,8 +87,10 @@ export function runProcess(command, args, { cwd, input = '', env = process.env, 
       else if (failure) reject(failure);
       else if (code !== 0) {
         const detail = failureDetail(stderrTail, stdoutTail, env);
-        reject(workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`,
-          workerExitCode(code, stderrTail), { exitCode: code, exitSignal }));
+        const failure = workerError(`Worker exited unsuccessfully: ${code ?? exitSignal}; ${detail}`,
+          workerExitCode(code, stderrTail), { exitCode: code, exitSignal });
+        if (failure.code === 'WORKER_USAGE_LIMIT') trustedRetryableExternalFailures.add(failure);
+        reject(failure);
       }
       else resolve({ exitCode: code, stdout });
     });

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { runProcess } from '../src/process.mjs';
+import { isTrustedRetryableExternalFailure, runProcess } from '../src/process.mjs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fixture } from './helpers.mjs';
@@ -51,11 +51,24 @@ test('provider usage-limit terminal is classified as a retryable external failur
   const error = await processFailure(`process.stderr.write("ERROR: You've hit your usage limit. Upgrade to Pro, visit settings to purchase more credits or try again at 1:25 PM.\\nERROR: You've hit your usage limit. Upgrade to Pro, visit settings to purchase more credits or try again at 1:25 PM.\\ntokens used\\n118,844\\n");process.exit(1)`);
   assert.equal(error.code, 'WORKER_USAGE_LIMIT');
   assert.equal(error.exitCode, 1);
+  assert.equal(isTrustedRetryableExternalFailure(error), true);
 });
 
 test('an arbitrary usage-limit phrase does not become a retryable external failure', async () => {
   const error = await processFailure(`process.stderr.write("content says you've hit your usage limit\\n");process.exit(1)`);
   assert.equal(error.code, 'WORKER_EXIT_NONZERO');
+  assert.equal(isTrustedRetryableExternalFailure(error), false);
+});
+
+test('usage-limit text outside the approved stderr terminal is never trusted', async () => {
+  const exact = "ERROR: You've hit your usage limit. Upgrade to Pro, visit settings to purchase more credits or try again at 1:25 PM.";
+  const output = `${exact}\n${exact}\ntokens used\n118,844\n`;
+  const stdout = await processFailure(`process.stdout.write(${JSON.stringify(output)});process.exit(1)`);
+  assert.equal(stdout.code, 'WORKER_EXIT_NONZERO');
+  assert.equal(isTrustedRetryableExternalFailure(stdout), false);
+  assert.equal(isTrustedRetryableExternalFailure(Object.assign(Error('spoof'), {
+    code: 'WORKER_USAGE_LIMIT', diagnosticOperation: 'execute-worker',
+  })), false);
 });
 
 test('worker failure diagnostics retain the stderr tail instead of a long startup banner', async () => {

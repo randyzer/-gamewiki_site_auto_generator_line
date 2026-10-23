@@ -24,6 +24,7 @@ import { resolveStageIdentity } from './v2/stage-identity.mjs';
 import { prepareStage4SiteTransaction, recoverStage4SiteTransaction, stage4CandidateInputs,
   stage4SiteDigest } from './stage4-site-transaction.mjs';
 import { validateStage4Candidate } from './stage4-host-validation.mjs';
+import { isTrustedRetryableExternalFailure } from './process.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -945,7 +946,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       } catch (error) {
         if (stage4Transaction && !stage4Promoted) {
           try {
-            if (STAGE4_HOLD_CODES.has(error.code)) {
+            if (operation === 'execute-skill' && error.diagnosticOperation === 'execute-worker' &&
+                STAGE4_HOLD_CODES.has(error.code) && isTrustedRetryableExternalFailure(error)) {
               const held = await stage4Transaction.holdCandidate(error.code);
               stage.checkpoint.stage4Transaction = { ...stage.checkpoint.stage4Transaction,
                 candidateDigest: held.candidateDigest, state: held.state, failureCode: error.code };
