@@ -17,6 +17,7 @@ for (const route of routes) {
     throw Error(`SITE_AUDIT_INTERACTIONS_ROUTE_INVALID: ${route}`);
 }
 const authorizedRoutes = new Set(routes);
+const DISCLOSURE_EXECUTION_LIMIT = 12;
 const check = (category, status, detail) => ({ category, status, detail });
 const visible = locator => locator.count().then(async count => {
   for (let index = 0; index < count; index++) if (await locator.nth(index).isVisible().catch(() => false)) return locator.nth(index);
@@ -87,6 +88,11 @@ async function auditRoute(page, context, route) {
   const menu = await visible(menuLocator), searchInput = await visible(searchInputLocator);
   const searchTrigger = await visible(searchTriggerLocator), theme = await visible(themeLocator);
   const disclosure = await visible(disclosureLocator);
+  const visibleDisclosureIndexes = await disclosureLocator.evaluateAll(elements => {
+    const shown = element => { const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
+      return style.visibility !== 'hidden' && style.display !== 'none' && rect.width > 0 && rect.height > 0; };
+    return elements.flatMap((element, index) => shown(element) ? [index] : []);
+  });
   const candidateCounts = {
     menu: await menuLocator.count(), searchInput: await searchInputLocator.count(),
     searchTrigger: await searchTriggerLocator.count(), theme: await themeLocator.count(),
@@ -101,7 +107,12 @@ async function auditRoute(page, context, route) {
       if (!shown(element)) continue;
       visibleCount++;
       if (element.matches('a[href]')) { if (new URL(element.href).origin !== location.origin) externalLinkCount++; continue; }
-      if (element.matches('input:not([type="search"]),select,textarea')) { formControlCount++; continue; }
+      if (element.matches('input:not([type="search"]),select,textarea')) {
+        formControlCount++;
+        const readOnly = 'readOnly' in element && element.readOnly;
+        if (!element.matches(':disabled') && !readOnly) unclassified++;
+        continue;
+      }
       if (element.matches('summary,[aria-haspopup="dialog"]')) continue;
       if (/search|搜索/i.test(name(element)) || /menu|导航|菜单/i.test(name(element)) ||
           /theme|light|dark|主题/i.test(name(element)) || /cookie settings|cookie preferences|隐私设置|cookie 设置/i.test(name(element)) ||
@@ -207,9 +218,10 @@ async function auditRoute(page, context, route) {
   else if (inventory.dialogDisclosure === 'UNKNOWN') checks.push(check('dialog-disclosure', 'NOT_TESTED', 'A dialog or disclosure candidate existed but was not exercisable'));
   else {
     const failures = [], untested = []; let exercised = 0;
-    for (let index = 0; index < Math.min(candidateCounts.disclosure, 12); index++) {
+    const skippedVisible = Math.max(0, visibleDisclosureIndexes.length - DISCLOSURE_EXECUTION_LIMIT);
+    if (skippedVisible) untested.push(`${skippedVisible} visible dialog/disclosure controls exceeded execution bound ${DISCLOSURE_EXECUTION_LIMIT}`);
+    for (const index of visibleDisclosureIndexes.slice(0, DISCLOSURE_EXECUTION_LIMIT)) {
       const item = disclosureLocator.nth(index);
-      if (!await item.isVisible().catch(() => false)) continue;
       try {
         const before = await item.getAttribute('aria-expanded');
         const detailsBefore = await item.evaluate(element => element.closest('details')?.open ?? null);

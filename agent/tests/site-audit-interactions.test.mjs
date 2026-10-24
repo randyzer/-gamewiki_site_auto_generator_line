@@ -81,6 +81,47 @@ test('unclassified interactive controls keep the audit incomplete', async t => {
   assert.equal(result.completion, 'INCOMPLETE');
 });
 
+test('disclosure controls beyond the execution bound remain NOT_TESTED', async t => {
+  const url = await fixtureServer(t, (_request, response) => {
+    response.setHeader('content-type', 'text/html');
+    response.end(Array.from({ length: 13 }, (_, index) =>
+      `<details><summary>Disclosure ${index + 1}</summary><p>Detail</p></details>`).join(''));
+  });
+  const result = await collect(t, url, ['/']);
+  const disclosure = result.routes[0].checks.find(item => item.category === 'dialog-disclosure');
+  assert.equal(result.routes[0].inventory.dialogDisclosureControlCount, 13);
+  assert.equal(disclosure.status, 'NOT_TESTED');
+  assert.match(disclosure.detail, /1 visible.*execution bound/i);
+  assert.equal(result.completion, 'INCOMPLETE');
+});
+
+test('visible unclassified form controls keep the audit incomplete without submission', async t => {
+  let posts = 0;
+  const url = await fixtureServer(t, (request, response) => {
+    if (request.method === 'POST') posts++;
+    response.setHeader('content-type', 'text/html');
+    response.end('<form method="post"><input type="text" name="unsafe"></form>');
+  });
+  const result = await collect(t, url, ['/']);
+  assert.equal(posts, 0);
+  assert.equal(result.routes[0].inventory.formControlCount, 1);
+  assert.ok(result.routes[0].inventory.unclassifiedControlCount >= 1);
+  assert.equal(result.routes[0].checks.find(item => item.category === 'unclassified-controls').status, 'NOT_TESTED');
+  assert.equal(result.completion, 'INCOMPLETE');
+});
+
+test('read-only form controls are safely classified without blocking completion', async t => {
+  const url = await fixtureServer(t, (_request, response) => {
+    response.setHeader('content-type', 'text/html');
+    response.end('<label>Reference <input type="text" value="fixed" readonly></label>');
+  });
+  const result = await collect(t, url, ['/']);
+  assert.equal(result.routes[0].inventory.formControlCount, 1);
+  assert.equal(result.routes[0].inventory.unclassifiedControlCount, 0);
+  assert.equal(result.routes[0].checks.find(item => item.category === 'unclassified-controls').status, 'NOT_APPLICABLE');
+  assert.equal(result.completion, 'COMPLETE');
+});
+
 test('an exercised broken search is a complete FAIL finding', async t => {
   const url = await fixtureServer(t, (_request, response) => {
     response.setHeader('content-type', 'text/html'); response.end('<input type="search" aria-label="Search">');
