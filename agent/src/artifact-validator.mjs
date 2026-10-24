@@ -6,6 +6,7 @@ import { runProcess } from './process.mjs';
 import { STAGE, stageDefinition, findStage } from './stages.mjs';
 import { validateExistingContentArtifacts } from './existing-content-validator.mjs';
 import { createRoutePublicationManifest, ROUTE_PUBLICATION_ARTIFACT } from './route-publication.mjs';
+import { validateHostInteractions, validateAuditExecutionAcceptance } from './stage5-audit-policy.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 
@@ -119,12 +120,37 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     await python('validate_audit.py', ['--workspace', context.inputs.projectPath, '--run-dir', dirname(get('UI_UX_AUDIT.json').path), ...(context.mode === 'optimize' ? ['--expect-optimization'] : [])]);
     const audit = parseArtifactJson(get('UI_UX_AUDIT.json').bytes, get('UI_UX_AUDIT.json').path);
     assert(JSON.stringify(audit.viewports) === '[360,390,768,1024,1440,1920]', 'UI audit viewport coverage mismatch');
-    assert(['SHIP', 'SHIP_WITH_FIXES'].includes(audit.verdict), 'UI audit is not ready for prelaunch');
+    assert(context.hostEvidence?.interactionsPath && context.hostEvidence?.interactionsSha256,
+      'Complete host interaction evidence is required');
+    const interactions = await validateHostInteractions(context.hostEvidence.interactionsPath,
+      context.hostEvidence.interactionsSha256, context.runId, context.hostEvidence.routes);
+    validateAuditExecutionAcceptance(audit, context.hostEvidence.interactionsSha256,
+      context.stage5SiteVerdict);
+    const expectedRoutes = [...(context.hostEvidence.routes ?? [])].sort();
+    const interactionRoutes = interactions.value.routes.map(item => item.route).sort();
+    const reportRoutes = audit.routes.map(item => item.route).sort();
+    assert(expectedRoutes.length > 0 && JSON.stringify(interactionRoutes) === JSON.stringify(expectedRoutes) &&
+      JSON.stringify(reportRoutes) === JSON.stringify(expectedRoutes), 'UI audit route coverage mismatch');
+    for (const failure of interactions.failures) assert(audit.findings.some(finding =>
+      finding.route === failure.route && `${finding.category} ${finding.evidence}`.toLowerCase()
+        .includes(failure.category.toLowerCase())),
+    `UI audit omitted failed host interaction: ${failure.route} ${failure.category}`);
     for (const file of await treeFiles(join(dirname(get('UI_UX_AUDIT.json').path), 'screenshots'))) {
       artifacts.push({ kind: 'screenshot:' + file, path: file, bytes: await readArtifact(file, roots) });
     }
   }
   if (skill === STAGE.PRELAUNCH_ACCEPTANCE) {
+    const auditStage = context.upstream?.find(stage => stage.skill === STAGE.UI_UX_AUDIT);
+    const auditArtifact = auditStage?.artifacts?.find(item => item.kind === 'UI_UX_AUDIT.json');
+    if (auditArtifact) {
+      const priorAudit = parseArtifactJson(await readArtifact(auditArtifact.path,
+        [context.runDirectory, context.inputs.projectPath]), auditArtifact.path);
+      const launchBlockingFinding = priorAudit.findings?.some(finding =>
+        ['BLOCKER', 'HIGH'].includes(finding.severity) &&
+        !['FIXED', 'ACCEPTED_RISK'].includes(finding.status));
+      assert(!['BLOCKED', 'NEEDS_WORK'].includes(priorAudit.verdict) && !launchBlockingFinding,
+        'PRELAUNCH_BLOCKED_BY_UI_AUDIT: accepted Stage 5 findings still block launch');
+    }
     const report = parseArtifactJson(get('PRELAUNCH_ACCEPTANCE.json').bytes, get('PRELAUNCH_ACCEPTANCE.json').path);
     await python('validate_report.py', [get('PRELAUNCH_ACCEPTANCE.json').path]);
     assert(report.run_id === context.runId && report.game === context.inputs.gameIdentity && report.project_path === context.inputs.projectPath && report.expected_domain === 'https://' + context.inputs.domain, 'Prelaunch identity mismatch');

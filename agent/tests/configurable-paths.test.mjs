@@ -206,7 +206,29 @@ test('audit worker writes native reports while the host publishes them for the u
     auditSite: async () => {
       await mkdir(join(evidenceDirectory, 'screenshots'), { recursive: true });
       await writeFile(join(evidenceDirectory, 'screenshots/home.png'), 'synthetic');
-      return snapshotSiteEvidence(evidenceDirectory);
+      const interactionsPath = join(evidenceDirectory, 'HOST_UI_INTERACTIONS.json');
+      const interactions = Buffer.from(JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
+        runId: 'audit', authorizedRoutes: ['/'], routes: [{ route: '/', inventory: {
+          interactiveCount: 0, internalLinkCount: 0, authorizedInternalLinkCount: 0, unlistedInternalLinkCount: 0,
+          externalLinkCount: 0, formControlCount: 0, unclassifiedControlCount: 0,
+          mobileMenuControlCount: 0, searchControlCount: 0, themeToggleControlCount: 0,
+          dialogDisclosureControlCount: 0, mobileMenu: 'ABSENT', search: 'ABSENT',
+          themeToggle: 'ABSENT', dialogDisclosure: 'ABSENT',
+        }, checks: [
+          { category: 'route-load', status: 'PASS', detail: 'fixture route loaded' },
+          { category: 'internal-navigation', status: 'NOT_APPLICABLE', detail: 'fixture has no links' },
+          { category: 'mobile-menu', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+          { category: 'keyboard-focus-return', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+          { category: 'search-trigger', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+          { category: 'search-query', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+          { category: 'search-empty-state', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+          { category: 'theme-toggle', status: 'NOT_APPLICABLE', detail: 'fixture has no theme toggle' },
+          { category: 'dialog-disclosure', status: 'NOT_APPLICABLE', detail: 'fixture has no disclosure' },
+          { category: 'unclassified-controls', status: 'NOT_APPLICABLE', detail: 'fixture has no unknown controls' },
+        ] }], summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 9, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
+      await writeFile(interactionsPath, interactions);
+      return { ...(await snapshotSiteEvidence(evidenceDirectory)), routes: ['/'], interactionsPath,
+        interactionsSha256: sha256(interactions) };
     }, run: async (_command, args, options) => {
       const context = JSON.parse(options.input.split('Task context: ')[1].split('\n')[0]);
       assert.ok(context.reportDirectory.startsWith(context.nativeDirectory));
@@ -215,8 +237,13 @@ test('audit worker writes native reports while the host publishes them for the u
       assert.ok(!config.includes(JSON.stringify(evidenceDirectory) + '="write"'));
       await mkdir(context.reportDirectory, { recursive: true });
       for (const name of names) await writeFile(join(context.reportDirectory, name), name.endsWith('.json')
-        ? JSON.stringify({ viewports: [360,390,768,1024,1440,1920], verdict: 'SHIP' }) : 'synthetic');
-      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'PASSED',
+        ? JSON.stringify({ viewports: [360,390,768,1024,1440,1920], verdict: 'SHIP',
+          routes: [{ route: '/', archetype: 'home', reason: 'fixture' }], findings: [],
+          execution_acceptance: { kind: 'AUDIT_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+            host_interactions_sha256: context.hostEvidence.interactionsSha256 } }) : 'synthetic');
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'PARTIAL',
+        stage4_completion: null, stage5_completion: { kind: 'STAGE5_AUDIT_HANDOFF_V1',
+          audit_execution: 'COMPLETE', host_validation: 'REQUIRED', site_verdict: 'SHIP' },
         artifacts: names.map(kind => ({ kind, path: join(context.reportDirectory, kind) })), missing_inputs: [], evidence: ['synthetic'] }));
     }, validationOptions: { run: async (_command, args) => {
       assert.equal(args[args.indexOf('--run-dir') + 1], evidenceDirectory);

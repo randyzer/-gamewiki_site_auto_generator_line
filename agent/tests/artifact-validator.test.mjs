@@ -58,7 +58,31 @@ async function nativeFixture(t, index) {
     const dir = join(project, 'docs/ui-ux-audit', context.runId);
     result.artifacts = [];
     for (const kind of ARTIFACTS[index].filter(k => k.endsWith('.md'))) await add(kind, '# Offline fixture', join(dir, kind));
-    await add('UI_UX_AUDIT.json', { schema_version: 1, game: context.inputs.gameIdentity, mode: 'audit-only', verdict: 'SHIP', routes: [{ route: '/', archetype: 'home', reason: 'fixture' }],
+    const interactions = Buffer.from(JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
+      runId: context.runId, authorizedRoutes: ['/'], routes: [{ route: '/', inventory: {
+        interactiveCount: 0, internalLinkCount: 0, authorizedInternalLinkCount: 0, unlistedInternalLinkCount: 0,
+        externalLinkCount: 0, formControlCount: 0, unclassifiedControlCount: 0,
+        mobileMenuControlCount: 0, searchControlCount: 0, themeToggleControlCount: 0,
+        dialogDisclosureControlCount: 0, mobileMenu: 'ABSENT', search: 'ABSENT',
+        themeToggle: 'ABSENT', dialogDisclosure: 'ABSENT',
+      }, checks: [
+        { category: 'route-load', status: 'PASS', detail: 'fixture route loaded' },
+        { category: 'internal-navigation', status: 'NOT_APPLICABLE', detail: 'fixture has no links' },
+        { category: 'mobile-menu', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+        { category: 'keyboard-focus-return', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+        { category: 'search-trigger', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+        { category: 'search-query', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+        { category: 'search-empty-state', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+        { category: 'theme-toggle', status: 'NOT_APPLICABLE', detail: 'fixture has no theme toggle' },
+        { category: 'dialog-disclosure', status: 'NOT_APPLICABLE', detail: 'fixture has no disclosure' },
+        { category: 'unclassified-controls', status: 'NOT_APPLICABLE', detail: 'fixture has no unknown controls' },
+      ] }], summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 9, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
+    const interactionsPath = join(dir, 'HOST_UI_INTERACTIONS.json');
+    await writeFile(interactionsPath, interactions);
+    context.hostEvidence = { interactionsPath, interactionsSha256: sha256(interactions), routes: ['/'] };
+    await add('UI_UX_AUDIT.json', { schema_version: 1, game: context.inputs.gameIdentity, mode: 'audit-only', verdict: 'SHIP',
+      execution_acceptance: { kind: 'AUDIT_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE', host_interactions_sha256: sha256(interactions) },
+      routes: [{ route: '/', archetype: 'home', reason: 'fixture' }],
       findings: [], viewports: [360, 390, 768, 1024, 1440, 1920], summary: { blocker: 0, high: 0, medium: 0, low: 0, note: 0 } }, join(dir, 'UI_UX_AUDIT.json'));
     await mkdir(join(dir, 'screenshots')); await writeFile(join(dir, 'screenshots/offline.png'), 'Offline screenshot fixture');
     await writeFile(join(dirname(dir), 'LATEST'), context.runId);
@@ -97,10 +121,52 @@ test('UI report must include the exact six required viewport widths', async t =>
   await writeFile(path, JSON.stringify(audit));
   await assert.rejects(f.validate(), /UI audit viewport coverage mismatch/);
 });
+test('complete UI audit may preserve a BLOCKED site verdict for Stage 6', async t => {
+  const f = await nativeFixture(t, 4), path = f.result.artifacts.find(a => a.kind === 'UI_UX_AUDIT.json').path;
+  const audit = JSON.parse(await readFile(path));
+  audit.verdict = 'BLOCKED';
+  audit.findings = [{ id: 'UX-001', severity: 'BLOCKER', route: '/', category: 'trust',
+    evidence: 'Missing operator identity', impact: 'Launch trust requirement is absent',
+    recommendation: 'Add verified operator details', verification: 'Review the published policy pages', status: 'OPEN' }];
+  audit.summary.blocker = 1;
+  await writeFile(path, JSON.stringify(audit));
+  const validated = await f.validate();
+  assert.equal(validated.status, 'PASSED');
+  assert.equal(JSON.parse(Buffer.from(validated.artifacts.find(a => a.kind === 'UI_UX_AUDIT.json').content, 'base64')).verdict, 'BLOCKED');
+});
+test('UI audit cannot omit a failed Host interaction or a captured route', async t => {
+  const f = await nativeFixture(t, 4), interactionsPath = f.context.hostEvidence.interactionsPath;
+  const interactions = JSON.parse(await readFile(interactionsPath));
+  interactions.routes[0].inventory.search = 'PRESENT';
+  interactions.routes[0].inventory.searchControlCount = 1;
+  const query = interactions.routes[0].checks.find(item => item.category === 'search-query');
+  query.status = 'PASS'; query.detail = 'Query was exercised';
+  const emptyState = interactions.routes[0].checks.find(item => item.category === 'search-empty-state');
+  emptyState.status = 'FAIL'; emptyState.detail = 'No empty state';
+  interactions.summary = { PASS: 2, FAIL: 1, NOT_APPLICABLE: 7, NOT_TESTED: 0 };
+  const bytes = Buffer.from(JSON.stringify(interactions)); await writeFile(interactionsPath, bytes);
+  f.context.hostEvidence.interactionsSha256 = sha256(bytes);
+  const auditPath = f.result.artifacts.find(a => a.kind === 'UI_UX_AUDIT.json').path;
+  const audit = JSON.parse(await readFile(auditPath));
+  audit.execution_acceptance.host_interactions_sha256 = sha256(bytes);
+  await writeFile(auditPath, JSON.stringify(audit));
+  await assert.rejects(f.validate(), /omitted failed host interaction/);
+  f.context.hostEvidence.routes = ['/', '/missing'];
+  await assert.rejects(f.validate(), /route authorization boundary mismatch/);
+});
 test('prelaunch report must cover exactly the routes captured by the host', async t => {
   const f = await nativeFixture(t, 5);
   f.context.hostEvidence = { routes: ['/', '/missing-from-report'], routePublicationViolations: [] };
   await assert.rejects(f.validate(), /Prelaunch host route coverage mismatch/);
+});
+test('prelaunch cannot pass while the accepted UI audit retains an open launch blocker', async t => {
+  const f = await nativeFixture(t, 5);
+  const auditPath = join(f.context.runDirectory, 'accepted-ui-audit.json');
+  await writeFile(auditPath, JSON.stringify({ verdict: 'BLOCKED', findings: [
+    { severity: 'BLOCKER', status: 'OPEN' },
+  ] }));
+  f.context.upstream = [{ skill: STAGES[4], artifacts: [{ kind: 'UI_UX_AUDIT.json', path: auditPath }] }];
+  await assert.rejects(f.validate(), /PRELAUNCH_BLOCKED_BY_UI_AUDIT/);
 });
 test('homepage rejects directories, invalid ZIP and missing native fields', async t => {
   const f = await nativeFixture(t, 0); const zip = f.result.artifacts.find(a => a.kind === 'ICON.zip');
