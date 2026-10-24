@@ -208,8 +208,24 @@ test('audit worker writes native reports while the host publishes them for the u
       await writeFile(join(evidenceDirectory, 'screenshots/home.png'), 'synthetic');
       const interactionsPath = join(evidenceDirectory, 'HOST_UI_INTERACTIONS.json');
       const interactions = Buffer.from(JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
-        runId: 'audit', routes: [{ route: '/', checks: [{ category: 'navigation', status: 'PASS', detail: 'fixture' }] }],
-        summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 0, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
+        runId: 'audit', authorizedRoutes: ['/'], routes: [{ route: '/', inventory: {
+          interactiveCount: 0, internalLinkCount: 0, authorizedInternalLinkCount: 0, unlistedInternalLinkCount: 0,
+          externalLinkCount: 0, formControlCount: 0, unclassifiedControlCount: 0,
+          mobileMenuControlCount: 0, searchControlCount: 0, themeToggleControlCount: 0,
+          dialogDisclosureControlCount: 0, mobileMenu: 'ABSENT', search: 'ABSENT',
+          themeToggle: 'ABSENT', dialogDisclosure: 'ABSENT',
+        }, checks: [
+          { category: 'route-load', status: 'PASS', detail: 'fixture route loaded' },
+          { category: 'internal-navigation', status: 'NOT_APPLICABLE', detail: 'fixture has no links' },
+          { category: 'mobile-menu', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+          { category: 'keyboard-focus-return', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+          { category: 'search-trigger', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+          { category: 'search-query', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+          { category: 'search-empty-state', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+          { category: 'theme-toggle', status: 'NOT_APPLICABLE', detail: 'fixture has no theme toggle' },
+          { category: 'dialog-disclosure', status: 'NOT_APPLICABLE', detail: 'fixture has no disclosure' },
+          { category: 'unclassified-controls', status: 'NOT_APPLICABLE', detail: 'fixture has no unknown controls' },
+        ] }], summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 9, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
       await writeFile(interactionsPath, interactions);
       return { ...(await snapshotSiteEvidence(evidenceDirectory)), routes: ['/'], interactionsPath,
         interactionsSha256: sha256(interactions) };

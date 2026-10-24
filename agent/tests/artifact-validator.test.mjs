@@ -59,8 +59,24 @@ async function nativeFixture(t, index) {
     result.artifacts = [];
     for (const kind of ARTIFACTS[index].filter(k => k.endsWith('.md'))) await add(kind, '# Offline fixture', join(dir, kind));
     const interactions = Buffer.from(JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
-      runId: context.runId, routes: [{ route: '/', checks: [{ category: 'navigation', status: 'PASS', detail: 'fixture' }] }],
-      summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 0, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
+      runId: context.runId, authorizedRoutes: ['/'], routes: [{ route: '/', inventory: {
+        interactiveCount: 0, internalLinkCount: 0, authorizedInternalLinkCount: 0, unlistedInternalLinkCount: 0,
+        externalLinkCount: 0, formControlCount: 0, unclassifiedControlCount: 0,
+        mobileMenuControlCount: 0, searchControlCount: 0, themeToggleControlCount: 0,
+        dialogDisclosureControlCount: 0, mobileMenu: 'ABSENT', search: 'ABSENT',
+        themeToggle: 'ABSENT', dialogDisclosure: 'ABSENT',
+      }, checks: [
+        { category: 'route-load', status: 'PASS', detail: 'fixture route loaded' },
+        { category: 'internal-navigation', status: 'NOT_APPLICABLE', detail: 'fixture has no links' },
+        { category: 'mobile-menu', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+        { category: 'keyboard-focus-return', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+        { category: 'search-trigger', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+        { category: 'search-query', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+        { category: 'search-empty-state', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+        { category: 'theme-toggle', status: 'NOT_APPLICABLE', detail: 'fixture has no theme toggle' },
+        { category: 'dialog-disclosure', status: 'NOT_APPLICABLE', detail: 'fixture has no disclosure' },
+        { category: 'unclassified-controls', status: 'NOT_APPLICABLE', detail: 'fixture has no unknown controls' },
+      ] }], summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 9, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
     const interactionsPath = join(dir, 'HOST_UI_INTERACTIONS.json');
     await writeFile(interactionsPath, interactions);
     context.hostEvidence = { interactionsPath, interactionsSha256: sha256(interactions), routes: ['/'] };
@@ -121,8 +137,13 @@ test('complete UI audit may preserve a BLOCKED site verdict for Stage 6', async 
 test('UI audit cannot omit a failed Host interaction or a captured route', async t => {
   const f = await nativeFixture(t, 4), interactionsPath = f.context.hostEvidence.interactionsPath;
   const interactions = JSON.parse(await readFile(interactionsPath));
-  interactions.routes[0].checks[0] = { category: 'search-empty-state', status: 'FAIL', detail: 'No empty state' };
-  interactions.summary = { PASS: 0, FAIL: 1, NOT_APPLICABLE: 0, NOT_TESTED: 0 };
+  interactions.routes[0].inventory.search = 'PRESENT';
+  interactions.routes[0].inventory.searchControlCount = 1;
+  const query = interactions.routes[0].checks.find(item => item.category === 'search-query');
+  query.status = 'PASS'; query.detail = 'Query was exercised';
+  const emptyState = interactions.routes[0].checks.find(item => item.category === 'search-empty-state');
+  emptyState.status = 'FAIL'; emptyState.detail = 'No empty state';
+  interactions.summary = { PASS: 2, FAIL: 1, NOT_APPLICABLE: 7, NOT_TESTED: 0 };
   const bytes = Buffer.from(JSON.stringify(interactions)); await writeFile(interactionsPath, bytes);
   f.context.hostEvidence.interactionsSha256 = sha256(bytes);
   const auditPath = f.result.artifacts.find(a => a.kind === 'UI_UX_AUDIT.json').path;
@@ -131,7 +152,7 @@ test('UI audit cannot omit a failed Host interaction or a captured route', async
   await writeFile(auditPath, JSON.stringify(audit));
   await assert.rejects(f.validate(), /omitted failed host interaction/);
   f.context.hostEvidence.routes = ['/', '/missing'];
-  await assert.rejects(f.validate(), /route coverage mismatch/);
+  await assert.rejects(f.validate(), /route authorization boundary mismatch/);
 });
 test('prelaunch report must cover exactly the routes captured by the host', async t => {
   const f = await nativeFixture(t, 5);

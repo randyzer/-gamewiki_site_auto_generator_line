@@ -7,6 +7,7 @@ import { STAGE } from '../src/stages.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { runProcess } from '../src/process.mjs';
 import { sha256 } from '../src/files.mjs';
+import { validateHostInteractions } from '../src/stage5-audit-policy.mjs';
 
 const host = await import('../src/site-audit-host.mjs').catch(() => ({}));
 const evidence = await import('../src/site-evidence.mjs').catch(() => ({}));
@@ -31,11 +32,31 @@ async function writeAudit(directory) {
   await writeFile(join(directory, 'screenshots/home/desktop-1440.png'), 'synthetic screenshot');
   await writeFile(join(directory, 'AUTOMATED_AUDIT.json'), JSON.stringify({ viewports: [360,390,768,1024,1440,1920].map(width => ({ width })) }));
 }
-async function writeInteractions(path, { notTested = false } = {}) {
+async function writeInteractions(path, { notTested = false, routes = ['/', '/guide'] } = {}) {
+  const routeItems = routes.map(route => ({ route, inventory: {
+    interactiveCount: notTested ? 1 : 0, internalLinkCount: 0, authorizedInternalLinkCount: 0,
+    unlistedInternalLinkCount: 0, externalLinkCount: 0, formControlCount: 0,
+    unclassifiedControlCount: notTested ? 1 : 0, mobileMenuControlCount: 0, searchControlCount: 0,
+    themeToggleControlCount: 0, dialogDisclosureControlCount: 0,
+    mobileMenu: 'ABSENT', search: 'ABSENT', themeToggle: 'ABSENT',
+    dialogDisclosure: 'ABSENT',
+  }, checks: [
+    { category: 'route-load', status: 'PASS', detail: 'fixture route loaded' },
+    { category: 'internal-navigation', status: 'NOT_APPLICABLE', detail: 'fixture has no links' },
+    { category: 'mobile-menu', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+    { category: 'keyboard-focus-return', status: 'NOT_APPLICABLE', detail: 'fixture has no menu' },
+    { category: 'search-trigger', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+    { category: 'search-query', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+    { category: 'search-empty-state', status: 'NOT_APPLICABLE', detail: 'fixture has no search' },
+    { category: 'theme-toggle', status: 'NOT_APPLICABLE', detail: 'fixture has no theme toggle' },
+    { category: 'dialog-disclosure', status: 'NOT_APPLICABLE', detail: 'fixture has no disclosure' },
+    { category: 'unclassified-controls', status: notTested ? 'NOT_TESTED' : 'NOT_APPLICABLE',
+      detail: notTested ? 'fixture unknown control' : 'fixture has no unknown controls' },
+  ] }));
   await writeFile(path, JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
-    runId: 'audit-host', routes: [{ route: '/', checks: [{ category: 'navigation',
-      status: notTested ? 'NOT_TESTED' : 'PASS', detail: 'fixture' }] }],
-    summary: { PASS: notTested ? 0 : 1, FAIL: 0, NOT_APPLICABLE: 0, NOT_TESTED: notTested ? 1 : 0 },
+    runId: 'audit-host', authorizedRoutes: routes, routes: routeItems,
+    summary: { PASS: routes.length, FAIL: 0, NOT_APPLICABLE: routes.length * (notTested ? 8 : 9),
+      NOT_TESTED: notTested ? routes.length : 0 },
     completion: notTested ? 'INCOMPLETE' : 'COMPLETE' }));
 }
 test('audit adapter uses locked script through module hook and published routes plus homepage', async t => {
@@ -67,6 +88,16 @@ test('audit adapter rejects incomplete host interaction evidence', async t => {
     if (args[2].endsWith('game_site_audit.mjs')) await writeAudit(args[args.indexOf('--out') + 1]);
     else await writeInteractions(args[args.indexOf('--output') + 1], { notTested: true });
   } }), /SITE_AUDIT_INTERACTIONS_INCOMPLETE/);
+});
+test('host interaction validator requires every expected category, not only summary counts', async t => {
+  const f = await auditFixture(t), path = join(f.root, 'interactions.json');
+  await writeInteractions(path, { routes: ['/'] });
+  const value = JSON.parse(await readFile(path));
+  value.routes[0].checks = value.routes[0].checks.filter(item => item.category !== 'search-trigger');
+  value.summary.NOT_APPLICABLE--;
+  await writeFile(path, JSON.stringify(value));
+  await assert.rejects(validateHostInteractions(path, sha256(await readFile(path)), 'audit-host', ['/']),
+    /categories are incomplete/);
 });
 test('audit adapter rejects route escape and an incomplete viewport set', async t => {
   const f = await auditFixture(t), path = f.context.upstream[0].artifacts[0].path;
@@ -131,7 +162,7 @@ test('host accepts a complete provisional audit while preserving a BLOCKED site 
       const directory = join(context.inputs.projectPath, 'docs/ui-ux-audit', context.runId);
       await writeAudit(directory);
       const interactionsPath = join(directory, 'HOST_UI_INTERACTIONS.json');
-      await writeInteractions(interactionsPath);
+      await writeInteractions(interactionsPath, { routes: ['/'] });
       const interactionsSha256 = sha256(await readFile(interactionsPath));
       return { ...(await evidence.snapshotSiteEvidence(directory)), routes: ['/'],
         interactionsPath, interactionsSha256 };

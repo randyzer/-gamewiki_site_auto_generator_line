@@ -123,7 +123,7 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     assert(context.hostEvidence?.interactionsPath && context.hostEvidence?.interactionsSha256,
       'Complete host interaction evidence is required');
     const interactions = await validateHostInteractions(context.hostEvidence.interactionsPath,
-      context.hostEvidence.interactionsSha256, context.runId);
+      context.hostEvidence.interactionsSha256, context.runId, context.hostEvidence.routes);
     validateAuditExecutionAcceptance(audit, context.hostEvidence.interactionsSha256,
       context.stage5SiteVerdict);
     const expectedRoutes = [...(context.hostEvidence.routes ?? [])].sort();

@@ -34,7 +34,7 @@ export async function collectSiteAudit(context, { url, run = runProcess } = {}) 
   { cwd: context.runDirectory, timeoutMs: Math.max(180000, routes.length * 45000) });
   const interactionBytes = await readArtifact(interactionsPath, [directory]);
   const interactionsSha256 = sha256(interactionBytes);
-  await validateHostInteractions(interactionsPath, interactionsSha256, context.runId);
+  await validateHostInteractions(interactionsPath, interactionsSha256, context.runId, routes);
   const bundle = await snapshotSiteEvidence(directory);
   return { ...bundle, routes, scriptExitCode, automatedAuditPath, screenshotsDirectory: join(directory, 'screenshots'),
     interactionsPath, interactionsSha256 };
