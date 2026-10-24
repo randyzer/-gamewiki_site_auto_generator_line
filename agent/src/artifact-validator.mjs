@@ -7,6 +7,7 @@ import { STAGE, stageDefinition, findStage } from './stages.mjs';
 import { validateExistingContentArtifacts } from './existing-content-validator.mjs';
 import { createRoutePublicationManifest, ROUTE_PUBLICATION_ARTIFACT } from './route-publication.mjs';
 import { validateHostInteractions, validateAuditExecutionAcceptance } from './stage5-audit-policy.mjs';
+import { validatePrelaunchExecutionAcceptance } from './stage6-prelaunch-policy.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 
@@ -140,21 +141,14 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     }
   }
   if (skill === STAGE.PRELAUNCH_ACCEPTANCE) {
-    const auditStage = context.upstream?.find(stage => stage.skill === STAGE.UI_UX_AUDIT);
-    const auditArtifact = auditStage?.artifacts?.find(item => item.kind === 'UI_UX_AUDIT.json');
-    if (auditArtifact) {
-      const priorAudit = parseArtifactJson(await readArtifact(auditArtifact.path,
-        [context.runDirectory, context.inputs.projectPath]), auditArtifact.path);
-      const launchBlockingFinding = priorAudit.findings?.some(finding =>
-        ['BLOCKER', 'HIGH'].includes(finding.severity) &&
-        !['FIXED', 'ACCEPTED_RISK'].includes(finding.status));
-      assert(!['BLOCKED', 'NEEDS_WORK'].includes(priorAudit.verdict) && !launchBlockingFinding,
-        'PRELAUNCH_BLOCKED_BY_UI_AUDIT: accepted Stage 5 findings still block launch');
-    }
     const report = parseArtifactJson(get('PRELAUNCH_ACCEPTANCE.json').bytes, get('PRELAUNCH_ACCEPTANCE.json').path);
     await python('validate_report.py', [get('PRELAUNCH_ACCEPTANCE.json').path]);
     assert(report.run_id === context.runId && report.game === context.inputs.gameIdentity && report.project_path === context.inputs.projectPath && report.expected_domain === 'https://' + context.inputs.domain, 'Prelaunch identity mismatch');
-    assert(['可以上线', '可以上线，但有P2待办'].includes(report.disposition), 'Prelaunch does not permit planning');
+    assert(['可以上线', '可以上线，但有P2待办', '暂不建议上线'].includes(report.disposition), 'Invalid prelaunch disposition');
+    validatePrelaunchExecutionAcceptance(report, context.launchReadiness);
+    assert((context.launchReadiness.status === 'CLEARED') ===
+      ['可以上线', '可以上线，但有P2待办'].includes(report.disposition),
+    'Prelaunch disposition contradicts Host launch readiness');
     assert(Array.isArray(report.pages) && report.pages.length > 0 && report.coverage && typeof report.coverage === 'object', 'Empty prelaunch coverage');
     assert(Number.isInteger(report.coverage.routes_expected) && report.coverage.routes_expected > 0 && report.coverage.routes_checked === report.coverage.routes_expected && report.pages.length === report.coverage.routes_checked, 'Incomplete prelaunch coverage');
     if (context.hostEvidence) {
@@ -185,7 +179,14 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
       `DEPLOYMENT_REPORT_INVALID: production_url ${JSON.stringify(report.production_url)} is not https://${context.inputs.domain}`);
   } else if (skill === STAGE.DEPLOYMENT_PLAN) {
     const plan = parseArtifactJson(get('DEPLOYMENT_PLAN.json').bytes, get('DEPLOYMENT_PLAN.json').path);
-    assert(plan.schema_version === 1 && plan.status === 'AWAITING_CONFIRMATION' && plan.confirmation?.status === 'AWAITING_CONFIRMATION', 'Plan must await confirmation');
+    const launchBlocked = context.launchReadiness?.deploymentAuthorized === false;
+    if (launchBlocked) {
+      assert(plan.schema_version === 1 && plan.status === 'BLOCKED' &&
+        plan.confirmation?.status === 'NOT_AUTHORIZED_FOR_DEPLOYMENT' &&
+        JSON.stringify(plan.unresolved_blockers) === JSON.stringify(context.launchReadiness.unresolvedBlockers),
+      'Blocked plan must preserve every Host launch blocker');
+    } else assert(plan.schema_version === 1 && plan.status === 'AWAITING_CONFIRMATION' &&
+      plan.confirmation?.status === 'AWAITING_CONFIRMATION', 'Plan must await confirmation');
     assert(plan.project?.path === context.inputs.projectPath && plan.project.repository === context.inputs.repo && plan.project.branch === context.inputs.branch, 'Deployment project mismatch');
     assert(plan.domain?.production_origin === 'https://' + context.inputs.domain && plan.github_sync?.push_authorized === false, 'Deployment domain/authorization mismatch');
     for (const key of ['checks', 'risks', 'rollback']) assert(Array.isArray(plan[key]), 'Missing deployment plan section');

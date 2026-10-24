@@ -32,6 +32,7 @@ import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host
 import { createStage4ReadinessGate, verifyStage4ReadinessBinding } from './stage4-readiness.mjs';
 import { stage4CandidateInputs } from './stage4-site-transaction.mjs';
 import { validateStage5WorkerHandoff } from './stage5-audit-policy.mjs';
+import { validateStage6WorkerHandoff } from './stage6-prelaunch-policy.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
 
@@ -415,9 +416,11 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
             : 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
         ] : hostPrelaunch ? [
           'Read context.hostEvidence and verify every SHA256. Use view_image to inspect the host screenshots. Do not invoke browser commands, network requests, build/test/lint/typecheck commands, or site repairs; the host already collected those results.',
-          'context.launchReadiness is a Host-verified clearance bound to the accepted Stage 4 candidate, current site revision and post-audit project digest. It is required for launch readiness and cannot be replaced, cleared or inferred from Worker prose or omitted fields.',
+          'context.launchReadiness is the Host prelaunch context. Its status may be NOT_CLEARED; this does not prevent completing the audit. Preserve every unresolvedBlocker exactly and never infer that it is cleared.',
           'Read context.hostEvidence.routePublicationViolations and the routePublication section of HOST_EVIDENCE.json. Any violation, unprovable dynamic route, published noindex page, draft without noindex, draft sitemap entry, or public link to a draft requires a non-PASSED result.',
-          `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
+          'Add execution_acceptance to PRELAUNCH_ACCEPTANCE.json exactly as {"kind":"PRELAUNCH_EXECUTION_ACCEPTANCE_V1","status":"COMPLETE","context_digest":context.launchReadiness.contextDigest,"launch_readiness":context.launchReadiness.status,"unresolved_blockers":context.launchReadiness.unresolvedBlockers}. Use disposition 暂不建议上线 when status is NOT_CLEARED.',
+          'When the audit is complete, return PARTIAL with stage6_completion {"kind":"STAGE6_PRELAUNCH_HANDOFF_V1","audit_execution":"COMPLETE","host_validation":"REQUIRED","site_disposition":<report disposition>,"launch_readiness":context.launchReadiness.status}. Site blockers do not make audit execution incomplete. Missing route or Host evidence must leave stage6_completion null.',
+          `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them transactionally into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
         ] : ['Browser-dependent stages require a supported host per-command approval broker and are disabled here. Do not invoke browser commands, restart shared daemons or use substitute browser tools.']),
       ...(homepageResearch ? [
         'Image generation requires an actual callable image-generation tool. If unavailable, return BLOCKED; do not substitute SVG, local drawing, another provider or fabricated PNG/ZIP files.'
@@ -450,7 +453,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       ] : []),
       ...(context.existingContent ? [context.existingContent.workerInstructions] : []),
       ...(hostPrelaunch ? [
-        'Stage 4 PASSED means content integration and Host technical validation passed; it is not launch approval. Any unresolved operator identity, contact, jurisdiction, Privacy/Terms review or DNS delegation recorded in upstream CONTENT_GAPS.md remains a launch blocker and requires a non-PASSED prelaunch result.'
+        'Stage 4 PASSED means content integration and Host technical validation passed; it is not launch approval. Preserve unresolved launch blockers in a complete prelaunch report with disposition 暂不建议上线.'
       ] : []),
       'Audit phases: only write reports/screenshots, unless permissions.uiChanges is explicitly true.',
       ...(deploying ? [
@@ -459,7 +462,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'If anything differs from the approved plan (files, branch, DNS records, provider, costs), stop without proceeding and return WAITING_FOR_USER describing the difference; a changed scope needs a new plan.',
         'Write DEPLOYMENT_REPORT.md and DEPLOYMENT_REPORT.json under nativeDirectory per the Skill output contract and return them as artifacts. Report each service state separately and never claim indexing or analytics data from a submitted request or detected tag.'
       ] : [
-        'Deployment: plan only. Prepare DEPLOYMENT_PLAN.md/json under nativeDirectory; the host validates and publishes the unchanged files into projectPath/docs according to the native contract. Never overwrite an existing project plan. No commit, push, hosting, DNS, GSC, GA4 or advertising actions.'
+        'Deployment: plan only. Prepare DEPLOYMENT_PLAN.md/json under nativeDirectory; the host validates and publishes the unchanged files into projectPath/docs according to the native contract. If context.launchReadiness.deploymentAuthorized is false, set status BLOCKED, confirmation.status NOT_AUTHORIZED_FOR_DEPLOYMENT, and copy context.launchReadiness.unresolvedBlockers exactly. Never overwrite an existing project plan. No commit, push, hosting, DNS, GSC, GA4 or advertising actions.'
       ]),
       'Never use another tool/service to bypass a failed preferred tool. Missing capabilities => BLOCKED; missing facts => WAITING_FOR_USER.',
       'Never read or print credentials. Do not invent keywords, sources, approvals, test results or completed actions.',
@@ -617,7 +620,12 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       result.missing_inputs.length === 0 && stage5Completion !== null;
     if (hostAudit && result.status === 'PASSED')
       throw Error('STAGE5_HOST_VALIDATION_REQUIRED: Worker cannot directly pass the host audit stage');
-    if (context.inputs.paths && hostReview && !hostAudit && result.status === 'PASSED') {
+    const stage6Completion = hostPrelaunch ? validateStage6WorkerHandoff(result.stage6_completion) : null;
+    const stage6HostPending = hostPrelaunch && result.status === 'PARTIAL' &&
+      result.missing_inputs.length === 0 && stage6Completion !== null;
+    if (hostPrelaunch && result.status === 'PASSED')
+      throw Error('STAGE6_HOST_VALIDATION_REQUIRED: Worker cannot directly pass the host prelaunch stage');
+    if (context.inputs.paths && hostReview && !hostAudit && !stage6HostPending && result.status === 'PASSED') {
       // The native validators require site-local reports; only the host may publish these bytes.
       const root = join(project, 'docs', hostAudit ? 'ui-ux-audit' : 'prelaunch');
       const directory = join(root, context.runId);
@@ -660,10 +668,16 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
             published => validateNativeArtifacts(skill,
               { ...validationContext, stage5SiteVerdict: stage5Completion.siteVerdict },
               { ...published, status: 'PASSED' }, validationOptions)));
+      } else if (stage6HostPending && context.inputs.paths) {
+        validated = await diagnosticStep('publish-and-validate-stage6-prelaunch', () =>
+          publishSiteAuditReports(context, result,
+            published => validateNativeArtifacts(skill, validationContext,
+              { ...published, status: 'PASSED' }, validationOptions),
+          { rootName: 'prelaunch', writeLatest: false }));
       } else {
         validated = await diagnosticStep('validate-native-artifacts', () =>
           validateNativeArtifacts(skill, validationContext,
-            stage4HostPending || stage5HostPending ? { ...result, status: 'PASSED' } : result,
+            stage4HostPending || stage5HostPending || stage6HostPending ? { ...result, status: 'PASSED' } : result,
             validationOptions));
       }
     } catch (error) {
@@ -681,6 +695,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       stage5SiteVerdict: stage5Completion.siteVerdict,
       evidence: [...result.evidence,
         `Host accepted the complete Stage 5 audit execution; independent site verdict remains ${stage5Completion.siteVerdict}.`] };
+    if (stage6HostPending) validated = { ...validated, status: 'PASSED',
+      evidence: [...result.evidence,
+        `Host accepted the complete Stage 6 audit execution; launch readiness remains ${stage6Completion.launchReadiness}.`] };
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];

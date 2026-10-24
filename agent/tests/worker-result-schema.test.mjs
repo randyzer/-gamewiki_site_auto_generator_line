@@ -61,3 +61,13 @@ test('Stage 5 audit completion handoff is required and nullable for other worker
   assert.deepEqual(completion.properties.site_verdict.enum,
     ['SHIP', 'SHIP_WITH_FIXES', 'NEEDS_WORK', 'BLOCKED']);
 });
+
+test('Stage 6 prelaunch completion handoff separates audit completion from launch readiness', async () => {
+  const schema = JSON.parse(await readFile(schemaPath, 'utf8'));
+  const completion = schema.properties.stage6_completion;
+  assert.ok(schema.required.includes('stage6_completion'));
+  assert.deepEqual(completion.type, ['object', 'null']);
+  assert.equal(completion.properties.kind.const, 'STAGE6_PRELAUNCH_HANDOFF_V1');
+  assert.deepEqual(completion.properties.launch_readiness.enum, ['CLEARED', 'NOT_CLEARED']);
+  assert.ok(completion.properties.site_disposition.enum.includes('暂不建议上线'));
+});

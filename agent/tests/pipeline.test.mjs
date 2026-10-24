@@ -227,7 +227,9 @@ async function launchReadinessFixture(t, pipelineOptions = {}) {
     return [...nameServers];
   };
   let stage6Calls = 0;
+  const workerCalls = [];
   const executor = async (skill, context) => {
+    workerCalls.push({ skill, context });
     if (skill === api.STAGES[3]) {
       await writeFile(join(context.stage4Transaction.candidatePath, 'worker-change.txt'), 'validated candidate\n');
       await mkdir(join(context.stage4Transaction.candidatePath, 'legal'));
@@ -239,13 +241,30 @@ async function launchReadinessFixture(t, pipelineOptions = {}) {
         stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS],
         evidence: ['Worker-owned gates passed; launch readiness remains Host-owned.'] };
     }
-    if (skill === api.STAGES[5]) stage6Calls++;
+    if (skill === api.STAGES[5]) {
+      stage6Calls++;
+      const result = f.good(skill, context);
+      const report = result.artifacts.find(item => item.kind === 'PRELAUNCH_ACCEPTANCE.json');
+      report.content = JSON.stringify({
+        disposition: context.launchReadiness.status === 'CLEARED' ? '可以上线' : '暂不建议上线',
+        siteRevision: f.inputs.siteRevision,
+        domain: f.inputs.domain,
+        execution_acceptance: {
+          kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1',
+          status: 'COMPLETE',
+          context_digest: context.launchReadiness.contextDigest,
+          launch_readiness: context.launchReadiness.status,
+          unresolved_blockers: context.launchReadiness.unresolvedBlockers,
+        },
+      });
+      return result;
+    }
     return f.good(skill, context);
   };
   const pipeline = await f.create({ executor, installSiteDependencies: f.installSiteDependencies,
     validateStage4: f.validateStage4, resolveLaunchNameServers, ...pipelineOptions });
   return { ...f, executor, pipeline, privacyBytes, termsBytes, nameServers,
-    resolveLaunchNameServers, stage6Calls: () => stage6Calls };
+    resolveLaunchNameServers, workerCalls, stage6Calls: () => stage6Calls };
 }
 
 function launchReadinessClearance(f, binding, projectDigest) {
@@ -276,19 +295,58 @@ function launchReadinessClearance(f, binding, projectDigest) {
   };
 }
 
-test('Stage 6 cannot run or pass while persisted Stage 4 launch blockers are unresolved', async t => {
+test('Stage 6 runs without clearance and persists a non-deployable prelaunch assessment', async t => {
   const f = await launchReadinessFixture(t);
-  await advance(f.pipeline, 5);
+  const state = await advance(f.pipeline, 6);
 
-  const state = await advance(f.pipeline, 1);
+  assert.equal(state.stages[5].status, 'PASSED');
+  assert.equal(f.stage6Calls(), 1);
+  assert.equal(state.stages[5].checkpoint.prelaunchAssessment.launchReadiness, 'NOT_CLEARED');
+  assert.equal(state.stages[5].checkpoint.prelaunchAssessment.deploymentAuthorized, false);
+  assert.deepEqual(state.stages[5].checkpoint.prelaunchAssessment.unresolvedBlockers
+    .filter(item => item.source === 'STAGE4_LAUNCH_READINESS').map(item => item.code),
+  STAGE4_LAUNCH_BLOCKERS);
+});
 
-  assert.equal(state.stages[5].status, 'WAITING_FOR_USER');
-  assert.deepEqual(state.stages[5].missing_inputs, ['launchReadinessClearance']);
-  assert.equal(f.stage6Calls(), 0);
+test('Stage 7 may prepare a non-executing blocked plan but cannot execute it without clearance', async t => {
+  const f = await launchReadinessFixture(t, { deploymentExecution: true });
+  const planned = await advance(f.pipeline, 7);
+
+  assert.equal(planned.stages[6].status, 'WAITING_FOR_USER');
+  assert.equal(planned.stages[6].checkpoint.planDigest?.length, 64);
+  assert.equal(f.workerCalls.find(call => call.skill === api.STAGES[6]).context.launchReadiness.launchReadiness,
+    'NOT_CLEARED');
+
+  await assert.rejects(f.pipeline.updateUserInputs({ deploymentPlanApproval: {
+    approved: true, digest: planned.stages[6].checkpoint.planDigest,
+  } }), /LAUNCH_READINESS/);
+  assert.equal(f.pipeline.snapshot().deploymentExecuted, false);
+});
+
+test('Stage 7 rejects a stale Stage 6 assessment after accepted Stage 5 evidence changes', async t => {
+  const f = await launchReadinessFixture(t);
+  const accepted = await advance(f.pipeline, 6);
+  const auditArtifact = accepted.stages[4].artifacts.find(item => item.kind === 'UI_UX_AUDIT.json');
+  const changedAudit = JSON.stringify({ verdict: 'PASSED', findings: [
+    { id: 'UX-LOW', severity: 'LOW', status: 'OPEN', route: '/', evidence: 'updated detail' },
+  ] });
+  await writeFile(auditArtifact.path, changedAudit);
+  const manifest = JSON.parse(await readFile(f.pipeline.manifestPath, 'utf8'));
+  manifest.stages[4].artifacts.find(item => item.kind === 'UI_UX_AUDIT.json').sha256 = hash(changedAudit);
+  await writeFile(f.pipeline.manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+
+  const resumed = await f.create({ runId: accepted.runId, resume: true, inputs: {}, executor: f.executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    resolveLaunchNameServers: f.resolveLaunchNameServers });
+  const result = await resumed.advance();
+  assert.equal(result.stages[6].status, 'BLOCKED');
+  assert.match(result.stages[6].diagnostic.reason, /Persisted assessment is stale or unrelated/);
+  assert.equal(f.workerCalls.filter(call => call.skill === api.STAGES[6]).length, 0);
+  assert.equal(result.deploymentExecuted, false);
 });
 
 test('Stage 6 persists verified clearances and Stage 7 rejects a forged clearance attestation', async t => {
-  const f = await launchReadinessFixture(t);
+  const f = await launchReadinessFixture(t, { deploymentExecution: true });
   await advance(f.pipeline, 4);
   const binding = f.pipeline.snapshot().stages[3].checkpoint.launchReadiness;
   await f.pipeline.advance();
@@ -306,10 +364,13 @@ test('Stage 6 persists verified clearances and Stage 7 rejects a forged clearanc
   await writeFile(f.pipeline.manifestPath, JSON.stringify(manifest, null, 2) + '\n');
   const resumed = await f.create({ runId: accepted.runId, resume: true, inputs: {}, executor: f.executor,
     installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
-    resolveLaunchNameServers: f.resolveLaunchNameServers });
-  const rejected = await resumed.advance();
-  assert.equal(rejected.stages[6].status, 'BLOCKED');
-  assert.match(rejected.stages[6].evidence.join('\n'), /LAUNCH_READINESS/);
+    resolveLaunchNameServers: f.resolveLaunchNameServers, deploymentExecution: true });
+  const planned = await resumed.advance();
+  assert.equal(planned.stages[6].status, 'WAITING_FOR_USER');
+  await assert.rejects(resumed.updateUserInputs({ deploymentPlanApproval: {
+    approved: true, digest: planned.stages[6].checkpoint.planDigest,
+  } }), /LAUNCH_READINESS_ATTESTATION_INVALID/);
+  assert.equal(resumed.snapshot().deploymentExecuted, false);
 });
 
 test('Stage 7 refuses an approved deployment plan after launch-clearance evidence becomes stale', async t => {
@@ -1360,7 +1421,7 @@ test('canonical-required content waits for confirmed origin', async t => {
   await p.advance(); assert.equal(p.snapshot().stages[3].status, 'PASSED');
 });
 
-test('prelaunch no-go cannot enter deployment planning', async t => {
+test('prelaunch no-go completes audit and enters non-executing deployment planning', async t => {
   const f = await fixture(t);
   const p = await f.create({ executor: async (s, c) => {
     const out = f.good(s, c);
@@ -1368,8 +1429,9 @@ test('prelaunch no-go cannot enter deployment planning', async t => {
       JSON.stringify({ disposition: '暂不建议上线', domain: f.inputs.domain, siteRevision: f.inputs.siteRevision });
     return out;
   } });
-  await advance(p, 7); assert.equal(p.snapshot().stages[5].status, 'BLOCKED');
-  assert.equal(p.snapshot().stages[6].status, 'NOT_STARTED');
+  await advance(p, 7); assert.equal(p.snapshot().stages[5].status, 'PASSED');
+  assert.equal(p.snapshot().stages[5].checkpoint.prelaunchAssessment.deploymentAuthorized, false);
+  assert.equal(p.snapshot().stages[6].status, 'WAITING_FOR_USER');
 });
 
 test('explicit retry retains attempt history and can resume partial work', async t => {
@@ -1674,16 +1736,24 @@ test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck art
       const context = JSON.parse(options.input.split('Task context: ')[1].split('\n')[0]);
       const artifacts = [];
       for (const kind of context.requiredArtifacts) {
-        const path = join(context.nativeDirectory, kind);
+        const path = join(context.reportDirectory, kind);
         const content = kind === 'PRELAUNCH_ACCEPTANCE.json' ? JSON.stringify({
           run_id: context.runId, game: context.inputs.gameIdentity, project_path: context.inputs.projectPath,
-          expected_domain: 'https://' + context.inputs.domain, disposition: '可以上线',
+          expected_domain: 'https://' + context.inputs.domain, disposition: '暂不建议上线',
           coverage: { routes_expected: 1, routes_checked: 1 }, pages: [{ path: '/' }],
+          execution_acceptance: { kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+            context_digest: context.launchReadiness.contextDigest,
+            launch_readiness: context.launchReadiness.status,
+            unresolved_blockers: context.launchReadiness.unresolvedBlockers },
         }) : '# Synthetic prelaunch report';
         await writeFile(path, content); artifacts.push({ kind, path });
       }
       await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
-        status: 'PASSED', artifacts, evidence: ['Synthetic worker report'], missing_inputs: [],
+        status: 'PARTIAL', summary: 'Synthetic complete audit', artifacts,
+        evidence: ['Synthetic worker report'], missing_inputs: [], stage4_completion: null,
+        stage5_completion: null, stage6_completion: { kind: 'STAGE6_PRELAUNCH_HANDOFF_V1',
+          audit_execution: 'COMPLETE', host_validation: 'REQUIRED',
+          site_disposition: '暂不建议上线', launch_readiness: context.launchReadiness.status },
       }));
     },
   });

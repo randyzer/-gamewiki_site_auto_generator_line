@@ -33,6 +33,7 @@ import { createStage4LaunchReadinessBinding, verifyStage4LaunchReadinessBinding,
   validateLaunchReadinessClearance, createStage6LaunchReadinessAttestation,
   verifyStage6LaunchReadinessAttestation } from './stage4-launch-gap-policy.mjs';
 import { projectContentDigest } from './project-content-digest.mjs';
+import { createPrelaunchContext, createPrelaunchAssessment, verifyPrelaunchAssessment } from './stage6-prelaunch-policy.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -550,6 +551,32 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     return attestation;
   }
 
+  async function prelaunchContext() {
+    const binding = stage4LaunchReadinessBinding();
+    const auditStage = findStage(state.stages, STAGE.UI_UX_AUDIT);
+    const auditArtifact = auditStage.artifacts.find(item => item.kind === 'UI_UX_AUDIT.json');
+    assert(auditArtifact, 'STAGE5_AUDIT_MISSING');
+    const stage5AuditBytes = await regularFile(auditArtifact.path);
+    const stage5AuditSha256 = hash(stage5AuditBytes);
+    assert(stage5AuditSha256 === auditArtifact.sha256, 'STAGE5_AUDIT_SHA256_MISMATCH');
+    const stage5Audit = parseArtifactJson(stage5AuditBytes, auditArtifact.path);
+    let verified = null;
+    if (state.inputs.launchReadinessClearance !== undefined) {
+      assert(binding, 'LAUNCH_READINESS_BINDING_MISSING');
+      verified = await verifyLaunchReadinessClearance();
+    }
+    return createPrelaunchContext({ runId, siteRevision: state.inputs.siteRevision,
+      projectDigest: auditStage.checkpoint.projectDigest, binding, stage5Audit,
+      stage5AuditSha256,
+      clearanceDigest: verified?.clearanceDigest ?? null });
+  }
+
+  async function verifyPrelaunchState() {
+    const context = await prelaunchContext();
+    const assessment = findStage(state.stages, STAGE.PRELAUNCH_ACCEPTANCE).checkpoint.prelaunchAssessment;
+    return verifyPrelaunchAssessment(assessment, context);
+  }
+
   const scopedApproval = value => value?.approved === true && value.projectPath === state.inputs.projectPath && nonempty(value.scope);
   const uiApproval = value => scopedApproval(value) && value.runId === runId && stageName(value.stage) === STAGE.UI_UX_AUDIT &&
     value.siteRevision === state.inputs.siteRevision && Array.isArray(value.files) && value.files.length > 0 &&
@@ -587,9 +614,6 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       if (!nonempty(input.siteRevision)) missing.push('siteRevision');
     }
     if (index >= stageIndex(STAGE.PRELAUNCH_ACCEPTANCE) && !/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9-]+$/i.test(input.domain ?? '')) missing.push('domain');
-    if (state.stages[index].skill === STAGE.PRELAUNCH_ACCEPTANCE &&
-        stage4LaunchReadinessBinding() && input.launchReadinessClearance === undefined)
-      missing.push('launchReadinessClearance');
     if (state.stages[index].skill === STAGE.DEPLOYMENT_PLAN) {
       for (const key of ['repo', 'branch']) if (!nonempty(input[key])) missing.push(key);
       if (!nonempty(input.dns?.provider) || input.dns.recordsReviewed !== true) missing.push('dns');
@@ -733,7 +757,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (state.templateSnapshot) await verifyTemplateSnapshot(state.templateSnapshot);
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         await verifyProjectFreshness(index);
-        if (index >= stageIndex(STAGE.DEPLOYMENT_PLAN)) await verifyStage6LaunchReadiness();
+        if (index >= stageIndex(STAGE.DEPLOYMENT_PLAN)) await verifyPrelaunchState();
         if (index > stageIndex(STAGE.KEYWORD_RESEARCH)) {
           const expected = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256;
           assert(expected && hash(await regularFile(state.inputs.rawKeywordsFile)) === expected, 'Raw keywords changed; explicitly update input or start a new run');
@@ -831,8 +855,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const inputCopyPaths = Object.fromEntries(Object.entries(state.inputCopies ?? {}).map(([key, copy]) => [key, copy.copyPath]));
         const workerInputs = { ...state.inputs, ...inputCopyPaths };
         const launchReadiness = stage.skill === STAGE.PRELAUNCH_ACCEPTANCE
-          ? await verifyLaunchReadinessClearance()
-          : stage.skill === STAGE.DEPLOYMENT_PLAN ? await verifyStage6LaunchReadiness() : null;
+          ? await prelaunchContext()
+          : stage.skill === STAGE.DEPLOYMENT_PLAN ? await verifyPrelaunchState() : null;
         const researchHandoff = index > stageIndex(STAGE.KEYWORD_RESEARCH)
           ? await verifyArtifacts(stageIndex(STAGE.KEYWORD_RESEARCH)) : null;
         const context = clone({ runId, stage: stage.skill, inputs: workerInputs, inputCopyPaths,
@@ -981,7 +1005,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
           const report = artifacts.find(a => a.kind === 'PRELAUNCH_ACCEPTANCE.json');
           const data = JSON.parse(Buffer.from(report.content, report.encoding ?? 'utf8').toString('utf8'));
           const reasons = [];
-          if (!['可以上线', '可以上线，但有P2待办'].includes(data.disposition)) reasons.push('Prelaunch disposition does not permit deployment planning');
+          if (!['可以上线', '可以上线，但有P2待办', '暂不建议上线'].includes(data.disposition)) reasons.push('Prelaunch disposition is invalid');
           if (data.siteRevision !== undefined && data.siteRevision !== state.inputs.siteRevision) reasons.push('Prelaunch report siteRevision differs from the current task');
           if (data.expected_domain !== undefined ? data.expected_domain !== 'https://' + state.inputs.domain : data.domain !== state.inputs.domain) reasons.push('Prelaunch report domain differs from the current task');
           if (reasons.length) { status = 'BLOCKED'; evidence = reasons; }
@@ -1046,8 +1070,13 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         }
         if (stage.skill === STAGE.UI_UX_AUDIT && status === 'PASSED') stage.checkpoint.projectDigest = await projectDigest();
         if (stage.skill === STAGE.PRELAUNCH_ACCEPTANCE && status === 'PASSED') {
-          const verified = await verifyLaunchReadinessClearance();
-          if (verified) {
+          const context = await prelaunchContext();
+          const report = saved.find(item => item.kind === 'PRELAUNCH_ACCEPTANCE.json');
+          const reportData = parseArtifactJson(await regularFile(report.path), report.path);
+          stage.checkpoint.prelaunchAssessment = createPrelaunchAssessment({ context,
+            reportSha256: report.sha256, disposition: reportData.disposition });
+          const verified = state.inputs.launchReadinessClearance === undefined ? null : await verifyLaunchReadinessClearance();
+          if (verified && stage.checkpoint.prelaunchAssessment.deploymentAuthorized) {
             stage.checkpoint.launchReadiness = createStage6LaunchReadinessAttestation({
               binding: verified.binding, siteRevision: state.inputs.siteRevision,
               projectDigest: verified.projectDigest, clearanceDigest: verified.clearanceDigest,
@@ -1243,7 +1272,11 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         const approval = patch.deploymentPlanApproval;
         assert(approval?.approved === true && approval.digest === findStage(state.stages, STAGE.DEPLOYMENT_PLAN).checkpoint.planDigest, 'Approval must match current deployment plan digest');
         await verifyLock();
-        await verifyStage6LaunchReadiness();
+        if (deploymentExecution) {
+          const assessment = await verifyPrelaunchState();
+          assert(assessment.deploymentAuthorized === true, 'LAUNCH_READINESS_NOT_CLEARED');
+          await verifyStage6LaunchReadiness();
+        }
         for (let i = 0; i <= stageIndex(STAGE.DEPLOYMENT_PLAN); i++) await verifyArtifacts(i);
         await verifyProjectFreshness(stageIndex(STAGE.DEPLOYMENT_PLAN));
         assert(hash(await regularFile(state.inputs.rawKeywordsFile)) === findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256,

@@ -35,11 +35,23 @@
       "required": ["kind", "audit_execution", "host_validation", "site_verdict"],
       "additionalProperties": false
     },
+    "stage6_completion": {
+      "type": ["object", "null"],
+      "properties": {
+        "kind": { "type": "string", "const": "STAGE6_PRELAUNCH_HANDOFF_V1" },
+        "audit_execution": { "type": "string", "const": "COMPLETE" },
+        "host_validation": { "type": "string", "const": "REQUIRED" },
+        "site_disposition": { "type": "string", "enum": ["可以上线", "可以上线，但有P2待办", "暂不建议上线"] },
+        "launch_readiness": { "type": "string", "enum": ["CLEARED", "NOT_CLEARED"] }
+      },
+      "required": ["kind", "audit_execution", "host_validation", "site_disposition", "launch_readiness"],
+      "additionalProperties": false
+    },
     "artifacts": { "type": "array", "items": {
       "type": "object", "properties": {"kind": {"type": "string"}, "path": {"type": "string"}},
       "required": ["kind", "path"], "additionalProperties": false
     } }
   },
-  "required": ["status", "summary", "evidence", "missing_inputs", "stage4_completion", "stage5_completion", "artifacts"],
+  "required": ["status", "summary", "evidence", "missing_inputs", "stage4_completion", "stage5_completion", "stage6_completion", "artifacts"],
   "additionalProperties": false
 }
