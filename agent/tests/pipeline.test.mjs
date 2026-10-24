@@ -323,6 +323,28 @@ test('Stage 7 may prepare a non-executing blocked plan but cannot execute it wit
   assert.equal(f.pipeline.snapshot().deploymentExecuted, false);
 });
 
+test('Stage 7 rejects a stale Stage 6 assessment after accepted Stage 5 evidence changes', async t => {
+  const f = await launchReadinessFixture(t);
+  const accepted = await advance(f.pipeline, 6);
+  const auditArtifact = accepted.stages[4].artifacts.find(item => item.kind === 'UI_UX_AUDIT.json');
+  const changedAudit = JSON.stringify({ verdict: 'PASSED', findings: [
+    { id: 'UX-LOW', severity: 'LOW', status: 'OPEN', route: '/', evidence: 'updated detail' },
+  ] });
+  await writeFile(auditArtifact.path, changedAudit);
+  const manifest = JSON.parse(await readFile(f.pipeline.manifestPath, 'utf8'));
+  manifest.stages[4].artifacts.find(item => item.kind === 'UI_UX_AUDIT.json').sha256 = hash(changedAudit);
+  await writeFile(f.pipeline.manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+
+  const resumed = await f.create({ runId: accepted.runId, resume: true, inputs: {}, executor: f.executor,
+    installSiteDependencies: f.installSiteDependencies, validateStage4: f.validateStage4,
+    resolveLaunchNameServers: f.resolveLaunchNameServers });
+  const result = await resumed.advance();
+  assert.equal(result.stages[6].status, 'BLOCKED');
+  assert.match(result.stages[6].diagnostic.reason, /Persisted assessment is stale or unrelated/);
+  assert.equal(f.workerCalls.filter(call => call.skill === api.STAGES[6]).length, 0);
+  assert.equal(result.deploymentExecuted, false);
+});
+
 test('Stage 6 persists verified clearances and Stage 7 rejects a forged clearance attestation', async t => {
   const f = await launchReadinessFixture(t, { deploymentExecution: true });
   await advance(f.pipeline, 4);

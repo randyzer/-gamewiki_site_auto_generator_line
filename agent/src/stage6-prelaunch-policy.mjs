@@ -8,9 +8,10 @@ const invalid = detail => Object.assign(Error(`PRELAUNCH_ASSESSMENT_INVALID: ${d
 });
 
 export function createPrelaunchContext({ runId, siteRevision, projectDigest, binding,
-  stage5Audit, clearanceDigest = null }) {
+  stage5Audit, stage5AuditSha256, clearanceDigest = null }) {
   if (typeof runId !== 'string' || !runId || typeof siteRevision !== 'string' || !siteRevision ||
-      !digest(projectDigest) || !stage5Audit || typeof stage5Audit !== 'object')
+      !digest(projectDigest) || !digest(stage5AuditSha256) ||
+      !stage5Audit || typeof stage5Audit !== 'object')
     throw invalid('Host inputs are incomplete');
   const unresolvedBlockers = [];
   if (!binding?.bindingDigest) unresolvedBlockers.push({ source: 'STAGE4_LAUNCH_READINESS',
@@ -28,7 +29,8 @@ export function createPrelaunchContext({ runId, siteRevision, projectDigest, bin
     }
   }
   const unsigned = { kind: 'STAGE6_PRELAUNCH_CONTEXT_V1', runId, siteRevision, projectDigest,
-    stage4BindingDigest: binding?.bindingDigest ?? null, stage5Verdict: stage5Audit.verdict ?? null,
+    stage4BindingDigest: binding?.bindingDigest ?? null, stage5AuditSha256,
+    stage5Verdict: stage5Audit.verdict ?? null,
     clearanceDigest, status: unresolvedBlockers.length === 0 ? 'CLEARED' : 'NOT_CLEARED',
     unresolvedBlockers };
   return { ...unsigned, contextDigest: sha256(unsigned) };
@@ -65,6 +67,7 @@ export function createPrelaunchAssessment({ context, reportSha256, disposition }
     ['可以上线', '可以上线，但有P2待办'].includes(disposition);
   const unsigned = { kind: 'STAGE6_PRELAUNCH_ASSESSMENT_V1', contextDigest: context.contextDigest,
     reportSha256, siteRevision: context.siteRevision, projectDigest: context.projectDigest,
+    stage5AuditSha256: context.stage5AuditSha256,
     disposition, launchReadiness: context.status,
     unresolvedBlockers: context.unresolvedBlockers, deploymentAuthorized };
   return { ...unsigned, assessmentDigest: sha256(unsigned) };
@@ -73,6 +76,7 @@ export function createPrelaunchAssessment({ context, reportSha256, disposition }
 export function verifyPrelaunchAssessment(value, context) {
   if (!value || value.contextDigest !== context.contextDigest ||
       value.siteRevision !== context.siteRevision || value.projectDigest !== context.projectDigest ||
+      value.stage5AuditSha256 !== context.stage5AuditSha256 ||
       JSON.stringify(value.unresolvedBlockers) !== JSON.stringify(context.unresolvedBlockers))
     throw invalid('Persisted assessment is stale or unrelated');
   const { assessmentDigest, ...unsigned } = value;

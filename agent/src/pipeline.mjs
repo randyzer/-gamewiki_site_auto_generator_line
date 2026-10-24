@@ -556,7 +556,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     const auditStage = findStage(state.stages, STAGE.UI_UX_AUDIT);
     const auditArtifact = auditStage.artifacts.find(item => item.kind === 'UI_UX_AUDIT.json');
     assert(auditArtifact, 'STAGE5_AUDIT_MISSING');
-    const stage5Audit = parseArtifactJson(await regularFile(auditArtifact.path), auditArtifact.path);
+    const stage5AuditBytes = await regularFile(auditArtifact.path);
+    const stage5AuditSha256 = hash(stage5AuditBytes);
+    assert(stage5AuditSha256 === auditArtifact.sha256, 'STAGE5_AUDIT_SHA256_MISMATCH');
+    const stage5Audit = parseArtifactJson(stage5AuditBytes, auditArtifact.path);
     let verified = null;
     if (state.inputs.launchReadinessClearance !== undefined) {
       assert(binding, 'LAUNCH_READINESS_BINDING_MISSING');
@@ -564,6 +567,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     }
     return createPrelaunchContext({ runId, siteRevision: state.inputs.siteRevision,
       projectDigest: auditStage.checkpoint.projectDigest, binding, stage5Audit,
+      stage5AuditSha256,
       clearanceDigest: verified?.clearanceDigest ?? null });
   }
 
