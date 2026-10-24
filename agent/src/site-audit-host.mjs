@@ -47,8 +47,9 @@ async function atomicWrite(path, bytes, root) {
   await rename(temporary, path);
 }
 
-export async function publishSiteAuditReports(context, result, validate) {
-  const root = join(context.inputs.projectPath, 'docs', 'ui-ux-audit');
+export async function publishSiteAuditReports(context, result, validate,
+  { rootName = 'ui-ux-audit', writeLatest = true } = {}) {
+  const root = join(context.inputs.projectPath, 'docs', rootName);
   const directory = join(root, context.runId);
   const latest = join(root, 'LATEST');
   const backups = [];
@@ -67,8 +68,10 @@ export async function publishSiteAuditReports(context, result, validate) {
       await atomicWrite(target, bytes, context.inputs.projectPath);
       descriptor.path = target;
     }
-    backups.push({ path: latest, ...(await readOptional(latest)) });
-    await atomicWrite(latest, Buffer.from(context.runId), context.inputs.projectPath);
+    if (writeLatest) {
+      backups.push({ path: latest, ...(await readOptional(latest)) });
+      await atomicWrite(latest, Buffer.from(context.runId), context.inputs.projectPath);
+    }
     return await validate(result);
   } catch (error) {
     for (const backup of backups.reverse()) {

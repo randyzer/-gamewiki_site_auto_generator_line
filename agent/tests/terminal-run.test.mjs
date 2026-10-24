@@ -590,7 +590,7 @@ test('checkpoint-recovery intent cannot fall through after confirmation', async 
   assert.equal(after.deploymentExecuted, false);
 });
 
-test('a terminal run executes the approved plan on retry and reports the deployment', async t => {
+test('a terminal deployment approval cannot execute while launch readiness is not cleared', async t => {
   const s = await setup(t);
   const first = await runFromTerminal({ command: 'run', inputsFile: s.inputsFile, runId: 'term-deploy',
     configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
@@ -600,16 +600,14 @@ test('a terminal run executes the approved plan on retry and reports the deploym
   const inputs = { ...s.f.inputs, deploymentPlanApproval: { approved: true, digest: first.plan_digest } };
   await writeFile(s.inputsFile, JSON.stringify(inputs));
   const io = terminal('y');
-  const second = await runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId: 'term-deploy',
-    configuration: s.f.configuration, executor: s.executor, ...io });
+  await assert.rejects(runFromTerminal({ command: 'retry', inputsFile: s.inputsFile, runId: 'term-deploy',
+    configuration: s.f.configuration, executor: s.executor, ...io }), /LAUNCH_READINESS_NOT_CLEARED/);
   // The operator must see that this "y" approves a production deployment of exactly this plan.
   assert.match(io.text(), new RegExp(`DEPLOY TO PRODUCTION: approves plan ${first.plan_digest}`));
   assert.ok(io.text().includes(join(s.f.inputs.paths.siteDirectory, 'docs', 'DEPLOYMENT_PLAN.md')));
-  assert.equal(second.status, 'PASSED');
-  assert.equal(second.deployment_executed, true);
-  assert.equal(s.calls.filter(skill => skill === STAGE.DEPLOYMENT_PLAN).length, 2);
-  const report = await readFile(join(s.f.configuration.workspace, 'runs', 'term-deploy', 'AGENT_RUN_REPORT.md'), 'utf8');
-  assert.match(report, /Production deployed: true/);
+  assert.equal(s.calls.filter(skill => skill === STAGE.DEPLOYMENT_PLAN).length, 1);
+  const manifest = JSON.parse(await readFile(manifestPath(s.f, 'term-deploy')));
+  assert.equal(manifest.deploymentExecuted, false);
 });
 
 async function preview(s, { command = 'run', runId = 'code-run' } = {}) {
@@ -836,7 +834,7 @@ test('RUN_ID and command type are bound into each code', async t => {
   assert.equal(s.calls.length, 0);
 });
 
-test('deployment approval changes retry code; stale code leaves manifest untouched and current code deploys', async t => {
+test('deployment approval changes retry code but cannot bypass launch readiness', async t => {
   const s = await setup(t);
   const first = await runFromTerminal({ command: 'run', runId: 'code-run', inputsFile: s.inputsFile,
     configuration: s.f.configuration, executor: s.executor, ...terminal('y') });
@@ -853,9 +851,9 @@ test('deployment approval changes retry code; stale code leaves manifest untouch
     error.message.includes(old.code) && error.message.includes(current.code));
   assert.equal(s.calls.length, callsBefore);
   assert.equal(await readFile(manifestPath(s.f, 'code-run'), 'utf8'), before);
-  const result = await confirmRun(s, current.code, { command: 'retry' });
-  assert.equal(result.status, 'PASSED');
-  assert.equal(result.deployment_executed, true);
+  await assert.rejects(confirmRun(s, current.code, { command: 'retry' }), /LAUNCH_READINESS_NOT_CLEARED/);
+  const manifest = JSON.parse(await readFile(manifestPath(s.f, 'code-run')));
+  assert.equal(manifest.deploymentExecuted, false);
 });
 
 test('preview and confirm cannot be combined', async t => {

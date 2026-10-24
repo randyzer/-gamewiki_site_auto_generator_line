@@ -87,9 +87,15 @@ async function nativeFixture(t, index) {
     await mkdir(join(dir, 'screenshots')); await writeFile(join(dir, 'screenshots/offline.png'), 'Offline screenshot fixture');
     await writeFile(join(dirname(dir), 'LATEST'), context.runId);
   }
-  if (index === 5) await add('PRELAUNCH_ACCEPTANCE.json', { schema_version: '1.0', run_id: context.runId, game: context.inputs.gameIdentity,
-    project_path: project, expected_domain: 'https://' + context.inputs.domain, mode: 'audit-only', coverage: { routes_expected: 1, routes_checked: 1, limitations: [] },
-    pages: [{ path: '/' }], checks: [], seo_url_audit: { robots: { status: 'PASS' }, sitemap: { status: 'PASS' } }, findings: [], repairs: [], disposition: '可以上线' });
+  if (index === 5) {
+    context.launchReadiness = { kind: 'STAGE6_PRELAUNCH_CONTEXT_V1', status: 'CLEARED',
+      contextDigest: 'a'.repeat(64), unresolvedBlockers: [] };
+    await add('PRELAUNCH_ACCEPTANCE.json', { schema_version: '1.0', run_id: context.runId, game: context.inputs.gameIdentity,
+      project_path: project, expected_domain: 'https://' + context.inputs.domain, mode: 'audit-only', coverage: { routes_expected: 1, routes_checked: 1, limitations: [] },
+      pages: [{ path: '/' }], checks: [], seo_url_audit: { robots: { status: 'PASS' }, sitemap: { status: 'PASS' } }, findings: [], repairs: [], disposition: '可以上线',
+      execution_acceptance: { kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+        context_digest: context.launchReadiness.contextDigest, launch_readiness: 'CLEARED', unresolved_blockers: [] } });
+  }
   if (index === 6) await add('DEPLOYMENT_PLAN.json', { schema_version: 1, status: 'AWAITING_CONFIRMATION', confirmation: { status: 'AWAITING_CONFIRMATION' },
     project: { path: project, repository: context.inputs.repo, branch: context.inputs.branch }, domain: { production_origin: 'https://' + context.inputs.domain },
     github_sync: { push_authorized: false }, architecture: {}, hosting: {}, measurement: {}, checks: [], risks: [], rollback: [] });
@@ -159,14 +165,21 @@ test('prelaunch report must cover exactly the routes captured by the host', asyn
   f.context.hostEvidence = { routes: ['/', '/missing-from-report'], routePublicationViolations: [] };
   await assert.rejects(f.validate(), /Prelaunch host route coverage mismatch/);
 });
-test('prelaunch cannot pass while the accepted UI audit retains an open launch blocker', async t => {
+test('complete prelaunch audit preserves Host launch blockers without claiming deployment clearance', async t => {
   const f = await nativeFixture(t, 5);
-  const auditPath = join(f.context.runDirectory, 'accepted-ui-audit.json');
-  await writeFile(auditPath, JSON.stringify({ verdict: 'BLOCKED', findings: [
-    { severity: 'BLOCKER', status: 'OPEN' },
-  ] }));
-  f.context.upstream = [{ skill: STAGES[4], artifacts: [{ kind: 'UI_UX_AUDIT.json', path: auditPath }] }];
-  await assert.rejects(f.validate(), /PRELAUNCH_BLOCKED_BY_UI_AUDIT/);
+  const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
+    route: '/', status: 'OPEN' }];
+  f.context.launchReadiness = { ...f.context.launchReadiness, status: 'NOT_CLEARED',
+    contextDigest: 'b'.repeat(64), unresolvedBlockers: blockers };
+  const reportPath = f.result.artifacts.find(a => a.kind === 'PRELAUNCH_ACCEPTANCE.json').path;
+  const report = JSON.parse(await readFile(reportPath));
+  report.disposition = '暂不建议上线';
+  report.execution_acceptance = { kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+    context_digest: f.context.launchReadiness.contextDigest, launch_readiness: 'NOT_CLEARED',
+    unresolved_blockers: blockers };
+  await writeFile(reportPath, JSON.stringify(report));
+  const validated = await f.validate();
+  assert.equal(validated.status, 'PASSED');
 });
 test('homepage rejects directories, invalid ZIP and missing native fields', async t => {
   const f = await nativeFixture(t, 0); const zip = f.result.artifacts.find(a => a.kind === 'ICON.zip');
@@ -245,6 +258,22 @@ test('deployment cannot report itself approved or use another domain', async t =
   const f = await nativeFixture(t, 6); const item = f.result.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
   const data = JSON.parse(await readFile(item.path)); data.status = 'APPROVED'; await writeFile(item.path, JSON.stringify(data));
   await assert.rejects(f.validate(), /await confirmation/);
+});
+
+test('non-executing deployment plan preserves unresolved blockers and cannot await deployment approval', async t => {
+  const f = await nativeFixture(t, 6);
+  const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
+    route: '/', status: 'OPEN' }];
+  f.context.launchReadiness = { deploymentAuthorized: false, unresolvedBlockers: blockers };
+  const item = f.result.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
+  const data = JSON.parse(await readFile(item.path));
+  data.status = 'BLOCKED'; data.confirmation.status = 'NOT_AUTHORIZED_FOR_DEPLOYMENT';
+  data.unresolved_blockers = blockers;
+  await writeFile(item.path, JSON.stringify(data));
+  assert.equal((await f.validate()).status, 'PASSED');
+  data.unresolved_blockers = [];
+  await writeFile(item.path, JSON.stringify(data));
+  await assert.rejects(f.validate(), /preserve every Host launch blocker/);
 });
 
 test('complete handoff passes the native content-integrator preflight and is idempotent', async t => {

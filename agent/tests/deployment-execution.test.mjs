@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { createPipeline } from '../src/pipeline.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { fixture, goodResult, withSyntheticStage4 } from './helpers.mjs';
+import { sha256 } from '../src/files.mjs';
+import { STAGE4_LAUNCH_BLOCKERS } from '../src/stage4-launch-gap-policy.mjs';
 
 const DEPLOY = 6;
 const PRODUCTION_PERMISSIONS = ['gitPush', 'dns', 'productionDeployment', 'gsc', 'ga4'];
@@ -14,13 +16,50 @@ async function setup(t, { deploymentExecution = true, execute } = {}) {
   const calls = [];
   const executor = withSyntheticStage4(async (skill, context) => {
     calls.push({ skill, context: structuredClone(context) });
+    if (skill === STAGE.CONTENT_INTEGRATION) {
+      const result = await goodResult(skill, context);
+      const legal = join(context.stage4Transaction.candidatePath, 'legal');
+      await mkdir(legal, { recursive: true });
+      await writeFile(join(legal, 'privacy-policy.md'), 'Reviewed privacy policy\n');
+      await writeFile(join(legal, 'terms-of-service.md'), 'Reviewed terms\n');
+      return { ...result, status: 'PARTIAL', stage4WorkerArtifactsValidated: true,
+        stage4LaunchBlockers: [...STAGE4_LAUNCH_BLOCKERS] };
+    }
     if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute' && execute) return execute(context);
     return goodResult(skill, context);
   });
   const inputs = { ...f.inputs, projectPath: f.inputs.paths.siteDirectory };
-  const pipeline = await createPipeline({ ...f.configuration, inputs, executor, siteWrites: true, deploymentExecution });
+  const pipeline = await createPipeline({ ...f.configuration, inputs, executor, siteWrites: true,
+    deploymentExecution, resolveLaunchNameServers: async () => ['ns1.fixture.test'] });
   const toPlan = async () => {
-    for (let i = 0; i < 7; i++) await pipeline.advance();
+    for (let i = 0; i < 5; i++) await pipeline.advance();
+    const state = pipeline.snapshot();
+    const binding = state.stages[3].checkpoint.launchReadiness;
+    const projectDigest = state.stages[4].checkpoint.projectDigest;
+    const domain = inputs.domain, subjectDomain = domain;
+    const privacyPath = join(inputs.projectPath, 'legal/privacy-policy.md');
+    const termsPath = join(inputs.projectPath, 'legal/terms-of-service.md');
+    await pipeline.updateUserInputs({ launchReadinessClearance: {
+      kind: 'LAUNCH_READINESS_CLEARANCE_V2', stage4BindingDigest: binding.bindingDigest,
+      siteRevision: inputs.siteRevision, projectDigest, domain,
+      clearances: [
+        { code: 'OPERATOR_IDENTITY_REQUIRED', kind: 'OPERATOR_IDENTITY_CLEARANCE_V1', subjectDomain,
+          authority: 'USER', operatorName: 'Fixture Operator', operatorType: 'INDIVIDUAL', userConfirmed: true },
+        { code: 'CONTACT_CHANNEL_REQUIRED', kind: 'CONTACT_CHANNEL_CLEARANCE_V1', subjectDomain,
+          authority: 'USER', channelType: 'EMAIL', channelValue: 'owner@fixture.test', userConfirmed: true },
+        { code: 'JURISDICTION_REQUIRED', kind: 'JURISDICTION_CLEARANCE_V1', subjectDomain,
+          authority: 'USER', countryCode: 'US', jurisdiction: 'Test', userConfirmed: true },
+        { code: 'PRIVACY_POLICY_REVIEW_REQUIRED', kind: 'POLICY_REVIEW_CLEARANCE_V1', subjectDomain,
+          authority: 'USER_REVIEW', decision: 'APPROVED', policyPath: privacyPath,
+          policySha256: sha256('Reviewed privacy policy\n'), policyType: 'PRIVACY' },
+        { code: 'TERMS_POLICY_REVIEW_REQUIRED', kind: 'POLICY_REVIEW_CLEARANCE_V1', subjectDomain,
+          authority: 'USER_REVIEW', decision: 'APPROVED', policyPath: termsPath,
+          policySha256: sha256('Reviewed terms\n'), policyType: 'TERMS' },
+        { code: 'DNS_DELEGATION_REQUIRED', kind: 'DNS_DELEGATION_CLEARANCE_V1', subjectDomain,
+          authority: 'HOST_DNS', expectedNameServers: ['ns1.fixture.test'], provider: 'Fixture DNS' },
+      ],
+    } });
+    await pipeline.advance(); await pipeline.advance();
     return pipeline.snapshot().stages[DEPLOY].checkpoint.planDigest;
   };
   return { f, calls, pipeline, toPlan, projectPath: inputs.projectPath };
