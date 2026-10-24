@@ -5,7 +5,7 @@ import { isAbsolute, join, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runProcess } from './process.mjs';
 import { installDependencies, buildAndServe } from './site-preview-host.mjs';
-import { collectSiteAudit } from './site-audit-host.mjs';
+import { collectSiteAudit, publishSiteAuditReports } from './site-audit-host.mjs';
 import { collectPrelaunch } from './prelaunch-host.mjs';
 import { verifySiteEvidence } from './site-evidence.mjs';
 import { collectHomepageSources } from './homepage-source-host.mjs';
@@ -31,6 +31,7 @@ import { assessKeywordEvidenceOutcome, KEYWORD_EVIDENCE_CLAIMS_FILE, KEYWORD_EVI
 import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host.mjs';
 import { createStage4ReadinessGate, verifyStage4ReadinessBinding } from './stage4-readiness.mjs';
 import { stage4CandidateInputs } from './stage4-site-transaction.mjs';
+import { validateStage5WorkerHandoff } from './stage5-audit-policy.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
 
@@ -406,6 +407,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         ] :
         hostAudit ? [
           'Host browser evidence is in context.hostEvidence, with a SHA256 for every screenshot and automated evidence file. Read these files and use view_image to inspect the screenshots. Do not invoke browser commands or network requests.',
+          'HOST_UI_INTERACTIONS.json is trusted Host evidence. Verify its SHA256 from context.hostEvidence, and turn every FAIL into a finding whose route matches and whose category or evidence names the failed interaction category exactly. NOT_APPLICABLE is not a pass; NOT_TESTED means the audit execution is incomplete.',
+          'Add execution_acceptance to UI_UX_AUDIT.json exactly as {"kind":"AUDIT_EXECUTION_ACCEPTANCE_V1","status":"COMPLETE","host_interactions_sha256":context.hostEvidence.interactionsSha256}. Keep the independent site verdict as SHIP, SHIP_WITH_FIXES, NEEDS_WORK or BLOCKED.',
+          'Stage 5 completion is provisional. When all routes, six viewport widths, automated evidence, applicable Host interactions, findings and all three reports are complete, return PARTIAL with stage5_completion {"kind":"STAGE5_AUDIT_HANDOFF_V1","audit_execution":"COMPLETE","host_validation":"REQUIRED","site_verdict":<the exact UI_UX_AUDIT.json verdict>}. Site blockers do not make the audit incomplete. Missing or NOT_TESTED evidence must leave stage5_completion null.',
           context.inputs.paths
             ? 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in context.reportDirectory. The site is read-only; the host publishes the reports and LATEST for the unchanged Skill validator. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully.'
             : 'Write UI_UX_AUDIT_REPORT.md, UI_UX_AUDIT.json and UI_UX_OPTIMIZATION_PLAN.md in projectPath/docs/ui-ux-audit/runId, and LATEST in projectPath/docs/ui-ux-audit containing runId. Use exactly viewports [360,390,768,1024,1440,1920]. Complete the Skill rubric truthfully; this is audit-only, with no site changes.'
@@ -608,7 +612,12 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
     if (homepageResearch && result.status === 'PASSED' && !context.homepageSourceCaptures)
       return { status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['homepageSourceCaptures'], evidence: [
         `HOMEPAGE_SOURCE_CAPTURES_REQUIRED: plan the source URL list in ${requestPath}; no host capture evidence was collected.`] };
-    if (context.inputs.paths && hostReview && result.status === 'PASSED') {
+    const stage5Completion = hostAudit ? validateStage5WorkerHandoff(result.stage5_completion) : null;
+    const stage5HostPending = hostAudit && result.status === 'PARTIAL' &&
+      result.missing_inputs.length === 0 && stage5Completion !== null;
+    if (hostAudit && result.status === 'PASSED')
+      throw Error('STAGE5_HOST_VALIDATION_REQUIRED: Worker cannot directly pass the host audit stage');
+    if (context.inputs.paths && hostReview && !hostAudit && result.status === 'PASSED') {
       // The native validators require site-local reports; only the host may publish these bytes.
       const root = join(project, 'docs', hostAudit ? 'ui-ux-audit' : 'prelaunch');
       const directory = join(root, context.runId);
@@ -645,9 +654,18 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       stage4Completion !== null;
     let validated;
     try {
-      validated = await diagnosticStep('validate-native-artifacts', () =>
-        validateNativeArtifacts(skill, validationContext,
-          stage4HostPending ? { ...result, status: 'PASSED' } : result, validationOptions));
+      if (stage5HostPending && context.inputs.paths) {
+        validated = await diagnosticStep('publish-and-validate-stage5-audit', () =>
+          publishSiteAuditReports({ ...context, stage5SiteVerdict: stage5Completion.siteVerdict }, result,
+            published => validateNativeArtifacts(skill,
+              { ...validationContext, stage5SiteVerdict: stage5Completion.siteVerdict },
+              { ...published, status: 'PASSED' }, validationOptions)));
+      } else {
+        validated = await diagnosticStep('validate-native-artifacts', () =>
+          validateNativeArtifacts(skill, validationContext,
+            stage4HostPending || stage5HostPending ? { ...result, status: 'PASSED' } : result,
+            validationOptions));
+      }
     } catch (error) {
       error.workerStatus = result.status;
       error.hostValidation = 'FAILED';
@@ -659,6 +677,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       evidence: [...result.evidence,
         'Host independently validated the complete Worker artifact handoff; technical validation remains pending.',
         `Stage 4 launch blockers remain for Stage 6/7: ${stage4Completion.launchBlockers.join(', ') || '(none)'}`] };
+    if (stage5HostPending) validated = { ...validated, status: 'PASSED',
+      stage5SiteVerdict: stage5Completion.siteVerdict,
+      evidence: [...result.evidence,
+        `Host accepted the complete Stage 5 audit execution; independent site verdict remains ${stage5Completion.siteVerdict}.`] };
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];

@@ -24,11 +24,22 @@
       "required": ["kind", "worker_owned_gates", "host_validation", "blocking_gaps", "launch_blockers"],
       "additionalProperties": false
     },
+    "stage5_completion": {
+      "type": ["object", "null"],
+      "properties": {
+        "kind": { "type": "string", "const": "STAGE5_AUDIT_HANDOFF_V1" },
+        "audit_execution": { "type": "string", "const": "COMPLETE" },
+        "host_validation": { "type": "string", "const": "REQUIRED" },
+        "site_verdict": { "type": "string", "enum": ["SHIP", "SHIP_WITH_FIXES", "NEEDS_WORK", "BLOCKED"] }
+      },
+      "required": ["kind", "audit_execution", "host_validation", "site_verdict"],
+      "additionalProperties": false
+    },
     "artifacts": { "type": "array", "items": {
       "type": "object", "properties": {"kind": {"type": "string"}, "path": {"type": "string"}},
       "required": ["kind", "path"], "additionalProperties": false
     } }
   },
-  "required": ["status", "summary", "evidence", "missing_inputs", "stage4_completion", "artifacts"],
+  "required": ["status", "summary", "evidence", "missing_inputs", "stage4_completion", "stage5_completion", "artifacts"],
   "additionalProperties": false
 }

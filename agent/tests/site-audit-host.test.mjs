@@ -6,6 +6,7 @@ import { fixture } from './helpers.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { runProcess } from '../src/process.mjs';
+import { sha256 } from '../src/files.mjs';
 
 const host = await import('../src/site-audit-host.mjs').catch(() => ({}));
 const evidence = await import('../src/site-evidence.mjs').catch(() => ({}));
@@ -30,21 +31,42 @@ async function writeAudit(directory) {
   await writeFile(join(directory, 'screenshots/home/desktop-1440.png'), 'synthetic screenshot');
   await writeFile(join(directory, 'AUTOMATED_AUDIT.json'), JSON.stringify({ viewports: [360,390,768,1024,1440,1920].map(width => ({ width })) }));
 }
+async function writeInteractions(path, { notTested = false } = {}) {
+  await writeFile(path, JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
+    runId: 'audit-host', routes: [{ route: '/', checks: [{ category: 'navigation',
+      status: notTested ? 'NOT_TESTED' : 'PASS', detail: 'fixture' }] }],
+    summary: { PASS: notTested ? 0 : 1, FAIL: 0, NOT_APPLICABLE: 0, NOT_TESTED: notTested ? 1 : 0 },
+    completion: notTested ? 'INCOMPLETE' : 'COMPLETE' }));
+}
 test('audit adapter uses locked script through module hook and published routes plus homepage', async t => {
   const f = await auditFixture(t); let calls = 0;
   const result = await host.collectSiteAudit(f.context, { run: async (command, args) => {
     calls++; assert.equal(command, process.execPath); assert.equal(args[0], '--import');
     assert.ok(args[1].endsWith('playwright-register.mjs'));
-    assert.equal(args[2], join(f.root, 'skills/scripts/game_site_audit.mjs'));
-    assert.equal(args[args.indexOf('--url') + 1], 'http://127.0.0.1:3001');
-    assert.deepEqual(args.flatMap((v,i) => v === '--route' ? [args[i+1]] : []), ['/', '/guide']);
-    await writeAudit(args[args.indexOf('--out') + 1]);
+    if (args[2].endsWith('game_site_audit.mjs')) {
+      assert.equal(args[2], join(f.root, 'skills/scripts/game_site_audit.mjs'));
+      assert.equal(args[args.indexOf('--url') + 1], 'http://127.0.0.1:3001');
+      assert.deepEqual(args.flatMap((v,i) => v === '--route' ? [args[i+1]] : []), ['/', '/guide']);
+      await writeAudit(args[args.indexOf('--out') + 1]);
+    } else {
+      assert.ok(args[2].endsWith('site-audit-interactions.mjs'));
+      await writeInteractions(args[args.indexOf('--output') + 1]);
+    }
   }, url: 'http://127.0.0.1:3001' });
-  assert.equal(calls, 1); assert.ok(result.files.every(file => /^[a-f0-9]{64}$/.test(file.sha256)));
+  assert.equal(calls, 2); assert.ok(result.files.every(file => /^[a-f0-9]{64}$/.test(file.sha256)));
   assert.ok(result.screenshotsDirectory.endsWith('/screenshots'));
+  assert.ok(result.interactionsPath.endsWith('/HOST_UI_INTERACTIONS.json'));
+  assert.match(result.interactionsSha256, /^[a-f0-9]{64}$/);
   await evidence.verifySiteEvidence(result);
   await writeFile(result.automatedAuditPath, '{}');
   await assert.rejects(evidence.verifySiteEvidence(result), /HOST_EVIDENCE_CHANGED/);
+});
+test('audit adapter rejects incomplete host interaction evidence', async t => {
+  const f = await auditFixture(t);
+  await assert.rejects(host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async (_command, args) => {
+    if (args[2].endsWith('game_site_audit.mjs')) await writeAudit(args[args.indexOf('--out') + 1]);
+    else await writeInteractions(args[args.indexOf('--output') + 1], { notTested: true });
+  } }), /SITE_AUDIT_INTERACTIONS_INCOMPLETE/);
 });
 test('audit adapter rejects route escape and an incomplete viewport set', async t => {
   const f = await auditFixture(t), path = f.context.upstream[0].artifacts[0].path;
@@ -64,7 +86,10 @@ test('audit adapter rejects route escape and an incomplete viewport set', async 
 test('audit findings exit code 2 preserves completed evidence, other failures still reject', async t => {
   const f = await auditFixture(t);
   const bundle = await host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async (_c,args) => {
-    await writeAudit(args[args.indexOf('--out')+1]); throw Object.assign(Error('HIGH findings'), { exitCode: 2 });
+    if (args[2].endsWith('game_site_audit.mjs')) {
+      await writeAudit(args[args.indexOf('--out')+1]); throw Object.assign(Error('HIGH findings'), { exitCode: 2 });
+    }
+    await writeInteractions(args[args.indexOf('--output') + 1]);
   } });
   assert.equal(bundle.scriptExitCode, 2);
   await assert.rejects(host.collectSiteAudit(f.context, { url: 'http://127.0.0.1:3001', run: async () => { throw Object.assign(Error('browser launch failed'), { exitCode: 1 }); } }), /browser launch failed/);
@@ -94,6 +119,74 @@ test('audit executor builds preview, passes immutable evidence, permits view_ima
     await writeFile(args[args.indexOf('--output-last-message')+1], JSON.stringify({ status: 'BLOCKED', artifacts: [], missing_inputs: [], evidence: ['synthetic review incomplete'] }));
   } });
   assert.equal((await execute(STAGE.UI_UX_AUDIT, f.context)).status, 'BLOCKED'); assert.equal(stops, 1);
+});
+test('host accepts a complete provisional audit while preserving a BLOCKED site verdict', async t => {
+  const f = await auditFixture(t), requiredArtifacts = [
+    'UI_UX_AUDIT_REPORT.md', 'UI_UX_AUDIT.json', 'UI_UX_OPTIMIZATION_PLAN.md'];
+  f.context.requiredArtifacts = requiredArtifacts;
+  const execute = createSkillExecutor({ researchPython: process.execPath,
+    validationOptions: { run: async () => ({ exitCode: 0 }) },
+    previewSite: async () => ({ url: 'http://127.0.0.1:3001', stop: async () => {} }),
+    auditSite: async context => {
+      const directory = join(context.inputs.projectPath, 'docs/ui-ux-audit', context.runId);
+      await writeAudit(directory);
+      const interactionsPath = join(directory, 'HOST_UI_INTERACTIONS.json');
+      await writeInteractions(interactionsPath);
+      const interactionsSha256 = sha256(await readFile(interactionsPath));
+      return { ...(await evidence.snapshotSiteEvidence(directory)), routes: ['/'],
+        interactionsPath, interactionsSha256 };
+    },
+    run: async (_command, args, options) => {
+      const context = JSON.parse(options.input.split('Task context: ')[1].split('\n')[0]);
+      const report = { schema_version: 1, game: context.inputs.gameIdentity, mode: 'audit-only', verdict: 'BLOCKED',
+        execution_acceptance: { kind: 'AUDIT_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+          host_interactions_sha256: context.hostEvidence.interactionsSha256 },
+        routes: [{ route: '/', archetype: 'home', reason: 'fixture' }],
+        findings: [{ id: 'UX-001', severity: 'BLOCKER', route: '/', category: 'trust',
+          evidence: 'Missing operator identity', impact: 'Launch trust requirement is absent',
+          recommendation: 'Add verified operator details', verification: 'Review policy pages', status: 'OPEN' }],
+        viewports: [360,390,768,1024,1440,1920],
+        summary: { blocker: 1, high: 0, medium: 0, low: 0, note: 0 } };
+      await writeFile(join(context.reportDirectory, 'UI_UX_AUDIT_REPORT.md'), '# Complete fixture audit');
+      await writeFile(join(context.reportDirectory, 'UI_UX_OPTIMIZATION_PLAN.md'), '# Fix UX-001');
+      await writeFile(join(context.reportDirectory, 'UI_UX_AUDIT.json'), JSON.stringify(report));
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({
+        status: 'PARTIAL', summary: 'Audit complete; site blocked', missing_inputs: [], evidence: ['fixture'],
+        stage4_completion: null,
+        stage5_completion: { kind: 'STAGE5_AUDIT_HANDOFF_V1', audit_execution: 'COMPLETE',
+          host_validation: 'REQUIRED', site_verdict: 'BLOCKED' },
+        artifacts: requiredArtifacts.map(kind => ({ kind, path: join(context.reportDirectory, kind) })),
+      }));
+    } });
+  const result = await execute(STAGE.UI_UX_AUDIT, f.context);
+  assert.equal(result.status, 'PASSED');
+  assert.equal(result.stage5SiteVerdict, 'BLOCKED');
+  assert.equal(await readFile(join(f.context.inputs.projectPath, 'docs/ui-ux-audit/LATEST'), 'utf8'), f.context.runId);
+  assert.ok(result.artifacts.every(item => item.path.includes('/artifacts/4/1/')),
+    'validated artifacts must be registered into the run snapshot');
+});
+test('host report publication rolls back reports and LATEST when validation fails', async t => {
+  const f = await auditFixture(t), root = join(f.context.inputs.projectPath, 'docs/ui-ux-audit');
+  const directory = join(root, f.context.runId), reportDirectory = join(f.context.runDirectory, 'native/reports');
+  await mkdir(reportDirectory, { recursive: true });
+  f.context.nativeDirectory = join(f.context.runDirectory, 'native');
+  f.context.reportDirectory = reportDirectory;
+  f.context.requiredArtifacts = ['UI_UX_AUDIT_REPORT.md', 'UI_UX_AUDIT.json', 'UI_UX_OPTIMIZATION_PLAN.md'];
+  await mkdir(directory, { recursive: true });
+  await writeFile(join(root, 'LATEST'), 'previous-run');
+  const result = { artifacts: [] };
+  for (const kind of f.context.requiredArtifacts) {
+    const path = join(reportDirectory, kind); await writeFile(path, `new ${kind}`);
+    result.artifacts.push({ kind, path });
+  }
+  await assert.rejects(host.publishSiteAuditReports(f.context, result, async () => {
+    throw Error('synthetic validation failure');
+  }), /synthetic validation failure/);
+  assert.equal(await readFile(join(root, 'LATEST'), 'utf8'), 'previous-run');
+  for (const kind of f.context.requiredArtifacts)
+    await assert.rejects(readFile(join(directory, kind)), { code: 'ENOENT' });
+  assert.deepEqual(result.artifacts.map(item => item.path),
+    f.context.requiredArtifacts.map(kind => join(reportDirectory, kind)));
 });
 test('audit evidence mutation is rejected, worker failure still stops preview', async t => {
   for (const throws of [false, true]) {

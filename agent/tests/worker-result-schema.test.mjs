@@ -51,3 +51,13 @@ test('Stage 4 completion handoff is required and nullable for non-Stage-4 worker
   ]);
   assert.ok(completion.required.includes('launch_blockers'));
 });
+
+test('Stage 5 audit completion handoff is required and nullable for other workers', async () => {
+  const schema = JSON.parse(await readFile(schemaPath, 'utf8'));
+  const completion = schema.properties.stage5_completion;
+  assert.ok(schema.required.includes('stage5_completion'));
+  assert.deepEqual(completion.type, ['object', 'null']);
+  assert.equal(completion.properties.kind.const, 'STAGE5_AUDIT_HANDOFF_V1');
+  assert.deepEqual(completion.properties.site_verdict.enum,
+    ['SHIP', 'SHIP_WITH_FIXES', 'NEEDS_WORK', 'BLOCKED']);
+});

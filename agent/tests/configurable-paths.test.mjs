@@ -206,7 +206,13 @@ test('audit worker writes native reports while the host publishes them for the u
     auditSite: async () => {
       await mkdir(join(evidenceDirectory, 'screenshots'), { recursive: true });
       await writeFile(join(evidenceDirectory, 'screenshots/home.png'), 'synthetic');
-      return snapshotSiteEvidence(evidenceDirectory);
+      const interactionsPath = join(evidenceDirectory, 'HOST_UI_INTERACTIONS.json');
+      const interactions = Buffer.from(JSON.stringify({ kind: 'HOST_UI_INTERACTIONS_V1', schemaVersion: 1,
+        runId: 'audit', routes: [{ route: '/', checks: [{ category: 'navigation', status: 'PASS', detail: 'fixture' }] }],
+        summary: { PASS: 1, FAIL: 0, NOT_APPLICABLE: 0, NOT_TESTED: 0 }, completion: 'COMPLETE' }));
+      await writeFile(interactionsPath, interactions);
+      return { ...(await snapshotSiteEvidence(evidenceDirectory)), routes: ['/'], interactionsPath,
+        interactionsSha256: sha256(interactions) };
     }, run: async (_command, args, options) => {
       const context = JSON.parse(options.input.split('Task context: ')[1].split('\n')[0]);
       assert.ok(context.reportDirectory.startsWith(context.nativeDirectory));
@@ -215,8 +221,13 @@ test('audit worker writes native reports while the host publishes them for the u
       assert.ok(!config.includes(JSON.stringify(evidenceDirectory) + '="write"'));
       await mkdir(context.reportDirectory, { recursive: true });
       for (const name of names) await writeFile(join(context.reportDirectory, name), name.endsWith('.json')
-        ? JSON.stringify({ viewports: [360,390,768,1024,1440,1920], verdict: 'SHIP' }) : 'synthetic');
-      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'PASSED',
+        ? JSON.stringify({ viewports: [360,390,768,1024,1440,1920], verdict: 'SHIP',
+          routes: [{ route: '/', archetype: 'home', reason: 'fixture' }], findings: [],
+          execution_acceptance: { kind: 'AUDIT_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+            host_interactions_sha256: context.hostEvidence.interactionsSha256 } }) : 'synthetic');
+      await writeFile(args[args.indexOf('--output-last-message') + 1], JSON.stringify({ status: 'PARTIAL',
+        stage4_completion: null, stage5_completion: { kind: 'STAGE5_AUDIT_HANDOFF_V1',
+          audit_execution: 'COMPLETE', host_validation: 'REQUIRED', site_verdict: 'SHIP' },
         artifacts: names.map(kind => ({ kind, path: join(context.reportDirectory, kind) })), missing_inputs: [], evidence: ['synthetic'] }));
     }, validationOptions: { run: async (_command, args) => {
       assert.equal(args[args.indexOf('--run-dir') + 1], evidenceDirectory);
