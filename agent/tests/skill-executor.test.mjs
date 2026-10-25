@@ -998,6 +998,47 @@ test('validated deployment plan is published to native docs with identical snaps
   assert.equal(await readFile(join(projectPath, 'docs/DEPLOYMENT_PLAN.md'), 'utf8'), 'unconfirmed user plan');
 });
 
+test('Host accepts a complete blocked Stage 7 plan without authorizing deployment', async t => {
+  const f = await fixture(t); const projectPath = join(f.configuration.workspace, 'site'); let invoked;
+  const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
+    route: '/', status: 'OPEN' }];
+  const executor = createSkillExecutor({ run: async (_command, args, options) => {
+    invoked = { args, options };
+    const output = args[args.indexOf('--output-last-message') + 1];
+    const plan = { schema_version: 1, status: 'BLOCKED',
+      confirmation: { status: 'NOT_AUTHORIZED_FOR_DEPLOYMENT' },
+      project: { path: projectPath, repository: f.inputs.repo, branch: f.inputs.branch },
+      domain: { production_origin: 'https://' + f.inputs.domain },
+      github_sync: { push_authorized: false }, unresolvedBlockers: blockers,
+      architecture: {}, hosting: {}, measurement: {}, checks: [], risks: [], rollback: [] };
+    const artifacts = [];
+    for (const [kind, bytes] of [['DEPLOYMENT_PLAN.md', '# Blocked offline plan'],
+      ['DEPLOYMENT_PLAN.json', JSON.stringify(plan)]]) {
+      const path = join(options.cwd, kind); await writeFile(path, bytes); artifacts.push({ kind, path });
+    }
+    await writeFile(output, JSON.stringify({ status: 'BLOCKED', evidence: ['Plan generated; deployment forbidden'],
+      missing_inputs: [], artifacts }));
+  } });
+  const context = { runId: 'blocked-plan', inputs: { ...f.inputs, projectPath },
+    outputDirectory: join(f.configuration.workspace, 'runs/blocked-plan/artifacts/6/1'),
+    requiredArtifacts: ARTIFACTS[6], skillLock: { source: join(f.root, 'skills', STAGES[6] + '.md') },
+    upstream: [], mode: 'plan', launchReadiness: { status: 'NOT_CLEARED',
+      deploymentAuthorized: false, unresolvedBlockers: blockers },
+    permissions: { siteWrites: false, productionDeployment: false } };
+
+  const result = await executor(STAGES[6], context);
+
+  assert.equal(result.status, 'PASSED');
+  assert.equal(result.artifacts.length, 2);
+  assert.equal(context.launchReadiness.deploymentAuthorized, false);
+  assert.match(invoked.options.input, /worker-result status PASSED/);
+  const published = JSON.parse(await readFile(join(projectPath, 'docs/DEPLOYMENT_PLAN.json')));
+  assert.deepEqual(published.unresolved_blockers, blockers);
+  assert.equal(Object.hasOwn(published, 'unresolvedBlockers'), false);
+  assert.equal(published.status, 'BLOCKED');
+  assert.equal(published.github_sync.push_authorized, false);
+});
+
 test('deployment plan publication rolls back newly created files after a write failure', async t => {
   const f = await fixture(t); const projectPath = join(f.configuration.workspace, 'site');
   const result = { artifacts: ['DEPLOYMENT_PLAN.md', 'DEPLOYMENT_PLAN.json'].map(kind => ({ kind, content: 'offline fixture', encoding: 'utf8' })) };

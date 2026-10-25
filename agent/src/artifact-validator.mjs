@@ -42,6 +42,26 @@ export async function normalizePrelaunchRoutePublication(context, bytes, sourceP
   return Buffer.from(JSON.stringify(report, null, 2) + '\n');
 }
 
+export function normalizeDeploymentPlanBlockers(context, bytes, sourcePath) {
+  if (context.mode !== 'plan' || context.launchReadiness?.deploymentAuthorized !== false) return bytes;
+  const expected = context.launchReadiness.unresolvedBlockers;
+  assert(Array.isArray(expected), 'Host launch blocker proof is missing');
+  const plan = parseArtifactJson(bytes, sourcePath);
+  const hasCanonical = Object.hasOwn(plan, 'unresolved_blockers');
+  const hasLegacy = Object.hasOwn(plan, 'unresolvedBlockers');
+  assert(hasCanonical || hasLegacy, 'Blocked plan must preserve every Host launch blocker');
+  if (hasCanonical && hasLegacy)
+    assert(canonicalJson(plan.unresolved_blockers) === canonicalJson(plan.unresolvedBlockers),
+      'Blocked plan has conflicting deployment blocker fields');
+  const blockers = hasCanonical ? plan.unresolved_blockers : plan.unresolvedBlockers;
+  assert(canonicalJson(blockers) === canonicalJson(expected),
+    'Blocked plan must preserve every Host launch blocker');
+  if (!hasLegacy) return bytes;
+  delete plan.unresolvedBlockers;
+  plan.unresolved_blockers = expected;
+  return Buffer.from(JSON.stringify(plan, null, 2) + '\n');
+}
+
 export async function validateNativeArtifacts(skill, context, result, { run = runProcess, existingContentBuild } = {}) {
   stageDefinition(skill);
   assert(['PASSED', 'PARTIAL', 'FAILED', 'BLOCKED', 'WAITING_FOR_USER'].includes(result?.status), 'Unknown worker status');
@@ -208,7 +228,14 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     assert(origin === 'https://' + context.inputs.domain,
       `DEPLOYMENT_REPORT_INVALID: production_url ${JSON.stringify(report.production_url)} is not https://${context.inputs.domain}`);
   } else if (skill === STAGE.DEPLOYMENT_PLAN) {
-    const plan = parseArtifactJson(get('DEPLOYMENT_PLAN.json').bytes, get('DEPLOYMENT_PLAN.json').path);
+    const planArtifact = get('DEPLOYMENT_PLAN.json');
+    const normalizedBytes = normalizeDeploymentPlanBlockers(context,
+      planArtifact.bytes, planArtifact.path);
+    if (!normalizedBytes.equals(planArtifact.bytes)) {
+      planArtifact.bytes = normalizedBytes;
+      planArtifact.originalSha256 = sha256(normalizedBytes);
+    }
+    const plan = parseArtifactJson(planArtifact.bytes, planArtifact.path);
     const launchBlocked = context.launchReadiness?.deploymentAuthorized === false;
     if (launchBlocked) {
       assert(plan.schema_version === 1 && plan.status === 'BLOCKED' &&

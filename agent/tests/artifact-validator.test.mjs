@@ -328,6 +328,7 @@ test('deployment cannot report itself approved or use another domain', async t =
 
 test('non-executing deployment plan preserves unresolved blockers and cannot await deployment approval', async t => {
   const f = await nativeFixture(t, 6);
+  f.context.mode = 'plan';
   const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
     route: '/', status: 'OPEN' }];
   f.context.launchReadiness = { deploymentAuthorized: false, unresolvedBlockers: blockers };
@@ -338,6 +339,63 @@ test('non-executing deployment plan preserves unresolved blockers and cannot awa
   await writeFile(item.path, JSON.stringify(data));
   assert.equal((await f.validate()).status, 'PASSED');
   data.unresolved_blockers = [];
+  await writeFile(item.path, JSON.stringify(data));
+  await assert.rejects(f.validate(), /preserve every Host launch blocker/);
+});
+
+test('deployment plan normalizes an exact legacy unresolvedBlockers field to unresolved_blockers', async t => {
+  const f = await nativeFixture(t, 6);
+  f.context.mode = 'plan';
+  const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
+    route: '/', status: 'OPEN' }];
+  f.context.launchReadiness = { status: 'NOT_CLEARED', deploymentAuthorized: false,
+    unresolvedBlockers: blockers };
+  const item = f.result.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
+  const data = JSON.parse(await readFile(item.path));
+  data.status = 'BLOCKED'; data.confirmation.status = 'NOT_AUTHORIZED_FOR_DEPLOYMENT';
+  data.unresolvedBlockers = blockers;
+  await writeFile(item.path, JSON.stringify(data));
+
+  const validated = await f.validate();
+  const artifact = validated.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
+  const normalized = JSON.parse(Buffer.from(artifact.content, 'base64'));
+  assert.deepEqual(normalized.unresolved_blockers, blockers);
+  assert.equal(Object.hasOwn(normalized, 'unresolvedBlockers'), false);
+});
+
+test('deployment blocker alias normalization is disabled outside plan mode', async t => {
+  const f = await nativeFixture(t, 6);
+  const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
+    route: '/', status: 'OPEN' }];
+  f.context.launchReadiness = { status: 'NOT_CLEARED', deploymentAuthorized: false,
+    unresolvedBlockers: blockers };
+  const item = f.result.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
+  const data = JSON.parse(await readFile(item.path));
+  data.status = 'BLOCKED'; data.confirmation.status = 'NOT_AUTHORIZED_FOR_DEPLOYMENT';
+  data.unresolvedBlockers = blockers;
+  await writeFile(item.path, JSON.stringify(data));
+
+  await assert.rejects(f.validate(), /preserve every Host launch blocker/);
+});
+
+test('deployment plan rejects conflicting or Host-mismatched blocker aliases', async t => {
+  const f = await nativeFixture(t, 6);
+  f.context.mode = 'plan';
+  const blockers = [{ source: 'STAGE5_UI_AUDIT', code: 'UX-001', severity: 'BLOCKER',
+    route: '/', status: 'OPEN' }];
+  f.context.launchReadiness = { status: 'NOT_CLEARED', deploymentAuthorized: false,
+    unresolvedBlockers: blockers };
+  const item = f.result.artifacts.find(a => a.kind === 'DEPLOYMENT_PLAN.json');
+  const data = JSON.parse(await readFile(item.path));
+  data.status = 'BLOCKED'; data.confirmation.status = 'NOT_AUTHORIZED_FOR_DEPLOYMENT';
+  data.unresolvedBlockers = blockers;
+  data.unresolved_blockers = [];
+  await writeFile(item.path, JSON.stringify(data));
+  await assert.rejects(f.validate(), /conflicting deployment blocker fields/);
+
+  delete data.unresolved_blockers;
+  data.unresolvedBlockers = [...blockers, { source: 'STAGE6_ROUTE_PUBLICATION',
+    code: 'EXTRA', severity: 'BLOCKER' }];
   await writeFile(item.path, JSON.stringify(data));
   await assert.rejects(f.validate(), /preserve every Host launch blocker/);
 });
