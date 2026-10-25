@@ -465,7 +465,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         'If anything differs from the approved plan (files, branch, DNS records, provider, costs), stop without proceeding and return WAITING_FOR_USER describing the difference; a changed scope needs a new plan.',
         'Write DEPLOYMENT_REPORT.md and DEPLOYMENT_REPORT.json under nativeDirectory per the Skill output contract and return them as artifacts. Report each service state separately and never claim indexing or analytics data from a submitted request or detected tag.'
       ] : [
-        'Deployment: plan only. Prepare DEPLOYMENT_PLAN.md/json under nativeDirectory; the host validates and publishes the unchanged files into projectPath/docs according to the native contract. If context.launchReadiness.deploymentAuthorized is false, set status BLOCKED, confirmation.status NOT_AUTHORIZED_FOR_DEPLOYMENT, and copy context.launchReadiness.unresolvedBlockers exactly. Never overwrite an existing project plan. No commit, push, hosting, DNS, GSC, GA4 or advertising actions.'
+        'Deployment: plan only. Prepare DEPLOYMENT_PLAN.md/json under nativeDirectory; the host validates and publishes the validated files into projectPath/docs according to the native contract. If context.launchReadiness.deploymentAuthorized is false, set DEPLOYMENT_PLAN.json status BLOCKED, confirmation.status NOT_AUTHORIZED_FOR_DEPLOYMENT, and copy context.launchReadiness.unresolvedBlockers exactly into canonical unresolved_blockers. A complete validated blocked plan is successful plan generation, so return worker-result status PASSED; this never means deployment succeeded or became authorized. Never overwrite an existing project plan. No commit, push, hosting, DNS, GSC, GA4 or advertising actions.'
       ]),
       'Never use another tool/service to bypass a failed preferred tool. Missing capabilities => BLOCKED; missing facts => WAITING_FOR_USER.',
       'Never read or print credentials. Do not invent keywords, sources, approvals, test results or completed actions.',
@@ -629,6 +629,10 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       result.missing_inputs.length === 0 && stage6Completion !== null;
     if (hostPrelaunch && result.status === 'PASSED')
       throw Error('STAGE6_HOST_VALIDATION_REQUIRED: Worker cannot directly pass the host prelaunch stage');
+    const stage7BlockedPlanPending = skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'plan' &&
+      !deploying && result.status === 'BLOCKED' && result.missing_inputs.length === 0 &&
+      result.evidence.length > 0 && context.launchReadiness?.status === 'NOT_CLEARED' &&
+      context.launchReadiness?.deploymentAuthorized === false;
     if (context.inputs.paths && hostReview && !hostAudit && !stage6HostPending && result.status === 'PASSED') {
       // The native validators require site-local reports; only the host may publish these bytes.
       const root = join(project, 'docs', hostAudit ? 'ui-ux-audit' : 'prelaunch');
@@ -683,7 +687,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       } else {
         validated = await diagnosticStep('validate-native-artifacts', () =>
           validateNativeArtifacts(skill, validationContext,
-            stage4HostPending || stage5HostPending || stage6HostPending ? { ...result, status: 'PASSED' } : result,
+            stage4HostPending || stage5HostPending || stage6HostPending || stage7BlockedPlanPending
+              ? { ...result, status: 'PASSED' } : result,
             validationOptions));
       }
     } catch (error) {
@@ -705,6 +710,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       stage6LaunchReadiness: context.launchReadiness,
       evidence: [...result.evidence,
         `Host accepted the complete Stage 6 audit execution; launch readiness remains ${stage6Completion.launchReadiness}.`] };
+    if (stage7BlockedPlanPending) validated = { ...validated, status: 'PASSED',
+      evidence: [...result.evidence,
+        'Host accepted complete Stage 7 plan generation; launch readiness remains NOT_CLEARED and deployment remains unauthorized.'] };
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(
       `Template merged; temporary cleanup pending: ${templateMerge.sourceDirectory}; ${templateMerge.cleanup.error}`);
     if (iconEvidence.length) validated.evidence = [...validated.evidence, ...iconEvidence];

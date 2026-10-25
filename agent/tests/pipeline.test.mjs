@@ -313,6 +313,7 @@ test('Stage 7 may prepare a non-executing blocked plan but cannot execute it wit
   const planned = await advance(f.pipeline, 7);
 
   assert.equal(planned.stages[6].status, 'WAITING_FOR_USER');
+  assert.equal(planned.stages[6].artifacts.length, api.ARTIFACTS[6].length);
   assert.equal(planned.stages[6].checkpoint.planDigest?.length, 64);
   assert.equal(f.workerCalls.find(call => call.skill === api.STAGES[6]).context.launchReadiness.launchReadiness,
     'NOT_CLEARED');
