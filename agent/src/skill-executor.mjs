@@ -32,7 +32,7 @@ import { convertIconOnHost, ICON_FILES, FAVICON_IO_URL } from './favicon-io-host
 import { createStage4ReadinessGate, verifyStage4ReadinessBinding } from './stage4-readiness.mjs';
 import { stage4CandidateInputs } from './stage4-site-transaction.mjs';
 import { validateStage5WorkerHandoff } from './stage5-audit-policy.mjs';
-import { validateStage6WorkerHandoff } from './stage6-prelaunch-policy.mjs';
+import { bindStage6HostFindings, validateStage6WorkerHandoff } from './stage6-prelaunch-policy.mjs';
 
 const schema = fileURLToPath(new URL('../config/worker-result.schema.json', import.meta.url));
 
@@ -362,6 +362,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
         preview = await previewSite(project);
         context.hostEvidence = await (hostAudit ? auditSite : prelaunchSite)(context, { url: preview.url });
         await verifySiteEvidence(context.hostEvidence);
+        if (hostPrelaunch) context.launchReadiness = bindStage6HostFindings(context.launchReadiness,
+          context.hostEvidence.routePublicationViolations);
       } catch (error) {
         return { status: 'WAITING_FOR_USER', artifacts: [], missing_inputs: ['sitePreviewEvidence'], evidence: [
           sanitizeDiagnosticText(error.message), `Repair the production build/browser capability for ${project}, then retry this stage. No substitute browser or deployment was used.`] };
@@ -516,7 +518,8 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       return diagnosticStep('read-worker-result', async () => {
         const parsed = parseArtifactJson(await readArtifact(output, [context.nativeDirectory]), output);
         const { stage4WorkerArtifactsValidated: _untrustedHostMarker,
-          stage4LaunchBlockers: _untrustedLaunchBlockers, ...workerResult } = parsed;
+          stage4LaunchBlockers: _untrustedLaunchBlockers,
+          stage6LaunchReadiness: _untrustedStage6LaunchReadiness, ...workerResult } = parsed;
         return workerResult;
       });
     };
@@ -696,6 +699,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
       evidence: [...result.evidence,
         `Host accepted the complete Stage 5 audit execution; independent site verdict remains ${stage5Completion.siteVerdict}.`] };
     if (stage6HostPending) validated = { ...validated, status: 'PASSED',
+      stage6LaunchReadiness: context.launchReadiness,
       evidence: [...result.evidence,
         `Host accepted the complete Stage 6 audit execution; launch readiness remains ${stage6Completion.launchReadiness}.`] };
     if (templateMerge?.cleanup.status === 'FAILED') validated.evidence.push(

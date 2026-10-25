@@ -11,6 +11,7 @@ import { runProcess } from '../agent/src/process.mjs';
 import { snapshotSiteEvidence } from '../agent/src/site-evidence.mjs';
 import { sha256 } from '../agent/src/files.mjs';
 import { STAGE, STAGES } from '../agent/src/stages.mjs';
+import { createPrelaunchContext } from '../agent/src/stage6-prelaunch-policy.mjs';
 
 const repository = dirname(dirname(fileURLToPath(import.meta.url)));
 const quote = value => `'${value.replaceAll("'", `'"'"'`)}'`;
@@ -408,7 +409,11 @@ async function prepareFixture(root, stage) {
     stage4Readiness.transaction = { kind: 'STAGE4_SITE_TRANSACTION_V1',
       runId: `ENV_SELFCHECK-stage-${stage}`, attempt: 1, targetPath: siteDirectory, candidatePath };
   }
-  return { runId: `ENV_SELFCHECK-stage-${stage}`, runDirectory, outputDirectory,
+  const runId = `ENV_SELFCHECK-stage-${stage}`;
+  const launchReadiness = stage === 6 ? createPrelaunchContext({ runId,
+    siteRevision: 'environment-selfcheck', projectDigest: 'a'.repeat(64), binding: null,
+    stage5Audit: { verdict: 'BLOCKED', findings: [] }, stage5AuditSha256: 'b'.repeat(64) }) : null;
+  return { runId, runDirectory, outputDirectory,
     nativeDirectory: join(outputDirectory, 'native'), mode: stage === 7 ? 'plan' : 'audit-only',
     skillLock: { source: join(repository, 'codex-skills', STAGES[stage - 1], 'SKILL.md') },
     requiredArtifacts: [], upstream: [STAGE.HOMEPAGE_RESEARCH, STAGE.KEYWORD_RESEARCH]
@@ -416,6 +421,7 @@ async function prepareFixture(root, stage) {
     inputs: { gameIdentity: 'Environment Selfcheck', objective: 'Environment probes only',
       projectPath: siteDirectory, rawKeywordsFile, paths: { siteDirectory, researchDirectory, rawKeywordsFile } },
     permissions: { siteWrites: [3, 4].includes(stage), productionDeployment: false },
+    ...(launchReadiness ? { launchReadiness } : {}),
     ...(stage4Readiness ? { stage4Readiness,
       stage4Transaction: stage4Readiness.transaction,
       stage4CandidateResearchHandoff: { kind: 'STAGE4_SELFCHECK_CANDIDATE_HANDOFF' },
@@ -457,7 +463,8 @@ export async function runSelfcheck({ reportsDirectory = join(repository, 'agent/
           const directory = join(context.nativeDirectory, 'synthetic-host-evidence');
           await mkdir(directory, { recursive: true });
           await writeFile(join(directory, 'SYNTHETIC.txt'), 'Environment verification fixture; no site audit performed.\n');
-          return snapshotSiteEvidence(directory);
+          return { ...await snapshotSiteEvidence(directory), routes: ['/'],
+            routePublicationViolations: [] };
         };
         const executor = createSkillExecutor({ ...executorOptions, timeoutMs: 300000,
           verifyStage4Readiness: async binding => {

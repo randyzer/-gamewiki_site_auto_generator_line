@@ -868,7 +868,7 @@ test('Pipeline records audit-only Git capability failure as BLOCKED after indepe
       checked++;
       const area = join(context.nativeDirectory, 'independent-host');
       await mkdir(area); await writeFile(join(area, 'evidence.txt'), 'SYNTHETIC independent evidence');
-      return snapshotSiteEvidence(area);
+      return { ...await snapshotSiteEvidence(area), routes: ['/'], routePublicationViolations: [] };
     };
     const execute = createSkillExecutor({ workerGit: join(f.root, 'missing-git'), researchPython: process.execPath,
       previewSite: async () => ({ url: 'http://127.0.0.1:1', stop: async () => {} }),
@@ -1718,8 +1718,9 @@ test('pipeline exposes its project digest for host verification', async t => {
   assert.equal(await p.projectDigest(), p.snapshot().stages[4].checkpoint.projectDigest);
 });
 
-test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck artifacts', async t => {
-  const f = await fixture(t); let captures = 0;
+test('pipeline carries exact Stage 6 Host findings into the Stage 7 launch blockers', async t => {
+  const f = await fixture(t); let captures = 0, stage7Context;
+  const violations = [{ code: 'PUBLISHED_ROUTE_NOINDEX', route: '/' }];
   const prelaunch = createSkillExecutor({
     previewSite: async () => ({ url: 'http://127.0.0.1:32111', stop: async () => {} }),
     prelaunchSite: async context => {
@@ -1728,8 +1729,11 @@ test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck art
       await writeFile(join(context.inputs.projectPath, 'next-env.d.ts'), 'generated declarations');
       const directory = join(context.inputs.projectPath, 'docs/prelaunch', context.runId, 'host-evidence');
       await mkdir(directory, { recursive: true });
-      await writeFile(join(directory, 'HOST_EVIDENCE.json'), '{"synthetic":true}');
-      return { ...await snapshotSiteEvidence(directory), routes: ['/'], routePublicationViolations: [] };
+      await writeFile(join(directory, 'HOST_EVIDENCE.json'), JSON.stringify({ routePublication: {
+        manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1', violations,
+      } }));
+      return { ...await snapshotSiteEvidence(directory), routes: ['/'],
+        routePublicationViolations: violations };
     },
     validationOptions: { run: async () => ({ exitCode: 0 }) },
     run: async (_command, args, options) => {
@@ -1741,6 +1745,7 @@ test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck art
           run_id: context.runId, game: context.inputs.gameIdentity, project_path: context.inputs.projectPath,
           expected_domain: 'https://' + context.inputs.domain, disposition: '暂不建议上线',
           coverage: { routes_expected: 1, routes_checked: 1 }, pages: [{ path: '/' }],
+          route_publication: { manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1', violations },
           execution_acceptance: { kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
             context_digest: context.launchReadiness.contextDigest,
             launch_readiness: context.launchReadiness.status,
@@ -1757,13 +1762,27 @@ test('pipeline UI to prelaunch passes when prelaunchSite generates typecheck art
       }));
     },
   });
-  const p = await f.create({ executor: (skill, context) => skill === api.STAGES[5] ? prelaunch(skill, context) : f.good(skill, context) });
+  const p = await f.create({ executor: (skill, context) => {
+    if (skill === api.STAGES[5]) return prelaunch(skill, context);
+    if (skill === api.STAGES[6]) stage7Context = context;
+    return f.good(skill, context);
+  } });
   await advance(p, 5);
   const before = p.snapshot().stages[4].checkpoint.projectDigest;
   await p.advance();
   assert.equal(captures, 1);
   assert.equal(p.snapshot().stages[5].status, 'PASSED');
+  assert.equal(p.snapshot().stages[5].checkpoint.prelaunchAssessment.kind,
+    'STAGE6_PRELAUNCH_ASSESSMENT_V2');
+  assert.deepEqual(p.snapshot().stages[5].checkpoint.prelaunchAssessment.stage6HostFindings,
+    violations);
   assert.equal(await p.projectDigest(), before);
+  await p.advance();
+  assert.equal(p.snapshot().stages[6].status, 'WAITING_FOR_USER');
+  assert.deepEqual(stage7Context.launchReadiness.stage6HostFindings, violations);
+  assert.ok(stage7Context.launchReadiness.unresolvedBlockers.some(blocker =>
+    blocker.source === 'STAGE6_ROUTE_PUBLICATION' && blocker.code === 'PUBLISHED_ROUTE_NOINDEX'));
+  assert.equal(p.snapshot().deploymentExecuted, false);
 });
 
 test('input invalidation resets failed downstream checkpoints without corrupting resume', async t => {

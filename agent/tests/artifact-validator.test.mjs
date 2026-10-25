@@ -181,6 +181,31 @@ test('complete prelaunch audit preserves Host launch blockers without claiming d
   const validated = await f.validate();
   assert.equal(validated.status, 'PASSED');
 });
+test('complete prelaunch audit accepts exact Host route violations while remaining not cleared', async t => {
+  const f = await nativeFixture(t, 5);
+  const violations = [{ code: 'PUBLISHED_ROUTE_NOINDEX', route: '/' }];
+  const blockers = violations.map(violation => ({ source: 'STAGE6_ROUTE_PUBLICATION',
+    code: violation.code, severity: 'BLOCKER', violation }));
+  f.context.launchReadiness = { ...f.context.launchReadiness, status: 'NOT_CLEARED',
+    contextDigest: 'b'.repeat(64), unresolvedBlockers: blockers };
+  const evidencePath = join(f.context.inputs.projectPath, 'HOST_EVIDENCE.json');
+  await writeFile(evidencePath, JSON.stringify({ routePublication: {
+    manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1', violations } }));
+  f.context.hostEvidence = { routes: ['/'], routePublicationViolations: violations, evidencePath };
+  const reportPath = f.result.artifacts.find(a => a.kind === 'PRELAUNCH_ACCEPTANCE.json').path;
+  const report = JSON.parse(await readFile(reportPath));
+  report.disposition = '暂不建议上线';
+  report.route_publication = { manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1', violations };
+  report.execution_acceptance = { kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+    context_digest: f.context.launchReadiness.contextDigest, launch_readiness: 'NOT_CLEARED',
+    unresolved_blockers: blockers };
+  await writeFile(reportPath, JSON.stringify(report));
+  assert.equal((await f.validate()).status, 'PASSED');
+
+  report.route_publication.violations = [];
+  await writeFile(reportPath, JSON.stringify(report));
+  await assert.rejects(f.validate(), /route publication.*mismatch/i);
+});
 test('homepage rejects directories, invalid ZIP and missing native fields', async t => {
   const f = await nativeFixture(t, 0); const zip = f.result.artifacts.find(a => a.kind === 'ICON.zip');
   await writeFile(zip.path, 'not a zip'); await assert.rejects(f.validate());

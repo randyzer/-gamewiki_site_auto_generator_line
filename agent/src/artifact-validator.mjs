@@ -156,15 +156,21 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
         JSON.stringify([...context.hostEvidence.routes].sort()), 'Prelaunch host route coverage mismatch');
       assert(Array.isArray(context.hostEvidence.routePublicationViolations),
         'Prelaunch route publication proof is missing');
-      assert(context.hostEvidence.routePublicationViolations.length === 0,
-        'Prelaunch route publication violations remain');
+      assert(report.route_publication?.manifestKind === 'ROUTE_PUBLICATION_MANIFEST_V1' &&
+        JSON.stringify(report.route_publication.violations) ===
+          JSON.stringify(context.hostEvidence.routePublicationViolations),
+      'Prelaunch route publication findings mismatch Host evidence');
+      if (context.launchReadiness.status === 'CLEARED')
+        assert(context.hostEvidence.routePublicationViolations.length === 0,
+          'Cleared prelaunch cannot retain route publication violations');
       if (context.hostEvidence.evidencePath) {
         const evidence = parseArtifactJson(await readArtifact(context.hostEvidence.evidencePath,
           [context.inputs.projectPath]), context.hostEvidence.evidencePath);
         assert(evidence.routePublication?.manifestKind === 'ROUTE_PUBLICATION_MANIFEST_V1' &&
           Array.isArray(evidence.routePublication.violations) &&
-          evidence.routePublication.violations.length === 0,
-        'Prelaunch route publication evidence is incomplete');
+          JSON.stringify(evidence.routePublication.violations) ===
+            JSON.stringify(context.hostEvidence.routePublicationViolations),
+        'Prelaunch route publication evidence differs from the Host bundle');
       }
     }
   }

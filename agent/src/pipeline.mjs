@@ -33,7 +33,8 @@ import { createStage4LaunchReadinessBinding, verifyStage4LaunchReadinessBinding,
   validateLaunchReadinessClearance, createStage6LaunchReadinessAttestation,
   verifyStage6LaunchReadinessAttestation } from './stage4-launch-gap-policy.mjs';
 import { projectContentDigest } from './project-content-digest.mjs';
-import { createPrelaunchContext, createPrelaunchAssessment, verifyPrelaunchAssessment } from './stage6-prelaunch-policy.mjs';
+import { createPrelaunchContext, createPrelaunchAssessment, verifyPrelaunchAssessment,
+  verifyStage6HostContext } from './stage6-prelaunch-policy.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -1070,7 +1071,9 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         }
         if (stage.skill === STAGE.UI_UX_AUDIT && status === 'PASSED') stage.checkpoint.projectDigest = await projectDigest();
         if (stage.skill === STAGE.PRELAUNCH_ACCEPTANCE && status === 'PASSED') {
-          const context = await prelaunchContext();
+          const baseContext = await prelaunchContext();
+          const context = result.stage6LaunchReadiness
+            ? verifyStage6HostContext(result.stage6LaunchReadiness, baseContext) : baseContext;
           const report = saved.find(item => item.kind === 'PRELAUNCH_ACCEPTANCE.json');
           const reportData = parseArtifactJson(await regularFile(report.path), report.path);
           stage.checkpoint.prelaunchAssessment = createPrelaunchAssessment({ context,

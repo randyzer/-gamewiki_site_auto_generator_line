@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { STAGE4_LAUNCH_BLOCKERS } from './stage4-launch-gap-policy.mjs';
 
 const sha256 = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -6,6 +7,18 @@ const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value
 const invalid = detail => Object.assign(Error(`PRELAUNCH_ASSESSMENT_INVALID: ${detail}`), {
   code: 'PRELAUNCH_ASSESSMENT_INVALID',
 });
+const clone = value => JSON.parse(JSON.stringify(value));
+
+function hostFindings(value) {
+  if (!Array.isArray(value) || value.some(item => !item || typeof item !== 'object' ||
+      Array.isArray(item) || typeof item.code !== 'string' || !item.code))
+    throw invalid('Stage 6 Host findings are malformed');
+  return clone(value);
+}
+
+const hostBlockers = findings => findings.map(violation => ({
+  source: 'STAGE6_ROUTE_PUBLICATION', code: violation.code, severity: 'BLOCKER', violation,
+}));
 
 export function createPrelaunchContext({ runId, siteRevision, projectDigest, binding,
   stage5Audit, stage5AuditSha256, clearanceDigest = null }) {
@@ -34,6 +47,33 @@ export function createPrelaunchContext({ runId, siteRevision, projectDigest, bin
     clearanceDigest, status: unresolvedBlockers.length === 0 ? 'CLEARED' : 'NOT_CLEARED',
     unresolvedBlockers };
   return { ...unsigned, contextDigest: sha256(unsigned) };
+}
+
+export function bindStage6HostFindings(context, findings) {
+  if (context?.kind !== 'STAGE6_PRELAUNCH_CONTEXT_V1' || !digest(context.contextDigest))
+    throw invalid('Base prelaunch context is invalid');
+  const { contextDigest, ...baseUnsigned } = context;
+  if (sha256(baseUnsigned) !== contextDigest)
+    throw invalid('Base prelaunch context digest mismatch');
+  const { kind: _kind, contextDigest: baseContextDigest, status: _status,
+    unresolvedBlockers: baseBlockers, ...identity } = context;
+  const stage6HostFindings = hostFindings(findings);
+  const unresolvedBlockers = [...baseBlockers, ...hostBlockers(stage6HostFindings)];
+  const unsigned = { ...identity, kind: 'STAGE6_PRELAUNCH_CONTEXT_V2', baseContextDigest,
+    stage6HostFindings, stage6HostFindingsDigest: sha256(stage6HostFindings),
+    status: context.status === 'CLEARED' && stage6HostFindings.length === 0 ? 'CLEARED' : 'NOT_CLEARED',
+    unresolvedBlockers };
+  return { ...unsigned, contextDigest: sha256(unsigned) };
+}
+
+export function verifyStage6HostContext(value, baseContext) {
+  if (!value || value.kind !== 'STAGE6_PRELAUNCH_CONTEXT_V2' ||
+      value.baseContextDigest !== baseContext?.contextDigest)
+    throw invalid('Stage 6 Host context is stale or unrelated');
+  const expected = bindStage6HostFindings(baseContext, value.stage6HostFindings);
+  if (!isDeepStrictEqual(value, expected))
+    throw invalid('Stage 6 Host findings or context digest mismatch');
+  return value;
 }
 
 export function validateStage6WorkerHandoff(value) {
@@ -65,22 +105,43 @@ export function createPrelaunchAssessment({ context, reportSha256, disposition }
     throw invalid('Assessment report is invalid');
   const deploymentAuthorized = context.status === 'CLEARED' &&
     ['可以上线', '可以上线，但有P2待办'].includes(disposition);
-  const unsigned = { kind: 'STAGE6_PRELAUNCH_ASSESSMENT_V1', contextDigest: context.contextDigest,
+  const stage6 = context.kind === 'STAGE6_PRELAUNCH_CONTEXT_V2';
+  const unsigned = { kind: stage6 ? 'STAGE6_PRELAUNCH_ASSESSMENT_V2' : 'STAGE6_PRELAUNCH_ASSESSMENT_V1',
+    contextDigest: context.contextDigest,
     reportSha256, siteRevision: context.siteRevision, projectDigest: context.projectDigest,
     stage5AuditSha256: context.stage5AuditSha256,
     disposition, launchReadiness: context.status,
-    unresolvedBlockers: context.unresolvedBlockers, deploymentAuthorized };
+    unresolvedBlockers: context.unresolvedBlockers, deploymentAuthorized,
+    ...(stage6 ? { baseContextDigest: context.baseContextDigest,
+      stage6HostFindings: context.stage6HostFindings,
+      stage6HostFindingsDigest: context.stage6HostFindingsDigest } : {}) };
   return { ...unsigned, assessmentDigest: sha256(unsigned) };
 }
 
 export function verifyPrelaunchAssessment(value, context) {
-  if (!value || value.contextDigest !== context.contextDigest ||
-      value.siteRevision !== context.siteRevision || value.projectDigest !== context.projectDigest ||
-      value.stage5AuditSha256 !== context.stage5AuditSha256 ||
-      JSON.stringify(value.unresolvedBlockers) !== JSON.stringify(context.unresolvedBlockers))
-    throw invalid('Persisted assessment is stale or unrelated');
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw invalid('Persisted assessment is missing');
   const { assessmentDigest, ...unsigned } = value;
   if (!digest(assessmentDigest) || sha256(unsigned) !== assessmentDigest)
     throw invalid('Assessment digest mismatch');
+  const expectedContext = value.kind === 'STAGE6_PRELAUNCH_ASSESSMENT_V2'
+    ? verifyStage6HostContext({ kind: 'STAGE6_PRELAUNCH_CONTEXT_V2', runId: context.runId,
+      siteRevision: value.siteRevision, projectDigest: value.projectDigest,
+      stage4BindingDigest: context.stage4BindingDigest, stage5AuditSha256: value.stage5AuditSha256,
+      stage5Verdict: context.stage5Verdict, clearanceDigest: context.clearanceDigest,
+      baseContextDigest: value.baseContextDigest, stage6HostFindings: value.stage6HostFindings,
+      stage6HostFindingsDigest: value.stage6HostFindingsDigest, status: value.launchReadiness,
+      unresolvedBlockers: value.unresolvedBlockers, contextDigest: value.contextDigest }, context)
+    : context;
+  if (value.contextDigest !== expectedContext.contextDigest ||
+      value.siteRevision !== expectedContext.siteRevision || value.projectDigest !== expectedContext.projectDigest ||
+      value.stage5AuditSha256 !== expectedContext.stage5AuditSha256 ||
+      value.launchReadiness !== expectedContext.status ||
+      JSON.stringify(value.unresolvedBlockers) !== JSON.stringify(expectedContext.unresolvedBlockers))
+    throw invalid('Persisted assessment is stale or unrelated');
+  const expectedAuthorization = expectedContext.status === 'CLEARED' &&
+    ['可以上线', '可以上线，但有P2待办'].includes(value.disposition);
+  if (value.deploymentAuthorized !== expectedAuthorization)
+    throw invalid('Persisted assessment authorization is invalid');
   return value;
 }

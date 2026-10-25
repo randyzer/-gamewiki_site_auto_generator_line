@@ -113,7 +113,7 @@ export async function collectPrelaunch(context, { url, fetchUrl = fetch, launchB
     checked.add(route);
     const result = await request(route), { text, ...record } = result; links.push(record);
     if (/html/i.test(result.contentType)) {
-      for (const match of text.matchAll(/<(?:a|link)\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
+      for (const match of text.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
         const linked = routeFor(decodeXml(match[1] ?? match[2] ?? match[3]), result.url);
         if (linked !== null) recordLink(route, linked);
       }
