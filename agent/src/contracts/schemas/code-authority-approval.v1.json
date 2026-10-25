@@ -1,0 +1,51 @@
+{
+  "$id": "CODE_AUTHORITY_APPROVAL_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "authorityId",
+    "authoritySequence",
+    "previousEventDigest",
+    "issuedAt",
+    "approvalId",
+    "repositoryIdentityDigest",
+    "repositoryCommit",
+    "repositoryTree",
+    "skillSourceTree",
+    "skillInventoryDigest",
+    "schemaBundleDigest",
+    "productionPolicyDigest",
+    "productionPolicyVersion",
+    "expiresAt",
+    "eventDigest",
+    "signature"
+  ],
+  "properties": {
+    "kind": { "const": "CODE_AUTHORITY_APPROVAL" },
+    "schemaVersion": { "const": 1 },
+    "authorityId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "authoritySequence": { "type": "integer", "minimum": 1 },
+    "previousEventDigest": { "type": ["string", "null"], "format": "sha256" },
+    "issuedAt": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "approvalId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "repositoryIdentityDigest": { "type": "string", "format": "sha256" },
+    "repositoryCommit": { "type": "string", "format": "git-sha" },
+    "repositoryTree": { "type": "string", "format": "git-sha" },
+    "skillSourceTree": { "type": "string", "format": "git-sha" },
+    "skillInventoryDigest": { "type": "string", "format": "sha256" },
+    "schemaBundleDigest": { "type": "string", "format": "sha256" },
+    "productionPolicyDigest": { "type": "string", "format": "sha256" },
+    "productionPolicyVersion": { "const": 1 },
+    "expiresAt": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "eventDigest": { "type": "string", "format": "sha256" },
+    "signature": { "type": "string", "pattern": "^[a-f0-9]{128}$" }
+  }
+}
