@@ -8,8 +8,39 @@ import { validateExistingContentArtifacts } from './existing-content-validator.m
 import { createRoutePublicationManifest, ROUTE_PUBLICATION_ARTIFACT } from './route-publication.mjs';
 import { validateHostInteractions, validateAuditExecutionAcceptance } from './stage5-audit-policy.mjs';
 import { validatePrelaunchExecutionAcceptance } from './stage6-prelaunch-policy.mjs';
+import { canonicalJson } from './contracts/canonical-json.mjs';
 
 const assert = (ok, message) => { if (!ok) throw Error(message); };
+
+export async function normalizePrelaunchRoutePublication(context, bytes, sourcePath) {
+  if (!context.hostEvidence) return bytes;
+  assert(Array.isArray(context.hostEvidence.routePublicationViolations),
+    'Prelaunch route publication proof is missing');
+  let expected = { manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1',
+    violations: context.hostEvidence.routePublicationViolations };
+  if (context.hostEvidence.evidencePath) {
+    const evidence = parseArtifactJson(await readArtifact(context.hostEvidence.evidencePath,
+      [context.inputs.projectPath]), context.hostEvidence.evidencePath);
+    assert(evidence.routePublication?.manifestKind === 'ROUTE_PUBLICATION_MANIFEST_V1' &&
+      Array.isArray(evidence.routePublication.violations) &&
+      canonicalJson(evidence.routePublication.violations) ===
+        canonicalJson(context.hostEvidence.routePublicationViolations),
+    'Prelaunch route publication evidence differs from the Host bundle');
+    expected = evidence.routePublication;
+  }
+  const report = parseArtifactJson(bytes, sourcePath);
+  const canonical = report.route_publication;
+  const legacy = report.routePublication;
+  if (canonical && legacy)
+    assert(canonicalJson(canonical) === canonicalJson(legacy),
+      'Prelaunch report has conflicting route publication fields');
+  assert(canonicalJson(canonical ?? legacy) === canonicalJson(expected),
+    'Prelaunch route publication findings mismatch Host evidence');
+  if (!legacy) return bytes;
+  delete report.routePublication;
+  report.route_publication = expected;
+  return Buffer.from(JSON.stringify(report, null, 2) + '\n');
+}
 
 export async function validateNativeArtifacts(skill, context, result, { run = runProcess, existingContentBuild } = {}) {
   stageDefinition(skill);
@@ -141,7 +172,8 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     }
   }
   if (skill === STAGE.PRELAUNCH_ACCEPTANCE) {
-    const report = parseArtifactJson(get('PRELAUNCH_ACCEPTANCE.json').bytes, get('PRELAUNCH_ACCEPTANCE.json').path);
+    const reportArtifact = get('PRELAUNCH_ACCEPTANCE.json');
+    let report = parseArtifactJson(reportArtifact.bytes, reportArtifact.path);
     await python('validate_report.py', [get('PRELAUNCH_ACCEPTANCE.json').path]);
     assert(report.run_id === context.runId && report.game === context.inputs.gameIdentity && report.project_path === context.inputs.projectPath && report.expected_domain === 'https://' + context.inputs.domain, 'Prelaunch identity mismatch');
     assert(['可以上线', '可以上线，但有P2待办', '暂不建议上线'].includes(report.disposition), 'Invalid prelaunch disposition');
@@ -154,24 +186,16 @@ export async function validateNativeArtifacts(skill, context, result, { run = ru
     if (context.hostEvidence) {
       assert(JSON.stringify(report.pages.map(page => page.path).sort()) ===
         JSON.stringify([...context.hostEvidence.routes].sort()), 'Prelaunch host route coverage mismatch');
-      assert(Array.isArray(context.hostEvidence.routePublicationViolations),
-        'Prelaunch route publication proof is missing');
-      assert(report.route_publication?.manifestKind === 'ROUTE_PUBLICATION_MANIFEST_V1' &&
-        JSON.stringify(report.route_publication.violations) ===
-          JSON.stringify(context.hostEvidence.routePublicationViolations),
-      'Prelaunch route publication findings mismatch Host evidence');
+      const normalizedBytes = await normalizePrelaunchRoutePublication(context,
+        reportArtifact.bytes, reportArtifact.path);
+      if (!normalizedBytes.equals(reportArtifact.bytes)) {
+        reportArtifact.bytes = normalizedBytes;
+        reportArtifact.originalSha256 = sha256(normalizedBytes);
+        report = parseArtifactJson(normalizedBytes, reportArtifact.path);
+      }
       if (context.launchReadiness.status === 'CLEARED')
         assert(context.hostEvidence.routePublicationViolations.length === 0,
           'Cleared prelaunch cannot retain route publication violations');
-      if (context.hostEvidence.evidencePath) {
-        const evidence = parseArtifactJson(await readArtifact(context.hostEvidence.evidencePath,
-          [context.inputs.projectPath]), context.hostEvidence.evidencePath);
-        assert(evidence.routePublication?.manifestKind === 'ROUTE_PUBLICATION_MANIFEST_V1' &&
-          Array.isArray(evidence.routePublication.violations) &&
-          JSON.stringify(evidence.routePublication.violations) ===
-            JSON.stringify(context.hostEvidence.routePublicationViolations),
-        'Prelaunch route publication evidence differs from the Host bundle');
-      }
     }
   }
   if (skill === STAGE.DEPLOYMENT_PLAN && context.mode === 'execute') {

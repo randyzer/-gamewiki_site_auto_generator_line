@@ -205,16 +205,21 @@ test('host report publication rolls back reports and LATEST when validation fail
   f.context.requiredArtifacts = ['UI_UX_AUDIT_REPORT.md', 'UI_UX_AUDIT.json', 'UI_UX_OPTIMIZATION_PLAN.md'];
   await mkdir(directory, { recursive: true });
   await writeFile(join(root, 'LATEST'), 'previous-run');
+  await writeFile(join(directory, f.context.requiredArtifacts[0]), 'previous report');
   const result = { artifacts: [] };
   for (const kind of f.context.requiredArtifacts) {
     const path = join(reportDirectory, kind); await writeFile(path, `new ${kind}`);
     result.artifacts.push({ kind, path });
   }
-  await assert.rejects(host.publishSiteAuditReports(f.context, result, async () => {
+  await assert.rejects(host.publishSiteAuditReports(f.context, result, async published => {
+    assert.equal(await readFile(published.artifacts[0].path, 'utf8'),
+      `transformed new ${f.context.requiredArtifacts[0]}`);
     throw Error('synthetic validation failure');
-  }), /synthetic validation failure/);
+  }, { transformArtifact: (_kind, bytes) => Buffer.from(`transformed ${bytes}`) }),
+  /synthetic validation failure/);
   assert.equal(await readFile(join(root, 'LATEST'), 'utf8'), 'previous-run');
-  for (const kind of f.context.requiredArtifacts)
+  assert.equal(await readFile(join(directory, f.context.requiredArtifacts[0]), 'utf8'), 'previous report');
+  for (const kind of f.context.requiredArtifacts.slice(1))
     await assert.rejects(readFile(join(directory, kind)), { code: 'ENOENT' });
   assert.deepEqual(result.artifacts.map(item => item.path),
     f.context.requiredArtifacts.map(kind => join(reportDirectory, kind)));

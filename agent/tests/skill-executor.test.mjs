@@ -861,6 +861,11 @@ test('keyword shell inherits only credential names without exposing values in la
       for (const name of ['SERPER_API_KEY', 'YTDLP_COOKIES_FILE', 'DYLD_LIBRARY_PATH', 'SSL_CERT_FILE'])
         assert.equal(other.options.env[name], undefined);
       assert.equal(Boolean(other.options.env.ZDOTDIR), GIT_STAGES.includes(ALL_STAGES[index]));
+      if (index === 5) {
+        assert.match(other.options.input,
+          /Write the Host route publication proof only as top-level route_publication/);
+        assert.match(other.options.input, /Do not emit routePublication in PRELAUNCH_ACCEPTANCE\.json/);
+      }
       await assert.rejects(access(join(otherRunDirectory, 'host-tools/keyword-research/zdotdir/.zshenv')),
         error => error.code === 'ENOENT');
     }

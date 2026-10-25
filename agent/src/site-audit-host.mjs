@@ -48,7 +48,7 @@ async function atomicWrite(path, bytes, root) {
 }
 
 export async function publishSiteAuditReports(context, result, validate,
-  { rootName = 'ui-ux-audit', writeLatest = true } = {}) {
+  { rootName = 'ui-ux-audit', writeLatest = true, transformArtifact = null } = {}) {
   const root = join(context.inputs.projectPath, 'docs', rootName);
   const directory = join(root, context.runId);
   const latest = join(root, 'LATEST');
@@ -61,7 +61,10 @@ export async function publishSiteAuditReports(context, result, validate,
       const descriptor = result.artifacts.find(item => item.kind === kind);
       if (!descriptor || descriptor.path !== join(context.reportDirectory, kind))
         throw Error('Native report path mismatch: ' + kind);
-      const bytes = await readArtifact(descriptor.path, [context.nativeDirectory]);
+      const sourceBytes = await readArtifact(descriptor.path, [context.nativeDirectory]);
+      const bytes = transformArtifact
+        ? await transformArtifact(kind, sourceBytes, descriptor.path)
+        : sourceBytes;
       const target = join(directory, kind);
       backups.push({ path: target, ...(await readOptional(target)) });
       await mkdir(directory, { recursive: true });
