@@ -14,6 +14,13 @@ import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
 import { runProcess } from '../src/process.mjs';
 import { locateGitTool } from '../src/deployment-tools.mjs';
 import { GIT_STAGES } from '../src/worker-permissions.mjs';
+import { createPrelaunchContext } from '../src/stage6-prelaunch-policy.mjs';
+
+function stage6LaunchReadiness(runId) {
+  return createPrelaunchContext({ runId, siteRevision: 'fixture-revision',
+    projectDigest: 'a'.repeat(64), binding: null,
+    stage5Audit: { verdict: 'BLOCKED', findings: [] }, stage5AuditSha256: 'b'.repeat(64) });
+}
 
 async function withTemplateSnapshot(context, root, commit = 'e'.repeat(40)) {
   const checkout = join(root, 'template-cache', commit);
@@ -482,7 +489,7 @@ async function keywordLaunchFixture(t, { versionFailure = null, withCookies = tr
     const directory = join(context.inputs.projectPath, 'docs/offline-evidence');
     await mkdir(directory, { recursive: true });
     await writeFile(join(directory, 'evidence.txt'), 'offline host evidence');
-    return snapshotSiteEvidence(directory);
+    return { ...await snapshotSiteEvidence(directory), routes: ['/'], routePublicationViolations: [] };
   };
   const executor = createSkillExecutor({ environment, researchPython: python, researchYtDlp: link, timeoutMs: executorTimeoutMs,
     verifyStage4Readiness: async binding => binding.attestation,
@@ -840,6 +847,7 @@ test('keyword shell inherits only credential names without exposing values in la
           targetPath: stageContext.inputs.projectPath, candidatePath };
         stageContext.stage4CandidateResearchHandoff = { kind: 'test-candidate-handoff' };
       }
+      if (index === 5) stageContext.launchReadiness = stage6LaunchReadiness(stageContext.runId);
       const count = f.calls.length;
       await f.executor(ALL_STAGES[index], stageContext);
       assert.equal(f.calls.length, count + 1);
@@ -1078,7 +1086,7 @@ test('audit-only hosts retain independent evidence when Git is unavailable, with
       audited++;
       const area = join(context.nativeDirectory, 'host-evidence');
       await mkdir(area); await writeFile(join(area, 'EVIDENCE.txt'), 'SYNTHETIC independent audit');
-      return snapshotSiteEvidence(area);
+      return { ...await snapshotSiteEvidence(area), routes: ['/'], routePublicationViolations: [] };
     };
     const execute = createSkillExecutor({ workerGit: join(f.root, 'missing-git'), researchPython: process.execPath,
       previewSite: async () => ({ url: 'http://127.0.0.1:1', stop: async () => { stopped++; } }),
@@ -1086,6 +1094,7 @@ test('audit-only hosts retain independent evidence when Git is unavailable, with
     const context = { runId: 'audit-git-unknown', outputDirectory: join(root, 'artifacts/4/1'),
       inputs: { ...f.inputs, projectPath }, requiredArtifacts: [], upstream: [], mode: 'audit-only',
       permissions: { siteWrites: false }, skillLock: { source: join(f.root, 'skills', skill + '.md') } };
+    if (skill === STAGES[5]) context.launchReadiness = stage6LaunchReadiness(context.runId);
     const result = await execute(skill, context);
     assert.equal(audited, 1);
     assert.equal(stopped, 1);

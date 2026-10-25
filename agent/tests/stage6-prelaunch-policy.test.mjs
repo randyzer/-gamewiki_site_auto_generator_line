@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPrelaunchContext, createPrelaunchAssessment, validatePrelaunchExecutionAcceptance,
-  validateStage6WorkerHandoff, verifyPrelaunchAssessment } from '../src/stage6-prelaunch-policy.mjs';
+import { bindStage6HostFindings, createPrelaunchContext, createPrelaunchAssessment,
+  validatePrelaunchExecutionAcceptance, validateStage6WorkerHandoff,
+  verifyPrelaunchAssessment } from '../src/stage6-prelaunch-policy.mjs';
 import { STAGE4_LAUNCH_BLOCKERS } from '../src/stage4-launch-gap-policy.mjs';
 
 const base = () => createPrelaunchContext({ runId: 'run-1', siteRevision: 'revision-1',
@@ -55,4 +56,38 @@ test('Stage 6 handoff cannot claim a launchable disposition while not cleared', 
   assert.throws(() => validateStage6WorkerHandoff({ kind: 'STAGE6_PRELAUNCH_HANDOFF_V1',
     audit_execution: 'COMPLETE', host_validation: 'REQUIRED', site_disposition: '可以上线',
     launch_readiness: 'NOT_CLEARED' }), /contradicts/);
+});
+
+test('Stage 6 Host findings become immutable blockers without invalidating audit completion', () => {
+  const baseContext = base();
+  const violations = [
+    { code: 'ROUTE_UNPROVABLE', path: 'app/[[...segments]]/page.tsx' },
+    { code: 'PUBLISHED_ROUTE_NOINDEX', route: '/' },
+  ];
+  const context = bindStage6HostFindings(baseContext, violations);
+  assert.equal(context.status, 'NOT_CLEARED');
+  assert.deepEqual(context.stage6HostFindings, violations);
+  assert.deepEqual(context.unresolvedBlockers.slice(-2), violations.map(violation => ({
+    source: 'STAGE6_ROUTE_PUBLICATION', code: violation.code, severity: 'BLOCKER', violation,
+  })));
+
+  const assessment = createPrelaunchAssessment({ context, reportSha256: 'c'.repeat(64),
+    disposition: '暂不建议上线' });
+  assert.equal(assessment.deploymentAuthorized, false);
+  assert.deepEqual(assessment.stage6HostFindings, violations);
+  assert.equal(verifyPrelaunchAssessment(assessment, baseContext).assessmentDigest,
+    assessment.assessmentDigest);
+  assert.throws(() => verifyPrelaunchAssessment({ ...assessment,
+    stage6HostFindings: violations.slice(1) }, baseContext), /digest|findings/i);
+});
+
+test('Stage 6 Host findings revoke an otherwise cleared launch context', () => {
+  const cleared = createPrelaunchContext({ runId: 'run-1', siteRevision: 'revision-1',
+    projectDigest: 'a'.repeat(64), binding: { bindingDigest: 'b'.repeat(64) },
+    stage5AuditSha256: '5'.repeat(64), stage5Audit: { verdict: 'SHIP', findings: [] },
+    clearanceDigest: 'd'.repeat(64) });
+  assert.equal(cleared.status, 'CLEARED');
+  const context = bindStage6HostFindings(cleared,
+    [{ code: 'PUBLISHED_ROUTE_NOINDEX', route: '/' }]);
+  assert.equal(context.status, 'NOT_CLEARED');
 });

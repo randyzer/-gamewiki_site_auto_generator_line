@@ -6,6 +6,7 @@ import { fixture } from './helpers.mjs';
 import { STAGE } from '../src/stages.mjs';
 import { createSkillExecutor } from '../src/skill-executor.mjs';
 import { snapshotSiteEvidence } from '../src/site-evidence.mjs';
+import { createPrelaunchContext } from '../src/stage6-prelaunch-policy.mjs';
 
 const api = await import('../src/prelaunch-host.mjs').catch(() => ({}));
 async function setup(t) {
@@ -21,8 +22,12 @@ async function setup(t) {
     counts:{publish:2,draftOnly:1,omit:0}}));
   await writeFile(join(projectPath,'package.json'),JSON.stringify({scripts:{typecheck:'tsc',test:'test',build:'next build'}}));
   await writeFile(join(projectPath,'pnpm-lock.yaml'),'locked');
+  const launchReadiness = createPrelaunchContext({ runId, siteRevision:f.inputs.siteRevision,
+    projectDigest:'a'.repeat(64), binding:null, stage5Audit:{verdict:'BLOCKED',findings:[]},
+    stage5AuditSha256:'b'.repeat(64) });
   return {...f, context:{runId,runDirectory,inputs:{...f.inputs,projectPath},mode:'audit-only',requiredArtifacts:[],
     outputDirectory:join(runDirectory,'artifacts/5/1'),permissions:{siteWrites:false},
+    launchReadiness,
     skillLock:{source:join(f.root,'skills',STAGE.PRELAUNCH_ACCEPTANCE+'.md')},
     upstream:[{skill:STAGE.CONTENT_INTEGRATION,artifacts:[{kind:'ROUTE_PUBLICATION_MANIFEST.json',path}]}]}};
 }
@@ -65,7 +70,8 @@ test('prelaunch proves an isolated noindex draft and exact public sitemap withou
     const path=new URL(target).pathname;
     const text=path==='/sitemap.xml'
       ? '<urlset><url><loc>https://fixture.test/</loc></url><url><loc>https://fixture.test/guide</loc></url></urlset>'
-      : path==='/draft' ? '<html><head><meta name="robots" content="noindex,nofollow"></head></html>' : '<html></html>';
+      : path==='/draft' ? '<html><head><meta name="robots" content="noindex,nofollow"></head></html>'
+        : '<html><head><link rel="stylesheet" href="/_next/static/site.css"><link rel="icon" href="/favicon.ico"><link rel="manifest" href="/site.webmanifest"></head></html>';
     return {status:200,headers:new Headers({'content-type':path.includes('xml')?'application/xml':'text/html'}),
       text:async()=>text,body:{cancel:async()=>{}}};
   };
