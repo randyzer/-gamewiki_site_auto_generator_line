@@ -11,7 +11,7 @@ import { verifySiteEvidence } from './site-evidence.mjs';
 import { collectHomepageSources } from './homepage-source-host.mjs';
 import { safePath, readArtifact, parseArtifactJson, inside, sha256 } from './files.mjs';
 import { templateCopyDirectory, mergeTemplateCopy } from './template-merge.mjs';
-import { validateNativeArtifacts } from './artifact-validator.mjs';
+import { normalizePrelaunchRoutePublication, validateNativeArtifacts } from './artifact-validator.mjs';
 import { STAGE, BROWSER_STAGES, PYTHON_STAGES, stageDefinition } from './stages.mjs';
 import { publishDeploymentPlan } from './handoff.mjs';
 import { prepareExistingContent } from './existing-content-adapter.mjs';
@@ -420,6 +420,7 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           'Read context.hostEvidence and verify every SHA256. Use view_image to inspect the host screenshots. Do not invoke browser commands, network requests, build/test/lint/typecheck commands, or site repairs; the host already collected those results.',
           'context.launchReadiness is the Host prelaunch context. Its status may be NOT_CLEARED; this does not prevent completing the audit. Preserve every unresolvedBlocker exactly and never infer that it is cleared.',
           'Read context.hostEvidence.routePublicationViolations and the routePublication section of HOST_EVIDENCE.json. Any violation, unprovable dynamic route, published noindex page, draft without noindex, draft sitemap entry, or public link to a draft requires a non-PASSED result.',
+          'Write the Host route publication proof only as top-level route_publication in PRELAUNCH_ACCEPTANCE.json, copied exactly from the routePublication section of HOST_EVIDENCE.json. Do not emit routePublication in PRELAUNCH_ACCEPTANCE.json.',
           'Add execution_acceptance to PRELAUNCH_ACCEPTANCE.json exactly as {"kind":"PRELAUNCH_EXECUTION_ACCEPTANCE_V1","status":"COMPLETE","context_digest":context.launchReadiness.contextDigest,"launch_readiness":context.launchReadiness.status,"unresolved_blockers":context.launchReadiness.unresolvedBlockers}. Use disposition 暂不建议上线 when status is NOT_CLEARED.',
           'When the audit is complete, return PARTIAL with stage6_completion {"kind":"STAGE6_PRELAUNCH_HANDOFF_V1","audit_execution":"COMPLETE","host_validation":"REQUIRED","site_disposition":<report disposition>,"launch_readiness":context.launchReadiness.status}. Site blockers do not make audit execution incomplete. Missing route or Host evidence must leave stage6_completion null.',
           `Write PRELAUNCH_ACCEPTANCE_REPORT.md, PRELAUNCH_ACCEPTANCE.json and REPAIR_MANIFEST.md under ${context.inputs.paths ? 'context.reportDirectory; the host publishes them transactionally into the read-only site' : 'projectPath/docs/prelaunch/runId'} per the Skill. routes_checked must equal routes_expected, pages.length and context.hostEvidence.routes.length; pages must cover exactly those routes. Record failures truthfully, never infer successful checks from missing evidence.`
@@ -676,7 +677,9 @@ export function createSkillExecutor({ command = process.env.CODEX_BIN || 'codex'
           publishSiteAuditReports(context, result,
             published => validateNativeArtifacts(skill, validationContext,
               { ...published, status: 'PASSED' }, validationOptions),
-          { rootName: 'prelaunch', writeLatest: false }));
+          { rootName: 'prelaunch', writeLatest: false,
+            transformArtifact: (kind, bytes, path) => kind === 'PRELAUNCH_ACCEPTANCE.json'
+              ? normalizePrelaunchRoutePublication(context, bytes, path) : bytes }));
       } else {
         validated = await diagnosticStep('validate-native-artifacts', () =>
           validateNativeArtifacts(skill, validationContext,

@@ -206,6 +206,47 @@ test('complete prelaunch audit accepts exact Host route violations while remaini
   await writeFile(reportPath, JSON.stringify(report));
   await assert.rejects(f.validate(), /route publication.*mismatch/i);
 });
+test('prelaunch normalizes an exact legacy routePublication field to canonical route_publication', async t => {
+  const f = await nativeFixture(t, 5);
+  const violations = [{ code: 'PUBLISHED_ROUTE_NOINDEX', route: '/' }];
+  const blockers = violations.map(violation => ({ source: 'STAGE6_ROUTE_PUBLICATION',
+    code: violation.code, severity: 'BLOCKER', violation }));
+  f.context.launchReadiness = { ...f.context.launchReadiness, status: 'NOT_CLEARED',
+    contextDigest: 'b'.repeat(64), unresolvedBlockers: blockers };
+  const routePublication = { manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1', violations };
+  const evidencePath = join(f.context.inputs.projectPath, 'HOST_EVIDENCE.json');
+  await writeFile(evidencePath, JSON.stringify({ routePublication }));
+  f.context.hostEvidence = { routes: ['/'], routePublicationViolations: violations, evidencePath };
+  const reportPath = f.result.artifacts.find(a => a.kind === 'PRELAUNCH_ACCEPTANCE.json').path;
+  const report = JSON.parse(await readFile(reportPath));
+  report.disposition = '暂不建议上线';
+  report.routePublication = { violations, manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1' };
+  report.execution_acceptance = { kind: 'PRELAUNCH_EXECUTION_ACCEPTANCE_V1', status: 'COMPLETE',
+    context_digest: f.context.launchReadiness.contextDigest, launch_readiness: 'NOT_CLEARED',
+    unresolved_blockers: blockers };
+  await writeFile(reportPath, JSON.stringify(report));
+
+  const validated = await f.validate();
+  const artifact = validated.artifacts.find(item => item.kind === 'PRELAUNCH_ACCEPTANCE.json');
+  const normalized = JSON.parse(Buffer.from(artifact.content, 'base64'));
+  assert.deepEqual(normalized.route_publication, routePublication);
+  assert.equal(Object.hasOwn(normalized, 'routePublication'), false);
+});
+test('prelaunch rejects conflicting canonical and legacy route publication fields', async t => {
+  const f = await nativeFixture(t, 5);
+  const routePublication = { manifestKind: 'ROUTE_PUBLICATION_MANIFEST_V1', violations: [] };
+  const evidencePath = join(f.context.inputs.projectPath, 'HOST_EVIDENCE.json');
+  await writeFile(evidencePath, JSON.stringify({ routePublication }));
+  f.context.hostEvidence = { routes: ['/'], routePublicationViolations: [], evidencePath };
+  const reportPath = f.result.artifacts.find(a => a.kind === 'PRELAUNCH_ACCEPTANCE.json').path;
+  const report = JSON.parse(await readFile(reportPath));
+  report.route_publication = routePublication;
+  report.routePublication = { ...routePublication,
+    violations: [{ code: 'DRAFT_ROUTE_INDEXABLE', route: '/draft' }] };
+  await writeFile(reportPath, JSON.stringify(report));
+
+  await assert.rejects(f.validate(), /conflicting route publication fields/i);
+});
 test('homepage rejects directories, invalid ZIP and missing native fields', async t => {
   const f = await nativeFixture(t, 0); const zip = f.result.artifacts.find(a => a.kind === 'ICON.zip');
   await writeFile(zip.path, 'not a zip'); await assert.rejects(f.validate());
