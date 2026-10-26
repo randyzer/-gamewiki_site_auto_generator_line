@@ -1,0 +1,23 @@
+{
+  "$id": "SITE_ACCEPTANCE_IDENTITY_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "policyVersion", "lineageDigest",
+    "baselineDigest", "projectDigest", "publicationEvidenceDigest",
+    "remediationScopeDigest", "transactionId", "acceptanceRevision"
+  ],
+  "properties": {
+    "kind": { "const": "SITE_ACCEPTANCE_IDENTITY" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "SITE_ACCEPTANCE_CONTRACT" },
+    "policyVersion": { "const": "site-acceptance-v1" },
+    "lineageDigest": { "type": "string", "format": "sha256" },
+    "baselineDigest": { "type": "string", "format": "sha256" },
+    "projectDigest": { "type": "string", "format": "sha256" },
+    "publicationEvidenceDigest": { "type": "string", "format": "sha256" },
+    "remediationScopeDigest": { "type": "string", "format": "sha256" },
+    "transactionId": { "type": "string", "pattern": "^site-remediation-[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "acceptanceRevision": { "type": "string", "format": "sha256" }
+  }
+}

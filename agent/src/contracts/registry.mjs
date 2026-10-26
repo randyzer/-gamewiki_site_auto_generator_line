@@ -105,6 +105,32 @@ const definitions = new Map([
   ['STAGE4_READINESS_ATTESTATION:1', { kind: 'STAGE4_READINESS_ATTESTATION', schemaVersion: 1,
     producer: 'HOST_STAGE4_READINESS_GATE', validator: 'CONTRACT_REGISTRY',
     schema: load('stage4-readiness-attestation.v1.json') }],
+  ['IMMUTABLE_INTEGRATION_LINEAGE:1', { kind: 'IMMUTABLE_INTEGRATION_LINEAGE', schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT', validator: 'CONTRACT_REGISTRY',
+    schema: load('immutable-integration-lineage.v1.json') }],
+  ['CURRENT_SITE_BASELINE:1', { kind: 'CURRENT_SITE_BASELINE', schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT', validator: 'CONTRACT_REGISTRY',
+    schema: load('current-site-baseline.v1.json') }],
+  ['SITE_ACCEPTANCE_IDENTITY:1', { kind: 'SITE_ACCEPTANCE_IDENTITY', schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-acceptance-identity.v1.json') }],
+  ['SITE_REACCEPTANCE_AUTHORIZATION:1', { kind: 'SITE_REACCEPTANCE_AUTHORIZATION', schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-reacceptance-authorization.v1.json') }],
+  ['SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION:1', {
+    kind: 'SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION', schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-reacceptance-authorization-reservation.v1.json') }],
+  ['SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION:1', {
+    kind: 'SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION', schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-reacceptance-authorization-consumption.v1.json') }],
+  ['PUBLICATION_EVIDENCE_BODY:1', { kind: 'PUBLICATION_EVIDENCE_BODY', schemaVersion: 1,
+    producer: 'EFFECTIVE_PUBLICATION_ATTESTATION', validator: 'CONTRACT_REGISTRY',
+    schema: load('publication-evidence-body.v1.json') }],
+  ['DERIVED_PUBLICATION_ATTESTATION:1', { kind: 'DERIVED_PUBLICATION_ATTESTATION', schemaVersion: 1,
+    producer: 'EFFECTIVE_PUBLICATION_ATTESTATION', validator: 'CONTRACT_REGISTRY',
+    schema: load('derived-publication-attestation.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

@@ -1,0 +1,21 @@
+{
+  "$id": "SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "authorizationDigest", "previewId",
+    "confirmationIdentity", "transactionId", "intentDigest", "reservedAtMs", "reservationDigest"
+  ],
+  "properties": {
+    "kind": { "const": "SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "SITE_ACCEPTANCE_CONTRACT" },
+    "authorizationDigest": { "type": "string", "format": "sha256" },
+    "previewId": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "confirmationIdentity": { "type": "string", "minLength": 1 },
+    "transactionId": { "type": "string", "pattern": "^site-remediation-[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "intentDigest": { "type": "string", "format": "sha256" },
+    "reservedAtMs": { "type": "integer", "minimum": 0 },
+    "reservationDigest": { "type": "string", "format": "sha256" }
+  }
+}

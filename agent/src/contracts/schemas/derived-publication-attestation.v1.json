@@ -1,0 +1,71 @@
+{
+  "$id": "DERIVED_PUBLICATION_ATTESTATION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "evidenceBody", "publicationEvidenceDigest",
+    "acceptanceRevision", "attestationDigest"
+  ],
+  "properties": {
+    "kind": { "const": "DERIVED_PUBLICATION_ATTESTATION" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "EFFECTIVE_PUBLICATION_ATTESTATION" },
+    "evidenceBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind", "schemaVersion", "producer", "policyVersion", "originalPublicationManifestSha256",
+        "lineageDigest", "researchHandoffSha256", "researchApprovalDigest",
+        "originalLaunchReadinessBindingDigest", "baselineKind", "baselineDigest",
+        "remediationScopeDigest", "projectDigest", "observedRoutes", "routeInventoryDigest",
+        "pages", "validationStatus", "validatorVersion", "publicationEvidenceDigest"
+      ],
+      "properties": {
+        "kind": { "const": "PUBLICATION_EVIDENCE_BODY" },
+        "schemaVersion": { "const": 1 },
+        "producer": { "const": "EFFECTIVE_PUBLICATION_ATTESTATION" },
+        "policyVersion": { "const": "effective-publication-v1" },
+        "originalPublicationManifestSha256": { "type": "string", "format": "sha256" },
+        "lineageDigest": { "type": "string", "format": "sha256" },
+        "researchHandoffSha256": { "type": "string", "format": "sha256" },
+        "researchApprovalDigest": { "type": "string", "format": "sha256" },
+        "originalLaunchReadinessBindingDigest": { "type": "string", "format": "sha256" },
+        "baselineKind": { "enum": ["VERIFIED_HISTORICAL_BASELINE", "REACCEPTED_CURRENT_BASELINE"] },
+        "baselineDigest": { "type": "string", "format": "sha256" },
+        "remediationScopeDigest": { "type": "string", "format": "sha256" },
+        "projectDigest": { "type": "string", "format": "sha256" },
+        "observedRoutes": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^/" }
+        },
+        "routeInventoryDigest": { "type": "string", "format": "sha256" },
+        "pages": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": [
+              "route", "originalDisposition", "effectiveDisposition", "materialStatus",
+              "robots", "inSitemap", "inNavigation", "dynamicProof"
+            ],
+            "properties": {
+              "route": { "type": "string", "pattern": "^/" },
+              "originalDisposition": { "enum": ["PUBLISH", "DRAFT_ONLY", "OMIT"] },
+              "effectiveDisposition": { "enum": ["PUBLISH", "DRAFT_ONLY", "OMIT"] },
+              "materialStatus": { "enum": ["COMPLETED", "PARTIAL", "BLOCKED"] },
+              "robots": { "enum": ["index", "noindex", "absent"] },
+              "inSitemap": { "type": "boolean" },
+              "inNavigation": { "type": "boolean" },
+              "dynamicProof": { "enum": ["STATIC", "PROVEN", "UNPROVEN"] }
+            }
+          }
+        },
+        "validationStatus": { "const": "VERIFIED" },
+        "validatorVersion": { "type": "string", "minLength": 1 },
+        "publicationEvidenceDigest": { "type": "string", "format": "sha256" }
+      }
+    },
+    "publicationEvidenceDigest": { "type": "string", "format": "sha256" },
+    "acceptanceRevision": { "type": "string", "format": "sha256" },
+    "attestationDigest": { "type": "string", "format": "sha256" }
+  }
+}
