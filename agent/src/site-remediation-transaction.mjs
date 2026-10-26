@@ -32,10 +32,12 @@ import {
 } from './site-remediation-journal.mjs';
 import { syncDirectory } from './state/atomic-file.mjs';
 import { ALL_STAGES, STAGE } from './stages.mjs';
+import { collectSiteRemediationHostEvidence } from './site-remediation-host.mjs';
 
 export const OFFLINE_SITE_REMEDIATION_CAPABILITY = Object.freeze({
   kind: 'OFFLINE_SITE_REMEDIATION_CAPABILITY',
 });
+const TRUSTED_SITE_REMEDIATION_CAPABILITY = Symbol('TRUSTED_SITE_REMEDIATION_CAPABILITY');
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const fail = (code, message) => new ContractError(code, message);
@@ -258,7 +260,8 @@ export function createSiteRemediationController({ workspace, runId, capability,
     throw fail('SITE_REMEDIATION_CONFIGURATION_INVALID',
       'Absolute workspace and safe runId are required');
   }
-  const trustedHost = capability === OFFLINE_SITE_REMEDIATION_CAPABILITY;
+  const offlineHost = capability === OFFLINE_SITE_REMEDIATION_CAPABILITY;
+  const trustedHost = offlineHost || capability === TRUSTED_SITE_REMEDIATION_CAPABILITY;
   const runDirectory = join(workspace, 'runs', runId);
   const manifestPath = join(runDirectory, 'manifest.json');
   const lockPath = join(runDirectory, '.lock');
@@ -270,6 +273,7 @@ export function createSiteRemediationController({ workspace, runId, capability,
       throw fail('SITE_REMEDIATION_HOST_PROVIDER_REQUIRED',
         'A synthetic evidence provider is required for offline tests');
     }
+    if (!offlineHost) return;
     let relativeWorkspace;
     try {
       const temporaryRoot = await realpath(tmpdir());
@@ -510,6 +514,19 @@ export function createSiteRemediationController({ workspace, runId, capability,
   }
 
   return Object.freeze({ manifestPath, preview, confirm, recover });
+}
+
+export function createTrustedSiteRemediationController({ hostEvidence, ...options } = {}) {
+  if (!hostEvidence || typeof hostEvidence !== 'object' || Array.isArray(hostEvidence)) {
+    throw fail('SITE_REMEDIATION_HOST_PROVIDER_REQUIRED',
+      'Trusted Host evidence contracts are required');
+  }
+  return createSiteRemediationController({ ...options,
+    capability: TRUSTED_SITE_REMEDIATION_CAPABILITY,
+    evidenceProvider: ({ expected, manifest }) => collectSiteRemediationHostEvidence({
+      ...hostEvidence, expected, manifest,
+    }),
+  });
 }
 
 export async function assertNoPendingSiteRemediation({ runDirectory, manifestSha256 }) {

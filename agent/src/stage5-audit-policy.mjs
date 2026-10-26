@@ -12,6 +12,28 @@ const INVENTORY_COUNTS = Object.freeze(['interactiveCount', 'internalLinkCount',
   'mobileMenuControlCount', 'searchControlCount', 'themeToggleControlCount', 'dialogDisclosureControlCount']);
 const invalid = detail => Object.assign(Error(`STAGE5_AUDIT_INVALID: ${detail}`), { code: 'STAGE5_AUDIT_INVALID' });
 const status = (route, category) => route.checks.find(item => item.category === category)?.status;
+const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
+
+export function bindStage5SiteAcceptance(siteAcceptance) {
+  if (!siteAcceptance || siteAcceptance.mode !== 'REMEDIATED' ||
+      !digest(siteAcceptance.acceptanceRevision) || !digest(siteAcceptance.projectDigest) ||
+      !digest(siteAcceptance.attestationDigest) || !digest(siteAcceptance.envelopeDigest)) {
+    throw invalid('effective site acceptance identity is invalid');
+  }
+  return Object.freeze({ kind: 'STAGE5_SITE_ACCEPTANCE_V1',
+    acceptanceRevision: siteAcceptance.acceptanceRevision,
+    projectDigest: siteAcceptance.projectDigest,
+    attestationDigest: siteAcceptance.attestationDigest,
+    envelopeDigest: siteAcceptance.envelopeDigest });
+}
+
+export function verifyStage5SiteAcceptance(value, siteAcceptance) {
+  const expected = bindStage5SiteAcceptance(siteAcceptance);
+  if (JSON.stringify(value) !== JSON.stringify(expected)) {
+    throw invalid('Stage 5 evidence belongs to another site acceptance');
+  }
+  return value;
+}
 
 export async function validateHostInteractions(path, expectedSha256, runId, expectedRoutes = null) {
   const bytes = await readArtifact(path, [dirname(path)]);

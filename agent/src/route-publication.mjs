@@ -1,5 +1,10 @@
 import { readArtifact, parseArtifactJson } from './files.mjs';
 import { STAGE, findStage } from './stages.mjs';
+import { ContractError } from './contracts/errors.mjs';
+import {
+  verifyDerivedPublicationAttestation,
+  verifyPublicationEvidenceBody,
+} from './effective-publication-attestation.mjs';
 
 export const ROUTE_PUBLICATION_KIND = 'ROUTE_PUBLICATION_MANIFEST_V1';
 export const ROUTE_PUBLICATION_ARTIFACT = 'ROUTE_PUBLICATION_MANIFEST.json';
@@ -115,4 +120,32 @@ export async function publicationRoutes(context, { includeDrafts = false } = {})
   const allowed = includeDrafts ? new Set(['PUBLISH', 'DRAFT_ONLY']) : new Set(['PUBLISH']);
   return [...new Set(manifest.pages.filter(page => allowed.has(page.disposition) && page.route)
     .map(page => publicationRoute(page.route)))];
+}
+
+export function verifyEffectivePublication({ originalManifest, evidenceBody, attestation,
+  acceptanceIdentity, currentRoutes }) {
+  verifyPublicationEvidenceBody(evidenceBody);
+  verifyDerivedPublicationAttestation(attestation, { acceptanceIdentity });
+  if (!originalManifest || !Array.isArray(originalManifest.pages) ||
+      !Array.isArray(currentRoutes)) {
+    throw new ContractError('PUBLICATION_POLICY_INVALID',
+      'Original publication policy and current routes are required');
+  }
+  const originals = new Map(originalManifest.pages
+    .filter(page => page.route)
+    .map(page => [publicationRoute(page.route), page.disposition]));
+  for (const page of evidenceBody.pages) {
+    if (page.effectiveDisposition === 'OMIT') continue;
+    const original = originals.get(publicationRoute(page.route));
+    if (!original || original !== page.originalDisposition) {
+      throw new ContractError('PUBLICATION_RIGHTS_WIDENED',
+        `Current route is not justified by Stage 4: ${page.route}`);
+    }
+  }
+  const observed = [...new Set(currentRoutes.map(publicationRoute))].sort();
+  if (JSON.stringify(observed) !== JSON.stringify(evidenceBody.observedRoutes)) {
+    throw new ContractError('PUBLICATION_ROUTE_COVERAGE_INVALID',
+      'Current route inventory differs from the Host publication evidence');
+  }
+  return evidenceBody;
 }

@@ -1,0 +1,33 @@
+{
+  "$id": "EFFECTIVE_SITE_ACCEPTANCE_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "mode", "siteRevision",
+    "acceptanceRevision", "projectDigest", "lineageDigest", "baselineDigest",
+    "receiptDigest", "attestationDigest", "originalPublicationManifestSha256",
+    "originalLaunchReadinessBindingDigest", "launchReadiness", "unresolvedBlockers",
+    "envelopeDigest"
+  ],
+  "properties": {
+    "kind": { "const": "EFFECTIVE_SITE_ACCEPTANCE" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "EFFECTIVE_SITE_ACCEPTANCE_RESOLVER" },
+    "mode": { "enum": ["ORDINARY", "REMEDIATED"] },
+    "siteRevision": { "type": "string", "minLength": 1 },
+    "acceptanceRevision": { "type": "string", "format": "sha256" },
+    "projectDigest": { "type": "string", "format": "sha256" },
+    "lineageDigest": { "type": "string", "format": "sha256" },
+    "baselineDigest": { "type": ["string", "null"], "format": "sha256" },
+    "receiptDigest": { "type": ["string", "null"], "format": "sha256" },
+    "attestationDigest": { "type": ["string", "null"], "format": "sha256" },
+    "originalPublicationManifestSha256": { "type": ["string", "null"], "format": "sha256" },
+    "originalLaunchReadinessBindingDigest": { "type": ["string", "null"], "format": "sha256" },
+    "launchReadiness": { "enum": ["CLEARED", "NOT_CLEARED"] },
+    "unresolvedBlockers": {
+      "type": "array", "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "envelopeDigest": { "type": "string", "format": "sha256" }
+  }
+}
