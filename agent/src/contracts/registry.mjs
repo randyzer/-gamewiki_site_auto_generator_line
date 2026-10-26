@@ -131,6 +131,18 @@ const definitions = new Map([
   ['DERIVED_PUBLICATION_ATTESTATION:1', { kind: 'DERIVED_PUBLICATION_ATTESTATION', schemaVersion: 1,
     producer: 'EFFECTIVE_PUBLICATION_ATTESTATION', validator: 'CONTRACT_REGISTRY',
     schema: load('derived-publication-attestation.v1.json') }],
+  ['SITE_REMEDIATION_PREVIEW:1', { kind: 'SITE_REMEDIATION_PREVIEW', schemaVersion: 1,
+    producer: 'SITE_REMEDIATION_TRANSACTION', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-remediation-preview.v1.json') }],
+  ['SITE_REMEDIATION_INTENT:1', { kind: 'SITE_REMEDIATION_INTENT', schemaVersion: 1,
+    producer: 'SITE_REMEDIATION_TRANSACTION', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-remediation-intent.v1.json') }],
+  ['SITE_REMEDIATION_RECEIPT:1', { kind: 'SITE_REMEDIATION_RECEIPT', schemaVersion: 1,
+    producer: 'SITE_REMEDIATION_TRANSACTION', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-remediation-receipt.v1.json') }],
+  ['SITE_REMEDIATION_ABORT:1', { kind: 'SITE_REMEDIATION_ABORT', schemaVersion: 1,
+    producer: 'SITE_REMEDIATION_TRANSACTION', validator: 'CONTRACT_REGISTRY',
+    schema: load('site-remediation-abort.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

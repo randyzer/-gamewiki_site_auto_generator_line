@@ -1,0 +1,33 @@
+{
+  "$id": "SITE_REMEDIATION_RECEIPT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "policyVersion", "runId", "transactionId",
+    "previewId", "previewDigest", "intentDigest", "reservationDigest", "consumptionDigest",
+    "preManifestSha256", "postManifestSha256", "committedSequence", "acceptanceRevision",
+    "preservedStages", "invalidatedStages", "deploymentExecuted", "committedAtMs", "receiptDigest"
+  ],
+  "properties": {
+    "kind": { "const": "SITE_REMEDIATION_RECEIPT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "SITE_REMEDIATION_TRANSACTION" },
+    "policyVersion": { "const": "site-remediation-transaction-v1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "transactionId": { "type": "string", "pattern": "^site-remediation-[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "previewId": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "previewDigest": { "type": "string", "format": "sha256" },
+    "intentDigest": { "type": "string", "format": "sha256" },
+    "reservationDigest": { "type": "string", "format": "sha256" },
+    "consumptionDigest": { "type": "string", "format": "sha256" },
+    "preManifestSha256": { "type": "string", "format": "sha256" },
+    "postManifestSha256": { "type": "string", "format": "sha256" },
+    "committedSequence": { "type": "integer", "minimum": 1 },
+    "acceptanceRevision": { "type": "string", "format": "sha256" },
+    "preservedStages": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string", "minLength": 1 } },
+    "invalidatedStages": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "string", "minLength": 1 } },
+    "deploymentExecuted": { "const": false },
+    "committedAtMs": { "type": "integer", "minimum": 0 },
+    "receiptDigest": { "type": "string", "format": "sha256" }
+  }
+}

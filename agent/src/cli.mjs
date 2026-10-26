@@ -12,6 +12,7 @@ import { runFromTerminal } from './terminal-run.mjs';
 import { reportCliResult } from './cli-result.mjs';
 import { previewFinalizedStage4Reconciliation,
   applyFinalizedStage4Reconciliation } from './stage4-finalized-reconciliation.mjs';
+import { createSiteRemediationController } from './site-remediation-transaction.mjs';
 
 const [command, file, id, revision] = process.argv.slice(2);
 async function entryInput(file) {
@@ -90,6 +91,43 @@ else if (command === 'reconcile-stage4-confirm' && file && id && revision &&
       releaseAuthorized: false });
   }
 }
+else if (command === 'site-remediation-preview' && file &&
+  process.argv.slice(2).length === 2) {
+  try {
+    const config = await loadConfiguration();
+    const controller = createSiteRemediationController({ workspace: config.workspace, runId: file });
+    reportEntry(await controller.preview({}));
+  } catch (error) {
+    reportEntry({ status: 'BLOCKED', code: error.code ?? 'SITE_REMEDIATION_UNAVAILABLE',
+      reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
+      releaseAuthorized: false });
+  }
+}
+else if (command === 'site-remediation-confirm' && file && id && revision &&
+  process.argv.slice(2).length === 4) {
+  try {
+    const config = await loadConfiguration();
+    const controller = createSiteRemediationController({ workspace: config.workspace, runId: id });
+    reportEntry(await controller.confirm({ previewId: file, confirmationCode: revision,
+      authorization: null }));
+  } catch (error) {
+    reportEntry({ status: 'BLOCKED', code: error.code ?? 'SITE_REMEDIATION_UNAVAILABLE',
+      reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
+      releaseAuthorized: false });
+  }
+}
+else if (command === 'site-remediation-recover' && file &&
+  process.argv.slice(2).length === 2) {
+  try {
+    const config = await loadConfiguration();
+    const controller = createSiteRemediationController({ workspace: config.workspace, runId: file });
+    reportEntry(await controller.recover({ transactionId: null }));
+  } catch (error) {
+    reportEntry({ status: 'BLOCKED', code: error.code ?? 'SITE_REMEDIATION_UNAVAILABLE',
+      reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
+      releaseAuthorized: false });
+  }
+}
 else if (['run-confirm', 'retry-confirm'].includes(command) && file && id && revision &&
   process.argv.slice(2).length === 4) {
   const result = await runFromTerminal({ command: command === 'run-confirm' ? 'run' : 'retry',
@@ -106,6 +144,6 @@ else if (['run', 'retry'].includes(command) && file && id) {
   const result = await runFromTerminal({ command, inputsFile: file, runId: id, ...confirmation });
   if (result.status !== 'PREVIEW') reportEntry(result);
 } else {
-  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | reconcile-stage4-preview RUN_ID | reconcile-stage4-confirm PREVIEW_ID RUN_ID CODE | run INPUTS.json RUN_ID [--preview | --confirm CODE] | retry INPUTS.json RUN_ID [--preview | --confirm CODE] | run-confirm PREVIEW_ID RUN_ID CODE | retry-confirm PREVIEW_ID RUN_ID CODE');
+  console.error('Usage: node src/cli.mjs entry-preview INPUTS.json| - [RUN_ID] | entry-create INPUTS.json|- RUN_ID | entry-status RUN_ID | entry-update PATCH.json|- RUN_ID EXPECTED_REVISION | entry-handoff-preview REQUEST.json|- | entry-handoff-validate SNAPSHOT.json|- | inventory | review-card CARD.json | preflight CARD.json [RUN_ID] | reconcile-stage4-preview RUN_ID | reconcile-stage4-confirm PREVIEW_ID RUN_ID CODE | site-remediation-preview RUN_ID | site-remediation-confirm PREVIEW_ID RUN_ID CODE | site-remediation-recover RUN_ID | run INPUTS.json RUN_ID [--preview | --confirm CODE] | retry INPUTS.json RUN_ID [--preview | --confirm CODE] | run-confirm PREVIEW_ID RUN_ID CODE | retry-confirm PREVIEW_ID RUN_ID CODE');
   process.exitCode = 2;
 }

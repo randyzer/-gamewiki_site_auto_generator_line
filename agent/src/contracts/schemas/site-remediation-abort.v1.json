@@ -1,0 +1,24 @@
+{
+  "$id": "SITE_REMEDIATION_ABORT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "policyVersion", "runId", "transactionId",
+    "previewId", "previewDigest", "intentDigest", "phase", "reasonCode", "abortedAtMs", "abortDigest"
+  ],
+  "properties": {
+    "kind": { "const": "SITE_REMEDIATION_ABORT" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "SITE_REMEDIATION_TRANSACTION" },
+    "policyVersion": { "const": "site-remediation-transaction-v1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "transactionId": { "type": "string", "pattern": "^site-remediation-[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "previewId": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "previewDigest": { "type": "string", "format": "sha256" },
+    "intentDigest": { "type": "string", "format": "sha256" },
+    "phase": { "enum": ["INTENT_ONLY", "RESERVED_PRE_COMMIT", "RECOVERY_REQUIRED"] },
+    "reasonCode": { "type": "string", "minLength": 1 },
+    "abortedAtMs": { "type": "integer", "minimum": 0 },
+    "abortDigest": { "type": "string", "format": "sha256" }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$id": "SITE_REMEDIATION_PREVIEW_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind", "schemaVersion", "producer", "policyVersion", "runId", "transactionId",
+    "previewId", "manifestSequence", "manifestSha256", "mode", "lineageDigest",
+    "researchApprovalDigest", "oldProjectDigest", "newProjectDigest", "baselineDigest",
+    "remediationScopeDigest", "publicationEvidenceDigest", "attestationDigest",
+    "acceptanceRevision", "protectedInputsDigest", "invalidatedStages",
+    "historicalEvidenceGaps", "operatorSummarySha256", "createdAtMs", "previewDigest"
+  ],
+  "properties": {
+    "kind": { "const": "SITE_REMEDIATION_PREVIEW" },
+    "schemaVersion": { "const": 1 },
+    "producer": { "const": "SITE_REMEDIATION_TRANSACTION" },
+    "policyVersion": { "const": "site-remediation-transaction-v1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "transactionId": { "type": "string", "pattern": "^site-remediation-[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "previewId": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "manifestSequence": { "type": "integer", "minimum": 0 },
+    "manifestSha256": { "type": "string", "format": "sha256" },
+    "mode": { "enum": ["EXACT_REMEDIATION", "LEGACY_CURRENT_BASELINE"] },
+    "lineageDigest": { "type": "string", "format": "sha256" },
+    "researchApprovalDigest": { "type": "string", "format": "sha256" },
+    "oldProjectDigest": { "type": "string", "format": "sha256" },
+    "newProjectDigest": { "type": "string", "format": "sha256" },
+    "baselineDigest": { "type": "string", "format": "sha256" },
+    "remediationScopeDigest": { "type": "string", "format": "sha256" },
+    "publicationEvidenceDigest": { "type": "string", "format": "sha256" },
+    "attestationDigest": { "type": "string", "format": "sha256" },
+    "acceptanceRevision": { "type": "string", "format": "sha256" },
+    "protectedInputsDigest": { "type": "string", "format": "sha256" },
+    "invalidatedStages": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "string", "minLength": 1 } },
+    "historicalEvidenceGaps": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "operatorSummarySha256": { "type": "string", "format": "sha256" },
+    "createdAtMs": { "type": "integer", "minimum": 0 },
+    "previewDigest": { "type": "string", "format": "sha256" }
+  }
+}
