@@ -1,7 +1,6 @@
-# Agent 当前执行路线图
+# Agent 执行路线图快照（2026-10-22，已归档）
 
-状态：个人使用版为当前主线。完整架构、业务阶段和时间盒见
-[个人使用版架构与执行计划](AGENT_PERSONAL_USE_ARCHITECTURE_AND_PLAN.md)。
+状态：历史进度快照，不再表示当前阶段。最新状态见[当前状态](../CURRENT_STATUS.md)，稳定架构见[个人使用版架构与执行计划](../AGENT_PERSONAL_USE_ARCHITECTURE_AND_PLAN.md)。
 
 原 Agent V2 的 Code Authority、签名、抗回滚、六来源证明和生产权威迁移不再是实际建站前置条件。相关代码和历史文档可以保留供未来参考，但不能阻塞个人版 Agent 完成真实游戏站。
 
