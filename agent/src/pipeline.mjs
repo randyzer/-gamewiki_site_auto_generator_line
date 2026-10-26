@@ -523,10 +523,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
     const binding = stage4LaunchReadinessBinding();
     if (!binding) return null;
     const projectDigestValue = findStage(state.stages, STAGE.UI_UX_AUDIT).checkpoint.projectDigest;
+    const siteAcceptance = await effectiveSiteAcceptance();
     assert(/^[a-f0-9]{64}$/.test(projectDigestValue ?? ''), 'LAUNCH_READINESS_PROJECT_DIGEST_MISSING');
     const verified = await validateLaunchReadinessClearance(state.inputs.launchReadinessClearance, {
       binding, siteRevision: state.inputs.siteRevision, projectDigest: projectDigestValue,
       domain: state.inputs.domain, resolveNameServers: resolveLaunchNameServers,
+      siteAcceptance,
       readPolicyEvidence: async path => {
         const evidencePath = resolve(path);
         assert(isAbsolute(path) && inside(state.inputs.projectPath, evidencePath) &&
@@ -546,6 +548,23 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       siteRevision: state.inputs.siteRevision, projectDigest: verified.projectDigest,
       clearanceDigest: verified.clearanceDigest });
     return attestation;
+  }
+
+  async function verifyCurrentDeploymentClearance(assessment) {
+    assert(assessment?.deploymentAuthorized === true, 'LAUNCH_READINESS_NOT_CLEARED');
+    const acceptance = await effectiveSiteAcceptance();
+    const verified = await verifyLaunchReadinessClearance();
+    assert(verified, 'LAUNCH_READINESS_NOT_CLEARED');
+    if (acceptance?.mode === 'REMEDIATED') {
+      assert(state.inputs.launchReadinessClearance?.kind === 'LAUNCH_READINESS_CLEARANCE_V3' &&
+        state.inputs.launchReadinessClearance.acceptanceRevision ===
+          acceptance.acceptanceRevision &&
+        assessment.acceptanceRevision === acceptance.acceptanceRevision &&
+        assessment.acceptanceClearanceDigest === verified.clearanceDigest,
+      'CURRENT_SITE_ACCEPTANCE_NOT_CLEARED');
+    }
+    await verifyStage6LaunchReadiness();
+    return verified;
   }
 
   async function prelaunchContext() {
@@ -572,6 +591,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       projectDigest: auditStage.checkpoint.projectDigest, binding, stage5Audit,
       stage5AuditSha256,
       clearanceDigest: verified?.clearanceDigest ?? null,
+      acceptanceClearanceDigest: siteAcceptance?.mode === 'REMEDIATED'
+        ? verified?.clearanceDigest ?? null : null,
       siteAcceptance });
   }
 
@@ -761,12 +782,16 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         if (state.templateSnapshot) await verifyTemplateSnapshot(state.templateSnapshot);
         for (let i = 0; i < index; i++) await verifyArtifacts(i);
         await verifyProjectFreshness(index);
-        if (index >= stageIndex(STAGE.DEPLOYMENT_PLAN)) await verifyPrelaunchState();
+        const prelaunchAssessment = index >= stageIndex(STAGE.DEPLOYMENT_PLAN)
+          ? await verifyPrelaunchState() : null;
         if (index > stageIndex(STAGE.KEYWORD_RESEARCH)) {
           const expected = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.keywordSha256;
           assert(expected && hash(await regularFile(state.inputs.rawKeywordsFile)) === expected, 'Raw keywords changed; explicitly update input or start a new run');
         }
-        if (executingDeployment(stage)) await verifyApprovedPlan(stage);
+        if (executingDeployment(stage)) {
+          await verifyCurrentDeploymentClearance(prelaunchAssessment);
+          await verifyApprovedPlan(stage);
+        }
       } catch (error) {
         await recordFailure(stage, error, 'verify-upstream', 'BLOCKED'); await save(); return clone(state);
       }
@@ -1311,8 +1336,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         }
         if (deploymentExecution) {
           const assessment = await verifyPrelaunchState();
-          assert(assessment.deploymentAuthorized === true, 'LAUNCH_READINESS_NOT_CLEARED');
-          await verifyStage6LaunchReadiness();
+          await verifyCurrentDeploymentClearance(assessment);
         }
         for (let i = 0; i <= stageIndex(STAGE.DEPLOYMENT_PLAN); i++) await verifyArtifacts(i);
         await verifyProjectFreshness(stageIndex(STAGE.DEPLOYMENT_PLAN));

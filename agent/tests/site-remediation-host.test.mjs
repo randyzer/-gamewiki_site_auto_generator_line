@@ -16,6 +16,7 @@ import {
 import { projectContentDigest } from '../src/project-content-digest.mjs';
 import { sourceFiles } from '../src/project-baseline.mjs';
 import { collectSiteRemediationHostEvidence } from '../src/site-remediation-host.mjs';
+import { createHostPublicationObservation } from '../src/route-publication.mjs';
 
 const d = character => character.repeat(64);
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -45,6 +46,12 @@ async function fixture(t) {
     historicalEquivalence: false, digestPolicyVersion: 'project-content-v1', projectPath,
     files: inventory, projectDigest, routes: ['/'], protectedInputs,
     historicalEvidenceGaps: ['FINAL_STAGE4_INVENTORY_UNAVAILABLE'] });
+  const observationPages = [{ route: '/', robots: 'noindex', inSitemap: true,
+    inNavigation: true, linkedFromPublicPages: true, sourceFileExposed: false,
+    dynamicProof: 'STATIC' }];
+  const hostObservation = createHostPublicationObservation({ projectDigest,
+    observedRoutes: ['/'], pages: observationPages, indexingAuthorization: 'NOT_CLEARED',
+    validatorVersion: 'host-route-v1' });
   const evidenceBody = createPublicationEvidenceBody({
     originalPublicationManifestSha256: d('1'), lineageDigest: lineage.lineageDigest,
     researchHandoffSha256: d('3'), researchApprovalDigest: d('4'),
@@ -55,7 +62,7 @@ async function fixture(t) {
       inSitemap: true, inNavigation: true, linkedFromPublicPages: true,
       sourceFileExposed: false, dynamicProof: 'STATIC' }],
     validationStatus: 'VERIFIED', indexingAuthorization: 'NOT_CLEARED',
-    hostObservationDigest: d('7'), validatorVersion: 'host-route-v1',
+    hostObservationDigest: hostObservation.observationDigest, validatorVersion: 'host-route-v1',
   });
   const acceptanceIdentity = createSiteAcceptanceIdentity({
     lineageDigest: evidenceBody.lineageDigest, baselineDigest: baseline.baselineDigest,
@@ -82,14 +89,51 @@ async function fixture(t) {
       kind: 'ROUTE_PUBLICATION_MANIFEST.json', sha256: d('1') }],
     checkpoint: { launchReadiness: { bindingDigest: d('5') } } },
   ] };
-  return { projectPath, protectedPath, lineage, baseline, publicationEvidence: evidenceBody, acceptanceIdentity,
-    attestation, expected, originalPublicationManifest, manifest };
+  return { projectPath, protectedPath, lineage, baseline, publicationEvidence: evidenceBody,
+    acceptanceIdentity, attestation, expected, originalPublicationManifest, manifest,
+    observePublication: async () => hostObservation, hostObservation };
 }
 
 test('trusted Host evidence is recomputed from the current project and contracts', async t => {
   const f = await fixture(t);
   const observed = await collectSiteRemediationHostEvidence(f);
-  assert.deepEqual(observed, f.expected);
+  assert.deepEqual(Object.fromEntries(Object.keys(f.expected).map(key => [key, observed[key]])),
+    f.expected);
+  assert.equal(observed.immutableObjects.baseline, f.baseline);
+});
+
+test('trusted Host evidence rejects missing or forged publication observations', async t => {
+  const missing = await fixture(t);
+  delete missing.observePublication;
+  await assert.rejects(() => collectSiteRemediationHostEvidence(missing),
+    error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+
+  for (const [field, value] of [
+    ['robots', 'index'], ['inSitemap', false], ['inNavigation', false],
+    ['linkedFromPublicPages', false], ['sourceFileExposed', true],
+  ]) {
+    const f = await fixture(t);
+    const page = { ...f.hostObservation.pages[0], [field]: value };
+    f.observePublication = async () => createHostPublicationObservation({
+      projectDigest: f.hostObservation.projectDigest, observedRoutes: ['/'], pages: [page],
+      indexingAuthorization: f.hostObservation.indexingAuthorization,
+      validatorVersion: f.hostObservation.validatorVersion,
+    });
+    await assert.rejects(() => collectSiteRemediationHostEvidence(f),
+      error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+  }
+});
+
+test('trusted Host evidence rejects a Host route inventory mismatch', async t => {
+  const f = await fixture(t);
+  f.observePublication = async () => createHostPublicationObservation({
+    projectDigest: f.hostObservation.projectDigest, observedRoutes: ['/other'],
+    pages: [{ ...f.hostObservation.pages[0], route: '/other' }],
+    indexingAuthorization: f.hostObservation.indexingAuthorization,
+    validatorVersion: f.hostObservation.validatorVersion,
+  });
+  await assert.rejects(() => collectSiteRemediationHostEvidence(f),
+    error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
 });
 
 test('trusted Host evidence rejects changed project and unprovable routes', async t => {

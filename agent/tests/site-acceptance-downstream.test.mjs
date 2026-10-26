@@ -12,7 +12,8 @@ import {
 
 const d = character => character.repeat(64);
 const acceptance = { mode: 'REMEDIATED', acceptanceRevision: d('1'),
-  projectDigest: d('2'), attestationDigest: d('3'), envelopeDigest: d('4') };
+  projectDigest: d('2'), attestationDigest: d('3'), envelopeDigest: d('4'),
+  unresolvedBlockers: ['CURRENT_LAUNCH_READINESS_REVALIDATION_REQUIRED'] };
 
 test('Stage 5 binding rejects a different remediation acceptance', () => {
   const binding = bindStage5SiteAcceptance(acceptance);
@@ -29,6 +30,8 @@ test('Stage 6 context and assessment preserve the remediation acceptance identit
   assert.equal(context.acceptanceRevision, acceptance.acceptanceRevision);
   assert.equal(context.acceptanceProjectDigest, acceptance.projectDigest);
   assert.equal(context.publicationAttestationDigest, acceptance.attestationDigest);
+  assert.equal(context.status, 'NOT_CLEARED');
+  assert.equal(context.unresolvedBlockers.at(-1).source, 'CURRENT_SITE_ACCEPTANCE');
   const assessment = createPrelaunchAssessment({ context, reportSha256: d('6'),
     disposition: '暂不建议上线' });
   assert.equal(verifyPrelaunchAssessment(assessment, context), assessment);

@@ -77,7 +77,7 @@ async function verifyProtectedInputs(projectPath, expected) {
 
 export async function collectSiteRemediationHostEvidence({ projectPath, lineage, baseline,
   publicationEvidence: evidenceBody, acceptanceIdentity, attestation, expected,
-  originalPublicationManifest, manifest = null }) {
+  originalPublicationManifest, observePublication, manifest = null }) {
   verifyImmutableIntegrationLineage(lineage);
   verifyManifestLineage(lineage, manifest);
   verifyCurrentSiteBaseline(baseline);
@@ -107,8 +107,16 @@ export async function collectSiteRemediationHostEvidence({ projectPath, lineage,
     throw fail('SITE_REMEDIATION_ROUTE_INVENTORY_CHANGED',
       'Current route inventory differs from the accepted baseline');
   }
+  if (typeof observePublication !== 'function') {
+    throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      'Trusted Host publication observation provider is required');
+  }
+  const hostObservation = await observePublication(Object.freeze({
+    projectPath, projectDigest: currentProjectDigest, currentRoutes: routes,
+  }));
   verifyEffectivePublication({ originalManifest: originalPublicationManifest, evidenceBody,
-    attestation, acceptanceIdentity, currentRoutes: routes });
+    attestation, acceptanceIdentity, currentRoutes: routes, hostObservation,
+    projectDigest: currentProjectDigest });
   const observed = {
     ...expected,
     lineageDigest: evidenceBody.lineageDigest,
@@ -125,5 +133,7 @@ export async function collectSiteRemediationHostEvidence({ projectPath, lineage,
     throw fail('SITE_REMEDIATION_EVIDENCE_STALE',
       'Host-recomputed evidence differs from the approved snapshot');
   }
-  return Object.freeze(observed);
+  return Object.freeze({ ...observed, immutableObjects: Object.freeze({
+    baseline, publicationEvidence: evidenceBody, attestation,
+  }) });
 }

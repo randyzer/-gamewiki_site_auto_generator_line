@@ -8,8 +8,10 @@ import { acquireRunLock } from './run-lock.mjs';
 import {
   createAuthorizationConsumption,
   createAuthorizationReservation,
+  createSiteAcceptanceIdentity,
   verifyAuthorizationConsumption,
   verifyAuthorizationReservation,
+  verifyCurrentSiteBaseline,
   verifySiteReacceptanceAuthorization,
 } from './site-acceptance-contract.mjs';
 import {
@@ -29,10 +31,15 @@ import {
   persistSiteRemediationBytes,
   persistSiteRemediationRecord,
   siteRemediationPaths,
+  siteRemediationObjectPath,
 } from './site-remediation-journal.mjs';
 import { syncDirectory } from './state/atomic-file.mjs';
 import { ALL_STAGES, STAGE } from './stages.mjs';
 import { collectSiteRemediationHostEvidence } from './site-remediation-host.mjs';
+import {
+  verifyDerivedPublicationAttestation,
+  verifyPublicationEvidenceBody,
+} from './effective-publication-attestation.mjs';
 
 export const OFFLINE_SITE_REMEDIATION_CAPABILITY = Object.freeze({
   kind: 'OFFLINE_SITE_REMEDIATION_CAPABILITY',
@@ -175,6 +182,67 @@ async function readRecord(path) {
   return parseStrictJson(await readFile(path), path);
 }
 
+function verifyImmutableObjects(objects, expected) {
+  if (!objects || typeof objects !== 'object' || Array.isArray(objects)) {
+    throw fail('SITE_REMEDIATION_OBJECT_INVALID',
+      'Trusted Host evidence must include immutable acceptance objects');
+  }
+  const { baseline, publicationEvidence, attestation } = objects;
+  verifyCurrentSiteBaseline(baseline);
+  verifyPublicationEvidenceBody(publicationEvidence);
+  const acceptanceIdentity = createSiteAcceptanceIdentity({
+    lineageDigest: expected.lineageDigest,
+    baselineDigest: baseline.baselineDigest,
+    projectDigest: baseline.projectDigest,
+    publicationEvidenceDigest: publicationEvidence.publicationEvidenceDigest,
+    remediationScopeDigest: publicationEvidence.remediationScopeDigest,
+    transactionId: expected.transactionId,
+  });
+  verifyDerivedPublicationAttestation(attestation, { acceptanceIdentity });
+  if (baseline.baselineDigest !== expected.baselineDigest ||
+      baseline.projectDigest !== expected.newProjectDigest ||
+      publicationEvidence.publicationEvidenceDigest !== expected.publicationEvidenceDigest ||
+      publicationEvidence.baselineDigest !== baseline.baselineDigest ||
+      publicationEvidence.projectDigest !== baseline.projectDigest ||
+      attestation.attestationDigest !== expected.attestationDigest ||
+      acceptanceIdentity.acceptanceRevision !== expected.acceptanceRevision) {
+    throw fail('SITE_REMEDIATION_OBJECT_INVALID',
+      'Immutable acceptance objects do not bind the remediation preview');
+  }
+  return { baseline, publicationEvidence, attestation, acceptanceIdentity };
+}
+
+async function persistImmutableObjects(runDirectory, objects, expected) {
+  const verified = verifyImmutableObjects(objects, expected);
+  const paths = [
+    siteRemediationObjectPath(runDirectory, verified.baseline.baselineDigest),
+    siteRemediationObjectPath(runDirectory,
+      verified.publicationEvidence.publicationEvidenceDigest),
+    siteRemediationObjectPath(runDirectory, verified.attestation.attestationDigest),
+  ];
+  await assertStorageBoundary(runDirectory, ...paths);
+  await Promise.all([
+    persistSiteRemediationRecord(paths[0], verified.baseline),
+    persistSiteRemediationRecord(paths[1], verified.publicationEvidence),
+    persistSiteRemediationRecord(paths[2], verified.attestation),
+  ]);
+  return verified;
+}
+
+async function readImmutableObjects(runDirectory, record) {
+  try {
+    const [baseline, publicationEvidence, attestation] = await Promise.all([
+      readRecord(siteRemediationObjectPath(runDirectory, record.baselineDigest)),
+      readRecord(siteRemediationObjectPath(runDirectory, record.publicationEvidenceDigest)),
+      readRecord(siteRemediationObjectPath(runDirectory, record.attestationDigest)),
+    ]);
+    return verifyImmutableObjects({ baseline, publicationEvidence, attestation }, record);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
 async function assertStorageBoundary(root, ...paths) {
   try {
     const resolvedRoot = resolve(root);
@@ -249,7 +317,9 @@ export async function verifyCommittedSiteRemediation({ runDirectory, manifest })
     throw fail('SITE_REMEDIATION_COMMIT_INVALID',
       'Current manifest does not preserve the committed site remediation identity');
   }
-  return Object.freeze({ preview: record, intent, receipt, postManifest: post });
+  const immutableObjects = await readImmutableObjects(runDirectory, record);
+  return Object.freeze({ preview: record, intent, receipt, postManifest: post,
+    immutableObjects });
 }
 
 export function createSiteRemediationController({ workspace, runId, capability,
@@ -297,6 +367,7 @@ export function createSiteRemediationController({ workspace, runId, capability,
       throw fail('SITE_REMEDIATION_EVIDENCE_STALE',
         'Current Host evidence no longer matches the approved remediation snapshot');
     }
+    return observed;
   }
 
   async function preview(input) {
@@ -307,7 +378,7 @@ export function createSiteRemediationController({ workspace, runId, capability,
     validateManifestForRemediation(manifest, { runId,
       expectedResearchApprovalDigest: input.researchApprovalDigest,
       expectedOldProjectDigest: input.oldProjectDigest });
-    await verifyCurrentEvidence(input, manifest);
+    const observed = await verifyCurrentEvidence(input, manifest);
     const previewId = uuid();
     const transactionId = `site-remediation-${previewId}`;
     const record = createSiteRemediationPreview({
@@ -315,6 +386,12 @@ export function createSiteRemediationController({ workspace, runId, capability,
       manifestSequence: manifest.sequence, manifestSha256: sha256(manifestBytes),
       createdAtMs: now(),
     });
+    if (observed.immutableObjects) {
+      await persistImmutableObjects(runDirectory, observed.immutableObjects, record);
+    } else if (!offlineHost) {
+      throw fail('SITE_REMEDIATION_OBJECT_INVALID',
+        'Trusted Host evidence did not include immutable acceptance objects');
+    }
     const paths = siteRemediationPaths(runDirectory, { previewId, transactionId });
     await assertStorageBoundary(runDirectory, paths.root, paths.previewPath,
       paths.transactionDirectory);
@@ -374,7 +451,10 @@ export function createSiteRemediationController({ workspace, runId, capability,
         validateManifestForRemediation(currentManifest, { runId,
           expectedResearchApprovalDigest: record.researchApprovalDigest,
           expectedOldProjectDigest: record.oldProjectDigest });
-        await verifyCurrentEvidence(record, currentManifest);
+        const observed = await verifyCurrentEvidence(record, currentManifest);
+        if (observed.immutableObjects) {
+          await persistImmutableObjects(runDirectory, observed.immutableObjects, record);
+        }
       } catch (error) {
         if (error.code === 'SITE_REMEDIATION_EVIDENCE_STALE') {
           const abort = createSiteRemediationAbort({ runId,
@@ -474,7 +554,10 @@ export function createSiteRemediationController({ workspace, runId, capability,
       validateManifestForRemediation(manifest, { runId,
         expectedResearchApprovalDigest: record.researchApprovalDigest,
         expectedOldProjectDigest: record.oldProjectDigest });
-      await verifyCurrentEvidence(record, manifest);
+      const observed = await verifyCurrentEvidence(record, manifest);
+      if (observed.immutableObjects) {
+        await persistImmutableObjects(runDirectory, observed.immutableObjects, record);
+      }
       const acceptedAtMs = now();
       const post = resetDownstream(manifest, record, acceptedAtMs);
       const postBytes = Buffer.from(`${JSON.stringify(post, null, 2)}\n`);

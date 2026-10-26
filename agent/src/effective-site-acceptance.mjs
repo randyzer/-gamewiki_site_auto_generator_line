@@ -1,7 +1,15 @@
 import { canonicalJson, deepFreeze } from './contracts/canonical-json.mjs';
 import { ContractError } from './contracts/errors.mjs';
 import { validateContract } from './contracts/registry.mjs';
-import { canonicalContractDigest } from './site-acceptance-contract.mjs';
+import {
+  canonicalContractDigest,
+  createSiteAcceptanceIdentity,
+  verifyCurrentSiteBaseline,
+} from './site-acceptance-contract.mjs';
+import {
+  verifyDerivedPublicationAttestation,
+  verifyPublicationEvidenceBody,
+} from './effective-publication-attestation.mjs';
 import { verifyCommittedSiteRemediation } from './site-remediation-transaction.mjs';
 import { STAGE, findStage } from './stages.mjs';
 
@@ -35,6 +43,47 @@ function createEnvelope(body) {
   };
   validateContract(value.kind, value.schemaVersion, value);
   return deepFreeze(value);
+}
+
+function verifyCommittedEvidenceGraph(committed, marker, projectDigest) {
+  const { preview, intent, receipt, immutableObjects } = committed ?? {};
+  const { baseline, publicationEvidence, attestation } = immutableObjects ?? {};
+  if (!preview || !intent || !receipt || !baseline || !publicationEvidence || !attestation) {
+    throw fail('EFFECTIVE_SITE_ACCEPTANCE_INVALID',
+      'Committed remediation acceptance is missing immutable evidence objects');
+  }
+  verifyCurrentSiteBaseline(baseline);
+  verifyPublicationEvidenceBody(publicationEvidence);
+  const acceptanceIdentity = createSiteAcceptanceIdentity({
+    lineageDigest: publicationEvidence.lineageDigest,
+    baselineDigest: baseline.baselineDigest,
+    projectDigest: baseline.projectDigest,
+    publicationEvidenceDigest: publicationEvidence.publicationEvidenceDigest,
+    remediationScopeDigest: publicationEvidence.remediationScopeDigest,
+    transactionId: marker.transactionId,
+  });
+  verifyDerivedPublicationAttestation(attestation, { acceptanceIdentity });
+  const expectedObjectDigests = [baseline.baselineDigest,
+    publicationEvidence.publicationEvidenceDigest, attestation.attestationDigest,
+    intent.postManifestSha256].sort();
+  if (preview.newProjectDigest !== projectDigest || baseline.projectDigest !== projectDigest ||
+      preview.previewDigest !== marker.previewDigest ||
+      preview.transactionId !== marker.transactionId ||
+      preview.baselineDigest !== baseline.baselineDigest ||
+      preview.publicationEvidenceDigest !== publicationEvidence.publicationEvidenceDigest ||
+      preview.attestationDigest !== attestation.attestationDigest ||
+      preview.lineageDigest !== publicationEvidence.lineageDigest ||
+      preview.remediationScopeDigest !== publicationEvidence.remediationScopeDigest ||
+      preview.acceptanceRevision !== acceptanceIdentity.acceptanceRevision ||
+      marker.acceptanceRevision !== acceptanceIdentity.acceptanceRevision ||
+      marker.baselineDigest !== baseline.baselineDigest ||
+      marker.protectedInputsDigest !== baseline.protectedInputsDigest ||
+      receipt.acceptanceRevision !== acceptanceIdentity.acceptanceRevision ||
+      canonicalJson(intent.committedObjectDigests) !== canonicalJson(expectedObjectDigests)) {
+    throw fail('EFFECTIVE_SITE_ACCEPTANCE_INVALID',
+      'Committed remediation evidence graph is stale or substituted');
+  }
+  return { preview, receipt, baseline, publicationEvidence, attestation, acceptanceIdentity };
 }
 
 export function verifyEffectiveSiteAcceptance(value) {
@@ -92,13 +141,10 @@ export async function resolveEffectiveSiteAcceptance({
       'Current project does not match the committed remediation baseline');
   }
   const committed = await verifyCommitted({ runDirectory, manifest });
-  const { preview, receipt } = committed ?? {};
   const marker = manifest.siteAcceptance;
-  if (!preview || !receipt || preview.newProjectDigest !== projectDigest ||
-      preview.baselineDigest !== marker.baselineDigest ||
-      preview.acceptanceRevision !== marker.acceptanceRevision ||
-      receipt.acceptanceRevision !== marker.acceptanceRevision ||
-      !digest(preview.lineageDigest) || !digest(preview.attestationDigest) ||
+  const verified = verifyCommittedEvidenceGraph(committed, marker, projectDigest);
+  const { preview, receipt, attestation } = verified;
+  if (!digest(preview.lineageDigest) || !digest(attestation.attestationDigest) ||
       !digest(receipt.receiptDigest)) {
     throw fail('EFFECTIVE_SITE_ACCEPTANCE_INVALID',
       'Committed remediation evidence does not bind the current acceptance');
@@ -106,7 +152,7 @@ export async function resolveEffectiveSiteAcceptance({
   return createEnvelope({ mode: 'REMEDIATED', siteRevision: manifest.inputs.siteRevision,
     acceptanceRevision: marker.acceptanceRevision, projectDigest,
     lineageDigest: preview.lineageDigest, baselineDigest: marker.baselineDigest,
-    receiptDigest: receipt.receiptDigest, attestationDigest: preview.attestationDigest,
+    receiptDigest: receipt.receiptDigest, attestationDigest: attestation.attestationDigest,
     ...provenance, launchReadiness: 'NOT_CLEARED',
     unresolvedBlockers: ['CURRENT_LAUNCH_READINESS_REVALIDATION_REQUIRED',
       ...(preview.historicalEvidenceGaps ?? [])] });
