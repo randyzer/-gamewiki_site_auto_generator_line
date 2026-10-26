@@ -69,7 +69,9 @@ For legacy `wallpaper-engine-002`, only `REACCEPTED_CURRENT_BASELINE` is permitt
 
 ### 3.3 Derived publication evidence
 
-`DERIVED_PUBLICATION_ATTESTATION_V1` contains:
+Publication evidence uses two digest layers so that no identity depends on itself.
+
+`PUBLICATION_EVIDENCE_BODY_V1` contains:
 
 - original route-publication manifest SHA256
 - immutable integration lineage digest
@@ -77,12 +79,12 @@ For legacy `wallpaper-engine-002`, only `REACCEPTED_CURRENT_BASELINE` is permitt
 - original Stage 4 launch-readiness binding digest
 - baseline kind and baseline digest
 - remediation scope digest
-- `acceptanceRevision`
 - current `projectDigest`
 - independently observed route inventory and digest
 - per-route effective disposition: `PUBLISH`, `DRAFT_ONLY`, or `OMIT`
 - publication-policy validation result and validator version
-- attestation digest
+
+`publicationEvidenceDigest` is the SHA256 of the canonical publication evidence body. The body does not contain `acceptanceRevision`, `publicationEvidenceDigest`, `attestationDigest`, or any envelope that contains one of those fields.
 
 The derived attestation can preserve or narrow original publication rights. It cannot widen them. It rejects:
 
@@ -103,11 +105,20 @@ The original Stage 4 route-publication artifact remains immutable.
 - immutable integration lineage digest
 - current baseline digest
 - current `projectDigest`
-- derived publication-attestation digest
+- `publicationEvidenceDigest`
 - remediation scope digest
 - acceptance policy version
 
-It is content-addressed integrity, not authorization. Every new Stage 5, Stage 6, Stage 7 artifact, approval, assessment, and deployment-plan digest must bind this `acceptanceRevision` and the current `projectDigest`.
+After computing `acceptanceRevision`, the Host constructs `DERIVED_PUBLICATION_ATTESTATION_V1` containing:
+
+- the complete `PUBLICATION_EVIDENCE_BODY_V1`;
+- `publicationEvidenceDigest`;
+- `acceptanceRevision`;
+- `attestationDigest`, computed over the canonical envelope without `attestationDigest`.
+
+Verification independently recomputes the body digest, recomputes `acceptanceRevision` from the body digest and other acceptance fields, then recomputes the final envelope digest. A schema or builder that introduces a self-referential field or a dependency cycle is invalid. In this design, a requirement that acceptance bind the effective publication evidence means the non-self-referential `publicationEvidenceDigest`; the final envelope digest is downstream evidence and is not an input to `acceptanceRevision`.
+
+`acceptanceRevision` is content-addressed integrity, not authorization. Every new Stage 5, Stage 6, Stage 7 artifact, approval, assessment, and deployment-plan digest must bind this `acceptanceRevision`, the current `projectDigest`, and the final `attestationDigest`.
 
 ## 4. Authorization model
 
@@ -120,6 +131,7 @@ Authorization and hashing are separate concepts.
 
 `SITE_REACCEPTANCE_AUTHORIZATION_V1` binds:
 
+- contract kind, schema version, and authorization policy version
 - `runId`
 - preview ID and preview snapshot SHA256
 - preview manifest sequence and SHA256
@@ -128,12 +140,19 @@ Authorization and hashing are separate concepts.
 - old and new project digests
 - baseline digest
 - remediation scope digest
-- derived publication-attestation digest
+- publication evidence digest and final derived publication-attestation digest
 - proposed `acceptanceRevision`
 - operator-facing summary SHA256
-- once-only preview-consumption identity
+- proposed transaction ID and once-only preview authorization identity
 
 The local operator authorizes the current baseline as the input to new Stage 5 through Stage 7 validation. For legacy 002, the summary must state that historical equivalence is not proven and that the action creates a new trust boundary.
+
+The durable authorization lifecycle uses two separate immutable records:
+
+- `SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION_V1`: preview identity, confirmation identity, transaction ID, authorization body digest, intent digest, reserved-at time, and reservation digest.
+- `SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION_V1`: reservation digest, transaction ID, exact pre/post manifest SHA256, committed sequence, `acceptanceRevision`, committed object digests, consumed-at time, and consumption digest.
+
+Both schemas use exact-key validation and canonical serialization. A reservation may have only one matching consumption. Neither record claims an authenticated human identity: it proves that the local interactive operator confirmed the exact preview in this run. A future production approval adapter may provide stronger identity, but it is outside this design and cannot be simulated by a hash.
 
 The authorization cannot approve deployment, research promotion, service resumption, or a wider file scope.
 
@@ -186,11 +205,14 @@ Generated or transient exclusions are controlled by a versioned allowlist. Any s
 States:
 
 ```text
-PREVIEWED -> CONFIRMING -> COMMITTED
+PREVIEWED -> CONFIRMING -> RESERVED -> CONSUMED -> COMMITTED
+                 |            |           |-> RECOVERY_REQUIRED
+                 |            |-> ABORTED
                  |-> STALE
-                 |-> REJECTED
-                 `-> RECOVERY_REQUIRED
+                 `-> REJECTED
 ```
+
+`RESERVED` prevents another transaction from using the same operator confirmation but is not authorization consumption. `CONSUMED` means the exact accepted manifest transition has crossed its durable commit point. `COMMITTED` means the matching consumption record and final receipt are both durable and verified.
 
 ### 7.1 Preview
 
@@ -203,7 +225,7 @@ Preview is strictly read-only. It:
 5. inventories the current project under the fixed digest policy;
 6. determines baseline mode and records historical gaps;
 7. runs Host-only route and publication-policy validation;
-8. computes the exact scope, baseline, derived attestation, and proposed `acceptanceRevision`;
+8. computes the exact scope and baseline, canonical publication evidence body and digest, proposed `acceptanceRevision`, and final derived attestation;
 9. writes only an immutable preview snapshot outside the manifest transaction;
 10. emits an operator summary and one-time confirmation code.
 
@@ -215,14 +237,19 @@ Confirmation:
 
 1. acquires the durable exclusive run lock;
 2. loads and verifies the immutable preview snapshot;
-3. verifies one-time confirmation and consumes it for this operation;
-4. recomputes manifest SHA256, project inventory, project digest, protected inputs, scope, route inventory, and derived publication evidence;
+3. verifies that the operator confirmation matches the preview and is neither reserved nor consumed, without consuming it;
+4. recomputes manifest SHA256, project inventory, project digest, protected inputs, scope, route inventory, publication evidence body and digest, `acceptanceRevision`, and final derived attestation;
 5. verifies all immutable upstream artifact hashes again;
-6. rejects any stale approval, changed input, scope expansion, publication-policy widening, or concurrent state change;
-7. writes a durable transaction intent;
-8. writes immutable baseline, attestation, and authorization-consumption objects;
-9. atomically commits one manifest transition and then writes the immutable receipt;
-10. releases the lock without advancing a worker.
+6. rejects any stale confirmation, changed input, scope expansion, publication-policy widening, or concurrent state change before creating a reservation;
+7. creates a unique transaction ID and durably writes a transaction intent containing the verified pre-state, proposed post-state, and all object digests;
+8. atomically creates a `RESERVED` authorization record bound to the preview, confirmation identity, and transaction ID; a reservation for another transaction is rejected;
+9. writes and verifies the immutable baseline, publication evidence, final attestation, and proposed post-manifest objects;
+10. atomically commits the exact post-manifest transition; this manifest commit is the durable authorization-consumption commit point;
+11. writes a once-only `CONSUMED` record binding the reservation, transaction ID, pre/post manifest SHA256, committed sequence, `acceptanceRevision`, and committed object digests;
+12. writes the immutable receipt and marks the operation `COMMITTED`;
+13. releases the lock without advancing a worker.
+
+No stale or rejected pre-reservation validation consumes or reserves authorization. After reservation, only the same transaction ID may proceed. A crash before the manifest commit leaves authorization `RESERVED`, not `CONSUMED`; exact recovery may resume that transaction, while stale recovery writes an `ABORTED` tombstone and requires a new preview and confirmation. A crash after the manifest commit deterministically completes the single matching consumption record and receipt. It never creates or accepts a second authorization.
 
 On success:
 
@@ -239,9 +266,10 @@ No Stage 2 or Stage 4 worker is invoked.
 
 ### 7.3 Failure transitions
 
-- `STALE`: manifest, project, protected input, upstream evidence, or preview-bound scope changed. No manifest mutation.
-- `REJECTED`: identity, policy, authorization, path safety, or publication validation failed. No manifest mutation.
-- `RECOVERY_REQUIRED`: a durable transaction intent exists and the process stopped around the commit point. Normal retry is blocked until recovery verifies the exact transaction identity.
+- `STALE`: manifest, project, protected input, upstream evidence, or preview-bound scope changed before reservation. No manifest mutation or authorization consumption.
+- `REJECTED`: identity, policy, authorization, path safety, or publication validation failed before reservation. No manifest mutation or authorization consumption.
+- `ABORTED`: a reserved transaction can no longer commit because its exact pre-state changed. The reservation is tombstoned, cannot be consumed or reused, and a new preview is required.
+- `RECOVERY_REQUIRED`: a durable transaction intent or reservation exists and the process stopped around the commit point. Normal retry is blocked until recovery verifies the exact transaction identity.
 
 ## 8. Atomicity, replay, recovery, and rollback
 
@@ -251,19 +279,25 @@ Required durable objects are:
 
 - preview snapshot;
 - transaction intent;
+- authorization reservation or abort tombstone;
 - immutable current baseline;
+- immutable publication evidence body;
 - immutable derived publication attestation;
 - immutable authorization-consumption record;
 - committed remediation receipt.
 
-Receipt creation alone is never treated as a commit. Recovery compares intent, pre/post manifest SHA256, object digests, and receipt identity:
+Receipt creation alone is never treated as a commit. Recovery compares the transaction ID, intent, reservation, pre/post manifest SHA256, committed sequence, object digests, consumption, and receipt identity:
 
-- unchanged pre-state resumes or safely rejects;
-- exact post-state plus missing receipt completes the same receipt idempotently;
-- exact committed receipt returns the existing result;
+- exact pre-state plus a matching reservation resumes only the same transaction;
+- changed pre-state before manifest commit writes an `ABORTED` tombstone and requires new authorization;
+- exact post-manifest state plus a missing consumption or receipt completes those records for the same transaction idempotently;
+- exact `CONSUMED` state plus a missing receipt completes only the matching receipt;
+- exact committed receipt returns the existing result without a second consumption;
 - every mixed or conflicting state becomes `RECOVERY_REQUIRED` and requires manual review.
 
-Rollback before the manifest commit deletes only uncommitted temporary files. After commit, rollback is a new explicitly approved transaction; historical records are never deleted or rewritten.
+The authorization record is considered consumed only when the exact post-manifest SHA256 and sequence named by its transaction are durable. A reservation is never reported as consumed or committed. Canonical serialization and digest construction are pure and acyclic; validators reject unknown fields, non-canonical order, self-references, and digest dependency cycles.
+
+Rollback before reservation deletes only uncommitted temporary files. After reservation but before the manifest commit, recovery preserves the reservation and either resumes the same transaction or writes an `ABORTED` tombstone; it never silently releases the confirmation for reuse. After commit, rollback is a new explicitly approved transaction; historical records are never deleted or rewritten.
 
 ## 9. Module boundaries
 
@@ -338,6 +372,14 @@ Each PR requires independent review of its exact base, head, tree, changed-file 
 16. Original Stage 4 publication and readiness artifacts remain immutable.
 17. No Stage 2 or Stage 4 worker runs.
 18. No deployment, repository push, DNS change, service resume, or indexing side effect occurs.
+19. Publication evidence, acceptance identity, and final attestation digests are deterministic under canonical serialization.
+20. Self-referential fields and circular digest dependencies are rejected.
+21. Failed or stale validation before reservation neither reserves nor consumes authorization.
+22. A crash before intent persistence leaves no transaction or authorization state.
+23. A crash after reservation can resume only the same transaction ID or end in an `ABORTED` tombstone.
+24. A crash before manifest commit never reports authorization as consumed.
+25. A crash after manifest commit completes exactly one consumption and receipt idempotently.
+26. Duplicate confirmation and stale preview replay cannot create a second reservation, consumption, or commit.
 
 ## 12. Stop conditions
 
