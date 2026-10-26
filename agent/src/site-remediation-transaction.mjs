@@ -604,6 +604,10 @@ export function createTrustedSiteRemediationController({ hostEvidence, ...option
     throw fail('SITE_REMEDIATION_HOST_PROVIDER_REQUIRED',
       'Trusted Host evidence contracts are required');
   }
+  if (Object.hasOwn(hostEvidence, 'observePublication')) {
+    throw fail('SITE_REMEDIATION_HOST_OBSERVER_UNTRUSTED',
+      'Production remediation cannot accept caller-supplied publication observers');
+  }
   return createSiteRemediationController({ ...options,
     capability: TRUSTED_SITE_REMEDIATION_CAPABILITY,
     evidenceProvider: ({ expected, manifest }) => collectSiteRemediationHostEvidence({

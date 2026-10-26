@@ -12,6 +12,7 @@ import {
   verifySiteAcceptanceIdentity,
 } from './site-acceptance-contract.mjs';
 import { verifyEffectivePublication } from './route-publication.mjs';
+import { createHostPublicationObservation } from './route-publication.mjs';
 import { STAGE, findStage } from './stages.mjs';
 
 const fail = (code, message) => new ContractError(code, message);
@@ -23,6 +24,121 @@ const evidenceFields = Object.freeze([
 ]);
 const canonical = values => [...values]
   .sort((left, right) => canonicalJson(left).localeCompare(canonicalJson(right)));
+
+const decodeHtml = value => value.replace(/&amp;/g, '&').replace(/&lt;/g, '<')
+  .replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'");
+
+function localPublicationOrigin(value) {
+  let url;
+  try { url = new URL(value); }
+  catch { throw fail('PUBLICATION_HOST_OBSERVATION_INVALID', 'Local publication URL is invalid'); }
+  if (url.protocol !== 'http:' || !['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname) ||
+      url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
+    throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      'Host publication observation requires an exact local preview origin');
+  }
+  return url.origin;
+}
+
+function pageLinks(html, base, selector = null) {
+  const sections = selector === 'nav'
+    ? [...html.matchAll(/<nav\b[^>]*>([\s\S]*?)<\/nav>/gi)].map(match => match[1])
+    : [html];
+  const routes = [];
+  for (const section of sections) {
+    for (const match of section.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
+      try {
+        const url = new URL(decodeHtml(match[1] ?? match[2] ?? match[3]), base);
+        if (url.origin === new URL(base).origin && !url.username && !url.password)
+          routes.push(url.pathname.replace(/\/+$/, '') || '/');
+      } catch { /* Invalid links remain outside the trusted route set. */ }
+    }
+  }
+  return [...new Set(routes)].sort();
+}
+
+function robotsPolicy(html) {
+  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const attributes = Object.fromEntries([...match[0].matchAll(
+      /([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g,
+    )].map(attribute => [attribute[1].toLowerCase(), attribute[2] ?? attribute[3]]));
+    if (['robots', 'googlebot'].includes(attributes.name?.toLowerCase())) {
+      if (/(?:^|[,\s])(noindex|none)(?:$|[,\s])/i.test(attributes.content ?? '')) return 'noindex';
+      if (/(?:^|[,\s])index(?:$|[,\s])/i.test(attributes.content ?? '')) return 'index';
+    }
+  }
+  return 'absent';
+}
+
+async function observeCurrentPublication({ publicationUrl, projectDigest, currentRoutes,
+  originalPublicationManifest }) {
+  const origin = localPublicationOrigin(publicationUrl);
+  const artifacts = new Map();
+  const request = async path => {
+    try {
+      const response = await fetch(new URL(path, origin), {
+        redirect: 'manual', signal: AbortSignal.timeout(30000),
+      });
+      const text = await response.text();
+      artifacts.set(path, { path, status: response.status, sha256: sha256(Buffer.from(text)) });
+      return { status: response.status, text };
+    } catch {
+      throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+        `Current local preview could not be observed: ${path}`);
+    }
+  };
+  const robots = await request('/robots.txt');
+  if (robots.status !== 200) {
+    throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      'Current local preview robots.txt could not be observed');
+  }
+  const sitemap = await request('/sitemap.xml');
+  if (sitemap.status !== 200) {
+    throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      'Current local preview sitemap could not be observed');
+  }
+  const sitemapRoutes = new Set();
+  for (const match of sitemap.text.matchAll(/<loc\b[^>]*>([\s\S]*?)<\/loc>/gi)) {
+    try {
+      const url = new URL(decodeHtml(match[1].trim()), origin);
+      if (url.origin === origin) sitemapRoutes.add(url.pathname.replace(/\/+$/, '') || '/');
+    } catch { /* Invalid sitemap entries cannot prove a route. */ }
+  }
+  const responses = new Map();
+  for (const route of currentRoutes) {
+    const response = await request(route);
+    if (response.status !== 200) {
+      throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+        `Current local preview route did not return HTTP 200: ${route}`);
+    }
+    responses.set(route, response.text);
+  }
+  const policy = new Map(originalPublicationManifest.pages
+    .filter(page => page.route).map(page => [page.route, page]));
+  const publicRoutes = currentRoutes.filter(route => policy.get(route)?.disposition === 'PUBLISH');
+  const publicLinks = new Set(publicRoutes.flatMap(route => pageLinks(
+    responses.get(route), new URL(route, origin),
+  )));
+  const navigation = new Set(currentRoutes.flatMap(route => pageLinks(
+    responses.get(route), new URL(route, origin), 'nav',
+  )));
+  const pages = [];
+  for (const route of currentRoutes) {
+    const sourceFile = policy.get(route)?.sourceFile;
+    let sourceFileExposed = false;
+    if (sourceFile) {
+      const sourcePath = '/' + sourceFile.replace(/^\/+/, '');
+      sourceFileExposed = (await request(sourcePath)).status === 200;
+    }
+    pages.push({ route, robots: robotsPolicy(responses.get(route)),
+      inSitemap: sitemapRoutes.has(route), inNavigation: navigation.has(route),
+      linkedFromPublicPages: publicLinks.has(route), sourceFileExposed,
+      dynamicProof: 'STATIC' });
+  }
+  return createHostPublicationObservation({ projectDigest, observedRoutes: currentRoutes,
+    pages, indexingAuthorization: 'NOT_CLEARED', validatorVersion: 'host-route-v1',
+    observationArtifacts: [...artifacts.values()] });
+}
 
 function verifyManifestLineage(lineage, manifest) {
   if (!manifest) return;
@@ -77,7 +193,7 @@ async function verifyProtectedInputs(projectPath, expected) {
 
 export async function collectSiteRemediationHostEvidence({ projectPath, lineage, baseline,
   publicationEvidence: evidenceBody, acceptanceIdentity, attestation, expected,
-  originalPublicationManifest, observePublication, manifest = null }) {
+  originalPublicationManifest, publicationUrl, observePublication, manifest = null }) {
   verifyImmutableIntegrationLineage(lineage);
   verifyManifestLineage(lineage, manifest);
   verifyCurrentSiteBaseline(baseline);
@@ -107,13 +223,12 @@ export async function collectSiteRemediationHostEvidence({ projectPath, lineage,
     throw fail('SITE_REMEDIATION_ROUTE_INVENTORY_CHANGED',
       'Current route inventory differs from the accepted baseline');
   }
-  if (typeof observePublication !== 'function') {
+  if (observePublication !== undefined) {
     throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
-      'Trusted Host publication observation provider is required');
+      'Caller-supplied publication observation providers are forbidden');
   }
-  const hostObservation = await observePublication(Object.freeze({
-    projectPath, projectDigest: currentProjectDigest, currentRoutes: routes,
-  }));
+  const hostObservation = await observeCurrentPublication({ publicationUrl,
+    projectDigest: currentProjectDigest, currentRoutes: routes, originalPublicationManifest });
   verifyEffectivePublication({ originalManifest: originalPublicationManifest, evidenceBody,
     attestation, acceptanceIdentity, currentRoutes: routes, hostObservation,
     projectDigest: currentProjectDigest });

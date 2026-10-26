@@ -16,9 +16,11 @@ const observationFields = Object.freeze([
   'route', 'sourceFileExposed',
 ]);
 const observationKeys = Object.freeze([
-  'indexingAuthorization', 'kind', 'observationDigest', 'observedRoutes', 'pages',
-  'projectDigest', 'routeInventoryDigest', 'validatorVersion',
+  'indexingAuthorization', 'kind', 'observationArtifacts', 'observationArtifactsDigest',
+  'observationDigest', 'observedRoutes', 'pages', 'projectDigest', 'routeInventoryDigest',
+  'validatorVersion',
 ]);
+const observationArtifactKeys = Object.freeze(['path', 'sha256', 'status']);
 const exactKeys = (value, keys) => canonicalJson(Object.keys(value).sort()) ===
   canonicalJson([...keys].sort());
 
@@ -27,26 +29,38 @@ function publicationObservationError(detail) {
 }
 
 export function createHostPublicationObservation({ projectDigest, observedRoutes, pages,
-  indexingAuthorization, validatorVersion }) {
+  indexingAuthorization, validatorVersion, observationArtifacts = [] }) {
   const routes = [...observedRoutes].map(publicationRoute).sort();
   const observedPages = structuredClone(pages)
     .sort((left, right) => left.route.localeCompare(right.route));
+  const artifacts = structuredClone(observationArtifacts)
+    .sort((left, right) => left.path.localeCompare(right.path));
   if (!/^[a-f0-9]{64}$/.test(projectDigest ?? '') ||
       typeof validatorVersion !== 'string' || !validatorVersion ||
       !['CLEARED', 'NOT_CLEARED'].includes(indexingAuthorization) ||
       new Set(routes).size !== routes.length || observedPages.some(page =>
-        !exactKeys(page, observationFields) || page.route !== publicationRoute(page.route))) {
+        !exactKeys(page, observationFields) || page.route !== publicationRoute(page.route)) ||
+      !artifacts.length || new Set(artifacts.map(item => item.path)).size !== artifacts.length ||
+      artifacts.some(item => !exactKeys(item, observationArtifactKeys) ||
+        typeof item.path !== 'string' || !item.path.startsWith('/') || item.path.startsWith('//') ||
+        !Number.isSafeInteger(item.status) || item.status < 100 || item.status > 599 ||
+        !/^[a-f0-9]{64}$/.test(item.sha256 ?? ''))) {
     throw publicationObservationError('Host publication observation is incomplete');
   }
+  const observationArtifactsDigest = canonicalContractDigest(
+    'HOST_PUBLICATION_OBSERVATION_ARTIFACTS_V1', artifacts,
+  );
   const unsigned = {
-    kind: 'HOST_PUBLICATION_OBSERVATION_V1', validatorVersion, projectDigest,
+    kind: 'HOST_PUBLICATION_OBSERVATION_V2', validatorVersion, projectDigest,
     observedRoutes: routes,
     routeInventoryDigest: canonicalContractDigest('EFFECTIVE_ROUTE_INVENTORY_V1', routes),
-    pages: observedPages,
+    pages: observedPages, observationArtifacts: artifacts, observationArtifactsDigest,
     indexingAuthorization,
   };
   return Object.freeze({ ...unsigned,
-    observationDigest: canonicalContractDigest('HOST_PUBLICATION_OBSERVATION_V1', unsigned) });
+    observationDigest: canonicalContractDigest(
+      'HOST_PUBLICATION_OBSERVATION_V2_DIGEST_V1', unsigned,
+    ) });
 }
 
 export function verifyHostPublicationObservation(observation, { evidenceBody, currentRoutes,
@@ -61,6 +75,7 @@ export function verifyHostPublicationObservation(observation, { evidenceBody, cu
     pages: observation.pages,
     indexingAuthorization: observation.indexingAuthorization,
     validatorVersion: observation.validatorVersion,
+    observationArtifacts: observation.observationArtifacts,
   });
   if (canonicalJson(observation) !== canonicalJson(expected) ||
       observation.projectDigest !== projectDigest ||
