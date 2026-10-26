@@ -17,9 +17,14 @@ import { inspectResearchHandoffCheckpointRecovery,
   researchHandoffCheckpointRecoveryIntent } from '../src/research-handoff-recovery.mjs';
 import { discardHeldStage4SiteTransaction, stage4SiteDigest } from '../src/stage4-site-transaction.mjs';
 import { STAGE4_LAUNCH_BLOCKERS } from '../src/stage4-launch-gap-policy.mjs';
+import { createSiteRemediationIntent,
+  createSiteRemediationPreview } from '../src/site-remediation-records.mjs';
+import { persistSiteRemediationRecord,
+  siteRemediationPaths } from '../src/site-remediation-journal.mjs';
 
 const moduleURL = new URL('../src/pipeline.mjs', import.meta.url);
 const hash = value => createHash('sha256').update(value).digest('hex');
+const digest = character => character.repeat(64);
 let api;
 test('orchestration module exposes offline factory', async () => {
   try { api = await import(moduleURL); } catch (error) {
@@ -97,6 +102,54 @@ async function advance(pipeline, count) {
   for (let i = 0; i < count; i++) await pipeline.advance();
   return pipeline.snapshot();
 }
+
+test('pending site remediation blocks advance, retry, and input updates', async t => {
+  const f = await fixture(t);
+  const runId = 'pending-site-remediation';
+  const pipeline = await f.create({ runId });
+  const manifestBytes = await readFile(pipeline.manifestPath);
+  const manifest = JSON.parse(manifestBytes);
+  const previewId = '11111111-1111-4111-8111-111111111111';
+  const transactionId = `site-remediation-${previewId}`;
+  const preview = createSiteRemediationPreview({
+    runId, transactionId, previewId, manifestSequence: manifest.sequence,
+    manifestSha256: hash(manifestBytes), mode: 'EXACT_REMEDIATION',
+    lineageDigest: digest('1'), researchApprovalDigest: digest('2'),
+    oldProjectDigest: digest('3'), newProjectDigest: digest('4'),
+    baselineDigest: digest('5'), remediationScopeDigest: digest('6'),
+    publicationEvidenceDigest: digest('7'), attestationDigest: digest('8'),
+    acceptanceRevision: digest('9'), protectedInputsDigest: digest('a'),
+    historicalEvidenceGaps: [], operatorSummarySha256: digest('b'), createdAtMs: 1,
+  });
+  const paths = siteRemediationPaths(join(f.workspace, 'runs', runId), {
+    previewId, transactionId,
+  });
+  await persistSiteRemediationRecord(paths.previewPath, preview);
+  await persistSiteRemediationRecord(paths.intentPath, createSiteRemediationIntent({
+    runId, transactionId, previewId, previewDigest: preview.previewDigest,
+    authorizationDigest: digest('c'), expectedManifestSequence: manifest.sequence,
+    expectedManifestSha256: hash(manifestBytes), postManifestSha256: digest('d'),
+    committedSequence: manifest.sequence + 1, acceptanceRevision: digest('9'),
+    committedObjectDigests: [digest('d'), digest('e')], createdAtMs: 2,
+  }));
+
+  for (const operation of [
+    () => pipeline.advance(),
+    () => pipeline.updateUserInputs({}, { retry: true }),
+    () => pipeline.updateUserInputs({ domain: 'changed.example' }),
+  ]) {
+    await assert.rejects(operation,
+      error => error.code === 'SITE_REMEDIATION_TRANSACTION_PENDING');
+  }
+  await writeFile(paths.reservationPath, '{}\n');
+  for (const operation of [
+    () => pipeline.updateUserInputs({}, { retry: true }),
+    () => pipeline.updateUserInputs({ domain: 'changed.example' }),
+  ]) {
+    await assert.rejects(operation,
+      error => error.code === 'SITE_REMEDIATION_TRANSACTION_PENDING');
+  }
+});
 
 async function writeFixtureRecoveryLineage(nativeDirectory, { skillSyntax = false } = {}) {
   await writeFile(join(nativeDirectory, 'RAW_LINEAGE.json'), JSON.stringify({ pendingIds: [], rows: [

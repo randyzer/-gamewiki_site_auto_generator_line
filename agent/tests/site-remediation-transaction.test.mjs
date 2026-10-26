@@ -45,20 +45,48 @@ async function fixture(t) {
   };
   const manifestPath = join(runDirectory, 'manifest.json');
   await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-  const controller = createSiteRemediationController({ workspace, runId,
-    capability: OFFLINE_SITE_REMEDIATION_CAPABILITY, now: () => 1,
-    uuid: () => '11111111-1111-4111-8111-111111111111' });
-  return { workspace, runId, runDirectory, manifestPath, manifest, controller };
+  const evidenceDirectory = join(workspace, 'synthetic-host-evidence');
+  await mkdir(evidenceDirectory);
+  const evidencePaths = {
+    project: join(evidenceDirectory, 'project.bin'),
+    protectedInputs: join(evidenceDirectory, 'protected-inputs.bin'),
+    stage4: join(evidenceDirectory, 'stage4-evidence.bin'),
+    publication: join(evidenceDirectory, 'publication-evidence.bin'),
+  };
+  await Promise.all([
+    writeFile(evidencePaths.project, 'project-v2'),
+    writeFile(evidencePaths.protectedInputs, 'protected-inputs-v1'),
+    writeFile(evidencePaths.stage4, 'stage4-evidence-v1'),
+    writeFile(evidencePaths.publication, 'publication-evidence-v1'),
+  ]);
+  const liveDigest = path => readFile(path).then(sha256);
+  const previewInput = {
+    mode: 'LEGACY_CURRENT_BASELINE', lineageDigest: await liveDigest(evidencePaths.stage4),
+    researchApprovalDigest: d('3'), oldProjectDigest: d('4'),
+    newProjectDigest: await liveDigest(evidencePaths.project), baselineDigest: d('8'),
+    remediationScopeDigest: d('9'),
+    publicationEvidenceDigest: await liveDigest(evidencePaths.publication),
+    attestationDigest: d('b'), acceptanceRevision: d('c'),
+    protectedInputsDigest: await liveDigest(evidencePaths.protectedInputs),
+    historicalEvidenceGaps: ['FINAL_STAGE4_INVENTORY_UNAVAILABLE'],
+    operatorSummarySha256: d('e'),
+  };
+  const evidenceProvider = async () => ({
+    lineageDigest: await liveDigest(evidencePaths.stage4),
+    researchApprovalDigest: d('3'), oldProjectDigest: d('4'),
+    newProjectDigest: await liveDigest(evidencePaths.project), baselineDigest: d('8'),
+    remediationScopeDigest: d('9'),
+    publicationEvidenceDigest: await liveDigest(evidencePaths.publication),
+    attestationDigest: d('b'), acceptanceRevision: d('c'),
+    protectedInputsDigest: await liveDigest(evidencePaths.protectedInputs),
+    operatorSummarySha256: d('e'),
+  });
+  const createController = extra => createSiteRemediationController({ workspace, runId,
+    capability: OFFLINE_SITE_REMEDIATION_CAPABILITY, evidenceProvider, now: () => 1,
+    uuid: () => '11111111-1111-4111-8111-111111111111', ...extra });
+  return { workspace, runId, runDirectory, manifestPath, manifest,
+    controller: createController({}), createController, evidencePaths, previewInput };
 }
-
-const previewInput = {
-  mode: 'LEGACY_CURRENT_BASELINE', lineageDigest: d('6'), researchApprovalDigest: d('3'),
-  oldProjectDigest: d('4'), newProjectDigest: d('7'), baselineDigest: d('8'),
-  remediationScopeDigest: d('9'), publicationEvidenceDigest: d('a'), attestationDigest: d('b'),
-  acceptanceRevision: d('c'), protectedInputsDigest: d('d'),
-  historicalEvidenceGaps: ['FINAL_STAGE4_INVENTORY_UNAVAILABLE'],
-  operatorSummarySha256: d('e'),
-};
 
 function authorization(result) {
   const p = result.preview;
@@ -78,8 +106,17 @@ function authorization(result) {
 test('production controller is blocked until PR-C supplies trusted Host evidence', async t => {
   const f = await fixture(t);
   const production = createSiteRemediationController({ workspace: f.workspace, runId: f.runId });
-  await assert.rejects(() => production.preview(previewInput),
+  await assert.rejects(() => production.preview(f.previewInput),
     error => error.code === 'SITE_REMEDIATION_HOST_PROVIDER_REQUIRED');
+});
+
+test('offline capability cannot attest a production workspace', async () => {
+  const controller = createSiteRemediationController({
+    workspace: join(process.cwd(), 'synthetic-production-workspace'), runId: 'real-run',
+    capability: OFFLINE_SITE_REMEDIATION_CAPABILITY, evidenceProvider: async () => ({}),
+  });
+  await assert.rejects(() => controller.preview({}),
+    error => error.code === 'SITE_REMEDIATION_OFFLINE_SCOPE_INVALID');
 });
 
 test('preview rejects a linked manifest before reading Host-bound state', async t => {
@@ -88,13 +125,20 @@ test('preview rejects a linked manifest before reading Host-bound state', async 
   await writeFile(outside, await readFile(f.manifestPath));
   await rm(f.manifestPath);
   await symlink(outside, f.manifestPath);
-  await assert.rejects(() => f.controller.preview(previewInput),
+  await assert.rejects(() => f.controller.preview(f.previewInput),
     error => error.code === 'SITE_REMEDIATION_STORAGE_UNSAFE');
+});
+
+test('preview rejects caller publication evidence not observed by the Host provider', async t => {
+  const f = await fixture(t);
+  await assert.rejects(() => f.controller.preview({ ...f.previewInput,
+    publicationEvidenceDigest: d('f') }),
+  error => error.code === 'SITE_REMEDIATION_EVIDENCE_STALE');
 });
 
 test('confirmation atomically preserves Stage 1-4 and invalidates only Stage 5-7', async t => {
   const f = await fixture(t);
-  const result = await f.controller.preview(previewInput);
+  const result = await f.controller.preview(f.previewInput);
   await assert.rejects(() => f.controller.confirm({ previewId: result.preview.previewId,
     confirmationCode: 'wrong-code', authorization: authorization(result) }),
   error => error.code === 'SITE_REMEDIATION_CONFIRMATION_MISMATCH');
@@ -128,11 +172,35 @@ test('confirmation atomically preserves Stage 1-4 and invalidates only Stage 5-7
   assert.equal(JSON.parse(await readFile(f.manifestPath)).sequence, 220);
 });
 
+test('committed identity permits later Stage 5 progression but rejects protected-state tampering', async t => {
+  const f = await fixture(t);
+  const result = await f.controller.preview(f.previewInput);
+  await f.controller.confirm({ previewId: result.preview.previewId,
+    confirmationCode: result.confirmationCode, authorization: authorization(result) });
+  const progressed = JSON.parse(await readFile(f.manifestPath));
+  progressed.sequence += 1;
+  progressed.inputs.uiApproval = { approved: true };
+  progressed.stages[4].status = 'READY';
+  progressed.stages[4].evidence = ['Legitimate Stage 5 progression'];
+  await verifyCommittedSiteRemediation({ runDirectory: f.runDirectory,
+    manifest: progressed });
+
+  const tampered = structuredClone(progressed);
+  tampered.deploymentExecuted = true;
+  await assert.rejects(() => verifyCommittedSiteRemediation({
+    runDirectory: f.runDirectory, manifest: tampered }),
+  error => error.code === 'SITE_REMEDIATION_COMMIT_INVALID');
+  const markerTampered = structuredClone(progressed);
+  markerTampered.siteAcceptance.projectDigest = d('f');
+  await assert.rejects(() => verifyCommittedSiteRemediation({
+    runDirectory: f.runDirectory, manifest: markerTampered }),
+  error => error.code === 'SITE_REMEDIATION_COMMIT_INVALID');
+});
+
 test('recovery completes a crash after manifest commit without a second transition', async t => {
   const f = await fixture(t);
-  const preview = await f.controller.preview(previewInput);
-  const crashing = createSiteRemediationController({ workspace: f.workspace, runId: f.runId,
-    capability: OFFLINE_SITE_REMEDIATION_CAPABILITY, now: () => 2,
+  const preview = await f.controller.preview(f.previewInput);
+  const crashing = f.createController({ now: () => 2,
     fault: phase => { if (phase === 'afterManifestCommit') throw Error('synthetic crash'); } });
   await assert.rejects(() => crashing.confirm({ previewId: preview.preview.previewId,
     confirmationCode: preview.confirmationCode, authorization: authorization(preview) }),
@@ -146,9 +214,8 @@ test('recovery completes a crash after manifest commit without a second transiti
 
 test('recovery rejects unrelated manifest drift', async t => {
   const f = await fixture(t);
-  const preview = await f.controller.preview(previewInput);
-  const crashing = createSiteRemediationController({ workspace: f.workspace, runId: f.runId,
-    capability: OFFLINE_SITE_REMEDIATION_CAPABILITY, now: () => 2,
+  const preview = await f.controller.preview(f.previewInput);
+  const crashing = f.createController({ now: () => 2,
     fault: phase => { if (phase === 'afterIntent') throw Error('synthetic crash'); } });
   await assert.rejects(() => crashing.confirm({ previewId: preview.preview.previewId,
     confirmationCode: preview.confirmationCode, authorization: authorization(preview) }),
@@ -160,15 +227,39 @@ test('recovery rejects unrelated manifest drift', async t => {
     error => error.code === 'SITE_REMEDIATION_RECOVERY_REQUIRED');
 });
 
+for (const [label, evidenceKey] of [
+  ['changed project', 'project'],
+  ['changed protected research', 'protectedInputs'],
+  ['changed Stage 4 evidence', 'stage4'],
+]) {
+  test(`pre-commit recovery rejects ${label}`, async t => {
+    const f = await fixture(t);
+    const preview = await f.controller.preview(f.previewInput);
+    const crashing = f.createController({ now: () => 2,
+      fault: phase => { if (phase === 'afterReservation') throw Error('synthetic crash'); } });
+    await assert.rejects(() => crashing.confirm({ previewId: preview.preview.previewId,
+      confirmationCode: preview.confirmationCode, authorization: authorization(preview) }),
+    /synthetic crash/);
+    await writeFile(f.evidencePaths[evidenceKey], `${label}-v2`);
+    await assert.rejects(() => f.controller.recover({
+      transactionId: preview.preview.transactionId }),
+    error => error.code === 'SITE_REMEDIATION_EVIDENCE_STALE');
+    const transactionDirectory = join(f.runDirectory, 'site-remediation', 'transactions',
+      preview.preview.transactionId);
+    const abort = JSON.parse(await readFile(join(transactionDirectory, 'abort.json')));
+    assert.equal(abort.phase, 'RESERVED_PRE_COMMIT');
+    assert.equal(abort.reasonCode, 'SITE_REMEDIATION_EVIDENCE_STALE');
+  });
+}
+
 test('every durable crash boundary recovers idempotently', async t => {
   for (const phase of ['afterIntent', 'afterReservation', 'beforeManifestCommit',
     'afterManifestCommit', 'afterConsumption', 'afterReceipt']) {
     await t.test(phase, async t => {
       const f = await fixture(t);
-      const preview = await f.controller.preview(previewInput);
+      const preview = await f.controller.preview(f.previewInput);
       let crashed = false;
-      const crashing = createSiteRemediationController({ workspace: f.workspace, runId: f.runId,
-        capability: OFFLINE_SITE_REMEDIATION_CAPABILITY, now: () => 2,
+      const crashing = f.createController({ now: () => 2,
         fault: current => {
           if (!crashed && current === phase) { crashed = true; throw Error(`crash:${phase}`); }
         } });

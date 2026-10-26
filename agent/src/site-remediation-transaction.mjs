@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { lstat, mkdir, open, readFile, rename, unlink } from 'node:fs/promises';
-import { dirname, join, relative, resolve } from 'node:path';
+import { lstat, mkdir, open, readFile, realpath, rename, unlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { canonicalJson, parseStrictJson } from './contracts/canonical-json.mjs';
 import { ContractError } from './contracts/errors.mjs';
 import { acquireRunLock } from './run-lock.mjs';
@@ -13,6 +14,7 @@ import {
 } from './site-acceptance-contract.mjs';
 import {
   createSiteRemediationIntent,
+  createSiteRemediationAbort,
   createSiteRemediationPreview,
   createSiteRemediationReceipt,
   SITE_REMEDIATION_INVALIDATED_STAGES,
@@ -38,6 +40,15 @@ export const OFFLINE_SITE_REMEDIATION_CAPABILITY = Object.freeze({
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const fail = (code, message) => new ContractError(code, message);
 const clone = value => structuredClone(value);
+const EVIDENCE_FIELDS = Object.freeze([
+  'lineageDigest', 'researchApprovalDigest', 'oldProjectDigest', 'newProjectDigest',
+  'baselineDigest', 'remediationScopeDigest', 'publicationEvidenceDigest',
+  'attestationDigest', 'acceptanceRevision', 'protectedInputsDigest',
+  'operatorSummarySha256',
+]);
+const DOWNSTREAM_MUTABLE_INPUTS = Object.freeze(new Set([
+  'uiApproval', 'launchReadinessClearance', 'deploymentPlanApproval',
+]));
 
 function validateManifestForRemediation(manifest, { runId, expectedResearchApprovalDigest,
   expectedOldProjectDigest }) {
@@ -220,13 +231,19 @@ export async function verifyCommittedSiteRemediation({ runDirectory, manifest })
     } });
   verifySiteRemediationReceipt(receipt);
   const post = parseStrictJson(postBytes, paths.postManifestPath);
+  const invariant = value => {
+    const copy = clone(value);
+    delete copy.sequence;
+    copy.stages = copy.stages.slice(0, 4);
+    for (const key of DOWNSTREAM_MUTABLE_INPUTS) delete copy.inputs?.[key];
+    return canonicalJson(copy);
+  };
   if (sha256(postBytes) !== intent.postManifestSha256 ||
-      canonicalJson(manifest.stages.slice(0, 4)) !== canonicalJson(post.stages.slice(0, 4)) ||
-      canonicalJson(marker) !== canonicalJson(post.siteAcceptance) ||
+      !Number.isSafeInteger(manifest.sequence) || manifest.sequence < post.sequence ||
+      invariant(manifest) !== invariant(post) ||
       marker.acceptanceRevision !== receipt.acceptanceRevision ||
       marker.previewDigest !== record.previewDigest ||
-      marker.transactionId !== receipt.transactionId ||
-      manifest.inputs?.siteRevision !== post.inputs?.siteRevision) {
+      marker.transactionId !== receipt.transactionId) {
     throw fail('SITE_REMEDIATION_COMMIT_INVALID',
       'Current manifest does not preserve the committed site remediation identity');
   }
@@ -234,7 +251,8 @@ export async function verifyCommittedSiteRemediation({ runDirectory, manifest })
 }
 
 export function createSiteRemediationController({ workspace, runId, capability,
-  now = Date.now, uuid = randomUUID, fault = async () => {} } = {}) {
+  evidenceProvider = null, now = Date.now, uuid = randomUUID,
+  fault = async () => {} } = {}) {
   if (typeof workspace !== 'string' || resolve(workspace) !== workspace ||
       !/^[A-Za-z0-9_-]{1,100}$/.test(runId ?? '')) {
     throw fail('SITE_REMEDIATION_CONFIGURATION_INVALID',
@@ -245,19 +263,47 @@ export function createSiteRemediationController({ workspace, runId, capability,
   const manifestPath = join(runDirectory, 'manifest.json');
   const lockPath = join(runDirectory, '.lock');
 
-  function requireHost() {
+  async function requireHost() {
     if (!trustedHost) throw fail('SITE_REMEDIATION_HOST_PROVIDER_REQUIRED',
       'PR-C trusted Host evidence provider is required');
+    if (typeof evidenceProvider !== 'function') {
+      throw fail('SITE_REMEDIATION_HOST_PROVIDER_REQUIRED',
+        'A synthetic evidence provider is required for offline tests');
+    }
+    let relativeWorkspace;
+    try {
+      const temporaryRoot = await realpath(tmpdir());
+      const resolvedWorkspace = await realpath(workspace);
+      relativeWorkspace = relative(temporaryRoot, resolvedWorkspace);
+    } catch {
+      relativeWorkspace = relative(resolve(tmpdir()), workspace);
+    }
+    if (relativeWorkspace === '..' || relativeWorkspace.startsWith('../') ||
+        isAbsolute(relativeWorkspace) || relativeWorkspace === '') {
+      throw fail('SITE_REMEDIATION_OFFLINE_SCOPE_INVALID',
+        'Offline remediation capability is restricted to isolated temporary workspaces');
+    }
+  }
+
+  async function verifyCurrentEvidence(expected, manifest) {
+    const observed = await evidenceProvider({ workspace, runId, runDirectory,
+      manifest: clone(manifest), expected: clone(expected) });
+    if (!observed || typeof observed !== 'object' || EVIDENCE_FIELDS.some(field =>
+      observed[field] !== expected[field])) {
+      throw fail('SITE_REMEDIATION_EVIDENCE_STALE',
+        'Current Host evidence no longer matches the approved remediation snapshot');
+    }
   }
 
   async function preview(input) {
-    requireHost();
+    await requireHost();
     await assertStorageBoundary(workspace, runDirectory, manifestPath);
     const manifestBytes = await readFile(manifestPath);
     const manifest = parseStrictJson(manifestBytes, manifestPath);
     validateManifestForRemediation(manifest, { runId,
       expectedResearchApprovalDigest: input.researchApprovalDigest,
       expectedOldProjectDigest: input.oldProjectDigest });
+    await verifyCurrentEvidence(input, manifest);
     const previewId = uuid();
     const transactionId = `site-remediation-${previewId}`;
     const record = createSiteRemediationPreview({
@@ -312,6 +358,29 @@ export function createSiteRemediationController({ workspace, runId, capability,
           'Committed receipt does not match its transaction records');
       }
       return Object.freeze({ status: 'COMMITTED', receipt });
+    }
+    if (['INTENT_ONLY', 'RESERVED_PRE_COMMIT'].includes(currentPhase)) {
+      try {
+        const preBytes = await readFile(manifestPath);
+        if (sha256(preBytes) !== intent.expectedManifestSha256) {
+          throw fail('SITE_REMEDIATION_RECOVERY_REQUIRED',
+            'Manifest changed before the remediation commit');
+        }
+        const currentManifest = parseStrictJson(preBytes, manifestPath);
+        validateManifestForRemediation(currentManifest, { runId,
+          expectedResearchApprovalDigest: record.researchApprovalDigest,
+          expectedOldProjectDigest: record.oldProjectDigest });
+        await verifyCurrentEvidence(record, currentManifest);
+      } catch (error) {
+        if (error.code === 'SITE_REMEDIATION_EVIDENCE_STALE') {
+          const abort = createSiteRemediationAbort({ runId,
+            transactionId: record.transactionId, previewId: record.previewId,
+            previewDigest: record.previewDigest, intentDigest: intent.intentDigest,
+            phase: currentPhase, reasonCode: error.code, abortedAtMs: now() });
+          await persistSiteRemediationRecord(paths.abortPath, abort);
+        }
+        throw error;
+      }
     }
     if (currentPhase === 'INTENT_ONLY') {
       currentReservation = createAuthorizationReservation({ authorization,
@@ -374,7 +443,7 @@ export function createSiteRemediationController({ workspace, runId, capability,
   }
 
   async function confirm({ previewId, confirmationCode, authorization }) {
-    requireHost();
+    await requireHost();
     const transactionId = `site-remediation-${previewId}`;
     const paths = siteRemediationPaths(runDirectory, { previewId, transactionId });
     await assertStorageBoundary(runDirectory, paths.root, paths.previewPath,
@@ -401,6 +470,7 @@ export function createSiteRemediationController({ workspace, runId, capability,
       validateManifestForRemediation(manifest, { runId,
         expectedResearchApprovalDigest: record.researchApprovalDigest,
         expectedOldProjectDigest: record.oldProjectDigest });
+      await verifyCurrentEvidence(record, manifest);
       const acceptedAtMs = now();
       const post = resetDownstream(manifest, record, acceptedAtMs);
       const postBytes = Buffer.from(`${JSON.stringify(post, null, 2)}\n`);
@@ -422,7 +492,7 @@ export function createSiteRemediationController({ workspace, runId, capability,
   }
 
   async function recover({ transactionId }) {
-    requireHost();
+    await requireHost();
     await assertStorageBoundary(workspace, runDirectory, manifestPath,
       join(runDirectory, 'site-remediation'));
     const lock = await acquireRunLock({ lockPath, runId });
@@ -440,4 +510,17 @@ export function createSiteRemediationController({ workspace, runId, capability,
   }
 
   return Object.freeze({ manifestPath, preview, confirm, recover });
+}
+
+export async function assertNoPendingSiteRemediation({ runDirectory, manifestSha256 }) {
+  try {
+    const transaction = await pendingSiteRemediationTransaction({ runDirectory,
+      manifestSha256 });
+    if (transaction.phase === 'COMMITTED') return;
+    throw fail('SITE_REMEDIATION_TRANSACTION_PENDING',
+      `Site remediation transaction must be reconciled before pipeline execution: ${transaction.phase}`);
+  } catch (error) {
+    if (error.code === 'SITE_REMEDIATION_NOT_PENDING') return;
+    throw error;
+  }
 }

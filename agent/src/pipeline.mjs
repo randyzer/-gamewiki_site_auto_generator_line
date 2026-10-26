@@ -35,7 +35,8 @@ import { projectContentDigest } from './project-content-digest.mjs';
 import { createPrelaunchContext, createPrelaunchAssessment, verifyPrelaunchAssessment,
   verifyStage6HostContext } from './stage6-prelaunch-policy.mjs';
 import { acquireRunLock, recoverDeadRunLock } from './run-lock.mjs';
-import { verifyCommittedSiteRemediation } from './site-remediation-transaction.mjs';
+import { assertNoPendingSiteRemediation,
+  verifyCommittedSiteRemediation } from './site-remediation-transaction.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -343,6 +344,8 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         }
         const disk = JSON.parse(diskBytes.toString('utf8'));
         assert(JSON.stringify(disk) === JSON.stringify(state), 'Stale pipeline instance; resume from disk');
+        await assertNoPendingSiteRemediation({ runDirectory,
+          manifestSha256: hash(diskBytes) });
       }
       return await operation();
     } finally {
