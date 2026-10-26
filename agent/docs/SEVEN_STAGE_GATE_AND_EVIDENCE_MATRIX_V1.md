@@ -1,6 +1,6 @@
 # 七阶段验收与证据矩阵
 
-阶段名、顺序、输入白名单和必需产物以 [stages.mjs](../src/stages.mjs) 为准，条件必填与状态门以 [pipeline.mjs](../src/pipeline.mjs) 为准。使用方法见 [README](../README.md)，后续开发和真实验收安排见 [Agent V2 当前执行路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)。文中 run、site 下的路径均为运行时产物，不是仓库预置文件。
+阶段名、顺序、输入白名单和必需产物以 [stages.mjs](../src/stages.mjs) 为准，条件必填与状态门以 [pipeline.mjs](../src/pipeline.mjs) 为准。使用方法见 [README](../README.md)，最近一次真实验收见[当前状态](CURRENT_STATUS.md)。文中 run、site 下的路径均为运行时产物，不是仓库预置文件。
 
 ## 共同规则
 
@@ -20,7 +20,7 @@
 - **产物**：`HOMEPAGE_RESEARCH.md`、`ICON.zip`。
 - **校验器**：首页 Skill 的 [validate_outputs.py](../../codex-skills/game-homepage-icon-research/scripts/validate_outputs.py) 核验 Markdown 与 ZIP；总控 [verify-favicon-package.py](../scripts/verify-favicon-package.py) 进一步检查图标二进制包。未采集宿主来源即声称成功会改为等待来源。
 - **证据**：run 内 `homepage-sources/captures/CAPTURES.json`、逐页 JSON/截图及 SHA256 bundle；`homepage-icon/favicon_io.zip`、转换 digest；正式产物哈希。REJECTED/FAILED 页面不作成功来源。
-- **验证边界**：[首页接线测试](../tests/homepage-host-executor.test.mjs)、[代抓测试](../tests/homepage-source-host.test.mjs)、[转换测试](../tests/favicon-io-host.test.mjs)使用替身；当前主线完整真实首页为**未经真实运行验证**。
+- **验证边界**：自动化测试覆盖接线、代抓和转换；`wallpaper-engine-002` 已用真实 worker、宿主来源捕获和 favicon 包完成受控验证。该结论只覆盖已登记的运行身份，不代表任意新游戏或外部页面必然可用。
 
 ## 2. 关键词资料：game-innerpage-keyword-information-research
 
@@ -30,7 +30,7 @@
 - **产物**：`keywords.json`、`关键词处理记录.md`、`关键词素材汇总.md`、逐词 `…素材.md`；总控派生 `KEYWORD_MATERIALS.md`。
 - **校验器**：关键词 Skill 的 [validate_outputs.py](../../codex-skills/game-innerpage-keyword-information-research/scripts/validate_outputs.py)；总控检查关键词非空、逐词素材状态 COMPLETED。Skill 将盗版意图归并风险词，要求 `盗版意图处理` 表及 `盗版风险提示` 段落并限制下载站链接；不能捏造原词。
 - **证据**：原始 Markdown 哈希、处理/lineage 记录、素材引用、逐词 SHA256 与汇总 bundle。后续阶段若原件字节变化就阻断；retry 输入刷新会使关键词及下游失效。
-- **验证边界**：[执行器测试](../tests/skill-executor.test.mjs)、[产物测试](../tests/artifact-validator.test.mjs)、[pipeline 测试](../tests/pipeline.test.mjs)验证合成输入/产物及接线；当前 Serper/yt-dlp 真实业务调研为**未经真实运行验证**。
+- **验证边界**：自动化测试覆盖执行器、产物和 Pipeline；`wallpaper-engine-002` 已真实执行 Serper 和 yt-dlp，但最终为 `PARTIAL`，外部限流、站内资料缺口和未完成事实仍被保留。该运行验证了受控恢复与 handoff，不证明关键词研究已完整通过。
 
 ## 3. 模板选择与复制：game-site-template-selector
 
@@ -40,7 +40,7 @@
 - **产物**：`TEMPLATE_SELECTION_REPORT.md`、`template-copy-manifest.json`、`TEMPLATE_RESIDUE_SCAN.json`，以及复制得到的站点。
 - **校验器**：[artifact-validator](../src/artifact-validator.mjs)检查游戏/目标身份、source_unchanged、destination_verified、非空复制文件清单及逐文件实际 SHA256；pipeline 在推进前复核快照。
 - **证据**：manifest 中的模板来源/commit、复制清单文件哈希、残留扫描、正式产物及原生文件哈希。
-- **验证边界**：[snapshot 测试](../tests/template-snapshot.test.mjs)使用临时真实 Git 仓库，[总控测试](../tests/orchestrator-template-snapshot.test.mjs)使用 file 来源与替身 worker；真实 GitHub 获取和 worker 选模复制为**未经真实运行验证**。
+- **验证边界**：自动化测试覆盖快照和总控接线；`wallpaper-engine-002` 已真实完成固定模板选择、复制、残留扫描和站点合并。新模板来源或网络状态仍需每次运行独立验证。
 
 ## 4. 内容整合：game-site-content-integrator
 
@@ -50,7 +50,7 @@
 - **产物**：站点页面、`CONTENT_INTEGRATION_REPORT.md`、`CONTENT_PAGE_MANIFEST.json`、`CONTENT_PROVENANCE.md`、`CONTENT_GAPS.md`。
 - **校验器**：[artifact-validator](../src/artifact-validator.mjs)核验 schema/game、最终关键词一一覆盖、PUBLISHED/DRAFT/BLOCKED 状态与统计、来源文件存在及 provenance；BLOCKED 页面不能有 route/source_file，PUBLISHED 必须有 route、源码及素材记录。
 - **证据**：锁文件/安装命令和退出码、研究交接哈希、页面清单与逐词来源、缺口记录、正式及原生产物 SHA256。
-- **验证边界**：[预览宿主测试](../tests/site-preview-host.test.mjs)、[pipeline 测试](../tests/pipeline.test.mjs)、[产物测试](../tests/artifact-validator.test.mjs)覆盖替身安装和合成内容；真实安装/worker 内容生成为**未经真实运行验证**。
+- **验证边界**：自动化测试覆盖预览、Pipeline、产物和事务恢复；`wallpaper-engine-002` 已真实完成 Host readiness、候选事务、内容整合、构建及提交。该结果不替代其他项目的依赖和内容验收。
 
 ## 5. UI 审计：game-site-ui-ux-audit-optimizer
 
@@ -60,7 +60,7 @@
 - **产物**：`UI_UX_AUDIT_REPORT.md`、`UI_UX_AUDIT.json`、`UI_UX_OPTIMIZATION_PLAN.md`，站点 `docs/ui-ux-audit/RUN_ID/` 下报告/截图及 `LATEST`。
 - **校验器**：Skill 的 [validate_audit.py](../../codex-skills/game-site-ui-ux-audit-optimizer/scripts/validate_audit.py)，总控要求六视口严格匹配且 verdict 为 SHIP/SHIP_WITH_FIXES；通过时保存源码 projectDigest。
 - **证据**：`AUTOMATED_AUDIT.json`、截图集合及逐文件 SHA256、原生审计结论与优化方案、projectDigest。宿主证据前后变化会拒绝。
-- **验证边界**：[site-audit-host 测试](../tests/site-audit-host.test.mjs)检查替身预览/脚本/worker 与篡改检测，并真实导入 Playwright 模块；真实站点浏览器审计为**未经真实运行验证**。
+- **验证边界**：自动化测试覆盖预览、脚本、worker 和篡改检测；`wallpaper-engine-002` 已完成真实生产预览、多视口截图和 UI 审计。发现的问题仍属于站点待办，不会因阶段执行成功自动消失。
 
 ## 6. 全站上线前验收：game-site-prelaunch-gate
 
@@ -70,7 +70,7 @@
 - **产物**：`PRELAUNCH_ACCEPTANCE_REPORT.md`、`PRELAUNCH_ACCEPTANCE.json`、`REPAIR_MANIFEST.md`；站点 `docs/prelaunch/RUN_ID/host-evidence/` 下宿主证据和截图。
 - **校验器**：Skill 的 [validate_report.py](../../codex-skills/game-site-prelaunch-gate/scripts/validate_report.py)；总控核验 run/game/project/expected_domain、完整路由覆盖且与宿主集合相同，结论必须为“可以上线”或“可以上线，但有P2待办”。pipeline 另检查 siteRevision（报告有提供时）和域名。
 - **证据**：`HOST_EVIDENCE.json`、逐视口截图、HTTP/链接记录、各 package 脚本命令与退出码、哈希 bundle；这验证本地生产预览，不证明生产线上可用。浏览器渲染页面仍可能请求页面所引用的外部资源，不能把“外链不主动检查”写成宿主全局断网。
-- **验证边界**：[prelaunch-host 测试](../tests/prelaunch-host.test.mjs)使用替身 fetch、浏览器、package 命令及 worker；真实全站巡检为**未经真实运行验证**。
+- **验证边界**：自动化测试覆盖 fetch、浏览器、package 命令及 worker；`wallpaper-engine-002` 已完成真实全站巡检并登记结果。Stage 6 为 `PASSED` 只表示检查链路成功，当前 launch readiness 仍为 `NOT_CLEARED`，11 项业务阻塞仍需在站点项目处理。
 
 ## 7. 部署计划及执行：game-site-deploy-and-measurement
 
@@ -80,7 +80,7 @@
 - **产物**：plan 轮 `DEPLOYMENT_PLAN.md`、`DEPLOYMENT_PLAN.json`；execute 轮追加 `DEPLOYMENT_REPORT.md`、`DEPLOYMENT_REPORT.json`，保留原计划。
 - **校验器**：[artifact-validator](../src/artifact-validator.mjs)对计划检查 schema、AWAITING_CONFIRMATION、项目/仓库/分支/域名和未授权 push，以及 checks/risks/rollback/architecture/hosting/measurement；execute PASSED 必须报告 `deployment: "PRODUCTION LIVE"` 且 production_url origin 匹配确认域名。该结构校验本身不独立探测线上，也不证明 Google 每项已成功。
 - **证据**：两份计划、planDigest、批准摘要、生产部署报告及每服务实际状态。`deploymentExecuted=true` 在执行开始前保存，失败也不还原；仅表示可能已有副作用，不能用作成功证明。失败后重试先重新出计划；需人工核对实际副作用，冲突计划不会静默覆盖。
-- **验证边界**：[部署执行测试](../tests/deployment-execution.test.mjs)、[终端测试](../tests/terminal-run.test.mjs)使用替身 worker/合成生产报告。真实 push、部署、DNS、GSC/GA4 为**未经真实运行验证**。
+- **验证边界**：部署执行与终端自动化仍使用替身；`wallpaper-engine-002` 已真实验证 plan 轮的 worker、Host 校验、两项产物登记和发布，并正确停在 `WAITING_FOR_USER`。真实 push、生产部署、DNS、GSC/GA4 仍未经验证且未获授权。
 
 ## 冻结和可选范围
 

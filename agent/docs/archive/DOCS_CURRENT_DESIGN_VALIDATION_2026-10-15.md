@@ -5,7 +5,7 @@
 ## 文件变更
 
 - [agent README](../../README.md)：102 行，输入、七阶段、run/retry、部署批准、准备及验证边界。
-- [路线图](../MASTER_AGENT_EXECUTION_ROADMAP_V1.md)：当前实现与四项后续顺序。
+- [路线图](legacy/MASTER_AGENT_EXECUTION_ROADMAP_V1.md)：当时实现与四项后续顺序。
 - [阶段矩阵](../SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)：输入/权限/宿主/产物/校验器/证据。
 - [文档索引](../README.md)：现行文档和档案目录。
 - [Codex agent 入口](../../.codex/agents/game_site_orchestrator.toml)：整理输入、用户终端确认与证据汇报。

@@ -1,6 +1,6 @@
 # Agent V2 迁移实施计划
 
-状态：架构设计已批准，当前实现只达到 `P5_OFFLINE_FRAMEWORK_COMPLETE`；生产生命周期、真实格式 fixture 和 L6 尚未完成。后续工作必须遵循 [Agent V2 当前执行路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)，任何生产权威切换仍需本文件规定的独立审核和门禁。
+状态：冻结的未来参考方案，不是个人版 Agent 的当前路线。当前状态和维护边界见[Agent 当前状态](../../CURRENT_STATUS.md)；任何生产权威切换仍需重新立项、独立审核和门禁。
 
 ## 1. 策略
 

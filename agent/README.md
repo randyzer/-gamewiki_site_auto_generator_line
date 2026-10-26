@@ -2,7 +2,7 @@
 
 总控把用户提供的游戏身份和关键词依次交给七个 Skill，核验产物后再推进；第 7 阶段先生成部署计划，用户确认准确 digest 后才执行发布。主流程入口为 `run` / `retry`，实现见 [cli.mjs](src/cli.mjs)、[terminal-run.mjs](src/terminal-run.mjs) 和 [pipeline.mjs](src/pipeline.mjs)。
 
-当前开发主线是[个人使用版架构与执行计划](docs/AGENT_PERSONAL_USE_ARCHITECTURE_AND_PLAN.md)：直接复用现有七阶段 Pipeline、真实 Skill 执行、产物验收和恢复能力，以真实游戏站到达可审查部署计划作为验收。企业级 Code Authority、签名和抗回滚体系不再是实际建站的前置条件；当前顺序见[执行路线图](docs/AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)。
+当前架构基线是[个人使用版架构与执行计划](docs/AGENT_PERSONAL_USE_ARCHITECTURE_AND_PLAN.md)：直接复用现有七阶段 Pipeline、真实 Skill 执行、产物验收和恢复能力，以真实游戏站到达可审查部署计划作为验收。企业级 Code Authority、签名和抗回滚体系不再是实际建站的前置条件；最近一次受控真实验收见[当前状态](docs/CURRENT_STATUS.md)。
 
 Codex 整理输入，先用 `--preview` 展示完整摘要、Preview ID 与确认码，并保存不可变审批快照；用户在自己的消息中写出该码后，Codex 才能用 `run-confirm` / `retry-confirm` 读取快照、复验受保护状态并后台启动。CLI 也保留操作者在交互终端亲自输入单独小写 `y` 的流程；非交互 stdin（包括管道 `y`）仍会被拒绝。Codex 不得代输 `y`、模拟操作者终端或绕过确认。
 
@@ -218,9 +218,10 @@ worker 使用文件权限沙箱，命令网络只在第 2 阶段和第 7 阶段�
 
 ## 验证范围
 
-- 自动化可复验：[终端确认](tests/terminal-run.test.mjs)、[Skill 锁](tests/skill-lock.test.mjs)、[模板固定](tests/template-snapshot.test.mjs)、[部署双轮](tests/deployment-execution.test.mjs)、[权限](tests/worker-permissions.test.mjs)、[UI 宿主](tests/site-audit-host.test.mjs)、[巡检宿主](tests/prelaunch-host.test.mjs)。终端流、worker、浏览器、安装及部署多处使用替身；这些集成部分均为**未经真实运行验证**。
-- 未验证：当前主线的真实 Codex worker 七阶段端到端、真实公开来源/图像/favicon 交接、真实依赖安装与站点 UI/全站巡检，以及真实 push、部署、DNS、GSC/GA4。历史局部实测不能替代当前主线验收。
-- 验证与后续工作见 [Agent V2 当前执行路线图](docs/AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)；Legacy V1 说明和历史记录见[文档索引](docs/README.md)。
+- 自动化可复验：[终端确认](tests/terminal-run.test.mjs)、[Skill 锁](tests/skill-lock.test.mjs)、[模板固定](tests/template-snapshot.test.mjs)、[部署双轮](tests/deployment-execution.test.mjs)、[权限](tests/worker-permissions.test.mjs)、[UI 宿主](tests/site-audit-host.test.mjs)、[巡检宿主](tests/prelaunch-host.test.mjs)。这些测试仍不能单独代替真实运行结论。
+- `wallpaper-engine-002` 已完成受控真实验证：Stage 1、3–6 为 `PASSED`，Stage 2 以保留限制的 `PARTIAL` handoff 推进，Stage 7 已生成并登记部署计划后停在 `WAITING_FOR_USER`。完整身份和边界见[当前状态](docs/CURRENT_STATUS.md)。
+- 尚未验证且未获授权：真实 push、生产部署、DNS 修改、GSC/GA4 操作。计划生成成功不代表网站已具备上线条件。
+- Legacy、冻结 V2 方案和历史验收记录见[文档索引](docs/README.md)的归档说明。
 
 ## 已冻结范围
 

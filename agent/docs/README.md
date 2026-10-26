@@ -1,10 +1,10 @@
 # 文档索引
 
-现行文档：
+现行文档只有以下四类：
 
 - [总控 README](../README.md)：准备、输入、终端启动/恢复、计划批准与限制。
-- [Agent V2 当前执行路线图](AGENT_V2_CURRENT_EXECUTION_ROADMAP.md)：当前进度、停止线与唯一的下一步顺序。
-- [旧版总控路线图](MASTER_AGENT_EXECUTION_ROADMAP_V1.md)：V1 实现说明；后续顺序已撤销，仅供理解现有 Legacy 路径。
+- [当前状态](CURRENT_STATUS.md)：最近一次受控真实验收快照、当前边界和下一步归属。
+- [个人使用版架构与执行计划](AGENT_PERSONAL_USE_ARCHITECTURE_AND_PLAN.md)：稳定架构、信任边界、七阶段语义和防偏航规则。
 - [七阶段验收与证据矩阵](SEVEN_STAGE_GATE_AND_EVIDENCE_MATRIX_V1.md)：每阶段输入、权限、宿主动作、产物和校验。
 
-[archive/](archive/) 保留旧设计、过程报告和历史验收，仅说明当轮情况；移动时只修正相对链接，不作为当前主线使用指南。
+[archive/](archive/) 保留旧设计、过程报告和历史验收，仅说明当轮情况，不作为当前操作指南。其中 `frozen-v2/` 是冻结的企业级未来方案，`legacy/` 是旧 V1 路线图，`historical-validation/` 是历史环境和代码验收记录。
