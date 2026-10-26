@@ -18,7 +18,8 @@
         "lineageDigest", "researchHandoffSha256", "researchApprovalDigest",
         "originalLaunchReadinessBindingDigest", "baselineKind", "baselineDigest",
         "remediationScopeDigest", "projectDigest", "observedRoutes", "routeInventoryDigest",
-        "pages", "validationStatus", "validatorVersion", "publicationEvidenceDigest"
+        "pages", "indexingAuthorization", "hostObservationDigest", "hostObservationScopes",
+        "validationStatus", "validatorVersion", "publicationEvidenceDigest"
       ],
       "properties": {
         "kind": { "const": "PUBLICATION_EVIDENCE_BODY" },
@@ -45,7 +46,8 @@
             "type": "object", "additionalProperties": false,
             "required": [
               "route", "originalDisposition", "effectiveDisposition", "materialStatus",
-              "robots", "inSitemap", "inNavigation", "dynamicProof"
+              "robots", "inSitemap", "inNavigation", "linkedFromPublicPages",
+              "sourceFileExposed", "dynamicProof"
             ],
             "properties": {
               "route": { "type": "string", "pattern": "^/" },
@@ -55,8 +57,18 @@
               "robots": { "enum": ["index", "noindex", "absent"] },
               "inSitemap": { "type": "boolean" },
               "inNavigation": { "type": "boolean" },
+              "linkedFromPublicPages": { "type": "boolean" },
+              "sourceFileExposed": { "type": "boolean" },
               "dynamicProof": { "enum": ["STATIC", "PROVEN", "UNPROVEN"] }
             }
+          }
+        },
+        "indexingAuthorization": { "enum": ["NOT_CLEARED", "CLEARED"] },
+        "hostObservationDigest": { "type": "string", "format": "sha256" },
+        "hostObservationScopes": {
+          "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true,
+          "items": {
+            "enum": ["PUBLIC_INTERNAL_LINKS", "ROUTE_INVENTORY", "SOURCE_FILE_EXPOSURE"]
           }
         },
         "validationStatus": { "const": "VERIFIED" },

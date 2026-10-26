@@ -73,6 +73,46 @@ test('lineage and baseline digests are canonical and independently verified', ()
     error => error.code === 'SITE_ACCEPTANCE_DIGEST_MISMATCH');
 });
 
+test('baseline verification rejects reordered arrays even with recomputed digests', () => {
+  const baseline = createCurrentSiteBaseline({
+    ...baselineInput,
+    files: [
+      ...baselineInput.files,
+      { path: 'app/layout.tsx', mode: 0o644, byteLength: 8, sha256: d('8') },
+    ],
+    routes: ['/', '/en/'],
+    protectedInputs: [
+      ...baselineInput.protectedInputs,
+      { path: 'backgroundinformation/icon.png', mode: 0o400, byteLength: 8,
+        sha256: d('9') },
+    ],
+    historicalEvidenceGaps: [
+      'FINAL_STAGE4_INVENTORY_UNAVAILABLE',
+      'ORIGINAL_CHANGE_AUTHORIZATION_UNAVAILABLE',
+    ],
+  });
+
+  for (const [field, digestField, tag] of [
+    ['files', 'inventoryDigest', 'SITE_FILE_INVENTORY_V1'],
+    ['routes', 'routeInventoryDigest', 'SITE_ROUTE_INVENTORY_V1'],
+    ['protectedInputs', 'protectedInputsDigest', 'SITE_PROTECTED_INPUTS_V1'],
+    ['historicalEvidenceGaps', null, null],
+  ]) {
+    const { baselineDigest: _baselineDigest, ...canonicalBody } = baseline;
+    const body = {
+      ...canonicalBody,
+      [field]: [...baseline[field]].reverse(),
+    };
+    if (digestField) body[digestField] = canonicalContractDigest(tag, body[field]);
+    const reordered = {
+      ...body,
+      baselineDigest: canonicalContractDigest('CURRENT_SITE_BASELINE_V1', body),
+    };
+    assert.throws(() => verifyCurrentSiteBaseline(reordered),
+      error => error.code === 'SITE_ACCEPTANCE_NON_CANONICAL');
+  }
+});
+
 test('legacy baseline cannot claim historical equivalence', () => {
   assert.throws(() => createCurrentSiteBaseline({ ...baselineInput, historicalEquivalence: true }),
     error => error.code === 'SITE_ACCEPTANCE_LEGACY_EQUIVALENCE_INVALID');
@@ -118,8 +158,40 @@ test('authorization fixes one preview-bound transaction identity', () => {
     preManifestSha256: d('2'), postManifestSha256: d('d'), committedSequence: 220,
     acceptanceRevision: authorization.acceptanceRevision,
     committedObjectDigests: [d('e'), d('f')], consumedAtMs: 2 });
-  assert.equal(verifyAuthorizationConsumption(consumption, { authorization, reservation }),
-    consumption);
+  assert.equal(verifyAuthorizationConsumption(consumption, { authorization, reservation,
+    expectedPostState: {
+      postManifestSha256: d('d'), committedSequence: 220,
+      acceptanceRevision: authorization.acceptanceRevision,
+      committedObjectDigests: [d('e'), d('f')],
+    },
+  }), consumption);
+});
+
+test('consumption verification requires and matches trusted expected post-state', () => {
+  const authorization = createSiteReacceptanceAuthorization({ runId: 'run',
+    previewId: '11111111-1111-4111-8111-111111111111', previewSnapshotSha256: d('1'),
+    manifestSequence: 1, manifestSha256: d('2'), mode: 'EXACT_REMEDIATION',
+    lineageDigest: d('3'), oldProjectDigest: d('4'), newProjectDigest: d('5'),
+    baselineDigest: d('6'), remediationScopeDigest: d('7'), publicationEvidenceDigest: d('8'),
+    attestationDigest: d('9'), acceptanceRevision: d('a'), operatorSummarySha256: d('b'),
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111' });
+  const reservation = createAuthorizationReservation({ authorization,
+    confirmationIdentity: 'interactive-confirmation', intentDigest: d('c'), reservedAtMs: 1 });
+  const consumption = createAuthorizationConsumption({ authorization, reservation,
+    preManifestSha256: d('2'), postManifestSha256: d('d'), committedSequence: 2,
+    acceptanceRevision: d('a'), committedObjectDigests: [d('e')], consumedAtMs: 2 });
+
+  assert.throws(() => verifyAuthorizationConsumption(consumption,
+    { authorization, reservation }),
+  error => error.code === 'SITE_ACCEPTANCE_POST_STATE_REQUIRED');
+  assert.throws(() => verifyAuthorizationConsumption(consumption, {
+    authorization,
+    reservation,
+    expectedPostState: {
+      postManifestSha256: d('f'), committedSequence: 2,
+      acceptanceRevision: d('a'), committedObjectDigests: [d('e')],
+    },
+  }), error => error.code === 'SITE_ACCEPTANCE_POST_STATE_MISMATCH');
 });
 
 test('reservation and consumption reject substituted transaction identities and replay', () => {

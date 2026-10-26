@@ -55,6 +55,14 @@ const sortedUnique = (values, label) => {
   return output;
 };
 
+function assertCanonicalSortedUnique(values, label) {
+  const sorted = sortedUnique(values, label);
+  if (canonicalJson(values) !== canonicalJson(sorted)) {
+    throw new ContractError('SITE_ACCEPTANCE_NON_CANONICAL',
+      `${label} must use canonical sorted order`);
+  }
+}
+
 export function createImmutableIntegrationLineage(input) {
   assertAcyclic(input);
   rejectDerivedInput(input, ['lineageDigest']);
@@ -76,6 +84,8 @@ export function createImmutableIntegrationLineage(input) {
 
 export function verifyImmutableIntegrationLineage(value) {
   validateContract('IMMUTABLE_INTEGRATION_LINEAGE', 1, value);
+  assertCanonicalSortedUnique(value.stage3ArtifactDigests, 'Stage 3 artifacts');
+  assertCanonicalSortedUnique(value.stage4ArtifactDigests, 'Stage 4 artifacts');
   verifyDigest(value, 'lineageDigest', 'IMMUTABLE_INTEGRATION_LINEAGE_V1');
   return value;
 }
@@ -119,6 +129,10 @@ export function createCurrentSiteBaseline(input) {
 
 export function verifyCurrentSiteBaseline(value) {
   validateContract('CURRENT_SITE_BASELINE', 1, value);
+  assertCanonicalSortedUnique(value.files, 'files');
+  assertCanonicalSortedUnique(value.routes, 'routes');
+  assertCanonicalSortedUnique(value.protectedInputs, 'protected inputs');
+  assertCanonicalSortedUnique(value.historicalEvidenceGaps, 'historical evidence gaps');
   if (value.baselineKind === 'REACCEPTED_CURRENT_BASELINE' &&
       value.historicalEquivalence !== false) {
     throw new ContractError('SITE_ACCEPTANCE_LEGACY_EQUIVALENCE_INVALID',
@@ -262,9 +276,12 @@ export function createAuthorizationConsumption({
   return deepFreeze(value);
 }
 
-export function verifyAuthorizationConsumption(value, { authorization, reservation }) {
+export function verifyAuthorizationConsumption(value, {
+  authorization, reservation, expectedPostState,
+}) {
   verifyAuthorizationReservation(reservation, { authorization });
   validateContract('SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION', 1, value);
+  assertCanonicalSortedUnique(value.committedObjectDigests, 'committed objects');
   if (value.reservationDigest !== reservation.reservationDigest ||
       value.transactionId !== authorization.transactionId ||
       value.preManifestSha256 !== authorization.manifestSha256 ||
@@ -272,6 +289,27 @@ export function verifyAuthorizationConsumption(value, { authorization, reservati
       value.committedSequence !== authorization.manifestSequence + 1) {
     throw new ContractError('SITE_ACCEPTANCE_TRANSACTION_MISMATCH',
       'Consumption does not match the reserved manifest transition');
+  }
+  const expectedFields = [
+    'acceptanceRevision',
+    'committedObjectDigests',
+    'committedSequence',
+    'postManifestSha256',
+  ];
+  if (!expectedPostState ||
+      canonicalJson(Object.keys(expectedPostState).sort()) !== canonicalJson(expectedFields)) {
+    throw new ContractError('SITE_ACCEPTANCE_POST_STATE_REQUIRED',
+      'Trusted expected post-state is required to verify consumption');
+  }
+  const expectedObjectDigests = sortedUnique(
+    expectedPostState.committedObjectDigests, 'expected committed objects',
+  );
+  if (value.postManifestSha256 !== expectedPostState.postManifestSha256 ||
+      value.committedSequence !== expectedPostState.committedSequence ||
+      value.acceptanceRevision !== expectedPostState.acceptanceRevision ||
+      canonicalJson(value.committedObjectDigests) !== canonicalJson(expectedObjectDigests)) {
+    throw new ContractError('SITE_ACCEPTANCE_POST_STATE_MISMATCH',
+      'Consumption does not match the trusted expected post-state');
   }
   verifyDigest(value, 'consumptionDigest',
     'SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION_V1');

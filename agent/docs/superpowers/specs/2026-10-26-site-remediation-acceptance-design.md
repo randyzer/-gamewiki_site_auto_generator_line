@@ -82,6 +82,9 @@ Publication evidence uses two digest layers so that no identity depends on itsel
 - current `projectDigest`
 - independently observed route inventory and digest
 - per-route effective disposition: `PUBLISH`, `DRAFT_ONLY`, or `OMIT`
+- a Host observation digest covering route inventory, public internal links, and source-file exposure
+- per-route public-link and source-file-exposure observations
+- indexing authorization: `NOT_CLEARED` or `CLEARED`
 - publication-policy validation result and validator version
 
 `publicationEvidenceDigest` is the SHA256 of the canonical publication evidence body. The body does not contain `acceptanceRevision`, `publicationEvidenceDigest`, `attestationDigest`, or any envelope that contains one of those fields.
@@ -95,6 +98,8 @@ The derived attestation can preserve or narrow original publication rights. It c
 - unprovable dynamic or catch-all routes;
 - conflicting canonical or hreflang behavior;
 - public routes not justified by the immutable Stage 4 publication policy.
+
+`PUBLISH` means that verified content is eligible to be public; it does not authorize search-engine indexing. A publish-eligible route may remain `noindex`. `robots=index` is valid only when the separately verified indexing authorization is `CLEARED`; legacy 002 remains `NOT_CLEARED`. The pure validator verifies the closed evidence contract and the Host observation digest reference. It does not independently recreate browser observations or claim publication safety without that Host-produced evidence.
 
 The original Stage 4 route-publication artifact remains immutable.
 
@@ -151,6 +156,8 @@ The durable authorization lifecycle uses two separate immutable records:
 
 - `SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION_V1`: preview identity, confirmation identity, transaction ID, authorization body digest, intent digest, reserved-at time, and reservation digest.
 - `SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION_V1`: reservation digest, transaction ID, exact pre/post manifest SHA256, committed sequence, `acceptanceRevision`, committed object digests, consumed-at time, and consumption digest.
+
+The pure consumption verifier also requires an explicit trusted expected post-state supplied by the future PR-B transaction layer: post-manifest SHA256, committed sequence, `acceptanceRevision`, and the canonical committed-object digest set. It rejects a missing, incomplete, or mismatched expected post-state. This PR-A verifier proves that a consumption record matches trusted transaction expectations; it does not by itself discover or authorize the committed state.
 
 Both schemas use exact-key validation and canonical serialization. A reservation may have only one matching consumption. Neither record claims an authenticated human identity: it proves that the local interactive operator confirmed the exact preview in this run. A future production approval adapter may provide stronger identity, but it is outside this design and cannot be simulated by a hash.
 

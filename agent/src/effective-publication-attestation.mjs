@@ -1,4 +1,4 @@
-import { deepFreeze } from './contracts/canonical-json.mjs';
+import { canonicalJson, deepFreeze } from './contracts/canonical-json.mjs';
 import { ContractError } from './contracts/errors.mjs';
 import { validateContract } from './contracts/registry.mjs';
 import {
@@ -9,11 +9,17 @@ import {
 export const PUBLICATION_POLICY_VERSION = 'effective-publication-v1';
 
 const rank = new Map([['OMIT', 0], ['DRAFT_ONLY', 1], ['PUBLISH', 2]]);
+const hostObservationScopes = Object.freeze([
+  'PUBLIC_INTERNAL_LINKS',
+  'ROUTE_INVENTORY',
+  'SOURCE_FILE_EXPOSURE',
+]);
 const selfFields = [
   'acceptanceRevision', 'attestationDigest', 'publicationEvidenceDigest', 'evidenceBody',
+  'hostObservationScopes',
 ];
 
-function verifyPage(page) {
+function verifyPage(page, indexingAuthorization) {
   if (rank.get(page.effectiveDisposition) > rank.get(page.originalDisposition)) {
     throw new ContractError('PUBLICATION_RIGHTS_WIDENED',
       'Effective publication rights exceed Stage 4');
@@ -22,18 +28,27 @@ function verifyPage(page) {
     throw new ContractError('PUBLICATION_POLICY_INVALID',
       'Unproven routes cannot be accepted');
   }
-  if (page.effectiveDisposition === 'PUBLISH' &&
-      (page.materialStatus !== 'COMPLETED' || page.robots !== 'index')) {
+  if (page.sourceFileExposed) {
     throw new ContractError('PUBLICATION_POLICY_INVALID',
-      'Published routes require completed indexed material');
+      'Source files cannot be publicly exposed');
+  }
+  if (page.effectiveDisposition === 'PUBLISH' &&
+      (page.materialStatus !== 'COMPLETED' || page.robots === 'absent')) {
+    throw new ContractError('PUBLICATION_POLICY_INVALID',
+      'Publish-eligible routes require completed material and explicit robots policy');
+  }
+  if (page.robots === 'index' && indexingAuthorization !== 'CLEARED') {
+    throw new ContractError('PUBLICATION_INDEXING_NOT_AUTHORIZED',
+      'Indexing requires a separately cleared launch gate');
   }
   if (page.effectiveDisposition === 'DRAFT_ONLY' &&
       (page.materialStatus !== 'PARTIAL' || page.robots !== 'noindex' ||
-       page.inSitemap || page.inNavigation)) {
+       page.inSitemap || page.inNavigation || page.linkedFromPublicPages)) {
     throw new ContractError('PUBLICATION_POLICY_INVALID',
       'Draft routes must stay noindex and undiscoverable');
   }
-  if (page.effectiveDisposition === 'OMIT' && (page.inSitemap || page.inNavigation)) {
+  if (page.effectiveDisposition === 'OMIT' &&
+      (page.inSitemap || page.inNavigation || page.linkedFromPublicPages)) {
     throw new ContractError('PUBLICATION_POLICY_INVALID',
       'Omitted routes cannot be exposed');
   }
@@ -68,6 +83,16 @@ function verifyRouteCoverage(observedRoutes, pages) {
   }
 }
 
+function verifyCanonicalOrder(observedRoutes, pages) {
+  const sortedRoutes = [...observedRoutes].sort();
+  const sortedPages = [...pages].sort((left, right) => left.route.localeCompare(right.route));
+  if (canonicalJson(observedRoutes) !== canonicalJson(sortedRoutes) ||
+      canonicalJson(pages) !== canonicalJson(sortedPages)) {
+    throw new ContractError('PUBLICATION_EVIDENCE_NON_CANONICAL',
+      'Publication routes and pages must use canonical sorted order');
+  }
+}
+
 function verifyAcceptanceBinding(evidenceBody, acceptanceIdentity) {
   if (acceptanceIdentity.publicationEvidenceDigest !== evidenceBody.publicationEvidenceDigest ||
       acceptanceIdentity.lineageDigest !== evidenceBody.lineageDigest ||
@@ -87,7 +112,7 @@ export function createPublicationEvidenceBody(input) {
   const observedRoutes = structuredClone(input.observedRoutes).sort();
   const pages = structuredClone(input.pages)
     .sort((left, right) => left.route.localeCompare(right.route));
-  pages.forEach(verifyPage);
+  pages.forEach(page => verifyPage(page, input.indexingAuthorization));
   if (new Set(observedRoutes).size !== observedRoutes.length ||
       new Set(pages.map(item => item.route)).size !== pages.length) {
     throw new ContractError('PUBLICATION_ROUTE_DUPLICATE',
@@ -100,6 +125,7 @@ export function createPublicationEvidenceBody(input) {
     schemaVersion: 1,
     producer: 'EFFECTIVE_PUBLICATION_ATTESTATION',
     policyVersion: PUBLICATION_POLICY_VERSION,
+    hostObservationScopes: [...hostObservationScopes],
     observedRoutes,
     routeInventoryDigest: canonicalContractDigest(
       'EFFECTIVE_ROUTE_INVENTORY_V1', observedRoutes,
@@ -119,7 +145,12 @@ export function verifyPublicationEvidenceBody(value) {
   if (value.policyVersion !== PUBLICATION_POLICY_VERSION) {
     throw new ContractError('PUBLICATION_POLICY_INVALID', 'Publication policy version changed');
   }
-  value.pages.forEach(verifyPage);
+  if (canonicalJson(value.hostObservationScopes) !== canonicalJson(hostObservationScopes)) {
+    throw new ContractError('PUBLICATION_HOST_EVIDENCE_INCOMPLETE',
+      'Publication evidence must reference all required Host observation scopes');
+  }
+  verifyCanonicalOrder(value.observedRoutes, value.pages);
+  value.pages.forEach(page => verifyPage(page, value.indexingAuthorization));
   verifyRouteCoverage(value.observedRoutes, value.pages);
   if (canonicalContractDigest('EFFECTIVE_ROUTE_INVENTORY_V1', value.observedRoutes) !==
       value.routeInventoryDigest) {

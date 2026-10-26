@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createSiteAcceptanceIdentity } from '../src/site-acceptance-contract.mjs';
+import {
+  canonicalContractDigest,
+  createSiteAcceptanceIdentity,
+} from '../src/site-acceptance-contract.mjs';
 import {
   createDerivedPublicationAttestation,
   createPublicationEvidenceBody,
@@ -12,7 +15,7 @@ const d = value => value.repeat(64).slice(0, 64);
 const page = {
   route: '/', originalDisposition: 'PUBLISH', effectiveDisposition: 'PUBLISH',
   materialStatus: 'COMPLETED', robots: 'index', inSitemap: true, inNavigation: true,
-  dynamicProof: 'STATIC',
+  linkedFromPublicPages: true, sourceFileExposed: false, dynamicProof: 'STATIC',
 };
 const evidenceInput = {
   originalPublicationManifestSha256: d('1'), lineageDigest: d('2'),
@@ -20,6 +23,7 @@ const evidenceInput = {
   originalLaunchReadinessBindingDigest: d('5'), baselineKind: 'REACCEPTED_CURRENT_BASELINE',
   baselineDigest: d('6'), remediationScopeDigest: d('7'), projectDigest: d('8'),
   observedRoutes: ['/'], pages: [page], validationStatus: 'VERIFIED',
+  indexingAuthorization: 'CLEARED', hostObservationDigest: d('a'),
   validatorVersion: 'host-route-v1',
 };
 
@@ -40,14 +44,101 @@ test('publication evidence digest precedes acceptance revision and final attesta
     attestation);
 });
 
+test('publication verification rejects reordered routes and pages with valid recomputed digests', () => {
+  const evidenceBody = createPublicationEvidenceBody({
+    ...evidenceInput,
+    observedRoutes: ['/', '/en/'],
+    pages: [page, { ...page, route: '/en/' }],
+  });
+
+  for (const field of ['observedRoutes', 'pages']) {
+    const { publicationEvidenceDigest: _digest, ...canonicalBody } = evidenceBody;
+    const body = {
+      ...canonicalBody,
+      [field]: [...evidenceBody[field]].reverse(),
+    };
+    if (field === 'observedRoutes') {
+      body.routeInventoryDigest = canonicalContractDigest(
+        'EFFECTIVE_ROUTE_INVENTORY_V1', body.observedRoutes,
+      );
+    }
+    const reordered = {
+      ...body,
+      publicationEvidenceDigest: canonicalContractDigest('PUBLICATION_EVIDENCE_BODY_V1', body),
+    };
+    assert.throws(() => verifyPublicationEvidenceBody(reordered),
+      error => error.code === 'PUBLICATION_EVIDENCE_NON_CANONICAL');
+  }
+});
+
 test('effective policy may narrow but never widen original rights', () => {
   const narrowed = createPublicationEvidenceBody({ ...evidenceInput,
     pages: [{ ...page, effectiveDisposition: 'DRAFT_ONLY', materialStatus: 'PARTIAL',
-      robots: 'noindex', inSitemap: false, inNavigation: false }] });
+      robots: 'noindex', inSitemap: false, inNavigation: false,
+      linkedFromPublicPages: false }] });
   assert.equal(narrowed.pages[0].effectiveDisposition, 'DRAFT_ONLY');
   assert.throws(() => createPublicationEvidenceBody({ ...evidenceInput,
     pages: [{ ...page, originalDisposition: 'DRAFT_ONLY', effectiveDisposition: 'PUBLISH',
       materialStatus: 'PARTIAL' }] }), error => error.code === 'PUBLICATION_RIGHTS_WIDENED');
+});
+
+test('publication eligibility remains noindex until indexing authorization is cleared', () => {
+  const noindexPage = {
+    ...page,
+    robots: 'noindex',
+    linkedFromPublicPages: true,
+    sourceFileExposed: false,
+  };
+  const evidenceBody = createPublicationEvidenceBody({
+    ...evidenceInput,
+    indexingAuthorization: 'NOT_CLEARED',
+    hostObservationDigest: d('a'),
+    pages: [noindexPage],
+  });
+  assert.equal(evidenceBody.pages[0].effectiveDisposition, 'PUBLISH');
+  assert.equal(evidenceBody.pages[0].robots, 'noindex');
+  assert.throws(() => createPublicationEvidenceBody({
+    ...evidenceInput,
+    indexingAuthorization: 'NOT_CLEARED',
+    hostObservationDigest: d('a'),
+    pages: [{ ...noindexPage, robots: 'index' }],
+  }), error => error.code === 'PUBLICATION_INDEXING_NOT_AUTHORIZED');
+});
+
+test('Host observation evidence rejects public links and source exposure for restricted material', () => {
+  const publishPage = {
+    ...page,
+    robots: 'noindex',
+    linkedFromPublicPages: true,
+    sourceFileExposed: false,
+  };
+  const omittedPage = {
+    ...page,
+    route: '/blocked',
+    originalDisposition: 'OMIT',
+    effectiveDisposition: 'OMIT',
+    materialStatus: 'BLOCKED',
+    robots: 'noindex',
+    inSitemap: false,
+    inNavigation: false,
+    linkedFromPublicPages: false,
+    sourceFileExposed: false,
+  };
+  const input = {
+    ...evidenceInput,
+    indexingAuthorization: 'NOT_CLEARED',
+    hostObservationDigest: d('a'),
+    pages: [publishPage, omittedPage],
+  };
+  assert.equal(createPublicationEvidenceBody(input).hostObservationScopes.length, 3);
+  assert.throws(() => createPublicationEvidenceBody({
+    ...input,
+    pages: [publishPage, { ...omittedPage, linkedFromPublicPages: true }],
+  }), error => error.code === 'PUBLICATION_POLICY_INVALID');
+  assert.throws(() => createPublicationEvidenceBody({
+    ...input,
+    pages: [publishPage, { ...omittedPage, sourceFileExposed: true }],
+  }), error => error.code === 'PUBLICATION_POLICY_INVALID');
 });
 
 test('draft, blocked, unproven and self-referential evidence fails closed', () => {
