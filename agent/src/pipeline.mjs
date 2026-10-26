@@ -2,7 +2,6 @@ import { readFile, writeFile, mkdir, lstat, readdir, open, rename, unlink } from
 import { createHash, randomUUID } from 'node:crypto';
 import { isAbsolute, resolve, relative, dirname, join, parse, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { hostname } from 'node:os';
 import { resolveNs } from 'node:dns/promises';
 import { failureDiagnostic, diagnosticSummary, sanitizeDiagnosticText } from './diagnostics.mjs';
 import { parseArtifactJson } from './files.mjs';
@@ -35,6 +34,9 @@ import { createStage4LaunchReadinessBinding, verifyStage4LaunchReadinessBinding,
 import { projectContentDigest } from './project-content-digest.mjs';
 import { createPrelaunchContext, createPrelaunchAssessment, verifyPrelaunchAssessment,
   verifyStage6HostContext } from './stage6-prelaunch-policy.mjs';
+import { acquireRunLock, recoverDeadRunLock } from './run-lock.mjs';
+import { assertNoPendingSiteRemediation,
+  verifyCommittedSiteRemediation } from './site-remediation-transaction.mjs';
 
 import { STAGE, STAGES, ALL_STAGES, INPUT_STAGE, stageName, stageDefinition, stageIndex, findStage,
   stageSatisfied } from './stages.mjs';
@@ -196,17 +198,7 @@ function validateManifest(m, runId, workspace, inventoryPath, templateRoots) {
   }
 }
 
-export async function recoverDeadRunLock(lockPath) {
-  const guard = await open(lockPath + '.recovery', 'wx', 0o600);
-  try {
-    const lock = JSON.parse((await regularFile(lockPath)).toString('utf8'));
-    assert(lock.host === hostname() && Number.isSafeInteger(lock.pid) && lock.pid > 0, 'Unknown lock owner; manual reconciliation required');
-    let dead = false;
-    try { process.kill(lock.pid, 0); } catch (error) { if (error.code === 'ESRCH') dead = true; else throw error; }
-    assert(dead, 'Pipeline busy: lock owner is still alive');
-    await unlink(lockPath);
-  } finally { await guard.close(); await unlink(lockPath + '.recovery'); }
-}
+export { recoverDeadRunLock } from './run-lock.mjs';
 
 // Trusted in-process seam. JSON configuration and task inputs cannot recreate this identity.
 export const OFFLINE_STAGE4_READINESS_CAPABILITY = Object.freeze({
@@ -340,18 +332,10 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
 
   async function exclusive(operation, initial = false) {
     assert(!busy, 'Pipeline busy'); busy = true;
-    let handle;
+    let lock;
     try {
       await safeOutput(lockPath);
-      try { handle = await open(lockPath, 'wx', 0o600); }
-      catch (error) {
-        if (error.code !== 'EEXIST') throw error;
-        if (!recoverDeadLocks) throw new Error('Pipeline busy: durable run lock exists');
-        await recoverDeadRunLock(lockPath);
-        handle = await open(lockPath, 'wx', 0o600);
-      }
-      await handle.writeFile(JSON.stringify({ runId, pid: process.pid, host: hostname(), acquiredAt: now() }));
-      await handle.sync();
+      lock = await acquireRunLock({ lockPath, runId, recoverDead: recoverDeadLocks });
       if (!initial) {
         const diskBytes = await regularFile(manifestPath);
         if (initialResumeDigest !== undefined) {
@@ -360,10 +344,12 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
         }
         const disk = JSON.parse(diskBytes.toString('utf8'));
         assert(JSON.stringify(disk) === JSON.stringify(state), 'Stale pipeline instance; resume from disk');
+        await assertNoPendingSiteRemediation({ runDirectory,
+          manifestSha256: hash(diskBytes) });
       }
       return await operation();
     } finally {
-      if (handle) { await handle.close(); await unlink(lockPath); }
+      if (lock) await lock.release();
       busy = false;
     }
   }
@@ -380,6 +366,7 @@ export async function createPipeline({ workspace, executor, inputs = {}, invento
       JSON.stringify(JSON.parse((await regularFile(manifestPath)).toString('utf8')).inputs), 'Resume inputs must be changed via updateUserInputs');
     state = JSON.parse((await regularFile(manifestPath)).toString('utf8'));
     validateManifest(state, runId, workspace, inventoryPath, templateRoots);
+    await verifyCommittedSiteRemediation({ runDirectory, manifest: state });
     await validateProject(state.inputs.projectPath);
     const handoff = findStage(state.stages, STAGE.KEYWORD_RESEARCH).checkpoint.researchHandoff;
     if (handoff) {
