@@ -161,3 +161,119 @@ export function verifySiteAcceptanceIdentity(value) {
   verifyDigest(value, 'acceptanceRevision', 'SITE_ACCEPTANCE_IDENTITY_V1');
   return value;
 }
+
+export function createSiteReacceptanceAuthorization(input) {
+  assertAcyclic(input);
+  rejectDerivedInput(input, ['authorizationDigest']);
+  const body = {
+    ...structuredClone(input),
+    kind: 'SITE_REACCEPTANCE_AUTHORIZATION',
+    schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT',
+    policyVersion: SITE_ACCEPTANCE_POLICY_VERSION,
+  };
+  const value = {
+    ...body,
+    authorizationDigest: canonicalContractDigest('SITE_REACCEPTANCE_AUTHORIZATION_V1', body),
+  };
+  validateContract(value.kind, value.schemaVersion, value);
+  return deepFreeze(value);
+}
+
+export function verifySiteReacceptanceAuthorization(value) {
+  validateContract('SITE_REACCEPTANCE_AUTHORIZATION', 1, value);
+  if (value.policyVersion !== SITE_ACCEPTANCE_POLICY_VERSION) {
+    throw new ContractError('SITE_ACCEPTANCE_POLICY_MISMATCH', 'Authorization policy changed');
+  }
+  verifyDigest(value, 'authorizationDigest', 'SITE_REACCEPTANCE_AUTHORIZATION_V1');
+  return value;
+}
+
+export function createAuthorizationReservation({
+  authorization, confirmationIdentity, intentDigest, reservedAtMs,
+}) {
+  verifySiteReacceptanceAuthorization(authorization);
+  const body = {
+    kind: 'SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION',
+    schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT',
+    authorizationDigest: authorization.authorizationDigest,
+    previewId: authorization.previewId,
+    confirmationIdentity,
+    transactionId: authorization.transactionId,
+    intentDigest,
+    reservedAtMs,
+  };
+  const value = {
+    ...body,
+    reservationDigest: canonicalContractDigest(
+      'SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION_V1', body,
+    ),
+  };
+  validateContract(value.kind, value.schemaVersion, value);
+  return deepFreeze(value);
+}
+
+export function verifyAuthorizationReservation(value, { authorization }) {
+  verifySiteReacceptanceAuthorization(authorization);
+  validateContract('SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION', 1, value);
+  if (value.authorizationDigest !== authorization.authorizationDigest ||
+      value.previewId !== authorization.previewId ||
+      value.transactionId !== authorization.transactionId) {
+    throw new ContractError('SITE_ACCEPTANCE_TRANSACTION_MISMATCH',
+      'Reservation does not belong to the authorized transaction');
+  }
+  verifyDigest(value, 'reservationDigest',
+    'SITE_REACCEPTANCE_AUTHORIZATION_RESERVATION_V1');
+  return value;
+}
+
+export function createAuthorizationConsumption({
+  authorization, reservation, preManifestSha256, postManifestSha256, committedSequence,
+  acceptanceRevision, committedObjectDigests, consumedAtMs,
+}) {
+  verifyAuthorizationReservation(reservation, { authorization });
+  if (preManifestSha256 !== authorization.manifestSha256 ||
+      committedSequence !== authorization.manifestSequence + 1 ||
+      acceptanceRevision !== authorization.acceptanceRevision) {
+    throw new ContractError('SITE_ACCEPTANCE_TRANSACTION_MISMATCH',
+      'Consumption does not match the authorized manifest transition');
+  }
+  const body = {
+    kind: 'SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION',
+    schemaVersion: 1,
+    producer: 'SITE_ACCEPTANCE_CONTRACT',
+    reservationDigest: reservation.reservationDigest,
+    transactionId: reservation.transactionId,
+    preManifestSha256,
+    postManifestSha256,
+    committedSequence,
+    acceptanceRevision,
+    committedObjectDigests: sortedUnique(committedObjectDigests, 'committed objects'),
+    consumedAtMs,
+  };
+  const value = {
+    ...body,
+    consumptionDigest: canonicalContractDigest(
+      'SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION_V1', body,
+    ),
+  };
+  validateContract(value.kind, value.schemaVersion, value);
+  return deepFreeze(value);
+}
+
+export function verifyAuthorizationConsumption(value, { authorization, reservation }) {
+  verifyAuthorizationReservation(reservation, { authorization });
+  validateContract('SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION', 1, value);
+  if (value.reservationDigest !== reservation.reservationDigest ||
+      value.transactionId !== authorization.transactionId ||
+      value.preManifestSha256 !== authorization.manifestSha256 ||
+      value.acceptanceRevision !== authorization.acceptanceRevision ||
+      value.committedSequence !== authorization.manifestSequence + 1) {
+    throw new ContractError('SITE_ACCEPTANCE_TRANSACTION_MISMATCH',
+      'Consumption does not match the reserved manifest transition');
+  }
+  verifyDigest(value, 'consumptionDigest',
+    'SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION_V1');
+  return value;
+}

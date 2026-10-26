@@ -3,11 +3,17 @@ import assert from 'node:assert/strict';
 import { contractDefinition, validateContract } from '../src/contracts/registry.mjs';
 import {
   canonicalContractDigest,
+  createAuthorizationConsumption,
+  createAuthorizationReservation,
   createCurrentSiteBaseline,
   createImmutableIntegrationLineage,
+  createSiteReacceptanceAuthorization,
   createSiteAcceptanceIdentity,
+  verifyAuthorizationConsumption,
+  verifyAuthorizationReservation,
   verifyCurrentSiteBaseline,
   verifyImmutableIntegrationLineage,
+  verifySiteReacceptanceAuthorization,
   verifySiteAcceptanceIdentity,
 } from '../src/site-acceptance-contract.mjs';
 
@@ -90,4 +96,49 @@ test('canonical digest rejects cycles before serialization', () => {
   cyclic.self = cyclic;
   assert.throws(() => canonicalContractDigest('TEST_VALUE_V1', cyclic),
     error => error.code === 'SITE_ACCEPTANCE_CYCLE');
+});
+
+test('authorization fixes one preview-bound transaction identity', () => {
+  const authorization = createSiteReacceptanceAuthorization({
+    runId: 'wallpaper-engine-002',
+    previewId: '11111111-1111-4111-8111-111111111111',
+    previewSnapshotSha256: d('1'), manifestSequence: 219, manifestSha256: d('2'),
+    mode: 'LEGACY_CURRENT_BASELINE', lineageDigest: d('3'), oldProjectDigest: d('4'),
+    newProjectDigest: d('5'), baselineDigest: d('6'), remediationScopeDigest: d('7'),
+    publicationEvidenceDigest: d('8'), attestationDigest: d('9'), acceptanceRevision: d('a'),
+    operatorSummarySha256: d('b'),
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111',
+  });
+  assert.equal(verifySiteReacceptanceAuthorization(authorization), authorization);
+  const reservation = createAuthorizationReservation({ authorization,
+    confirmationIdentity: 'preview-snapshot:11111111-1111-4111-8111-111111111111',
+    intentDigest: d('c'), reservedAtMs: 1 });
+  assert.equal(verifyAuthorizationReservation(reservation, { authorization }), reservation);
+  const consumption = createAuthorizationConsumption({ authorization, reservation,
+    preManifestSha256: d('2'), postManifestSha256: d('d'), committedSequence: 220,
+    acceptanceRevision: authorization.acceptanceRevision,
+    committedObjectDigests: [d('e'), d('f')], consumedAtMs: 2 });
+  assert.equal(verifyAuthorizationConsumption(consumption, { authorization, reservation }),
+    consumption);
+});
+
+test('reservation and consumption reject substituted transaction identities and replay', () => {
+  const authorization = createSiteReacceptanceAuthorization({ runId: 'run',
+    previewId: '11111111-1111-4111-8111-111111111111', previewSnapshotSha256: d('1'),
+    manifestSequence: 1, manifestSha256: d('2'), mode: 'EXACT_REMEDIATION',
+    lineageDigest: d('3'), oldProjectDigest: d('4'), newProjectDigest: d('5'),
+    baselineDigest: d('6'), remediationScopeDigest: d('7'), publicationEvidenceDigest: d('8'),
+    attestationDigest: d('9'), acceptanceRevision: d('a'), operatorSummarySha256: d('b'),
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111' });
+  const reservation = createAuthorizationReservation({ authorization,
+    confirmationIdentity: 'interactive-confirmation', intentDigest: d('c'), reservedAtMs: 1 });
+  assert.throws(() => verifyAuthorizationReservation({ ...reservation,
+    transactionId: 'site-remediation-22222222-2222-4222-8222-222222222222' }, { authorization }),
+  error => error.code === 'SITE_ACCEPTANCE_TRANSACTION_MISMATCH');
+  assert.throws(() => createAuthorizationConsumption({ authorization, reservation,
+    preManifestSha256: authorization.manifestSha256, postManifestSha256: d('d'),
+    committedSequence: authorization.manifestSequence + 2,
+    acceptanceRevision: authorization.acceptanceRevision,
+    committedObjectDigests: [d('e')], consumedAtMs: 2 }),
+  error => error.code === 'SITE_ACCEPTANCE_TRANSACTION_MISMATCH');
 });
