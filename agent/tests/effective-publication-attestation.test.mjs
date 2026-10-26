@@ -65,3 +65,31 @@ test('draft, blocked, unproven and self-referential evidence fails closed', () =
   assert.throws(() => createPublicationEvidenceBody({ ...evidenceInput,
     acceptanceRevision: d('9') }), error => error.code === 'PUBLICATION_EVIDENCE_SELF_REFERENCE');
 });
+
+test('publication evidence rejects uncovered observations and observed omitted blockers', () => {
+  assert.throws(() => createPublicationEvidenceBody({ ...evidenceInput,
+    observedRoutes: ['/', '/uncovered'] }),
+  error => error.code === 'PUBLICATION_ROUTE_COVERAGE_INVALID');
+  assert.throws(() => createPublicationEvidenceBody({ ...evidenceInput,
+    pages: [{ ...page, originalDisposition: 'OMIT', effectiveDisposition: 'OMIT',
+      materialStatus: 'BLOCKED', robots: 'noindex', inSitemap: false, inNavigation: false }] }),
+  error => error.code === 'PUBLICATION_POLICY_INVALID');
+});
+
+test('derived attestation rejects evidence and acceptance binding mutations', () => {
+  const evidenceBody = createPublicationEvidenceBody(evidenceInput);
+  const identity = createSiteAcceptanceIdentity({ lineageDigest: evidenceBody.lineageDigest,
+    baselineDigest: evidenceBody.baselineDigest, projectDigest: evidenceBody.projectDigest,
+    publicationEvidenceDigest: evidenceBody.publicationEvidenceDigest,
+    remediationScopeDigest: evidenceBody.remediationScopeDigest,
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111' });
+  const attestation = createDerivedPublicationAttestation({ evidenceBody, acceptanceIdentity: identity });
+  assert.throws(() => verifyDerivedPublicationAttestation({ ...attestation,
+    publicationEvidenceDigest: d('f') }, { acceptanceIdentity: identity }),
+  error => error.code === 'PUBLICATION_ACCEPTANCE_BINDING_MISMATCH');
+  const { acceptanceRevision: _acceptanceRevision, ...identityInput } = identity;
+  assert.throws(() => verifyDerivedPublicationAttestation(attestation, {
+    acceptanceIdentity: createSiteAcceptanceIdentity({ ...identityInput,
+      transactionId: 'site-remediation-22222222-2222-4222-8222-222222222222' }),
+  }), error => error.code === 'PUBLICATION_ACCEPTANCE_BINDING_MISMATCH');
+});

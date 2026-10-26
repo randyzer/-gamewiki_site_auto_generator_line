@@ -39,6 +39,35 @@ function verifyPage(page) {
   }
 }
 
+function verifyRouteCoverage(observedRoutes, pages) {
+  const observed = new Set(observedRoutes);
+  const byRoute = new Map();
+  for (const page of pages) {
+    if (byRoute.has(page.route)) {
+      throw new ContractError('PUBLICATION_ROUTE_DUPLICATE',
+        'Publication page routes must be unique');
+    }
+    byRoute.set(page.route, page);
+  }
+  for (const route of observed) {
+    const page = byRoute.get(route);
+    if (!page) {
+      throw new ContractError('PUBLICATION_ROUTE_COVERAGE_INVALID',
+        'Every observed route requires an effective publication disposition');
+    }
+    if (page.effectiveDisposition === 'OMIT') {
+      throw new ContractError('PUBLICATION_POLICY_INVALID',
+        'An omitted route cannot remain publicly observable');
+    }
+  }
+  for (const page of pages) {
+    if (page.effectiveDisposition !== 'OMIT' && !observed.has(page.route)) {
+      throw new ContractError('PUBLICATION_ROUTE_COVERAGE_INVALID',
+        'Every published or draft route must appear in the observed inventory');
+    }
+  }
+}
+
 function verifyAcceptanceBinding(evidenceBody, acceptanceIdentity) {
   if (acceptanceIdentity.publicationEvidenceDigest !== evidenceBody.publicationEvidenceDigest ||
       acceptanceIdentity.lineageDigest !== evidenceBody.lineageDigest ||
@@ -64,6 +93,7 @@ export function createPublicationEvidenceBody(input) {
     throw new ContractError('PUBLICATION_ROUTE_DUPLICATE',
       'Observed publication routes must be unique');
   }
+  verifyRouteCoverage(observedRoutes, pages);
   const body = {
     ...structuredClone(input),
     kind: 'PUBLICATION_EVIDENCE_BODY',
@@ -90,6 +120,7 @@ export function verifyPublicationEvidenceBody(value) {
     throw new ContractError('PUBLICATION_POLICY_INVALID', 'Publication policy version changed');
   }
   value.pages.forEach(verifyPage);
+  verifyRouteCoverage(value.observedRoutes, value.pages);
   if (canonicalContractDigest('EFFECTIVE_ROUTE_INVENTORY_V1', value.observedRoutes) !==
       value.routeInventoryDigest) {
     throw new ContractError('PUBLICATION_EVIDENCE_DIGEST_MISMATCH',

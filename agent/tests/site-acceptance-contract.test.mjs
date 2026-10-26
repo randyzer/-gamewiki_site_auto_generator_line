@@ -142,3 +142,55 @@ test('reservation and consumption reject substituted transaction identities and 
     committedObjectDigests: [d('e')], consumedAtMs: 2 }),
   error => error.code === 'SITE_ACCEPTANCE_TRANSACTION_MISMATCH');
 });
+
+test('acceptance rejects every changed identity component', () => {
+  const validAcceptanceInput = {
+    lineageDigest: d('0'), baselineDigest: d('1'), projectDigest: d('2'),
+    publicationEvidenceDigest: d('3'), remediationScopeDigest: d('4'),
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111',
+  };
+  for (const [field, changed] of [
+    ['lineageDigest', d('5')],
+    ['baselineDigest', d('6')],
+    ['projectDigest', d('7')],
+    ['publicationEvidenceDigest', d('8')],
+    ['remediationScopeDigest', d('9')],
+  ]) {
+    const identity = createSiteAcceptanceIdentity(validAcceptanceInput);
+    assert.throws(() => verifySiteAcceptanceIdentity({ ...identity, [field]: changed }),
+      error => error.code === 'SITE_ACCEPTANCE_DIGEST_MISMATCH');
+  }
+});
+
+test('closed builders reject unknown and caller-supplied derived fields', () => {
+  assert.throws(() => createImmutableIntegrationLineage({ ...lineageInput, unexpected: true }),
+    error => error.code === 'CONTRACT_SCHEMA_INVALID');
+  assert.throws(() => createImmutableIntegrationLineage({ ...lineageInput, lineageDigest: d('1') }),
+    error => error.code === 'SITE_ACCEPTANCE_DERIVED_FIELD_INVALID');
+  assert.throws(() => createCurrentSiteBaseline({ ...baselineInput, baselineDigest: d('2') }),
+    error => error.code === 'SITE_ACCEPTANCE_DERIVED_FIELD_INVALID');
+});
+
+test('consumption rejects duplicate objects and a reservation from another authorization', () => {
+  const input = { runId: 'run', previewId: '11111111-1111-4111-8111-111111111111',
+    previewSnapshotSha256: d('1'), manifestSequence: 1, manifestSha256: d('2'),
+    mode: 'EXACT_REMEDIATION', lineageDigest: d('3'), oldProjectDigest: d('4'),
+    newProjectDigest: d('5'), baselineDigest: d('6'), remediationScopeDigest: d('7'),
+    publicationEvidenceDigest: d('8'), attestationDigest: d('9'), acceptanceRevision: d('a'),
+    operatorSummarySha256: d('b'),
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111' };
+  const authorization = createSiteReacceptanceAuthorization(input);
+  const reservation = createAuthorizationReservation({ authorization,
+    confirmationIdentity: 'interactive-confirmation', intentDigest: d('c'), reservedAtMs: 1 });
+  assert.throws(() => createAuthorizationConsumption({ authorization, reservation,
+    preManifestSha256: d('2'), postManifestSha256: d('d'), committedSequence: 2,
+    acceptanceRevision: d('a'), committedObjectDigests: [d('e'), d('e')], consumedAtMs: 2 }),
+  error => error.code === 'SITE_ACCEPTANCE_DUPLICATE');
+
+  const otherAuthorization = createSiteReacceptanceAuthorization({ ...input,
+    previewId: '22222222-2222-4222-8222-222222222222',
+    transactionId: 'site-remediation-22222222-2222-4222-8222-222222222222' });
+  assert.throws(() => verifyAuthorizationReservation(reservation,
+    { authorization: otherAuthorization }),
+  error => error.code === 'SITE_ACCEPTANCE_TRANSACTION_MISMATCH');
+});
