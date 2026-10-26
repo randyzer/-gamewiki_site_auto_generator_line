@@ -14,7 +14,7 @@
     "schemaVersion": { "const": 1 },
     "producer": { "const": "SITE_ACCEPTANCE_CONTRACT" },
     "runId": { "type": "string", "minLength": 1 },
-    "siteRevision": { "type": "string", "format": "sha256" },
+    "siteRevision": { "type": "string", "minLength": 1 },
     "manifestSequence": { "type": "integer", "minimum": 0 },
     "manifestSha256": { "type": "string", "format": "sha256" },
     "researchHandoffSha256": { "type": "string", "format": "sha256" },
