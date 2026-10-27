@@ -69,3 +69,22 @@ test('route discovery fails closed on app route handlers and Next route remappin
     'next.config.mjs#rewrites',
   ]);
 });
+
+test('route discovery separates exact static internal redirects from publication routes', async t => {
+  const project = await mkdtemp(resolve('.route-discovery-redirect-test-'));
+  t.after(() => rm(project, { recursive: true, force: true }));
+  await mkdir(join(project, 'app/en'), { recursive: true });
+  await mkdir(join(project, 'app/unsafe'), { recursive: true });
+  await writeFile(join(project, 'app/page.tsx'), 'export default function Page(){return null}');
+  await writeFile(join(project, 'app/en/page.tsx'), `import { permanentRedirect } from 'next/navigation';
+export default function EnglishAlias() { permanentRedirect('/'); }
+`);
+  await writeFile(join(project, 'app/unsafe/page.tsx'), `import { redirect } from 'next/navigation';
+export default function Unsafe({ target }) { redirect(target); }
+`);
+  const found = await discoverProjectRoutes(project);
+  assert.deepEqual(found.routes, ['/']);
+  assert.deepEqual(found.redirects, [{ route: '/en', target: '/', status: 308,
+    sourceFile: 'app/en/page.tsx' }]);
+  assert.deepEqual(found.unprovable, ['app/unsafe/page.tsx#redirect']);
+});

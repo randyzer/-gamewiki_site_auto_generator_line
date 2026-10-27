@@ -35,8 +35,15 @@ async function publicationServer(t) {
     robots: 'User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n',
     rootHeaders: {},
     exposedSource: false,
+    redirects: new Map(),
   };
   const server = createServer((request, response) => {
+    if (state.redirects.has(request.url)) {
+      const redirect = state.redirects.get(request.url);
+      response.statusCode = redirect.status;
+      response.setHeader('location', redirect.target);
+      return response.end('redirect');
+    }
     if (request.url === '/app/page.tsx' && !state.exposedSource) {
       response.statusCode = 404;
       return response.end('not found');
@@ -315,4 +322,27 @@ test('Host rejects unrelated or mismatched preview sessions', async t => {
   forged.previewSession = { ...forged.previewSession };
   await assert.rejects(() => collectSiteRemediationHostEvidence(forged),
     error => error.code === 'SITE_PREVIEW_SESSION_INVALID');
+});
+
+test('Host observes a proven internal redirect without widening publication rights', async t => {
+  const f = await fixture(t);
+  f.serverState.redirects.set('/en', { status: 308, target: '/' });
+  const observation = await observeCurrentPublication({ previewSession: f.previewSession,
+    publicationUrl: f.publicationUrl, projectPath: f.projectPath,
+    projectDigest: f.baseline.projectDigest, currentRoutes: ['/'],
+    currentRedirects: [{ route: '/en', target: '/', status: 308,
+      sourceFile: 'app/en/page.tsx' }],
+    originalPublicationManifest: f.originalPublicationManifest });
+  assert.deepEqual(observation.observedRoutes, ['/']);
+  assert.ok(observation.observationArtifacts.some(item =>
+    item.path === '/__host_redirect__/en'));
+
+  f.serverState.redirects.set('/en', { status: 308, target: '/draft' });
+  await assert.rejects(() => observeCurrentPublication({ previewSession: f.previewSession,
+    publicationUrl: f.publicationUrl, projectPath: f.projectPath,
+    projectDigest: f.baseline.projectDigest, currentRoutes: ['/'],
+    currentRedirects: [{ route: '/en', target: '/', status: 308,
+      sourceFile: 'app/en/page.tsx' }],
+    originalPublicationManifest: f.originalPublicationManifest }),
+  error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
 });

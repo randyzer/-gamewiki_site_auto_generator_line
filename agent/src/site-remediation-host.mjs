@@ -93,7 +93,7 @@ function robotsAllows(text, route) {
 }
 
 export async function observeCurrentPublication({ previewSession, publicationUrl, projectPath,
-  projectDigest, currentRoutes, originalPublicationManifest }) {
+  projectDigest, currentRoutes, currentRedirects = [], originalPublicationManifest }) {
   const boundUrl = publicationUrl ?? previewSession?.publicationUrl;
   verifySitePreviewSession(previewSession, { projectPath, projectDigest,
     publicationUrl: boundUrl });
@@ -106,12 +106,48 @@ export async function observeCurrentPublication({ previewSession, publicationUrl
       });
       const text = await response.text();
       artifacts.set(path, { path, status: response.status, sha256: sha256(Buffer.from(text)) });
-      return { status: response.status, text };
+      return { status: response.status, text, location: response.headers.get('location') };
     } catch {
       throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
         `Current local preview could not be observed: ${path}`);
     }
   };
+  const redirectRoutes = new Set();
+  for (const redirect of currentRedirects) {
+    if (!redirect || ![307, 308].includes(redirect.status) ||
+        typeof redirect.route !== 'string' || typeof redirect.target !== 'string' ||
+        redirectRoutes.has(redirect.route) || currentRoutes.includes(redirect.route) ||
+        !currentRoutes.includes(redirect.target)) {
+      throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+        'Current redirect inventory is incomplete or widens publication rights');
+    }
+    redirectRoutes.add(redirect.route);
+    const normalize = path => path.replace(/\/+$/, '') || '/';
+    const hops = [];
+    let path = redirect.route, proven = false;
+    for (let index = 0; index < 3; index += 1) {
+      const response = await request(path);
+      let target;
+      try { target = new URL(response.location, origin); }
+      catch { target = null; }
+      if (![307, 308].includes(response.status) || !target || target.origin !== origin ||
+          target.search || target.hash) break;
+      hops.push({ path, status: response.status, location: response.location });
+      if (normalize(target.pathname) === normalize(redirect.target)) {
+        proven = response.status === redirect.status;
+        break;
+      }
+      if (normalize(target.pathname) !== normalize(redirect.route) ||
+          hops.some(hop => hop.path === target.pathname)) break;
+      path = target.pathname;
+    }
+    if (!proven) throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      `Current local preview redirect differs from source proof: ${redirect.route}`);
+    const artifactPath = `/__host_redirect__${redirect.route}`;
+    artifacts.set(artifactPath, { path: artifactPath, status: redirect.status,
+      sha256: sha256(Buffer.from(canonicalJson({ route: redirect.route,
+        target: redirect.target, status: redirect.status, hops }))) });
+  }
   const robots = await request('/robots.txt');
   if (robots.status !== 200) {
     throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
@@ -279,7 +315,7 @@ async function verifyProtectedInputs(projectPath, expected) {
 export async function collectSiteRemediationHostEvidence({ projectPath, lineage, baseline,
   publicationEvidence: evidenceBody, acceptanceIdentity, attestation, expected,
   originalPublicationManifest, previewSession, publicationUrl, observePublication,
-  manifest = null }) {
+  currentRedirects = [], manifest = null }) {
   verifyImmutableIntegrationLineage(lineage);
   verifyManifestLineage(lineage, manifest);
   verifyCurrentSiteBaseline(baseline);
@@ -309,13 +345,17 @@ export async function collectSiteRemediationHostEvidence({ projectPath, lineage,
     throw fail('SITE_REMEDIATION_ROUTE_INVENTORY_CHANGED',
       'Current route inventory differs from the accepted baseline');
   }
+  if (canonicalJson(discovered.redirects) !== canonicalJson(currentRedirects)) {
+    throw fail('SITE_REMEDIATION_ROUTE_INVENTORY_CHANGED',
+      'Current redirect inventory differs from the accepted Host scope');
+  }
   if (observePublication !== undefined) {
     throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
       'Caller-supplied publication observation providers are forbidden');
   }
   const hostObservation = await observeCurrentPublication({ previewSession, publicationUrl,
     projectPath, projectDigest: currentProjectDigest, currentRoutes: routes,
-    originalPublicationManifest });
+    currentRedirects, originalPublicationManifest });
   verifyEffectivePublication({ originalManifest: originalPublicationManifest, evidenceBody,
     attestation, acceptanceIdentity, currentRoutes: routes, hostObservation,
     projectDigest: currentProjectDigest });

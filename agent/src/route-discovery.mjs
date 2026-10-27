@@ -8,7 +8,19 @@ async function filesIfDirectory(path) {
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
 }
 
-function sourceRoute(relativePath, kind) {
+function staticAppRedirect(relativePath, body) {
+  if (!/from\s*['"]next\/navigation['"]/.test(body) ||
+      !/\b(?:permanentRedirect|redirect)\s*\(/.test(body)) return null;
+  const match = body.match(/^\s*import\s*\{\s*(?<call>permanentRedirect|redirect)\s*\}\s*from\s*['"]next\/navigation['"]\s*;?\s*export\s+default\s+function(?:\s+[A-Za-z_$][\w$]*)?\s*\([^)]*\)\s*\{\s*\k<call>\(\s*(['"])(?<target>\/[^'"?#\\\s]*)\2\s*\)\s*;?\s*\}\s*$/s);
+  if (!match) return { unprovable: `${relativePath}#redirect` };
+  let target;
+  try { target = publicationRoute(match.groups.target); }
+  catch { return { unprovable: `${relativePath}#redirect` }; }
+  return { redirect: { target,
+    status: match.groups.call === 'permanentRedirect' ? 308 : 307 } };
+}
+
+function sourceRoute(relativePath, kind, body = '') {
   const extension = /\.(?:astro|html|md|mdx|js|jsx|ts|tsx)$/i;
   if (!extension.test(relativePath)) return null;
   let parts = relativePath.replace(extension, '').split('/');
@@ -16,6 +28,12 @@ function sourceRoute(relativePath, kind) {
     if (parts.at(-1) === 'route') return { unprovable: relativePath };
     if (parts.at(-1) !== 'page') return null;
     parts = parts.slice(0, -1).filter(part => !/^\(.+\)$/.test(part));
+    const redirect = staticAppRedirect(relativePath, body);
+    if (redirect?.unprovable) return redirect;
+    if (redirect?.redirect) return { redirect: {
+      route: publicationRoute('/' + parts.join('/')), ...redirect.redirect,
+      sourceFile: relativePath,
+    } };
   } else {
     if (parts[0] === 'api' || /^_/.test(parts.at(-1))) return null;
     if (parts.at(-1) === 'index') parts.pop();
@@ -32,13 +50,18 @@ function renderedRoute(relativePath) {
 }
 
 export async function discoverProjectRoutes(project) {
-  const routes = new Set(), unprovable = [];
+  const routes = new Set(), redirects = [], unprovable = [];
   for (const [root, kind] of [['app', 'app'], ['src/app', 'app'], ['pages', 'pages'],
     ['src/pages', 'pages']]) {
     const directory = join(project, root);
     for (const path of await filesIfDirectory(directory)) {
-      const found = sourceRoute(relative(directory, path), kind);
+      const relativePath = relative(directory, path);
+      const found = sourceRoute(relativePath, kind,
+        kind === 'app' && /(?:^|\/)page\.(?:js|jsx|ts|tsx)$/i.test(relativePath)
+          ? await readFile(path, 'utf8') : '');
       if (found?.route) routes.add(found.route);
+      else if (found?.redirect) redirects.push({ ...found.redirect,
+        sourceFile: `${root}/${found.redirect.sourceFile}` });
       else if (found?.unprovable) unprovable.push(`${root}/${found.unprovable}`);
     }
   }
@@ -62,5 +85,8 @@ export async function discoverProjectRoutes(project) {
         if (new RegExp(`\\b${hook}\\b`).test(body)) unprovable.push(`${path}#${hook}`);
     } catch (error) { if (error.code !== 'ENOENT') throw error; }
   }
-  return { routes: [...routes], unprovable: [...new Set(unprovable)].sort() };
+  redirects.sort((left, right) => left.route.localeCompare(right.route));
+  for (const redirect of redirects) routes.delete(redirect.route);
+  return { routes: [...routes], redirects,
+    unprovable: [...new Set(unprovable)].sort() };
 }
