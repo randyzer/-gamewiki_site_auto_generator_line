@@ -6,6 +6,7 @@ import { sha256 } from './files.mjs';
 import { sourceFiles } from './project-baseline.mjs';
 import { projectContentDigest } from './project-content-digest.mjs';
 import { discoverProjectRoutes } from './route-discovery.mjs';
+import { verifySitePreviewSession } from './site-preview-host.mjs';
 import {
   verifyCurrentSiteBaseline,
   verifyImmutableIntegrationLineage,
@@ -27,6 +28,7 @@ const canonical = values => [...values]
 
 const decodeHtml = value => value.replace(/&amp;/g, '&').replace(/&lt;/g, '<')
   .replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'");
+const launchBrowser = async () => (await import('playwright')).chromium.launch();
 
 function localPublicationOrigin(value) {
   let url;
@@ -40,39 +42,62 @@ function localPublicationOrigin(value) {
   return url.origin;
 }
 
-function pageLinks(html, base, selector = null) {
-  const sections = selector === 'nav'
-    ? [...html.matchAll(/<nav\b[^>]*>([\s\S]*?)<\/nav>/gi)].map(match => match[1])
-    : [html];
-  const routes = [];
-  for (const section of sections) {
-    for (const match of section.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
-      try {
-        const url = new URL(decodeHtml(match[1] ?? match[2] ?? match[3]), base);
-        if (url.origin === new URL(base).origin && !url.username && !url.password)
-          routes.push(url.pathname.replace(/\/+$/, '') || '/');
-      } catch { /* Invalid links remain outside the trusted route set. */ }
-    }
+function indexingPolicy(values) {
+  const tokens = values.flatMap(value => String(value ?? '').toLowerCase().split(/[,\s]+/))
+    .filter(Boolean);
+  const noindex = tokens.some(token => ['noindex', 'none'].includes(token));
+  const index = tokens.some(token => ['index', 'all'].includes(token));
+  if (noindex && index) {
+    throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      'Rendered and HTTP indexing directives contradict each other');
   }
-  return [...new Set(routes)].sort();
+  return noindex ? 'noindex' : index ? 'index' : 'absent';
 }
 
-function robotsPolicy(html) {
-  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
-    const attributes = Object.fromEntries([...match[0].matchAll(
-      /([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g,
-    )].map(attribute => [attribute[1].toLowerCase(), attribute[2] ?? attribute[3]]));
-    if (['robots', 'googlebot'].includes(attributes.name?.toLowerCase())) {
-      if (/(?:^|[,\s])(noindex|none)(?:$|[,\s])/i.test(attributes.content ?? '')) return 'noindex';
-      if (/(?:^|[,\s])index(?:$|[,\s])/i.test(attributes.content ?? '')) return 'index';
+function robotsAllows(text, route) {
+  const groups = [];
+  let agents = [], rules = [];
+  const flush = () => {
+    if (agents.length) groups.push({ agents, rules });
+    agents = []; rules = [];
+  };
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.replace(/#.*$/, '').trim();
+    if (!line) continue;
+    const match = line.match(/^([^:]+):\s*(.*)$/);
+    if (!match) continue;
+    const name = match[1].trim().toLowerCase(), value = match[2].trim();
+    if (name === 'user-agent') {
+      if (rules.length) flush();
+      agents.push(value.toLowerCase());
+    } else if (['allow', 'disallow'].includes(name) && agents.length && value) {
+      rules.push({ allow: name === 'allow', path: value });
     }
   }
-  return 'absent';
+  flush();
+  const matches = pattern => {
+    const anchored = pattern.endsWith('$');
+    const body = anchored ? pattern.slice(0, -1) : pattern;
+    const source = body.split('*').map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('.*');
+    return new RegExp(`^${source}${anchored ? '$' : ''}`).test(route);
+  };
+  const applicable = groups
+    .filter(group => group.agents.some(agent => ['*', 'googlebot'].includes(agent)))
+    .flatMap(group => group.rules).filter(rule => matches(rule.path));
+  if (!applicable.length) return true;
+  applicable.sort((left, right) =>
+    right.path.replace(/[*$]/g, '').length - left.path.replace(/[*$]/g, '').length ||
+    Number(right.allow) - Number(left.allow));
+  return applicable[0].allow;
 }
 
-async function observeCurrentPublication({ publicationUrl, projectDigest, currentRoutes,
-  originalPublicationManifest }) {
-  const origin = localPublicationOrigin(publicationUrl);
+export async function observeCurrentPublication({ previewSession, publicationUrl, projectPath,
+  projectDigest, currentRoutes, originalPublicationManifest }) {
+  const boundUrl = publicationUrl ?? previewSession?.publicationUrl;
+  verifySitePreviewSession(previewSession, { projectPath, projectDigest,
+    publicationUrl: boundUrl });
+  const origin = localPublicationOrigin(boundUrl);
   const artifacts = new Map();
   const request = async path => {
     try {
@@ -92,6 +117,7 @@ async function observeCurrentPublication({ publicationUrl, projectDigest, curren
     throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
       'Current local preview robots.txt could not be observed');
   }
+  const robotsText = robots.text;
   const sitemap = await request('/sitemap.xml');
   if (sitemap.status !== 200) {
     throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
@@ -116,12 +142,71 @@ async function observeCurrentPublication({ publicationUrl, projectDigest, curren
   const policy = new Map(originalPublicationManifest.pages
     .filter(page => page.route).map(page => [page.route, page]));
   const publicRoutes = currentRoutes.filter(route => policy.get(route)?.disposition === 'PUBLISH');
-  const publicLinks = new Set(publicRoutes.flatMap(route => pageLinks(
-    responses.get(route), new URL(route, origin),
-  )));
-  const navigation = new Set(currentRoutes.flatMap(route => pageLinks(
-    responses.get(route), new URL(route, origin), 'nav',
-  )));
+  const rendered = new Map();
+  let browser;
+  try {
+    browser = await launchBrowser();
+    const page = await browser.newPage();
+    for (const route of currentRoutes) {
+      const response = await page.goto(new URL(route, origin).href, {
+        waitUntil: 'networkidle', timeout: 30000,
+      });
+      if (!response || response.status() !== 200) {
+        throw Error(`rendered route did not return HTTP 200: ${route}`);
+      }
+      const dom = await page.evaluate(() => {
+        const routes = selector => [...document.querySelectorAll(selector)].flatMap(element => {
+          try {
+            const url = new URL(element.href, location.href);
+            return url.origin === location.origin
+              ? [url.pathname.replace(/\/+$/, '') || '/'] : [];
+          } catch { return []; }
+        }).filter((value, index, values) => values.indexOf(value) === index).sort();
+        const metaRobots = [...document.querySelectorAll('meta[name]')]
+          .filter(meta => ['robots', 'googlebot'].includes(meta.name.toLowerCase()))
+          .map(meta => meta.content);
+        return { links: routes('a[href]'), navigation: routes('nav a[href]'),
+          metaRobots, outerHtml: document.documentElement.outerHTML };
+      });
+      const headers = await response.allHeaders();
+      const robots = indexingPolicy([...dom.metaRobots, headers['x-robots-tag'] ?? '']);
+      if (robots !== 'noindex') {
+        throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+          `Route is not effectively noindex while indexing is NOT_CLEARED: ${route}`);
+      }
+      if (!robotsAllows(robotsText, route)) {
+        throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+          `robots.txt prevents verification of noindex for route: ${route}`);
+      }
+      const observation = { route, links: dom.links, navigation: dom.navigation,
+        metaRobots: dom.metaRobots, xRobotsTag: headers['x-robots-tag'] ?? null,
+        outerHtmlSha256: sha256(Buffer.from(dom.outerHtml)) };
+      artifacts.set(`/__host_browser__${route}`, { path: `/__host_browser__${route}`,
+        status: response.status(), sha256: sha256(Buffer.from(canonicalJson(observation))) });
+      rendered.set(route, { ...dom, robots });
+    }
+  } catch (error) {
+    if (error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID') throw error;
+    throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+      `Current local preview browser observation failed: ${error.message}`);
+  } finally {
+    await browser?.close().catch(() => {});
+  }
+  const forbidden = route => policy.get(route)?.disposition !== 'PUBLISH';
+  for (const route of publicRoutes) {
+    if (rendered.get(route).links.some(forbidden)) {
+      throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+        `A published page links to a draft, omitted, or unknown route: ${route}`);
+    }
+  }
+  for (const route of currentRoutes) {
+    if (rendered.get(route).navigation.some(forbidden)) {
+      throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
+        `Navigation exposes a draft, omitted, or unknown route: ${route}`);
+    }
+  }
+  const publicLinks = new Set(publicRoutes.flatMap(route => rendered.get(route).links));
+  const navigation = new Set(currentRoutes.flatMap(route => rendered.get(route).navigation));
   const pages = [];
   for (const route of currentRoutes) {
     const sourceFile = policy.get(route)?.sourceFile;
@@ -130,13 +215,13 @@ async function observeCurrentPublication({ publicationUrl, projectDigest, curren
       const sourcePath = '/' + sourceFile.replace(/^\/+/, '');
       sourceFileExposed = (await request(sourcePath)).status === 200;
     }
-    pages.push({ route, robots: robotsPolicy(responses.get(route)),
+    pages.push({ route, robots: rendered.get(route).robots,
       inSitemap: sitemapRoutes.has(route), inNavigation: navigation.has(route),
       linkedFromPublicPages: publicLinks.has(route), sourceFileExposed,
-      dynamicProof: 'STATIC' });
+      dynamicProof: 'PROVEN' });
   }
   return createHostPublicationObservation({ projectDigest, observedRoutes: currentRoutes,
-    pages, indexingAuthorization: 'NOT_CLEARED', validatorVersion: 'host-route-v1',
+    pages, indexingAuthorization: 'NOT_CLEARED', validatorVersion: 'host-route-v2',
     observationArtifacts: [...artifacts.values()] });
 }
 
@@ -193,7 +278,8 @@ async function verifyProtectedInputs(projectPath, expected) {
 
 export async function collectSiteRemediationHostEvidence({ projectPath, lineage, baseline,
   publicationEvidence: evidenceBody, acceptanceIdentity, attestation, expected,
-  originalPublicationManifest, publicationUrl, observePublication, manifest = null }) {
+  originalPublicationManifest, previewSession, publicationUrl, observePublication,
+  manifest = null }) {
   verifyImmutableIntegrationLineage(lineage);
   verifyManifestLineage(lineage, manifest);
   verifyCurrentSiteBaseline(baseline);
@@ -227,8 +313,9 @@ export async function collectSiteRemediationHostEvidence({ projectPath, lineage,
     throw fail('PUBLICATION_HOST_OBSERVATION_INVALID',
       'Caller-supplied publication observation providers are forbidden');
   }
-  const hostObservation = await observeCurrentPublication({ publicationUrl,
-    projectDigest: currentProjectDigest, currentRoutes: routes, originalPublicationManifest });
+  const hostObservation = await observeCurrentPublication({ previewSession, publicationUrl,
+    projectPath, projectDigest: currentProjectDigest, currentRoutes: routes,
+    originalPublicationManifest });
   verifyEffectivePublication({ originalManifest: originalPublicationManifest, evidenceBody,
     attestation, acceptanceIdentity, currentRoutes: routes, hostObservation,
     projectDigest: currentProjectDigest });

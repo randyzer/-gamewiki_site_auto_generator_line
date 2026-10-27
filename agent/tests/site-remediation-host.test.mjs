@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, readFile, realpath, rm, stat, writeFile } from 'node:fs
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { createHash } from 'node:crypto';
+import { EventEmitter } from 'node:events';
 import { createServer } from 'node:http';
 import {
   createCurrentSiteBaseline,
@@ -16,8 +17,11 @@ import {
 } from '../src/effective-publication-attestation.mjs';
 import { projectContentDigest } from '../src/project-content-digest.mjs';
 import { sourceFiles } from '../src/project-baseline.mjs';
-import { collectSiteRemediationHostEvidence } from '../src/site-remediation-host.mjs';
-import { createHostPublicationObservation } from '../src/route-publication.mjs';
+import {
+  collectSiteRemediationHostEvidence,
+  observeCurrentPublication,
+} from '../src/site-remediation-host.mjs';
+import { buildAndServe } from '../src/site-preview-host.mjs';
 import { createTrustedSiteRemediationController } from '../src/site-remediation-transaction.mjs';
 
 const d = character => character.repeat(64);
@@ -28,6 +32,8 @@ async function publicationServer(t) {
     root: '<html><head><meta name="robots" content="noindex"></head>' +
       '<body><nav><a href="/">Home</a></nav></body></html>',
     sitemap: null,
+    robots: 'User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n',
+    rootHeaders: {},
     exposedSource: false,
   };
   const server = createServer((request, response) => {
@@ -40,11 +46,14 @@ async function publicationServer(t) {
       return response.end('not found');
     }
     response.statusCode = 200;
+    for (const [name, value] of Object.entries(state.rootHeaders)) {
+      if (request.url === '/') response.setHeader(name, value);
+    }
     response.setHeader('content-type', request.url === '/sitemap.xml'
       ? 'application/xml' : request.url === '/robots.txt' ? 'text/plain' : 'text/html');
     response.end(request.url === '/sitemap.xml'
       ? state.sitemap ?? `<urlset><url><loc>http://${request.headers.host}/</loc></url></urlset>`
-      : request.url === '/robots.txt' ? 'User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n'
+      : request.url === '/robots.txt' ? state.robots
         : request.url === '/' ? state.root : 'source');
   });
   await new Promise((resolve, reject) => {
@@ -64,6 +73,10 @@ async function fixture(t) {
   await mkdir(join(projectPath, 'app'), { recursive: true });
   await mkdir(join(projectPath, 'backgroundinformation'), { recursive: true });
   await writeFile(join(projectPath, 'app/page.tsx'), 'export default function Page(){return null}\n');
+  await writeFile(join(projectPath, 'package.json'), JSON.stringify({
+    scripts: { build: 'next build', start: 'next start' },
+  }));
+  await writeFile(join(projectPath, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n');
   const protectedPath = join(projectPath, 'backgroundinformation/keywords.md');
   await writeFile(protectedPath, '# keywords\n');
   const preview = await publicationServer(t);
@@ -74,6 +87,15 @@ async function fixture(t) {
     mode: protectedStat.mode & 0o777, byteLength: protectedStat.size,
     sha256: sha256(await readFile(protectedPath)) }];
   const projectDigest = await projectContentDigest(projectPath);
+  const child = new EventEmitter();
+  child.stdout = new EventEmitter(); child.stderr = new EventEmitter();
+  child.kill = () => queueMicrotask(() => child.emit('close', 0));
+  const served = await buildAndServe(projectPath, {
+    run: async () => ({ exitCode: 0 }),
+    getPort: async () => Number(new URL(preview.publicationUrl).port),
+    spawnProcess: () => child,
+    fetchUrl: fetch,
+  });
   const lineage = createImmutableIntegrationLineage({ runId: 'run', siteRevision: 'site-v1',
     manifestSequence: 4, manifestSha256: d('a'), researchHandoffSha256: d('3'),
     researchApprovalDigest: d('4'), stage3CheckpointDigest: d('b'),
@@ -84,19 +106,14 @@ async function fixture(t) {
     historicalEquivalence: false, digestPolicyVersion: 'project-content-v1', projectPath,
     files: inventory, projectDigest, routes: ['/'], protectedInputs,
     historicalEvidenceGaps: ['FINAL_STAGE4_INVENTORY_UNAVAILABLE'] });
-  const observationPages = [{ route: '/', robots: 'noindex', inSitemap: true,
-    inNavigation: true, linkedFromPublicPages: true, sourceFileExposed: false,
-    dynamicProof: 'STATIC' }];
-  const hostObservation = createHostPublicationObservation({ projectDigest,
-    observedRoutes: ['/'], pages: observationPages, indexingAuthorization: 'NOT_CLEARED',
-    validatorVersion: 'host-route-v1', observationArtifacts: [
-      { path: '/', status: 200, sha256: sha256(Buffer.from(preview.state.root)) },
-      { path: '/app/page.tsx', status: 404, sha256: sha256(Buffer.from('not found')) },
-      { path: '/robots.txt', status: 200,
-        sha256: sha256(Buffer.from('User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n')) },
-      { path: '/sitemap.xml', status: 200,
-        sha256: sha256(Buffer.from(preview.state.sitemap)) },
-    ] });
+  const originalPublicationManifest = { pages: [
+    { route: '/', disposition: 'PUBLISH', sourceFile: 'app/page.tsx' },
+    { route: '/draft', disposition: 'DRAFT_ONLY', sourceFile: 'app/draft/page.tsx' },
+  ] };
+  const hostObservation = await observeCurrentPublication({
+    previewSession: served.session, projectPath, projectDigest, currentRoutes: ['/'],
+    originalPublicationManifest,
+  });
   const evidenceBody = createPublicationEvidenceBody({
     originalPublicationManifestSha256: d('1'), lineageDigest: lineage.lineageDigest,
     researchHandoffSha256: d('3'), researchApprovalDigest: d('4'),
@@ -105,9 +122,9 @@ async function fixture(t) {
     observedRoutes: ['/'], pages: [{ route: '/', originalDisposition: 'PUBLISH',
       effectiveDisposition: 'PUBLISH', materialStatus: 'COMPLETED', robots: 'noindex',
       inSitemap: true, inNavigation: true, linkedFromPublicPages: true,
-      sourceFileExposed: false, dynamicProof: 'STATIC' }],
+      sourceFileExposed: false, dynamicProof: 'PROVEN' }],
     validationStatus: 'VERIFIED', indexingAuthorization: 'NOT_CLEARED',
-    hostObservationDigest: hostObservation.observationDigest, validatorVersion: 'host-route-v1',
+    hostObservationDigest: hostObservation.observationDigest, validatorVersion: 'host-route-v2',
   });
   const acceptanceIdentity = createSiteAcceptanceIdentity({
     lineageDigest: evidenceBody.lineageDigest, baselineDigest: baseline.baselineDigest,
@@ -124,8 +141,6 @@ async function fixture(t) {
     attestationDigest: attestation.attestationDigest,
     acceptanceRevision: acceptanceIdentity.acceptanceRevision,
     protectedInputsDigest: baseline.protectedInputsDigest, operatorSummarySha256: d('9') };
-  const originalPublicationManifest = { pages: [{ route: '/', disposition: 'PUBLISH',
-    sourceFile: 'app/page.tsx' }] };
   const manifest = { runId: 'run', inputs: { siteRevision: 'site-v1' }, stages: [
     { skill: 'game-homepage-icon-research', artifacts: [], checkpoint: {} },
     { skill: 'game-innerpage-keyword-information-research', artifacts: [], checkpoint: {
@@ -137,7 +152,8 @@ async function fixture(t) {
   ] };
   return { projectPath, protectedPath, lineage, baseline, publicationEvidence: evidenceBody,
     acceptanceIdentity, attestation, expected, originalPublicationManifest, manifest,
-    publicationUrl: preview.publicationUrl, serverState: preview.state, hostObservation };
+    publicationUrl: preview.publicationUrl, previewSession: served.session,
+    previewStop: served.stop, serverState: preview.state, hostObservation };
 }
 
 test('trusted Host evidence is recomputed from the current project and contracts', async t => {
@@ -151,8 +167,9 @@ test('trusted Host evidence is recomputed from the current project and contracts
 test('trusted Host evidence rejects missing or forged publication observations', async t => {
   const missing = await fixture(t);
   delete missing.publicationUrl;
+  delete missing.previewSession;
   await assert.rejects(() => collectSiteRemediationHostEvidence(missing),
-    error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+    error => error.code === 'SITE_PREVIEW_SESSION_INVALID');
 
   for (const mutate of [
     f => { f.serverState.root = f.serverState.root.replace('noindex', 'index'); },
@@ -220,7 +237,7 @@ test('Host publication observation binds exact HTTP observation artifact digests
   const f = await fixture(t);
   assert.match(f.hostObservation.observationArtifactsDigest, /^[a-f0-9]{64}$/);
   assert.deepEqual(f.hostObservation.observationArtifacts.map(item => item.path),
-    ['/', '/app/page.tsx', '/robots.txt', '/sitemap.xml']);
+    ['/', '/__host_browser__/', '/app/page.tsx', '/robots.txt', '/sitemap.xml']);
   f.serverState.root += '<!-- same policy, different observed bytes -->';
   await assert.rejects(() => collectSiteRemediationHostEvidence(f),
     error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
@@ -228,7 +245,74 @@ test('Host publication observation binds exact HTTP observation artifact digests
 
 test('Host publication observation fails closed when the local preview is unavailable', async t => {
   const f = await fixture(t);
-  f.publicationUrl = 'http://127.0.0.1:1';
+  await f.previewStop();
+  await assert.rejects(() => collectSiteRemediationHostEvidence(f),
+    error => error.code === 'SITE_PREVIEW_SESSION_INVALID');
+});
+
+test('Host V2 observation digest changes when rendered DOM changes', async t => {
+  const f = await fixture(t);
+  const before = f.hostObservation;
+  f.serverState.root = f.serverState.root.replace('</body>', '<div id="hydrated">ready</div></body>');
+  const after = await observeCurrentPublication({ previewSession: f.previewSession,
+    publicationUrl: f.publicationUrl, projectPath: f.projectPath,
+    projectDigest: f.baseline.projectDigest, currentRoutes: ['/'],
+    originalPublicationManifest: f.originalPublicationManifest });
+  assert.notEqual(after.observationDigest, before.observationDigest);
+  assert.notEqual(after.observationArtifacts.find(item => item.path === '/__host_browser__/').sha256,
+    before.observationArtifacts.find(item => item.path === '/__host_browser__/').sha256);
+});
+
+test('Host browser observation rejects client-rendered draft links and hydrated navigation', async t => {
+  for (const script of [
+    `<script>document.body.append(Object.assign(document.createElement('a'),{href:'/draft',textContent:'Draft'}))</script>`,
+    `<script>document.querySelector('nav').append(Object.assign(document.createElement('a'),{href:'/draft',textContent:'Draft'}))</script>`,
+  ]) {
+    const f = await fixture(t);
+    f.serverState.root = f.serverState.root.replace('</body>', `${script}</body>`);
+    await assert.rejects(() => collectSiteRemediationHostEvidence(f),
+      error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+  }
+});
+
+test('Host browser observation failure blocks acceptance', async t => {
+  const f = await fixture(t);
+  f.serverState.rootHeaders['content-disposition'] = 'attachment; filename=page.html';
   await assert.rejects(() => collectSiteRemediationHostEvidence(f),
     error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+});
+
+test('Host indexing policy rejects X-Robots-Tag and robots.txt conflicts', async t => {
+  const header = await fixture(t);
+  header.serverState.rootHeaders['x-robots-tag'] = 'index';
+  await assert.rejects(() => collectSiteRemediationHostEvidence(header),
+    error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+
+  const robots = await fixture(t);
+  robots.serverState.robots = 'User-agent: *\nDisallow: /\n';
+  await assert.rejects(() => collectSiteRemediationHostEvidence(robots),
+    error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+
+  const wildcard = await fixture(t);
+  wildcard.serverState.robots = 'User-agent: *\nDisallow: /*\n';
+  await assert.rejects(() => observeCurrentPublication({
+    previewSession: wildcard.previewSession, publicationUrl: wildcard.publicationUrl,
+    projectPath: wildcard.projectPath, projectDigest: wildcard.baseline.projectDigest,
+    currentRoutes: ['/'], originalPublicationManifest: wildcard.originalPublicationManifest,
+  }),
+    error => error.code === 'PUBLICATION_HOST_OBSERVATION_INVALID');
+});
+
+test('Host rejects unrelated or mismatched preview sessions', async t => {
+  const accepted = await fixture(t);
+  const unrelated = await fixture(t);
+  accepted.previewSession = unrelated.previewSession;
+  accepted.publicationUrl = unrelated.publicationUrl;
+  await assert.rejects(() => collectSiteRemediationHostEvidence(accepted),
+    error => error.code === 'SITE_PREVIEW_SESSION_INVALID');
+
+  const forged = await fixture(t);
+  forged.previewSession = { ...forged.previewSession };
+  await assert.rejects(() => collectSiteRemediationHostEvidence(forged),
+    error => error.code === 'SITE_PREVIEW_SESSION_INVALID');
 });

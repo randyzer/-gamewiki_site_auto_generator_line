@@ -6,10 +6,22 @@ import { spawn } from 'node:child_process';
 import { runProcess } from './process.mjs';
 import { safePath, sha256 } from './files.mjs';
 import { sanitizeDiagnosticText } from './diagnostics.mjs';
+import { projectContentDigest } from './project-content-digest.mjs';
 import { siteProcessEnvironment } from './site-process-environment.mjs';
 import { packageManagerEnvironment, resolveSitePackageManager } from './site-package-manager.mjs';
 
 const fail = (code, detail) => Object.assign(Error(`${code}: ${sanitizeDiagnosticText(detail)}`), { code });
+const previewSessions = new WeakMap();
+
+export function verifySitePreviewSession(session, { projectPath, projectDigest, publicationUrl }) {
+  const state = session && previewSessions.get(session);
+  if (!state?.active || session.projectPath !== projectPath ||
+      session.projectDigest !== projectDigest || session.publicationUrl !== publicationUrl) {
+    throw fail('SITE_PREVIEW_SESSION_INVALID', 'preview identity is missing, inactive, or mismatched');
+  }
+  return session;
+}
+
 const installSandboxProfile = () => '(version 1)\n(allow default)\n(deny network*)\n';
 async function manager(projectPath) {
   await safePath(projectPath, [projectPath]);
@@ -68,9 +80,11 @@ export function availablePort() {
 
 export async function buildAndServe(projectPath, { run = runProcess, spawnProcess = spawn,
   getPort = availablePort, fetchUrl = fetch, timeoutMs = 60000, pollMs = 200 } = {}) {
-  let child, stopped;
+  let child, stopped, previewSession;
   let stdout = '', stderr = '', exited = false, startError;
   const stop = () => stopped ??= (async () => {
+    const sessionState = previewSession && previewSessions.get(previewSession);
+    if (sessionState) sessionState.active = false;
     if (!child) return;
     const kill = signal => {
       try { child.pid && process.platform !== 'win32' ? process.kill(-child.pid, signal) : child.kill(signal); }
@@ -87,6 +101,7 @@ export async function buildAndServe(projectPath, { run = runProcess, spawnProces
     if (!pkg.scripts?.build || !pkg.scripts?.start) throw Error(`build/start script missing in ${projectPath}/package.json`);
     const env = siteProcessEnvironment();
     await run(command, ['run', 'build'], { cwd: projectPath, env, timeoutMs: 600000 });
+    const projectDigest = await projectContentDigest(projectPath);
     const port = await getPort(), url = `http://127.0.0.1:${port}`;
     const args = ['run', 'start', ...(command === 'npm' ? ['--'] : []), '--hostname', '127.0.0.1', '--port', String(port)];
     child = spawnProcess(command, args, { cwd: projectPath, env, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -100,7 +115,16 @@ export async function buildAndServe(projectPath, { run = runProcess, spawnProces
       try {
         const response = await fetchUrl(url, { signal: AbortSignal.timeout(Math.max(1, Math.min(2000, deadline - Date.now()))), redirect: 'manual' });
         await response.body?.cancel();
-        if (response.status === 200) return { url, stop };
+        if (response.status === 200) {
+          previewSession = Object.freeze({
+            kind: 'HOST_SITE_PREVIEW_SESSION_V1',
+            projectPath,
+            projectDigest,
+            publicationUrl: url,
+          });
+          previewSessions.set(previewSession, { active: true });
+          return { url, stop, session: previewSession };
+        }
       } catch { /* The server may still be starting. */ }
       await new Promise(done => setTimeout(done, pollMs));
     }

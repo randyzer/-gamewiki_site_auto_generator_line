@@ -23,7 +23,10 @@ async function fixture(t, files = {}) {
   for (const [name, bytes] of Object.entries(files)) await writeFile(join(path, name), bytes);
   return path;
 }
-test('preview host API exists', () => assert.equal(typeof api.installDependencies, 'function'));
+test('preview host API exists', () => {
+  assert.equal(typeof api.installDependencies, 'function');
+  assert.equal(typeof api.verifySitePreviewSession, 'function');
+});
 test('production executor exposes host installation to the existing pipeline', () => {
   assert.equal(createSkillExecutor().installDependencies, api.installDependencies);
 });
@@ -98,7 +101,22 @@ test('build then production start binds loopback and stops process on explicit c
     fetchUrl: async url => { assert.equal(url, 'http://127.0.0.1:32123'); return { status: 200 }; } });
   assert.deepEqual(calls[0].slice(0, 2), ['pnpm', ['run', 'build']]);
   assert.deepEqual(calls[1].slice(0, 2), ['pnpm', ['run', 'start', '--hostname', '127.0.0.1', '--port', '32123']]);
+  assert.equal(api.verifySitePreviewSession(preview.session, {
+    projectPath: project,
+    projectDigest: preview.session.projectDigest,
+    publicationUrl: preview.url,
+  }), preview.session);
+  assert.throws(() => api.verifySitePreviewSession({ ...preview.session }, {
+    projectPath: project,
+    projectDigest: preview.session.projectDigest,
+    publicationUrl: preview.url,
+  }), /SITE_PREVIEW_SESSION_INVALID/);
   await preview.stop(); await preview.stop(); assert.ok(child.kills.length);
+  assert.throws(() => api.verifySitePreviewSession(preview.session, {
+    projectPath: project,
+    projectDigest: preview.session.projectDigest,
+    publicationUrl: preview.url,
+  }), /SITE_PREVIEW_SESSION_INVALID/);
 });
 test('preview timeout includes sanitized tail and kills child', async t => {
   const project = await fixture(t, { 'package.json': JSON.stringify({ scripts: { build: 'build', start: 'start' } }), 'package-lock.json': 'lock' });
