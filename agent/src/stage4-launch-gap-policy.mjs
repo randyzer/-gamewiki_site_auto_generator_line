@@ -68,17 +68,32 @@ export function verifyStage4LaunchReadinessBinding(value, { runId, siteRevision 
 }
 
 export async function validateLaunchReadinessClearance(value, { binding, siteRevision, projectDigest,
-  domain, readPolicyEvidence, resolveNameServers }) {
+  domain, readPolicyEvidence, resolveNameServers, siteAcceptance = null }) {
   const fail = detail => { throw Object.assign(Error(`LAUNCH_READINESS_CLEARANCE_INVALID: ${detail}`), {
     code: 'LAUNCH_READINESS_CLEARANCE_INVALID',
   }); };
+  const remediated = siteAcceptance?.mode === 'REMEDIATED';
+  const identityKeys = ['clearances', 'domain', 'kind', 'projectDigest', 'siteRevision',
+    'stage4BindingDigest', ...(remediated ? [
+      'acceptanceProjectDigest', 'acceptanceRevision', 'currentBlockers',
+    ] : [])];
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      !exactKeys(value, ['clearances', 'domain', 'kind', 'projectDigest', 'siteRevision', 'stage4BindingDigest']) ||
-      value.kind !== 'LAUNCH_READINESS_CLEARANCE_V2' || value.stage4BindingDigest !== binding.bindingDigest ||
+      !exactKeys(value, identityKeys) ||
+      value.kind !== (remediated ? 'LAUNCH_READINESS_CLEARANCE_V3' :
+        'LAUNCH_READINESS_CLEARANCE_V2') ||
+      value.stage4BindingDigest !== binding.bindingDigest ||
       value.siteRevision !== siteRevision || value.projectDigest !== projectDigest ||
       value.domain !== domain || !domainName(domain) || typeof readPolicyEvidence !== 'function' ||
       typeof resolveNameServers !== 'function' ||
       !Array.isArray(value.clearances) || value.clearances.length !== binding.blockers.length) fail('identity mismatch');
+  if (remediated && (value.acceptanceRevision !== siteAcceptance.acceptanceRevision ||
+      value.acceptanceProjectDigest !== siteAcceptance.projectDigest ||
+      value.acceptanceProjectDigest !== projectDigest ||
+      !Array.isArray(siteAcceptance.unresolvedBlockers) ||
+      JSON.stringify(value.currentBlockers) !==
+        JSON.stringify(siteAcceptance.unresolvedBlockers))) {
+    fail('current acceptance identity or blockers changed');
+  }
 
   const common = (clearance, index, keys) => {
     if (!clearance || typeof clearance !== 'object' || Array.isArray(clearance) ||

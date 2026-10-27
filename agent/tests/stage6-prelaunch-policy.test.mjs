@@ -91,3 +91,23 @@ test('Stage 6 Host findings revoke an otherwise cleared launch context', () => {
     [{ code: 'PUBLISHED_ROUTE_NOINDEX', route: '/' }]);
   assert.equal(context.status, 'NOT_CLEARED');
 });
+
+test('historical clearance cannot clear a remediated acceptance with current blockers', () => {
+  const siteAcceptance = { mode: 'REMEDIATED', acceptanceRevision: '1'.repeat(64),
+    projectDigest: 'a'.repeat(64), attestationDigest: '3'.repeat(64),
+    unresolvedBlockers: ['CURRENT_LAUNCH_READINESS_REVALIDATION_REQUIRED'] };
+  const context = createPrelaunchContext({ runId: 'run-1', siteRevision: 'revision-1',
+    projectDigest: 'a'.repeat(64), binding: { bindingDigest: 'b'.repeat(64) },
+    stage5AuditSha256: '5'.repeat(64), stage5Audit: { verdict: 'SHIP', findings: [] },
+    clearanceDigest: 'd'.repeat(64), siteAcceptance });
+  assert.equal(context.status, 'NOT_CLEARED');
+  assert.deepEqual(context.unresolvedBlockers, [{ source: 'CURRENT_SITE_ACCEPTANCE',
+    code: 'CURRENT_LAUNCH_READINESS_REVALIDATION_REQUIRED', severity: 'BLOCKER' }]);
+
+  const cleared = createPrelaunchContext({ runId: 'run-1', siteRevision: 'revision-1',
+    projectDigest: 'a'.repeat(64), binding: { bindingDigest: 'b'.repeat(64) },
+    stage5AuditSha256: '5'.repeat(64), stage5Audit: { verdict: 'SHIP', findings: [] },
+    clearanceDigest: 'e'.repeat(64), acceptanceClearanceDigest: 'e'.repeat(64),
+    siteAcceptance });
+  assert.equal(cleared.status, 'CLEARED');
+});

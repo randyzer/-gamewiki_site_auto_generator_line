@@ -27,6 +27,7 @@ const contracts = [
   ['SITE_REACCEPTANCE_AUTHORIZATION_CONSUMPTION', 1],
   ['PUBLICATION_EVIDENCE_BODY', 1],
   ['DERIVED_PUBLICATION_ATTESTATION', 1],
+  ['EFFECTIVE_SITE_ACCEPTANCE', 1],
 ];
 
 test('PR-A contracts are registered as closed versioned schemas', () => {

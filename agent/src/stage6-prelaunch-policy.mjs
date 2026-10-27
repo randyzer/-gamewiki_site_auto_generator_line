@@ -9,6 +9,17 @@ const invalid = detail => Object.assign(Error(`PRELAUNCH_ASSESSMENT_INVALID: ${d
 });
 const clone = value => JSON.parse(JSON.stringify(value));
 
+function acceptanceFields(value) {
+  if (value === null || value === undefined) return {};
+  if (!digest(value.acceptanceRevision) || !digest(value.projectDigest) ||
+      !digest(value.attestationDigest)) {
+    throw invalid('Effective site acceptance identity is incomplete');
+  }
+  return { acceptanceRevision: value.acceptanceRevision,
+    acceptanceProjectDigest: value.projectDigest,
+    publicationAttestationDigest: value.attestationDigest };
+}
+
 function hostFindings(value) {
   if (!Array.isArray(value) || value.some(item => !item || typeof item !== 'object' ||
       Array.isArray(item) || typeof item.code !== 'string' || !item.code))
@@ -21,12 +32,18 @@ const hostBlockers = findings => findings.map(violation => ({
 }));
 
 export function createPrelaunchContext({ runId, siteRevision, projectDigest, binding,
-  stage5Audit, stage5AuditSha256, clearanceDigest = null }) {
+  stage5Audit, stage5AuditSha256, clearanceDigest = null,
+  acceptanceClearanceDigest = null, siteAcceptance = null }) {
   if (typeof runId !== 'string' || !runId || typeof siteRevision !== 'string' || !siteRevision ||
       !digest(projectDigest) || !digest(stage5AuditSha256) ||
       !stage5Audit || typeof stage5Audit !== 'object')
     throw invalid('Host inputs are incomplete');
   const unresolvedBlockers = [];
+  const remediated = siteAcceptance?.mode === 'REMEDIATED';
+  if (acceptanceClearanceDigest &&
+      (!remediated || acceptanceClearanceDigest !== clearanceDigest)) {
+    throw invalid('Current acceptance clearance is stale or unrelated');
+  }
   if (!binding?.bindingDigest) unresolvedBlockers.push({ source: 'STAGE4_LAUNCH_READINESS',
     code: 'STAGE4_LAUNCH_READINESS_BINDING_MISSING', severity: 'BLOCKER' });
   if (!clearanceDigest) {
@@ -41,10 +58,20 @@ export function createPrelaunchContext({ runId, siteRevision, projectDigest, bin
         severity: finding.severity, route: finding.route, status: finding.status });
     }
   }
+  if (remediated && !acceptanceClearanceDigest) {
+    if (!Array.isArray(siteAcceptance.unresolvedBlockers) ||
+        siteAcceptance.unresolvedBlockers.some(code => typeof code !== 'string' || !code)) {
+      throw invalid('Current acceptance blockers are malformed');
+    }
+    unresolvedBlockers.push(...siteAcceptance.unresolvedBlockers.map(code => ({
+      source: 'CURRENT_SITE_ACCEPTANCE', code, severity: 'BLOCKER',
+    })));
+  }
   const unsigned = { kind: 'STAGE6_PRELAUNCH_CONTEXT_V1', runId, siteRevision, projectDigest,
     stage4BindingDigest: binding?.bindingDigest ?? null, stage5AuditSha256,
     stage5Verdict: stage5Audit.verdict ?? null,
-    clearanceDigest, status: unresolvedBlockers.length === 0 ? 'CLEARED' : 'NOT_CLEARED',
+    clearanceDigest, acceptanceClearanceDigest, ...acceptanceFields(siteAcceptance),
+    status: unresolvedBlockers.length === 0 ? 'CLEARED' : 'NOT_CLEARED',
     unresolvedBlockers };
   return { ...unsigned, contextDigest: sha256(unsigned) };
 }
@@ -110,8 +137,14 @@ export function createPrelaunchAssessment({ context, reportSha256, disposition }
     contextDigest: context.contextDigest,
     reportSha256, siteRevision: context.siteRevision, projectDigest: context.projectDigest,
     stage5AuditSha256: context.stage5AuditSha256,
+    acceptanceClearanceDigest: context.acceptanceClearanceDigest ?? null,
     disposition, launchReadiness: context.status,
     unresolvedBlockers: context.unresolvedBlockers, deploymentAuthorized,
+    ...acceptanceFields(context.acceptanceRevision ? {
+      acceptanceRevision: context.acceptanceRevision,
+      projectDigest: context.acceptanceProjectDigest,
+      attestationDigest: context.publicationAttestationDigest,
+    } : null),
     ...(stage6 ? { baseContextDigest: context.baseContextDigest,
       stage6HostFindings: context.stage6HostFindings,
       stage6HostFindingsDigest: context.stage6HostFindingsDigest } : {}) };
@@ -129,6 +162,12 @@ export function verifyPrelaunchAssessment(value, context) {
       siteRevision: value.siteRevision, projectDigest: value.projectDigest,
       stage4BindingDigest: context.stage4BindingDigest, stage5AuditSha256: value.stage5AuditSha256,
       stage5Verdict: context.stage5Verdict, clearanceDigest: context.clearanceDigest,
+      acceptanceClearanceDigest: value.acceptanceClearanceDigest ?? null,
+      ...acceptanceFields(value.acceptanceRevision ? {
+        acceptanceRevision: value.acceptanceRevision,
+        projectDigest: value.acceptanceProjectDigest,
+        attestationDigest: value.publicationAttestationDigest,
+      } : null),
       baseContextDigest: value.baseContextDigest, stage6HostFindings: value.stage6HostFindings,
       stage6HostFindingsDigest: value.stage6HostFindingsDigest, status: value.launchReadiness,
       unresolvedBlockers: value.unresolvedBlockers, contextDigest: value.contextDigest }, context)
@@ -136,6 +175,10 @@ export function verifyPrelaunchAssessment(value, context) {
   if (value.contextDigest !== expectedContext.contextDigest ||
       value.siteRevision !== expectedContext.siteRevision || value.projectDigest !== expectedContext.projectDigest ||
       value.stage5AuditSha256 !== expectedContext.stage5AuditSha256 ||
+      value.acceptanceClearanceDigest !== expectedContext.acceptanceClearanceDigest ||
+      value.acceptanceRevision !== expectedContext.acceptanceRevision ||
+      value.acceptanceProjectDigest !== expectedContext.acceptanceProjectDigest ||
+      value.publicationAttestationDigest !== expectedContext.publicationAttestationDigest ||
       value.launchReadiness !== expectedContext.status ||
       JSON.stringify(value.unresolvedBlockers) !== JSON.stringify(expectedContext.unresolvedBlockers))
     throw invalid('Persisted assessment is stale or unrelated');

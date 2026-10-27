@@ -23,6 +23,7 @@ export function siteRemediationPaths(runDirectory, { previewId, transactionId })
   const transactionDirectory = join(root, 'transactions', transactionId);
   return Object.freeze({
     root,
+    objectsDirectory: join(root, 'objects'),
     previewPath: join(root, 'previews', `${previewId}.json`),
     transactionDirectory,
     authorizationPath: join(transactionDirectory, 'authorization.json'),
@@ -33,6 +34,14 @@ export function siteRemediationPaths(runDirectory, { previewId, transactionId })
     receiptPath: join(transactionDirectory, 'receipt.json'),
     abortPath: join(transactionDirectory, 'abort.json'),
   });
+}
+
+export function siteRemediationObjectPath(runDirectory, digest) {
+  if (!/^[a-f0-9]{64}$/.test(digest ?? '')) {
+    throw new ContractError('SITE_REMEDIATION_OBJECT_INVALID',
+      'Immutable site remediation objects require a SHA256 identity');
+  }
+  return join(runDirectory, 'site-remediation', 'objects', `${digest}.json`);
 }
 
 async function readOptional(path) {

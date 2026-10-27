@@ -143,6 +143,9 @@ const definitions = new Map([
   ['SITE_REMEDIATION_ABORT:1', { kind: 'SITE_REMEDIATION_ABORT', schemaVersion: 1,
     producer: 'SITE_REMEDIATION_TRANSACTION', validator: 'CONTRACT_REGISTRY',
     schema: load('site-remediation-abort.v1.json') }],
+  ['EFFECTIVE_SITE_ACCEPTANCE:1', { kind: 'EFFECTIVE_SITE_ACCEPTANCE', schemaVersion: 1,
+    producer: 'EFFECTIVE_SITE_ACCEPTANCE_RESOLVER', validator: 'CONTRACT_REGISTRY',
+    schema: load('effective-site-acceptance.v1.json') }],
 ]);
 for (const definition of definitions.values()) deepFreeze(definition);
 

@@ -10,6 +10,7 @@ import {
   verifyDerivedPublicationAttestation,
   verifyPublicationEvidenceBody,
 } from '../src/effective-publication-attestation.mjs';
+import { verifyEffectivePublication } from '../src/route-publication.mjs';
 
 const d = value => value.repeat(64).slice(0, 64);
 const page = {
@@ -183,4 +184,27 @@ test('derived attestation rejects evidence and acceptance binding mutations', ()
     acceptanceIdentity: createSiteAcceptanceIdentity({ ...identityInput,
       transactionId: 'site-remediation-22222222-2222-4222-8222-222222222222' }),
   }), error => error.code === 'PUBLICATION_ACCEPTANCE_BINDING_MISMATCH');
+});
+
+test('effective publication remains bounded by the immutable Stage 4 manifest', () => {
+  const evidenceBody = createPublicationEvidenceBody(evidenceInput);
+  const identity = createSiteAcceptanceIdentity({ lineageDigest: evidenceBody.lineageDigest,
+    baselineDigest: evidenceBody.baselineDigest, projectDigest: evidenceBody.projectDigest,
+    publicationEvidenceDigest: evidenceBody.publicationEvidenceDigest,
+    remediationScopeDigest: evidenceBody.remediationScopeDigest,
+    transactionId: 'site-remediation-11111111-1111-4111-8111-111111111111' });
+  const attestation = createDerivedPublicationAttestation({ evidenceBody,
+    acceptanceIdentity: identity });
+  const originalManifest = { pages: [{ route: '/', disposition: 'PUBLISH' }] };
+  assert.equal(verifyEffectivePublication({ originalManifest, evidenceBody, attestation,
+    acceptanceIdentity: identity, currentRoutes: ['/'] }).publicationEvidenceDigest,
+  evidenceBody.publicationEvidenceDigest);
+  assert.throws(() => verifyEffectivePublication({ originalManifest, evidenceBody: {
+    ...evidenceBody, observedRoutes: ['/', '/extra'] }, attestation,
+  acceptanceIdentity: identity, currentRoutes: ['/', '/extra'] }),
+  error => ['PUBLICATION_EVIDENCE_DIGEST_MISMATCH',
+    'PUBLICATION_ROUTE_COVERAGE_INVALID'].includes(error.code));
+  assert.throws(() => verifyEffectivePublication({ originalManifest: { pages: [] },
+    evidenceBody, attestation, acceptanceIdentity: identity, currentRoutes: ['/'] }),
+  error => error.code === 'PUBLICATION_RIGHTS_WIDENED');
 });

@@ -4,7 +4,10 @@ import { mkdtemp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
-import { createSiteReacceptanceAuthorization } from '../src/site-acceptance-contract.mjs';
+import { createCurrentSiteBaseline, createSiteAcceptanceIdentity,
+  createSiteReacceptanceAuthorization } from '../src/site-acceptance-contract.mjs';
+import { createDerivedPublicationAttestation,
+  createPublicationEvidenceBody } from '../src/effective-publication-attestation.mjs';
 import {
   createSiteRemediationController,
   OFFLINE_SITE_REMEDIATION_CAPABILITY,
@@ -134,6 +137,56 @@ test('preview rejects caller publication evidence not observed by the Host provi
   await assert.rejects(() => f.controller.preview({ ...f.previewInput,
     publicationEvidenceDigest: d('f') }),
   error => error.code === 'SITE_REMEDIATION_EVIDENCE_STALE');
+});
+
+test('transaction persists and rereads the complete immutable acceptance graph', async t => {
+  const f = await fixture(t);
+  const projectDigest = f.previewInput.newProjectDigest;
+  const baseline = createCurrentSiteBaseline({ baselineKind: 'REACCEPTED_CURRENT_BASELINE',
+    historicalEquivalence: false, digestPolicyVersion: 'project-content-v1',
+    projectPath: '/synthetic/project', files: [{ path: 'app/page.tsx', mode: 0o644,
+      byteLength: 1, sha256: d('0') }], projectDigest, routes: ['/'],
+    protectedInputs: [{ path: 'backgroundinformation/keywords.md', mode: 0o644,
+      byteLength: 1, sha256: d('1') }], historicalEvidenceGaps: [] });
+  const publicationEvidence = createPublicationEvidenceBody({
+    originalPublicationManifestSha256: d('1'),
+    lineageDigest: f.previewInput.lineageDigest, researchHandoffSha256: d('2'),
+    researchApprovalDigest: f.previewInput.researchApprovalDigest,
+    originalLaunchReadinessBindingDigest: d('3'), baselineKind: baseline.baselineKind,
+    baselineDigest: baseline.baselineDigest,
+    remediationScopeDigest: f.previewInput.remediationScopeDigest, projectDigest,
+    observedRoutes: ['/'], pages: [{ route: '/', originalDisposition: 'PUBLISH',
+      effectiveDisposition: 'PUBLISH', materialStatus: 'COMPLETED', robots: 'noindex',
+      inSitemap: true, inNavigation: true, linkedFromPublicPages: true,
+      sourceFileExposed: false, dynamicProof: 'STATIC' }], validationStatus: 'VERIFIED',
+    indexingAuthorization: 'NOT_CLEARED', hostObservationDigest: d('4'),
+    validatorVersion: 'host-route-v1' });
+  const transactionId = 'site-remediation-11111111-1111-4111-8111-111111111111';
+  const acceptanceIdentity = createSiteAcceptanceIdentity({
+    lineageDigest: f.previewInput.lineageDigest, baselineDigest: baseline.baselineDigest,
+    projectDigest, publicationEvidenceDigest: publicationEvidence.publicationEvidenceDigest,
+    remediationScopeDigest: f.previewInput.remediationScopeDigest, transactionId });
+  const attestation = createDerivedPublicationAttestation({ evidenceBody: publicationEvidence,
+    acceptanceIdentity });
+  const previewInput = { ...f.previewInput, baselineDigest: baseline.baselineDigest,
+    publicationEvidenceDigest: publicationEvidence.publicationEvidenceDigest,
+    attestationDigest: attestation.attestationDigest,
+    acceptanceRevision: acceptanceIdentity.acceptanceRevision,
+    protectedInputsDigest: baseline.protectedInputsDigest };
+  const evidenceProvider = async () => ({ ...previewInput,
+    immutableObjects: { baseline, publicationEvidence, attestation } });
+  const controller = f.createController({ evidenceProvider });
+  const result = await controller.preview(previewInput);
+  await controller.confirm({ previewId: result.preview.previewId,
+    confirmationCode: result.confirmationCode, authorization: authorization(result) });
+  const updated = JSON.parse(await readFile(f.manifestPath));
+  const committed = await verifyCommittedSiteRemediation({ runDirectory: f.runDirectory,
+    manifest: updated });
+  assert.equal(committed.immutableObjects.baseline.baselineDigest, baseline.baselineDigest);
+  assert.equal(committed.immutableObjects.publicationEvidence.publicationEvidenceDigest,
+    publicationEvidence.publicationEvidenceDigest);
+  assert.equal(committed.immutableObjects.attestation.attestationDigest,
+    attestation.attestationDigest);
 });
 
 test('confirmation atomically preserves Stage 1-4 and invalidates only Stage 5-7', async t => {

@@ -1,9 +1,100 @@
 import { readArtifact, parseArtifactJson } from './files.mjs';
 import { STAGE, findStage } from './stages.mjs';
+import { ContractError } from './contracts/errors.mjs';
+import { canonicalJson } from './contracts/canonical-json.mjs';
+import { canonicalContractDigest } from './site-acceptance-contract.mjs';
+import {
+  verifyDerivedPublicationAttestation,
+  verifyPublicationEvidenceBody,
+} from './effective-publication-attestation.mjs';
 
 export const ROUTE_PUBLICATION_KIND = 'ROUTE_PUBLICATION_MANIFEST_V1';
 export const ROUTE_PUBLICATION_ARTIFACT = 'ROUTE_PUBLICATION_MANIFEST.json';
 const assert = (condition, detail) => { if (!condition) throw Error('ROUTE_PUBLICATION_INVALID: ' + detail); };
+const observationFields = Object.freeze([
+  'dynamicProof', 'inNavigation', 'inSitemap', 'linkedFromPublicPages', 'robots',
+  'route', 'sourceFileExposed',
+]);
+const observationKeys = Object.freeze([
+  'indexingAuthorization', 'kind', 'observationArtifacts', 'observationArtifactsDigest',
+  'observationDigest', 'observedRoutes', 'pages', 'projectDigest', 'routeInventoryDigest',
+  'validatorVersion',
+]);
+const observationArtifactKeys = Object.freeze(['path', 'sha256', 'status']);
+const exactKeys = (value, keys) => canonicalJson(Object.keys(value).sort()) ===
+  canonicalJson([...keys].sort());
+
+function publicationObservationError(detail) {
+  return new ContractError('PUBLICATION_HOST_OBSERVATION_INVALID', detail);
+}
+
+export function createHostPublicationObservation({ projectDigest, observedRoutes, pages,
+  indexingAuthorization, validatorVersion, observationArtifacts = [] }) {
+  const routes = [...observedRoutes].map(publicationRoute).sort();
+  const observedPages = structuredClone(pages)
+    .sort((left, right) => left.route.localeCompare(right.route));
+  const artifacts = structuredClone(observationArtifacts)
+    .sort((left, right) => left.path.localeCompare(right.path));
+  if (!/^[a-f0-9]{64}$/.test(projectDigest ?? '') ||
+      typeof validatorVersion !== 'string' || !validatorVersion ||
+      !['CLEARED', 'NOT_CLEARED'].includes(indexingAuthorization) ||
+      new Set(routes).size !== routes.length || observedPages.some(page =>
+        !exactKeys(page, observationFields) || page.route !== publicationRoute(page.route)) ||
+      !artifacts.length || new Set(artifacts.map(item => item.path)).size !== artifacts.length ||
+      artifacts.some(item => !exactKeys(item, observationArtifactKeys) ||
+        typeof item.path !== 'string' || !item.path.startsWith('/') || item.path.startsWith('//') ||
+        !Number.isSafeInteger(item.status) || item.status < 100 || item.status > 599 ||
+        !/^[a-f0-9]{64}$/.test(item.sha256 ?? ''))) {
+    throw publicationObservationError('Host publication observation is incomplete');
+  }
+  const observationArtifactsDigest = canonicalContractDigest(
+    'HOST_PUBLICATION_OBSERVATION_ARTIFACTS_V1', artifacts,
+  );
+  const unsigned = {
+    kind: 'HOST_PUBLICATION_OBSERVATION_V2', validatorVersion, projectDigest,
+    observedRoutes: routes,
+    routeInventoryDigest: canonicalContractDigest('EFFECTIVE_ROUTE_INVENTORY_V1', routes),
+    pages: observedPages, observationArtifacts: artifacts, observationArtifactsDigest,
+    indexingAuthorization,
+  };
+  return Object.freeze({ ...unsigned,
+    observationDigest: canonicalContractDigest(
+      'HOST_PUBLICATION_OBSERVATION_V2_DIGEST_V1', unsigned,
+    ) });
+}
+
+export function verifyHostPublicationObservation(observation, { evidenceBody, currentRoutes,
+  projectDigest }) {
+  if (!observation || typeof observation !== 'object' || Array.isArray(observation) ||
+      !exactKeys(observation, observationKeys)) {
+    throw publicationObservationError('Host publication observation is missing or malformed');
+  }
+  const expected = createHostPublicationObservation({
+    projectDigest: observation.projectDigest,
+    observedRoutes: observation.observedRoutes,
+    pages: observation.pages,
+    indexingAuthorization: observation.indexingAuthorization,
+    validatorVersion: observation.validatorVersion,
+    observationArtifacts: observation.observationArtifacts,
+  });
+  if (canonicalJson(observation) !== canonicalJson(expected) ||
+      observation.projectDigest !== projectDigest ||
+      observation.validatorVersion !== evidenceBody.validatorVersion ||
+      observation.observationDigest !== evidenceBody.hostObservationDigest ||
+      observation.routeInventoryDigest !== evidenceBody.routeInventoryDigest ||
+      canonicalJson(observation.observedRoutes) !== canonicalJson(
+        [...new Set(currentRoutes.map(publicationRoute))].sort())) {
+    throw publicationObservationError('Host publication observation identity is stale');
+  }
+  const expectedPages = evidenceBody.pages.map(page => Object.fromEntries(
+    observationFields.map(field => [field, page[field]]),
+  ));
+  if (canonicalJson(observation.pages) !== canonicalJson(expectedPages) ||
+      observation.indexingAuthorization !== evidenceBody.indexingAuthorization) {
+    throw publicationObservationError('Publication evidence differs from Host observations');
+  }
+  return observation;
+}
 
 export function publicationRoute(value) {
   assert(typeof value === 'string' && value.startsWith('/') && !value.startsWith('//') &&
@@ -115,4 +206,35 @@ export async function publicationRoutes(context, { includeDrafts = false } = {})
   const allowed = includeDrafts ? new Set(['PUBLISH', 'DRAFT_ONLY']) : new Set(['PUBLISH']);
   return [...new Set(manifest.pages.filter(page => allowed.has(page.disposition) && page.route)
     .map(page => publicationRoute(page.route)))];
+}
+
+export function verifyEffectivePublication({ originalManifest, evidenceBody, attestation,
+  acceptanceIdentity, currentRoutes, hostObservation = null, projectDigest = null }) {
+  verifyPublicationEvidenceBody(evidenceBody);
+  verifyDerivedPublicationAttestation(attestation, { acceptanceIdentity });
+  if (!originalManifest || !Array.isArray(originalManifest.pages) ||
+      !Array.isArray(currentRoutes)) {
+    throw new ContractError('PUBLICATION_POLICY_INVALID',
+      'Original publication policy and current routes are required');
+  }
+  const originals = new Map(originalManifest.pages
+    .filter(page => page.route)
+    .map(page => [publicationRoute(page.route), page.disposition]));
+  for (const page of evidenceBody.pages) {
+    if (page.effectiveDisposition === 'OMIT') continue;
+    const original = originals.get(publicationRoute(page.route));
+    if (!original || original !== page.originalDisposition) {
+      throw new ContractError('PUBLICATION_RIGHTS_WIDENED',
+        `Current route is not justified by Stage 4: ${page.route}`);
+    }
+  }
+  const observed = [...new Set(currentRoutes.map(publicationRoute))].sort();
+  if (JSON.stringify(observed) !== JSON.stringify(evidenceBody.observedRoutes)) {
+    throw new ContractError('PUBLICATION_ROUTE_COVERAGE_INVALID',
+      'Current route inventory differs from the Host publication evidence');
+  }
+  if (hostObservation) verifyHostPublicationObservation(hostObservation, {
+    evidenceBody, currentRoutes, projectDigest,
+  });
+  return evidenceBody;
 }
