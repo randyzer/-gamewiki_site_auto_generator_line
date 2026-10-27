@@ -156,3 +156,37 @@ test('all prelaunch project scripts receive a minimal environment without host s
   } });
   assert.deepEqual(observed, ['typecheck', 'lint', 'test', 'build']);
 });
+
+test('prelaunch verifies a static internal redirect without treating it as published content', async t => {
+  const f = await setup(t);
+  await mkdir(join(f.context.inputs.projectPath, 'app/en'), { recursive: true });
+  await writeFile(join(f.context.inputs.projectPath, 'app/page.tsx'),
+    'export default function Page(){return null}\n');
+  await writeFile(join(f.context.inputs.projectPath, 'app/en/page.tsx'),
+    `import { permanentRedirect } from 'next/navigation';\n` +
+    `export default function EnglishAlias(){permanentRedirect('/');}\n`);
+  const fetchUrl = async target => {
+    const path = new URL(target).pathname;
+    if (path === '/en') return { status: 308, headers: new Headers({ location: '/' }),
+      text: async () => '', body: { cancel: async () => {} } };
+    const text = path === '/sitemap.xml'
+      ? '<urlset><url><loc>https://fixture.test/</loc></url><url><loc>https://fixture.test/guide</loc></url></urlset>'
+      : path === '/draft' ? '<meta name="robots" content="noindex">' : '';
+    return { status: 200, headers: new Headers({ 'content-type': path.includes('xml')
+      ? 'application/xml' : 'text/html' }), text: async () => text,
+    body: { cancel: async () => {} } };
+  };
+  const launchBrowser = async () => ({ newContext: async () => ({
+    newPage: async () => ({ on: () => {}, goto: async () => ({ status: () => 200 }),
+      evaluate: async () => [], screenshot: async ({ path }) => writeFile(path, 'shot') }),
+    close: async () => {},
+  }), close: async () => {} });
+  const result = await api.collectPrelaunch(f.context, { url: 'http://127.0.0.1:32111',
+    fetchUrl, launchBrowser, run: async () => ({ exitCode: 0 }) });
+  const evidence = JSON.parse(await readFile(result.evidencePath));
+  assert.ok(evidence.http.some(item => item.route === '/en' && item.status === 308));
+  assert.ok(!evidence.routePublication.violations.some(item =>
+    item.route === '/en' && item.code === 'UNDECLARED_DISCOVERED_ROUTE'));
+  assert.ok(!evidence.routePublication.violations.some(item =>
+    item.route === '/en' && item.code === 'REDIRECT_UNPROVABLE'));
+});

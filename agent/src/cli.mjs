@@ -12,7 +12,8 @@ import { runFromTerminal } from './terminal-run.mjs';
 import { reportCliResult } from './cli-result.mjs';
 import { previewFinalizedStage4Reconciliation,
   applyFinalizedStage4Reconciliation } from './stage4-finalized-reconciliation.mjs';
-import { createSiteRemediationController } from './site-remediation-transaction.mjs';
+import { previewProductionSiteRemediation, confirmProductionSiteRemediation,
+  recoverProductionSiteRemediation } from './site-remediation-entry.mjs';
 
 const [command, file, id, revision] = process.argv.slice(2);
 async function entryInput(file) {
@@ -95,8 +96,8 @@ else if (command === 'site-remediation-preview' && file &&
   process.argv.slice(2).length === 2) {
   try {
     const config = await loadConfiguration();
-    const controller = createSiteRemediationController({ workspace: config.workspace, runId: file });
-    reportEntry(await controller.preview({}));
+    reportEntry(await previewProductionSiteRemediation({ workspace: config.workspace,
+      runId: file }));
   } catch (error) {
     reportEntry({ status: 'BLOCKED', code: error.code ?? 'SITE_REMEDIATION_UNAVAILABLE',
       reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
@@ -107,9 +108,8 @@ else if (command === 'site-remediation-confirm' && file && id && revision &&
   process.argv.slice(2).length === 4) {
   try {
     const config = await loadConfiguration();
-    const controller = createSiteRemediationController({ workspace: config.workspace, runId: id });
-    reportEntry(await controller.confirm({ previewId: file, confirmationCode: revision,
-      authorization: null }));
+    reportEntry(await confirmProductionSiteRemediation({ workspace: config.workspace,
+      runId: id, previewId: file, confirmationCode: revision }));
   } catch (error) {
     reportEntry({ status: 'BLOCKED', code: error.code ?? 'SITE_REMEDIATION_UNAVAILABLE',
       reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,
@@ -120,8 +120,8 @@ else if (command === 'site-remediation-recover' && file &&
   process.argv.slice(2).length === 2) {
   try {
     const config = await loadConfiguration();
-    const controller = createSiteRemediationController({ workspace: config.workspace, runId: file });
-    reportEntry(await controller.recover({ transactionId: null }));
+    reportEntry(await recoverProductionSiteRemediation({ workspace: config.workspace,
+      runId: file }));
   } catch (error) {
     reportEntry({ status: 'BLOCKED', code: error.code ?? 'SITE_REMEDIATION_UNAVAILABLE',
       reason: error.message, approvedToRun: false, executorStarted: false, siteWrites: false,

@@ -38,6 +38,7 @@ export async function collectPrelaunch(context, { url, fetchUrl = fetch, launchB
       const response = await fetchUrl(result.url, { redirect: 'manual', signal: AbortSignal.timeout(30000) });
       result.status = response.status;
       result.contentType = response.headers?.get('content-type') ?? '';
+      result.location = response.headers?.get('location') ?? null;
       if (/xml|html|text/.test(result.contentType)) result.text = await response.text();
       else await response.body?.cancel();
     } catch (error) { result.error = sanitizeDiagnosticText(error.message); }
@@ -63,6 +64,28 @@ export async function collectPrelaunch(context, { url, fetchUrl = fetch, launchB
   const discovered = await discoverProjectRoutes(project);
   const policy = new Map(publication.pages.filter(page => page.route).map(page => [page.route, page]));
   const publicationViolations = discovered.unprovable.map(path => ({ code: 'ROUTE_UNPROVABLE', path }));
+  const normalize = path => path.replace(/\/+$/, '') || '/';
+  for (const redirect of discovered.redirects) {
+    let path = redirect.route, proven = false;
+    for (let index = 0; index < 3; index += 1) {
+      const response = await request(path);
+      let target;
+      try { target = new URL(response.location, origin); }
+      catch { target = null; }
+      if (![307, 308].includes(response.status) || !target || target.origin !== origin ||
+          target.search || target.hash) break;
+      if (normalize(target.pathname) === normalize(redirect.target)) {
+        proven = response.status === redirect.status &&
+          policy.get(redirect.target)?.disposition === 'PUBLISH';
+        break;
+      }
+      if (normalize(target.pathname) !== normalize(redirect.route) ||
+          target.pathname === path) break;
+      path = target.pathname;
+    }
+    if (!proven) publicationViolations.push({ code: 'REDIRECT_UNPROVABLE',
+      route: redirect.route, target: redirect.target });
+  }
   for (const route of sitemapRoutes) {
     const page = policy.get(route);
     if (!page) publicationViolations.push({ code: 'SITEMAP_UNDECLARED_ROUTE', route });

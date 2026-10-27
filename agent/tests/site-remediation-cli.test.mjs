@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-test('site remediation CLI is isolated and fails closed before PR-C Host integration', async t => {
+test('site remediation CLI enters production orchestration and fails closed on a missing run', async t => {
   const root = await mkdtemp(join(tmpdir(), 'site-remediation-cli-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const agent = join(root, 'agent');
@@ -28,7 +28,7 @@ test('site remediation CLI is isolated and fails closed before PR-C Host integra
     assert.equal(result.status, 2, result.stderr);
     const output = JSON.parse(result.stdout);
     assert.equal(output.status, 'BLOCKED');
-    assert.equal(output.code, 'SITE_REMEDIATION_HOST_PROVIDER_REQUIRED');
+    assert.notEqual(output.code, 'SITE_REMEDIATION_HOST_PROVIDER_REQUIRED');
     assert.equal(output.executorStarted, false);
     assert.equal(output.siteWrites, false);
   }
